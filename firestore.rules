@@ -1,0 +1,166 @@
+rules_version = '2';
+
+/**
+ * Ora Firestore Security Rules — Phase 1.6 matrix (fail-closed).
+ *
+ * Authority:
+ * - docs/architecture-final/24-phase-1.6-condition-closure.md §1
+ * - ADR-014 Security Model
+ *
+ * Admin SDK (Cloud Run backends) bypasses these rules. Clients using the
+ * Firebase SDK are subject to them. Prefer API-mediated mutations for all
+ * authoritative state (rides, payments, drivers, etc.).
+ *
+ * Default: deny all. Collections not listed below are denied by the catch-all.
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null && request.auth.uid != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    /** Fields clients must never set/change on users/{uid}. */
+    function userProtectedFieldsUnchanged() {
+      return !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny([
+            'uid',
+            'role',
+            'driverStatus',
+            'createdAt',
+            'banned',
+            'accountStatus',
+            'phoneNumber',
+            'phoneE164'
+          ]);
+    }
+
+    // ── users/{uid} ─────────────────────────────────────────────────────────
+    // Read: own user. Create/delete: backend only. Update: own non-sensitive.
+    match /users/{uid} {
+      allow read: if isSelf(uid);
+      allow create, delete: if false;
+      allow update: if isSelf(uid) && userProtectedFieldsUnchanged();
+    }
+
+    // ── savedPlaces (low-risk; owner only) ──────────────────────────────────
+    // Docs may be savedPlaces/{placeId} with ownerUid field.
+    match /savedPlaces/{placeId} {
+      allow read, delete: if signedIn()
+          && resource.data.ownerUid == request.auth.uid;
+      allow create: if signedIn()
+          && request.resource.data.ownerUid == request.auth.uid;
+      allow update: if signedIn()
+          && resource.data.ownerUid == request.auth.uid
+          && request.resource.data.ownerUid == request.auth.uid;
+    }
+
+    // ── Explicitly denied collections (architecture matrix — backend-only) ──
+    // Documented deny: clients never read/write these via Firestore SDK.
+    match /drivers/{id} {
+      allow read, write: if false;
+    }
+    match /vehicles/{id} {
+      allow read, write: if false;
+    }
+    match /driverDocuments/{id} {
+      allow read, write: if false;
+    }
+    match /rides/{id} {
+      allow read, write: if false;
+    }
+    match /rideOffers/{id} {
+      allow read, write: if false;
+    }
+    match /rideEvents/{id} {
+      allow read, write: if false;
+    }
+    match /outboxEvents/{id} {
+      allow read, write: if false;
+    }
+    match /idempotencyRecords/{id} {
+      allow read, write: if false;
+    }
+    match /pricingRules/{id} {
+      allow read, write: if false;
+    }
+    match /pricingSnapshots/{id} {
+      allow read, write: if false;
+    }
+    match /feePolicies/{id} {
+      allow read, write: if false;
+    }
+    match /paymentIntents/{id} {
+      allow read, write: if false;
+    }
+    match /paymentAttempts/{id} {
+      allow read, write: if false;
+    }
+    match /paymentProviderCallbacks/{id} {
+      allow read, write: if false;
+    }
+    match /walletAccounts/{id} {
+      allow read, write: if false;
+    }
+    match /walletLedgerEntries/{id} {
+      allow read, write: if false;
+    }
+    match /driverPayouts/{id} {
+      allow read, write: if false;
+    }
+    match /refunds/{id} {
+      allow read, write: if false;
+    }
+    match /reconciliationRecords/{id} {
+      allow read, write: if false;
+    }
+    match /ratings/{id} {
+      allow read, write: if false;
+    }
+    match /safetyEvents/{id} {
+      allow read, write: if false;
+    }
+    match /supportTickets/{id} {
+      allow read, write: if false;
+    }
+    match /supportTicketMessages/{id} {
+      allow read, write: if false;
+    }
+    match /reports/{id} {
+      allow read, write: if false;
+    }
+    match /blocks/{id} {
+      allow read, write: if false;
+    }
+    match /tripShareTokens/{id} {
+      allow read, write: if false;
+    }
+    match /consentRecords/{id} {
+      allow read, write: if false;
+    }
+    match /adminAuditLogs/{id} {
+      allow read, write: if false;
+    }
+    match /moderationCases/{id} {
+      allow read, write: if false;
+    }
+    match /notificationReceipts/{id} {
+      allow read, write: if false;
+    }
+
+    // Historical Path B OTP aggregate — not used under ADR-016; deny if present.
+    match /otpSessions/{id} {
+      allow read, write: if false;
+    }
+
+    // Catch-all: deny everything else (fail-closed).
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

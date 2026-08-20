@@ -1,0 +1,67 @@
+.DS_Store
+*.iml
+.idea/
+.vscode/
+*.swp
+.cursor/
+
+# Secrets — never commit
+secrets/
+.env
+.env.*
+!.env.example
+mobile/.env
+**/*.pem
+**/*.p12
+**/*service-account*.json
+**/*firebase-adminsdk*.json
+
+# Dependencies / build outputs
+**/node_modules/
+**/dist/
+**/.dart_tool/
+**/build/
+**/coverage/
+*.log
+
+# Firebase native config — ignored because it is per-environment, NOT because it
+# is secret: it holds client identifiers that ship inside the app binary.  Each
+# developer and CI runner supplies the file for the project it targets.
+# See docs/implementation/firebase-native-setup.md.
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Backend secrets — Firebase Admin service accounts must never enter git.
+backend/**/secrets/
+backend/**/*service-account*.json
+backend/**/*firebase-adminsdk*.json
+
+# Flutter / Dart
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/build/
+mobile/**/doc/api/
+mobile/**/.last_build_id
+
+# Coverage
+mobile/coverage/
+
+# iOS
+mobile/ios/Pods/
+mobile/ios/.symlinks/
+mobile/ios/Flutter/Flutter.framework
+mobile/ios/Flutter/Flutter.podspec
+mobile/ios/Flutter/Generated.xcconfig
+mobile/ios/Flutter/ephemeral/
+mobile/ios/Runner/GeneratedPluginRegistrant.*
+
+# Android
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/**/GeneratedPluginRegistrant.java
+mobile/android/app/debug/
+mobile/android/app/profile/
+mobile/android/app/release/
+mobile/android/key.properties

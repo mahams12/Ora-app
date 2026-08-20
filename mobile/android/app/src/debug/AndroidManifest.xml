@@ -1,0 +1,6 @@
+<!-- Debug-only: allow http://10.0.2.2 (emulator → host) for local auth-service.
+     Release builds must not inherit this — production uses HTTPS. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application android:usesCleartextTraffic="true" />
+</manifest>
