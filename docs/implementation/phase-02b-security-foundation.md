@@ -1,7 +1,7 @@
 # Phase 2B — Security Foundation
 
 **Date:** 2026-08-20  
-**Status:** see final report in this chat / gate below
+**Status:** **PASS WITH REQUIRED ACTIONS** (code complete; Firebase Console actions pending)
 
 ## Locked OTP architecture (ADR-016 Path A)
 
