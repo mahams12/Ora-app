@@ -27,6 +27,7 @@ describe('firestore.rules fail-closed contract', () => {
       'outboxEvents',
       'idempotencyRecords',
       'drivers',
+      'locationStreams',
       'adminAuditLogs',
       'otpSessions',
     ]) {
@@ -43,9 +44,28 @@ describe('firestore.rules fail-closed contract', () => {
     expect(rules).toMatch(/allow read,\s*write:\s*if false/);
   });
 
-  it('protects users immutable security fields on update', () => {
-    expect(rules).toContain('userProtectedFieldsUnchanged');
-    expect(rules).toContain("'role'");
-    expect(rules).toContain("'banned'");
+  it('denies all client writes to users/{uid}', () => {
+    const idx = rules.indexOf('match /users/{uid}');
+    expect(idx).toBeGreaterThan(-1);
+    const slice = rules.slice(idx, idx + 280);
+    expect(slice).toMatch(/allow create,\s*update,\s*delete:\s*if false/);
+    expect(slice).not.toContain('userProtectedFieldsUnchanged');
+  });
+
+  it('denies safety/admin/report collections to clients', () => {
+    for (const collection of [
+      'reports',
+      'blocks',
+      'safetyEvents',
+      'moderationCases',
+      'tripShareTokens',
+      'driverPayouts',
+      'refunds',
+    ]) {
+      expect(rules).toContain(`match /${collection}/{`);
+      const idx = rules.indexOf(`match /${collection}/{`);
+      const slice = rules.slice(idx, idx + 180);
+      expect(slice).toMatch(/allow read,\s*write:\s*if false/);
+    }
   });
 });

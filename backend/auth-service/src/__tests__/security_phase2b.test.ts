@@ -135,6 +135,8 @@ describe('API rate limiting', () => {
     expect(res.status).toBe(429);
     expect(res.body.error.code).toBe('RATE_LIMITED');
     expect(res.body.error.message).toMatch(/try again/i);
+    expect(res.headers['retry-after']).toBeDefined();
+    expect(Number(res.headers['retry-after'])).toBeGreaterThan(0);
   });
 
   it('does not trust spoofed body uid for rate-limit buckets', async () => {
@@ -215,5 +217,43 @@ describe('error sanitization', () => {
     expect(res.body.error.detail).toBeUndefined();
     expect(JSON.stringify(res.body)).not.toMatch(/service account|stack|ECONNREFUSED/i);
     expect(res.body.error.message).toBe('Invalid or expired Firebase ID token.');
+  });
+});
+
+describe('token verification contract', () => {
+  it('calls verifyIdToken with checkRevoked=true', async () => {
+    const verifyIdToken = vi.fn(async () => ({
+      uid: 'uid-a',
+      phone_number: '+923001234567',
+    }));
+    const app = createApp({
+      auth: { verifyIdToken } as never,
+      db: memoryDb() as never,
+      requireAppCheck: false,
+    });
+    await request(app).get('/v1/auth/me').set('Authorization', 'Bearer good');
+    expect(verifyIdToken).toHaveBeenCalledWith('good', true);
+  });
+
+  it('rejects revoked token with sanitized UNAUTHENTICATED', async () => {
+    const app = appWithAuth({});
+    const res = await request(app)
+      .get('/v1/auth/me')
+      .set('Authorization', 'Bearer revoked');
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe('UNAUTHENTICATED');
+    expect(JSON.stringify(res.body)).not.toMatch(/revoked/i);
+  });
+});
+
+describe('request body limits', () => {
+  it('configures JSON body limit at 32kb (fail-closed contract)', () => {
+    // Express json limit is set in createApp; oversized payloads are rejected
+    // by body-parser in production. Emulating raw socket hangs in supertest,
+    // so this unit assertion locks the configured limit string in app.ts.
+    const { readFileSync } = require('node:fs') as typeof import('node:fs');
+    const { resolve } = require('node:path') as typeof import('node:path');
+    const src = readFileSync(resolve(__dirname, '../app.ts'), 'utf8');
+    expect(src).toMatch(/express\.json\(\{\s*limit:\s*'32kb'\s*\}\)/);
   });
 });

@@ -38,9 +38,11 @@ Every important event should use this envelope:
 - `ride.driver.arrived`
 - `ride.started`
 - `ride.completed`
+- `ride.closed`
 - `ride.cancelled`
 - `ride.expired`
 - `ride.no_show`
+- `ride.rating.submitted`
 
 There is no durable `ride.driver.selected` public state. Selection is `ride.offer.selected` + `ride.assigned`.
 

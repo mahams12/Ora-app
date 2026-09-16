@@ -19,17 +19,31 @@ class OraApp extends ConsumerWidget {
       debugShowCheckedModeBanner: !config.environment.isProduction,
       theme: OraTheme.light(),
       darkTheme: OraTheme.dark(),
-      themeMode: ThemeMode.system,
+      // Prototype is dark-first; product surfaces default to Ora dark.
+      themeMode: ThemeMode.dark,
       routerConfig: router,
     );
   }
 }
 
-/// The router is a ChangeNotifier that refreshes when auth state changes,
-/// so go_router re-evaluates guards on every auth transition.
-final appRouterProvider = Provider<GoRouter>((ref) {
-  // Watch auth state so the router is refreshed on status changes.
-  ref.watch(authStateNotifierProvider);
+/// Notifies go_router when [AuthStatus] changes without recreating the router.
+class AuthRouterRefresh extends ChangeNotifier {
+  void ping() => notifyListeners();
+}
 
-  return createAppRouter(ref: ref);
+final authRouterRefreshProvider = Provider<AuthRouterRefresh>((ref) {
+  final refresh = AuthRouterRefresh();
+  ref.listen(authStateNotifierProvider, (previous, next) {
+    if (previous != next) {
+      refresh.ping();
+    }
+  });
+  ref.onDispose(refresh.dispose);
+  return refresh;
+});
+
+/// Built once. Redirects re-run when [authRouterRefreshProvider] pings.
+final appRouterProvider = Provider<GoRouter>((ref) {
+  final refresh = ref.watch(authRouterRefreshProvider);
+  return createAppRouter(ref: ref, refreshListenable: refresh);
 });

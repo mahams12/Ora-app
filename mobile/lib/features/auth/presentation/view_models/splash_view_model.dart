@@ -35,7 +35,9 @@ class SplashViewModel extends Notifier<SplashViewState> {
     } catch (error, stackTrace) {
       // Provider may have been disposed after auth redirected off splash.
       try {
-        ref.read(appLoggerProvider).error(
+        ref
+            .read(appLoggerProvider)
+            .error(
               'Splash bootstrap failed',
               error: error,
               stackTrace: stackTrace,

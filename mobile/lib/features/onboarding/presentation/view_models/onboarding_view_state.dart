@@ -1,8 +1,31 @@
-/// State of the Phase 2 onboarding placeholder screen.
-enum OnboardingViewState {
-  /// Waiting for the user to acknowledge the placeholder screen.
+enum OnboardingStatus {
   idle,
+  submitting,
+  submitted,
+}
 
-  /// The auth state has been promoted; the router guard owns navigation now.
-  completed,
+/// Presentation state for display-name onboarding.
+class OnboardingViewState {
+  const OnboardingViewState({
+    this.status = OnboardingStatus.idle,
+    this.fieldError,
+    this.serverError,
+  });
+
+  final OnboardingStatus status;
+  final String? fieldError;
+  final String? serverError;
+
+  bool get isSubmitting => status == OnboardingStatus.submitting;
+
+  OnboardingViewState copyWith({
+    OnboardingStatus? status,
+    String? fieldError,
+    String? serverError,
+  }) =>
+      OnboardingViewState(
+        status: status ?? this.status,
+        fieldError: fieldError,
+        serverError: serverError,
+      );
 }

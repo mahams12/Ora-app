@@ -3,15 +3,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/di/providers.dart';
 import '../../features/auth/presentation/view_models/auth_view_state.dart';
+import '../../features/auth/presentation/view_models/session_user_profile.dart';
 import 'routes.dart';
 
 /// Enforces auth-based route protection.
 ///
-/// Guard logic (from Phase 2 / 2A):
+/// Guard logic (from Phase 2 / 2A / Slice L):
 ///   unknown / authenticated → stay on splash (session or /me in flight)
 ///   unauthenticated         → phone entry (OTP only with session)
 ///   onboardingRequired      → onboarding
-///   authenticatedReady      → home
+///   authenticatedReady      → home (or stay on protected paths)
+///   /driver/*               → approved driver only (server /me role gate)
 ///
 /// Client navigation cannot bypass auth; the guard always reads the
 /// authoritative [AuthStatus] from the Riverpod graph.
@@ -29,6 +31,8 @@ class AuthRouteGuard {
     final isOnAuth = location.startsWith('/auth');
     final isOnOnboarding = location == AppRoutes.onboarding;
     final isOnSplash = location == AppRoutes.splash;
+    final isOnDriver = location == AppRoutes.driverHome ||
+        location.startsWith('${AppRoutes.driverHome}/');
 
     return switch (authStatus) {
       // Session restore / Firebase init still in flight.
@@ -47,11 +51,22 @@ class AuthRouteGuard {
         isOnOnboarding ? null : AppRoutes.onboarding,
 
       // Server confirmed profileComplete — allow home; leave auth screens.
-      AuthStatus.authenticatedReady =>
-        (isOnAuth || isOnOnboarding || isOnSplash)
-            ? AppRoutes.home
-            : null,
+      // Driver shell requires approved driver from session /me profile.
+      AuthStatus.authenticatedReady => () {
+          if (isOnAuth || isOnOnboarding || isOnSplash) {
+            return AppRoutes.home;
+          }
+          if (isOnDriver && !_isApprovedDriver()) {
+            return AppRoutes.home;
+          }
+          return null;
+        }(),
     };
+  }
+
+  bool _isApprovedDriver() {
+    final profile = _ref.read(sessionUserProfileProvider);
+    return profile?.isApprovedDriver == true;
   }
 
   /// The OTP screen is only reachable while an OTP session is in flight.

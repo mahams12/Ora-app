@@ -9,6 +9,7 @@ import 'package:ora/core/logging/app_logger.dart';
 import 'package:ora/core/logging/log_record.dart';
 import 'package:ora/features/auth/domain/entities/auth_user.dart';
 import 'package:ora/features/auth/domain/entities/otp_session.dart';
+import 'package:ora/features/auth/domain/entities/phone_verification_result.dart';
 import 'package:ora/features/auth/domain/entities/user_profile.dart';
 import 'package:ora/features/auth/domain/repositories/auth_repository.dart';
 import 'package:ora/features/auth/domain/use_cases/resolve_auth_profile_use_case.dart';
@@ -32,7 +33,7 @@ class _FakeAuthRepository implements AuthRepository {
   Future<AuthUser?> getCurrentUser() async => current;
 
   @override
-  Future<OtpSession> requestOtp({required String phoneE164}) =>
+  Future<PhoneVerificationResult> requestOtp({required String phoneE164}) =>
       throw UnimplementedError();
 
   @override
@@ -43,7 +44,7 @@ class _FakeAuthRepository implements AuthRepository {
       throw UnimplementedError();
 
   @override
-  Future<OtpSession> resendOtp({required OtpSession session}) =>
+  Future<PhoneVerificationResult> resendOtp({required OtpSession session}) =>
       throw UnimplementedError();
 
   @override
@@ -63,6 +64,11 @@ class _FakeAuthRepository implements AuthRepository {
   @override
   Future<void> registerUser({required String uid}) async {
     registerCalls++;
+  }
+
+  @override
+  Future<UserProfile> updateDisplayName({required String displayName}) async {
+    return profile!;
   }
 
   @override
@@ -324,6 +330,52 @@ void main() {
       expect(
         container.read(authStateNotifierProvider),
         AuthStatus.unauthenticated,
+      );
+    });
+
+    test('refreshCanonicalProfile uses /me without a second register',
+        () async {
+      when(() => restoreSession()).thenAnswer((_) async => user);
+      repository.current = user;
+      repository.profile = incompleteProfile;
+
+      final container = makeContainer();
+      container.read(authStateNotifierProvider);
+      repository.controller.add(user);
+      await settle();
+      final registersAfterBootstrap = repository.registerCalls;
+
+      repository.profile = completeProfile;
+      await container
+          .read(authStateNotifierProvider.notifier)
+          .refreshCanonicalProfile();
+
+      expect(
+        container.read(authStateNotifierProvider),
+        AuthStatus.authenticatedReady,
+      );
+      expect(repository.registerCalls, registersAfterBootstrap);
+    });
+
+    test('refreshCanonicalProfile failure stays on onboarding', () async {
+      when(() => restoreSession()).thenAnswer((_) async => user);
+      repository.current = user;
+      repository.profile = incompleteProfile;
+
+      final container = makeContainer();
+      container.read(authStateNotifierProvider);
+      repository.controller.add(user);
+      await settle();
+
+      repository.profileError = const AppFailure.timeout();
+      await expectLater(
+        container.read(authStateNotifierProvider.notifier).refreshCanonicalProfile(),
+        throwsA(isA<TimeoutFailure>()),
+      );
+      await settle();
+      expect(
+        container.read(authStateNotifierProvider),
+        AuthStatus.onboardingRequired,
       );
     });
   });

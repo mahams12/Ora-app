@@ -6,7 +6,10 @@ abstract interface class LocalStorage {
   Future<void> delete({required String key});
 }
 
-/// Phase 1 placeholder — hive_ce integration in Phase 3+.
+/// Phase 1 placeholder — not durable.
+///
+/// Do not use for ride/payment idempotency keys. Ride mutations use
+/// [IdempotencyNonceStore] backed by [SecureStorage] (Phase 2E).
 class InMemoryLocalStorage implements LocalStorage {
   InMemoryLocalStorage();
 

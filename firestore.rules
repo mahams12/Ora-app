@@ -25,27 +25,13 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == uid;
     }
 
-    /** Fields clients must never set/change on users/{uid}. */
-    function userProtectedFieldsUnchanged() {
-      return !request.resource.data.diff(resource.data).affectedKeys()
-          .hasAny([
-            'uid',
-            'role',
-            'driverStatus',
-            'createdAt',
-            'banned',
-            'accountStatus',
-            'phoneNumber',
-            'phoneE164'
-          ]);
-    }
-
     // ── users/{uid} ─────────────────────────────────────────────────────────
-    // Read: own user. Create/delete: backend only. Update: own non-sensitive.
+    // Phase 2C: Flutter does not mutate user documents. Profile writes go
+    // through PATCH /v1/auth/profile (Admin SDK). Clients may read own doc
+    // only; all writes (including displayName, isActive, role) are denied.
     match /users/{uid} {
       allow read: if isSelf(uid);
-      allow create, delete: if false;
-      allow update: if isSelf(uid) && userProtectedFieldsUnchanged();
+      allow create, update, delete: if false;
     }
 
     // ── savedPlaces (low-risk; owner only) ──────────────────────────────────
@@ -63,6 +49,9 @@ service cloud.firestore {
     // ── Explicitly denied collections (architecture matrix — backend-only) ──
     // Documented deny: clients never read/write these via Firestore SDK.
     match /drivers/{id} {
+      allow read, write: if false;
+    }
+    match /locationStreams/{id} {
       allow read, write: if false;
     }
     match /vehicles/{id} {

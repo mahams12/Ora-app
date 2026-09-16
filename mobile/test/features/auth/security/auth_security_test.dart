@@ -15,7 +15,17 @@ void main() {
     'lib/features/auth/presentation/views/phone_entry_view.dart',
     'lib/features/auth/presentation/views/otp_entry_view.dart',
     'lib/features/auth/presentation/views/splash_view.dart',
-    'lib/features/onboarding/presentation/views/onboarding_placeholder_view.dart',
+    'lib/features/onboarding/presentation/views/onboarding_view.dart',
+    'lib/features/passenger/presentation/views/home_shell_view.dart',
+    'lib/features/passenger/presentation/views/passenger_home_view.dart',
+    'lib/features/passenger/presentation/views/passenger_unavailable_view.dart',
+    'lib/features/ride/presentation/views/ride_request_view.dart',
+    'lib/features/ride/presentation/views/ride_request_created_view.dart',
+    'lib/features/ride/presentation/views/offers_inbox_view.dart',
+    'lib/features/ride/presentation/views/active_ride_view.dart',
+    'lib/features/ride/presentation/views/ride_history_view.dart',
+    'lib/features/ride/presentation/views/ride_history_detail_view.dart',
+    'lib/features/ride/presentation/views/ride_rating_view.dart',
   ];
 
   const forbiddenImportsInViews = [
@@ -31,10 +41,7 @@ void main() {
     for (final relativePath in viewFiles) {
       test(relativePath, () {
         final file = File(relativePath);
-        if (!file.existsSync()) {
-          // Skip non-existent files gracefully (partial build).
-          return;
-        }
+        expect(file.existsSync(), isTrue, reason: '$relativePath must exist');
         final content = file.readAsStringSync();
         for (final forbidden in forbiddenImportsInViews) {
           expect(
@@ -92,9 +99,7 @@ void main() {
   // ── No client-side role determination ─────────────────────────────────────
 
   group('Security: client must not set role or authStatus fields', () {
-    const domainFiles = [
-      'lib/features/auth/domain/entities/auth_user.dart',
-    ];
+    const domainFiles = ['lib/features/auth/domain/entities/auth_user.dart'];
 
     for (final path in domainFiles) {
       test('$path has role as final (read-only) field', () {
@@ -103,47 +108,64 @@ void main() {
         final content = file.readAsStringSync();
 
         // The field must be declared as `final String? role` (not mutable).
-        expect(content.contains('final String? role'), isTrue,
-            reason: 'role must be a final (read-only) field in $path');
+        expect(
+          content.contains('final String? role'),
+          isTrue,
+          reason: 'role must be a final (read-only) field in $path',
+        );
 
         // There must not be a setter or explicit mutable assignment pattern.
-        expect(content.contains('set role('), isFalse,
-            reason: 'role must not have a public setter in $path');
+        expect(
+          content.contains('set role('),
+          isFalse,
+          reason: 'role must not have a public setter in $path',
+        );
       });
     }
 
     test('AuthUser.copyWith cannot be used to change role or driverStatus', () {
       // A `final` field is not enough on its own: a copyWith parameter would
       // still let any caller mint a user with an elevated role.
-      final file =
-          File('lib/features/auth/domain/entities/auth_user.dart');
+      final file = File('lib/features/auth/domain/entities/auth_user.dart');
       final content = file.readAsStringSync();
 
       final copyWithStart = content.indexOf('copyWith(');
-      expect(copyWithStart, greaterThan(-1),
-          reason: 'expected a copyWith on AuthUser');
+      expect(
+        copyWithStart,
+        greaterThan(-1),
+        reason: 'expected a copyWith on AuthUser',
+      );
 
       final signatureEnd = content.indexOf('})', copyWithStart);
-      expect(signatureEnd, greaterThan(copyWithStart),
-          reason: 'could not read the copyWith parameter list');
+      expect(
+        signatureEnd,
+        greaterThan(copyWithStart),
+        reason: 'could not read the copyWith parameter list',
+      );
 
       final parameters = content.substring(copyWithStart, signatureEnd);
 
-      expect(parameters.contains('role'), isFalse,
-          reason: 'role must not be a copyWith parameter: it is a '
-              'server-authoritative claim');
-      expect(parameters.contains('driverStatus'), isFalse,
-          reason: 'driverStatus must not be a copyWith parameter: it is a '
-              'server-authoritative claim');
+      expect(
+        parameters.contains('role'),
+        isFalse,
+        reason:
+            'role must not be a copyWith parameter: it is a '
+            'server-authoritative claim',
+      );
+      expect(
+        parameters.contains('driverStatus'),
+        isFalse,
+        reason:
+            'driverStatus must not be a copyWith parameter: it is a '
+            'server-authoritative claim',
+      );
     });
   });
 
   // ── Profile completeness is server-derived ────────────────────────────────
 
   test('profileComplete is not recomputed on the client', () {
-    final file = File(
-      'lib/features/auth/data/models/user_profile_model.dart',
-    );
+    final file = File('lib/features/auth/data/models/user_profile_model.dart');
     final content = file.readAsStringSync();
 
     expect(
@@ -178,7 +200,8 @@ void main() {
       expect(
         content.contains(forbidden),
         isFalse,
-        reason: 'Firebase Auth owns session persistence; storing $forbidden '
+        reason:
+            'Firebase Auth owns session persistence; storing $forbidden '
             'would duplicate its token lifecycle',
       );
     }

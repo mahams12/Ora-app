@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/di/providers.dart';
+import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_spacing.dart';
+import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
 import '../view_models/auth_view_state.dart';
+import '../widgets/ora_auth_chrome.dart';
 
-/// Phase 2: OTP code entry screen.
-///
-/// Shows a 6-digit code entry field, a resend button with a 30-second
-/// countdown enforced by the ViewModel, and maps server errors
-/// (locked, expired, too-many-attempts) to user-friendly banners.
-///
-/// Client does NOT validate the OTP — it submits and reflects server state.
+/// 6-digit OTP verification. Client submits; Firebase is authoritative.
 class OtpEntryView extends ConsumerStatefulWidget {
   const OtpEntryView({super.key});
 
@@ -23,10 +21,21 @@ class OtpEntryView extends ConsumerStatefulWidget {
 
 class _OtpEntryViewState extends ConsumerState<OtpEntryView> {
   final _controller = TextEditingController();
+  final _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _focusNode.requestFocus();
+    });
+  }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -34,6 +43,7 @@ class _OtpEntryViewState extends ConsumerState<OtpEntryView> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
     final padding = Responsive.horizontalPadding(context);
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
     final session = switch (authState) {
       AuthFlowOtpSent(:final session) => session,
@@ -46,87 +56,137 @@ class _OtpEntryViewState extends ConsumerState<OtpEntryView> {
     final isVerifying = authState is AuthFlowVerifyingOtp;
     final isResending = authState is AuthFlowResendingOtp;
     final isCooldown = authState is AuthFlowResendCooldown;
-    final cooldownSeconds =
-        authState is AuthFlowResendCooldown ? authState.remaining.inSeconds : 0;
-    final errorMessage =
-        authState is AuthFlowError ? authState.message : null;
+    final cooldownSeconds = authState is AuthFlowResendCooldown
+        ? authState.remaining.inSeconds
+        : 0;
+    final errorMessage = authState is AuthFlowError ? authState.message : null;
+    final code = _controller.text;
+    final busy = isVerifying || isResending;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Enter code'),
-        leading: BackButton(
-          onPressed: () =>
-              ref.read(authViewModelProvider.notifier).showPhoneEntry(),
-        ),
+    return OraAuthScaffold(
+      topLeading: OraAuthBackButton(
+        onPressed: () =>
+            ref.read(authViewModelProvider.notifier).showPhoneEntry(),
       ),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) => Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: Responsive.contentMaxWidth(context),
+      child: LayoutBuilder(
+        builder: (context, constraints) => Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: Responsive.contentMaxWidth(context),
+            ),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                padding,
+                OraSpacing.md,
+                padding,
+                OraSpacing.lg + bottomInset,
               ),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(
-                    horizontal: padding, vertical: OraSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Enter the 6-digit code',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(height: OraSpacing.xs),
-                    Text(
-                      session != null
-                          ? 'We sent a code to ${_maskPhone(session.phoneE164)}'
-                          : 'We sent you a code.',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: OraSpacing.lg),
-
-                    // ── 6-digit code field ────────────────────────────────
-                    OraTextField(
-                      controller: _controller,
-                      label: 'Code',
-                      hint: '123456',
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
-                    ),
-                    const SizedBox(height: OraSpacing.md),
-
-                    // ── Error banner ──────────────────────────────────────
-                    if (errorMessage != null) ...[
-                      _StatusBanner(message: errorMessage, isError: true),
-                      const SizedBox(height: OraSpacing.sm),
-                    ],
-
-                    // ── Verify button ─────────────────────────────────────
-                    OraButton(
-                      label: 'Verify',
-                      isLoading: isVerifying,
-                      onPressed: (isVerifying || isResending)
-                          ? null
-                          : _submit,
-                    ),
-                    const SizedBox(height: OraSpacing.md),
-
-                    // ── Resend button / cooldown countdown ────────────────
-                    if (isCooldown)
-                      _StatusBanner(
-                        message: 'Resend available in ${cooldownSeconds}s',
-                        isError: false,
-                      )
-                    else
-                      OraButton(
-                        label: isResending ? 'Resending…' : 'Resend code',
-                        isLoading: isResending,
-                        variant: OraButtonVariant.ghost,
-                        onPressed:
-                            (isResending || isVerifying) ? null : _resend,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Verify your number',
+                    style: OraTypography.headline(OraColors.textPrimary),
+                  ),
+                  const SizedBox(height: OraSpacing.xs),
+                  Text(
+                    session != null
+                        ? 'Code sent to ${_maskPhone(session.phoneE164)}'
+                        : 'Enter the 6-digit code we sent you.',
+                    style: OraTypography.body(OraColors.textMuted),
+                  ),
+                  const SizedBox(height: OraSpacing.xl),
+                  Semantics(
+                    textField: true,
+                    label: 'One-time verification code',
+                    child: GestureDetector(
+                      onTap: () => _focusNode.requestFocus(),
+                      behavior: HitTestBehavior.opaque,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Opacity(
+                            opacity: 0.01,
+                            child: TextField(
+                              controller: _controller,
+                              focusNode: _focusNode,
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.done,
+                              maxLength: 6,
+                              enabled: !busy,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(6),
+                              ],
+                              decoration: const InputDecoration(
+                                counterText: '',
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (value) {
+                                if (value.length == 6 && !busy) {
+                                  _submit();
+                                }
+                              },
+                              onSubmitted: (_) {
+                                if (!busy) _submit();
+                              },
+                            ),
+                          ),
+                          Row(
+                            children: List.generate(6, (index) {
+                              final digit = index < code.length
+                                  ? code[index]
+                                  : '';
+                              final focused =
+                                  _focusNode.hasFocus &&
+                                  (index == code.length ||
+                                      (code.length == 6 && index == 5));
+                              return Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    left: index == 0 ? 0 : OraSpacing.xxs,
+                                    right: index == 5 ? 0 : OraSpacing.xxs,
+                                  ),
+                                  child: OraPinBox(
+                                    value: digit,
+                                    focused: focused,
+                                    hasError: errorMessage != null,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                        ],
                       ),
+                    ),
+                  ),
+                  if (errorMessage != null) ...[
+                    const SizedBox(height: OraSpacing.md),
+                    OraAuthBanner(message: errorMessage),
                   ],
-                ),
+                  const SizedBox(height: OraSpacing.lg),
+                  OraButton(
+                    label: 'Verify & continue',
+                    isLoading: isVerifying,
+                    onPressed: busy ? null : _submit,
+                    semanticLabel: 'Verify code and continue',
+                  ),
+                  const SizedBox(height: OraSpacing.md),
+                  if (isCooldown)
+                    OraAuthBanner(
+                      message:
+                          'Resend available in ${cooldownSeconds.toString().padLeft(2, '0')}s',
+                      isError: false,
+                    )
+                  else
+                    OraButton(
+                      label: isResending ? 'Resending…' : 'Resend code',
+                      isLoading: isResending,
+                      variant: OraButtonVariant.ghost,
+                      onPressed: busy ? null : _resend,
+                      semanticLabel: 'Resend verification code',
+                    ),
+                ],
               ),
             ),
           ),
@@ -144,51 +204,11 @@ class _OtpEntryViewState extends ConsumerState<OtpEntryView> {
   Future<void> _resend() async {
     _controller.clear();
     await ref.read(authViewModelProvider.notifier).resendOtp();
+    if (mounted) _focusNode.requestFocus();
   }
 
-  /// Masks phone for display: +92300*****67 style.
   String _maskPhone(String phone) {
     if (phone.length <= 4) return phone;
     return '${phone.substring(0, phone.length - 7)}*****${phone.substring(phone.length - 2)}';
-  }
-}
-
-class _StatusBanner extends StatelessWidget {
-  const _StatusBanner({required this.message, required this.isError});
-
-  final String message;
-  final bool isError;
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = isError
-        ? Theme.of(context).colorScheme.errorContainer
-        : Theme.of(context).colorScheme.secondaryContainer;
-    final fg = isError
-        ? Theme.of(context).colorScheme.onErrorContainer
-        : Theme.of(context).colorScheme.onSecondaryContainer;
-
-    return Container(
-      padding: const EdgeInsets.all(OraSpacing.sm),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(isError ? Icons.error_outline : Icons.info_outline, color: fg),
-          const SizedBox(width: OraSpacing.sm),
-          Expanded(
-            child: Text(
-              message,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: fg),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

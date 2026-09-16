@@ -9,7 +9,31 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:ride-proof": "npx --yes esbuild scripts/run_ride_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_proof.cjs && node .tmp/ride_proof.cjs",
+    "test:ride-firestore-concurrency": "npx --yes esbuild scripts/run_ride_firestore_concurrency.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_firestore_concurrency.cjs && node .tmp/ride_firestore_concurrency.cjs",
+    "test:ride-offer-create-firestore-concurrency": "npx --yes esbuild scripts/run_ride_offer_create_firestore_concurrency.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_offer_create_firestore_concurrency.cjs && node .tmp/ride_offer_create_firestore_concurrency.cjs",
+    "test:ride-progression-firestore-concurrency": "npx --yes esbuild scripts/run_ride_progression_firestore_concurrency.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_progression_firestore_concurrency.cjs && node .tmp/ride_progression_firestore_concurrency.cjs",
+    "test:ride-close-firestore-concurrency": "npx --yes esbuild scripts/run_ride_close_firestore_concurrency.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_close_firestore_concurrency.cjs && node .tmp/ride_close_firestore_concurrency.cjs",
+    "test:ride-list-firestore-queries": "npx --yes esbuild scripts/run_ride_list_firestore_queries.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_list_firestore_queries.cjs && node .tmp/ride_list_firestore_queries.cjs",
+    "test:ride-open-discovery-firestore-queries": "npx --yes esbuild scripts/run_ride_open_discovery_firestore_queries.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_open_discovery_firestore_queries.cjs && node .tmp/ride_open_discovery_firestore_queries.cjs",
+    "test:ride-expire-firestore-concurrency": "npx --yes esbuild scripts/run_ride_expire_firestore_concurrency.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_expire_firestore_concurrency.cjs && node .tmp/ride_expire_firestore_concurrency.cjs",
+    "test:ride-offer-expire-firestore-concurrency": "npx --yes esbuild scripts/run_ride_offer_expire_firestore_concurrency.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_offer_expire_firestore_concurrency.cjs && node .tmp/ride_offer_expire_firestore_concurrency.cjs",
+    "test:phase-2j-unit-proof": "npx --yes esbuild scripts/run_phase_2j_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_2j_unit_proof.cjs && node .tmp/phase_2j_unit_proof.cjs",
+    "test:phase-2k-unit-proof": "npx --yes esbuild scripts/run_phase_2k_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_2k_unit_proof.cjs && node .tmp/phase_2k_unit_proof.cjs",
+    "test:phase-2l-unit-proof": "npx --yes esbuild scripts/run_phase_2l_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_2l_unit_proof.cjs && node .tmp/phase_2l_unit_proof.cjs",
+    "test:phase-2m-unit-proof": "npx --yes esbuild scripts/run_phase_2m_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_2m_unit_proof.cjs && node .tmp/phase_2m_unit_proof.cjs",
+    "test:phase-2n-unit-proof": "npx --yes esbuild scripts/run_phase_2n_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_2n_unit_proof.cjs && node .tmp/phase_2n_unit_proof.cjs",
+    "test:phase-m0-unit-proof": "npx --yes esbuild scripts/run_phase_m0_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_m0_unit_proof.cjs && node .tmp/phase_m0_unit_proof.cjs",
+    "test:phase-n1-unit-proof": "./node_modules/.bin/esbuild scripts/run_phase_n1_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_n1_unit_proof.cjs && node .tmp/phase_n1_unit_proof.cjs",
+    "test:phase-n2a-unit-proof": "./node_modules/.bin/esbuild scripts/run_phase_n2a_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_n2a_unit_proof.cjs && node .tmp/phase_n2a_unit_proof.cjs",
+    "test:phase-n2c-unit-proof": "./node_modules/.bin/esbuild scripts/run_phase_n2c_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_n2c_unit_proof.cjs && node .tmp/phase_n2c_unit_proof.cjs",
+    "test:redis-geo-proof": "./node_modules/.bin/esbuild scripts/run_redis_geo_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/redis_geo_proof.cjs --external:ioredis && node .tmp/redis_geo_proof.cjs",
+    "test:driver-availability-firestore": "./node_modules/.bin/esbuild scripts/run_driver_availability_firestore_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/driver_availability_firestore_proof.cjs && node .tmp/driver_availability_firestore_proof.cjs",
+    "test:location-update-firestore": "./node_modules/.bin/esbuild scripts/run_location_update_firestore_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/location_update_firestore_proof.cjs && node .tmp/location_update_firestore_proof.cjs",
+    "test:ride-arrived-at-firestore-concurrency": "npx --yes esbuild scripts/run_ride_arrived_at_firestore_concurrency.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_arrived_at_firestore_concurrency.cjs && node .tmp/ride_arrived_at_firestore_concurrency.cjs",
+    "test:ride-no-show-firestore-concurrency": "npx --yes esbuild scripts/run_ride_no_show_firestore_concurrency.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_no_show_firestore_concurrency.cjs && node .tmp/ride_no_show_firestore_concurrency.cjs",
+    "test:ride-rating-firestore-concurrency": "npx --yes esbuild scripts/run_ride_rating_firestore_concurrency.ts --bundle --platform=node --format=cjs --outfile=.tmp/ride_rating_firestore_concurrency.cjs && node .tmp/ride_rating_firestore_concurrency.cjs"
   },
   "engines": {
     "node": ">=20"
@@ -17,6 +41,7 @@
   "dependencies": {
     "express": "^4.21.2",
     "firebase-admin": "^13.0.2",
+    "ioredis": "^5.11.1",
     "uuid": "^11.0.5"
   },
   "devDependencies": {

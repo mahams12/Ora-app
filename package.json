@@ -1,0 +1,43 @@
+{
+  "name": "ora-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:firestore-rules": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"node_modules/.bin/mocha --timeout 30000 test/firestore.rules.test.mjs\"",
+    "test:ride-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-firestore-concurrency\"",
+    "test:ride-offer-create-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-offer-create-firestore-concurrency\"",
+    "test:ride-progression-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-progression-firestore-concurrency\"",
+    "test:ride-close-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-close-firestore-concurrency\"",
+    "test:ride-list-firestore-queries": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-list-firestore-queries\"",
+    "test:ride-expire-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-expire-firestore-concurrency\"",
+    "test:ride-offer-expire-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-offer-expire-firestore-concurrency\"",
+    "test:ride-arrived-at-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-arrived-at-firestore-concurrency\"",
+    "test:ride-no-show-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-no-show-firestore-concurrency\"",
+    "test:ride-rating-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-rating-firestore-concurrency\"",
+    "test:driver-availability-firestore": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:driver-availability-firestore\"",
+    "test:location-update-firestore": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:location-update-firestore\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahams12/Ora-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mahams12/Ora-app/issues"
+  },
+  "homepage": "https://github.com/mahams12/Ora-app#readme",
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "firebase": "^12.18.0",
+    "firebase-admin": "^14.3.0",
+    "mocha": "^11.8.0"
+  }
+}

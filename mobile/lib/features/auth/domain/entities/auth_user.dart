@@ -32,6 +32,11 @@ class AuthUser {
   bool get isDriver => role == 'driver';
   bool get isPassenger => role == 'passenger' || role == null;
 
+  /// Prefer [UserProfile.isApprovedDriver] from session /me when available.
+  /// Firebase AuthUser often has null role claims — do not invent them here.
+  bool get isApprovedDriver =>
+      role == 'driver' && driverStatus == 'approved';
+
   /// Copies this user, carrying [role] and [driverStatus] over unchanged.
   ///
   /// Those two fields are deliberately absent from the parameter list: they are

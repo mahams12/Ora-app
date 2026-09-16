@@ -1,4 +1,5 @@
 import '../entities/otp_session.dart';
+import '../entities/phone_verification_result.dart';
 import '../repositories/auth_repository.dart';
 
 /// Requests a new OTP code for the same phone number.
@@ -8,6 +9,6 @@ class ResendOtpUseCase {
 
   final AuthRepository _repository;
 
-  Future<OtpSession> call({required OtpSession session}) =>
+  Future<PhoneVerificationResult> call({required OtpSession session}) =>
       _repository.resendOtp(session: session);
 }

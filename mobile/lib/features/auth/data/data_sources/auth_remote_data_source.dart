@@ -34,4 +34,18 @@ class AuthRemoteDataSource {
     );
     return UserProfileModel.fromJson(response.data!);
   }
+
+  /// Updates displayName only. Server derives profileComplete.
+  Future<UserProfileModel> updateProfile({
+    required String displayName,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.patch<Map<String, dynamic>>(
+      '/auth/profile',
+      data: {'displayName': displayName},
+      context: context,
+      idempotent: true,
+    );
+    return UserProfileModel.fromJson(response.data!);
+  }
 }

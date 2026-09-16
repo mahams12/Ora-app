@@ -32,4 +32,9 @@ class UserProfile {
   /// for ride flows are populated.  Derived server-side; never inferred from
   /// local storage alone.
   final bool profileComplete;
+
+  /// UI/router gate only — backend still enforces driver eligibility.
+  /// Never set by the client; values come from GET /v1/auth/me.
+  bool get isApprovedDriver =>
+      role == 'driver' && driverStatus == 'approved';
 }

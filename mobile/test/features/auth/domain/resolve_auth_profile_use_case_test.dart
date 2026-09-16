@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:ora/core/errors/app_failure.dart';
 import 'package:ora/features/auth/domain/entities/user_profile.dart';
 import 'package:ora/features/auth/domain/repositories/auth_repository.dart';
 import 'package:ora/features/auth/domain/use_cases/resolve_auth_profile_use_case.dart';
@@ -33,5 +34,16 @@ void main() {
       () => repository.registerUser(uid: 'uid-1'),
       () => repository.getUserProfile(uid: 'uid-1'),
     ]);
+  });
+
+  test('register failure is not swallowed before /me', () async {
+    when(() => repository.registerUser(uid: 'uid-1'))
+        .thenThrow(const AppFailure.network(message: 'register failed'));
+
+    expect(
+      () => useCase(uid: 'uid-1'),
+      throwsA(isA<NetworkFailure>()),
+    );
+    verifyNever(() => repository.getUserProfile(uid: any(named: 'uid')));
   });
 }

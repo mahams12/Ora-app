@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:ora/core/errors/app_failure.dart';
 import 'package:ora/features/auth/domain/entities/auth_user.dart';
 import 'package:ora/features/auth/domain/entities/otp_session.dart';
+import 'package:ora/features/auth/domain/entities/phone_verification_result.dart';
 import 'package:ora/features/auth/domain/use_cases/logout_use_case.dart';
 import 'package:ora/features/auth/domain/use_cases/request_otp_use_case.dart';
 import 'package:ora/features/auth/domain/use_cases/resend_otp_use_case.dart';
@@ -65,7 +66,7 @@ void main() {
         otpState: OtpState.otpSent,
       );
       when(() => requestOtp(phoneE164: any(named: 'phoneE164')))
-          .thenAnswer((_) async => session);
+          .thenAnswer((_) async => const PhoneCodeSent(session));
 
       final container = makeContainer();
       addTearDown(container.dispose);
@@ -76,6 +77,27 @@ void main() {
       final state = container.read(authViewModelProvider);
       expect(state, isA<AuthFlowOtpSent>());
       expect((state as AuthFlowOtpSent).session.sessionId, 'vid-1');
+    });
+
+    test('transitions to AuthFlowAuthenticated on Android auto-sign-in',
+        () async {
+      const user = AuthUser(
+        uid: 'uid-1',
+        phoneNumber: '+923001234567',
+        isEmailVerified: false,
+      );
+      when(() => requestOtp(phoneE164: any(named: 'phoneE164')))
+          .thenAnswer((_) async => const PhoneAutoSignedIn(user));
+
+      final container = makeContainer();
+      addTearDown(container.dispose);
+      final vm = container.read(authViewModelProvider.notifier);
+
+      await vm.requestOtp(phoneE164: '+923001234567');
+
+      final state = container.read(authViewModelProvider);
+      expect(state, isA<AuthFlowAuthenticated>());
+      expect((state as AuthFlowAuthenticated).user.uid, 'uid-1');
     });
 
     test('transitions to AuthFlowError on InvalidPhoneFailure', () async {

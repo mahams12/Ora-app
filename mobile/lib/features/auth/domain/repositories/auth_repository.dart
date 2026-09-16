@@ -1,5 +1,6 @@
 import '../entities/auth_user.dart';
 import '../entities/otp_session.dart';
+import '../entities/phone_verification_result.dart';
 import '../entities/user_profile.dart';
 
 /// Domain contract for authentication operations.
@@ -21,17 +22,14 @@ abstract interface class AuthRepository {
 
   /// Requests an OTP for [phoneE164] (E.164 format, e.g. '+923001234567').
   ///
-  /// Server initiates an SMS dispatch.  Returns an [OtpSession] containing
-  /// the opaque session ID needed to verify or resend.
-  ///
-  /// Throws [InvalidPhoneFailure] for malformed numbers.
-  /// Throws [TooManyAttemptsFailure] / [OtpCooldownFailure] when rate-limited.
-  Future<OtpSession> requestOtp({required String phoneE164});
+  /// Returns [PhoneCodeSent] for the manual SMS path, or [PhoneAutoSignedIn]
+  /// when Android auto-retrieval already signed the user in.
+  Future<PhoneVerificationResult> requestOtp({required String phoneE164});
 
   /// Verifies [otpCode] against the active [session].
   ///
   /// On success, Firebase Auth signs in and the updated [AuthUser] is returned.
-  /// A `POST /v1/auth/register` call is made if this is the first sign-in.
+  /// Backend registration happens once in [ResolveAuthProfileUseCase].
   ///
   /// Throws [InvalidOtpFailure], [OtpExpiredFailure], [TooManyAttemptsFailure],
   /// [AccountDisabledFailure].
@@ -41,11 +39,7 @@ abstract interface class AuthRepository {
   });
 
   /// Requests a new OTP for the same phone in [session].
-  ///
-  /// Server enforces the 30 s cooldown and maxResends = 3.
-  ///
-  /// Throws [OtpCooldownFailure] when cooldown is active.
-  Future<OtpSession> resendOtp({required OtpSession session});
+  Future<PhoneVerificationResult> resendOtp({required OtpSession session});
 
   /// Restores an existing session from secure storage on app restart.
   ///
@@ -59,11 +53,16 @@ abstract interface class AuthRepository {
   /// Throws [SessionExpiredFailure] when Firebase cannot refresh.
   Future<String> refreshToken();
 
-  /// Loads the minimal [UserProfile] from Firestore after sign-in.
+  /// Loads the canonical profile for the signed-in user (`GET /v1/auth/me`).
+  /// [uid] is ignored by the API; identity comes from the bearer token.
   Future<UserProfile> getUserProfile({required String uid});
 
   /// Registers a new user document on the backend after first sign-in.
+  /// Failures propagate — callers must not swallow them.
   Future<void> registerUser({required String uid});
+
+  /// Updates the authenticated user's displayName (`PATCH /v1/auth/profile`).
+  Future<UserProfile> updateDisplayName({required String displayName});
 
   /// Clears all auth state: Firebase sign-out, secure storage wipe.
   Future<void> logout();

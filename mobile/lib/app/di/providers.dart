@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../app/config/app_config.dart';
 import '../../app/config/environment.dart';
@@ -10,6 +11,7 @@ import '../../core/network/auth_token_provider.dart';
 import '../../core/network/network_config.dart';
 import '../../core/security/app_check_token_provider.dart';
 import '../../core/security/firebase_app_check_bootstrap.dart';
+import '../../core/storage/idempotency_nonce_store.dart';
 import '../../core/storage/local_storage.dart';
 import '../../core/storage/secure_storage.dart';
 import '../../features/auth/data/data_sources/app_config_local_data_source.dart';
@@ -27,6 +29,7 @@ import '../../features/auth/domain/use_cases/request_otp_use_case.dart';
 import '../../features/auth/domain/use_cases/resend_otp_use_case.dart';
 import '../../features/auth/domain/use_cases/resolve_auth_profile_use_case.dart';
 import '../../features/auth/domain/use_cases/restore_session_use_case.dart';
+import '../../features/auth/domain/use_cases/update_display_name_use_case.dart';
 import '../../features/auth/domain/use_cases/verify_otp_use_case.dart';
 import '../../features/auth/presentation/view_models/auth_state_notifier.dart';
 import '../../features/auth/presentation/view_models/auth_view_model.dart';
@@ -35,6 +38,11 @@ import '../../features/auth/presentation/view_models/splash_view_model.dart';
 import '../../features/auth/presentation/view_models/splash_view_state.dart';
 import '../../features/onboarding/presentation/view_models/onboarding_view_model.dart';
 import '../../features/onboarding/presentation/view_models/onboarding_view_state.dart';
+import '../../features/passenger/presentation/view_models/home_view_model.dart';
+import '../../features/ride/data/data_sources/ride_remote_data_source.dart';
+import '../../features/ride/data/repositories/ride_repository_impl.dart';
+import '../../features/ride/domain/repositories/ride_repository.dart';
+import '../../features/ride/domain/use_cases/ride_use_cases.dart';
 
 // ── Environment / Config ──────────────────────────────────────────────────────
 
@@ -70,6 +78,91 @@ final secureStorageProvider = Provider<SecureStorage>(
 
 final localStorageProvider = Provider<LocalStorage>(
   (ref) => InMemoryLocalStorage(),
+);
+
+/// Durable Idempotency-Key store for ride mutations (Keychain/Keystore).
+final idempotencyNonceStoreProvider = Provider<IdempotencyNonceStore>((ref) {
+  const uuid = Uuid();
+  return SecureIdempotencyNonceStore(
+    secureStorage: ref.watch(secureStorageProvider),
+    createNonce: uuid.v4,
+  );
+});
+
+final rideRemoteDataSourceProvider = Provider<RideRemoteDataSource>(
+  (ref) => RideRemoteDataSource(ref.watch(apiClientProvider)),
+);
+
+final rideRepositoryProvider = Provider<RideRepository>(
+  (ref) => RideRepositoryImpl(
+    remote: ref.watch(rideRemoteDataSourceProvider),
+    apiClient: ref.watch(apiClientProvider),
+    nonceStore: ref.watch(idempotencyNonceStoreProvider),
+  ),
+);
+
+final createRideUseCaseProvider = Provider<CreateRideUseCase>(
+  (ref) => CreateRideUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final getRideUseCaseProvider = Provider<GetRideUseCase>(
+  (ref) => GetRideUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final listRidesUseCaseProvider = Provider<ListRidesUseCase>(
+  (ref) => ListRidesUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final listOpenRidesUseCaseProvider = Provider<ListOpenRidesUseCase>(
+  (ref) => ListOpenRidesUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final listOffersUseCaseProvider = Provider<ListOffersUseCase>(
+  (ref) => ListOffersUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final createOfferUseCaseProvider = Provider<CreateOfferUseCase>(
+  (ref) => CreateOfferUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final withdrawOfferUseCaseProvider = Provider<WithdrawOfferUseCase>(
+  (ref) => WithdrawOfferUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final selectOfferUseCaseProvider = Provider<SelectOfferUseCase>(
+  (ref) => SelectOfferUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final cancelRideUseCaseProvider = Provider<CancelRideUseCase>(
+  (ref) => CancelRideUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final closeRideUseCaseProvider = Provider<CloseRideUseCase>(
+  (ref) => CloseRideUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final markEnRouteUseCaseProvider = Provider<MarkEnRouteUseCase>(
+  (ref) => MarkEnRouteUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final markArrivedUseCaseProvider = Provider<MarkArrivedUseCase>(
+  (ref) => MarkArrivedUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final startRideUseCaseProvider = Provider<StartRideUseCase>(
+  (ref) => StartRideUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final completeRideUseCaseProvider = Provider<CompleteRideUseCase>(
+  (ref) => CompleteRideUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final submitRatingUseCaseProvider = Provider<SubmitRatingUseCase>(
+  (ref) => SubmitRatingUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final getMyRatingUseCaseProvider = Provider<GetMyRatingUseCase>(
+  (ref) => GetMyRatingUseCase(ref.watch(rideRepositoryProvider)),
 );
 
 // ── Auth token provider ───────────────────────────────────────────────────────
@@ -149,7 +242,6 @@ final authRepositoryProvider = Provider<AuthRepository>(
     remoteDataSource: ref.watch(authRemoteDataSourceProvider),
     secureStorage: ref.watch(secureStorageProvider),
     apiClient: ref.watch(apiClientProvider),
-    failureMapper: ref.watch(failureMapperProvider),
     logger: ref.watch(appLoggerProvider),
   ),
 );
@@ -188,6 +280,10 @@ final resolveAuthProfileUseCaseProvider = Provider<ResolveAuthProfileUseCase>(
   (ref) => ResolveAuthProfileUseCase(ref.watch(authRepositoryProvider)),
 );
 
+final updateDisplayNameUseCaseProvider = Provider<UpdateDisplayNameUseCase>(
+  (ref) => UpdateDisplayNameUseCase(ref.watch(authRepositoryProvider)),
+);
+
 // ── Auth ViewModels / state ───────────────────────────────────────────────────
 
 /// Global authentication status — used by route guards.
@@ -204,11 +300,15 @@ final authViewModelProvider =
 
 // ── Onboarding ────────────────────────────────────────────────────────────────
 
-/// Placeholder onboarding ViewModel — owns the auth-state transition so the
-/// onboarding View never navigates or decides completeness itself.
+/// Onboarding ViewModel — persists displayName; guard owns navigation.
 final onboardingViewModelProvider =
     NotifierProvider<OnboardingViewModel, OnboardingViewState>(
   OnboardingViewModel.new,
+);
+
+final homeViewModelProvider =
+    NotifierProvider<HomeViewModel, HomeUiState>(
+  HomeViewModel.new,
 );
 
 // ── Bootstrap (Phase 1 unchanged) ────────────────────────────────────────────

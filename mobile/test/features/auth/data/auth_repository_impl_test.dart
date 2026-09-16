@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart'
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ora/core/errors/app_failure.dart';
-import 'package:ora/core/errors/failure_mapper.dart';
 import 'package:ora/core/logging/app_logger.dart';
 import 'package:ora/core/logging/log_record.dart';
 import 'package:ora/core/network/api_client.dart';
@@ -12,8 +11,11 @@ import 'package:ora/core/storage/secure_storage.dart';
 import 'package:ora/core/storage/storage_keys.dart';
 import 'package:ora/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:ora/features/auth/data/data_sources/firebase_auth_data_source.dart';
+import 'package:ora/features/auth/data/models/user_profile_model.dart';
 import 'package:ora/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:ora/features/auth/domain/entities/otp_session.dart';
+import 'package:ora/features/auth/domain/entities/phone_verification_result.dart';
+import 'package:ora/features/auth/domain/entities/auth_user.dart';
 
 class MockFirebaseAuthDataSource extends Mock
     implements FirebaseAuthDataSource {}
@@ -85,7 +87,6 @@ void main() {
       remoteDataSource: remote,
       secureStorage: storage,
       apiClient: apiClient,
-      failureMapper: const FailureMapper(),
       logger: logger,
     );
 
@@ -107,16 +108,38 @@ void main() {
   group('requestOtp', () {
     test('persists the OTP handshake so it survives an app kill', () async {
       when(() => firebase.startPhoneVerification(
-          phoneE164: any(named: 'phoneE164'))).thenAnswer((_) async => _session);
+          phoneE164: any(named: 'phoneE164'))).thenAnswer(
+        (_) async => const PhoneCodeSent(_session),
+      );
 
-      final session = await repository.requestOtp(phoneE164: '+923001234567');
+      final result = await repository.requestOtp(phoneE164: '+923001234567');
 
-      expect(session.sessionId, 'vid-1');
+      expect(result, isA<PhoneCodeSent>());
+      expect((result as PhoneCodeSent).session.sessionId, 'vid-1');
       expect(await storage.read(key: StorageKeys.otpSessionId), 'vid-1');
       expect(
         await storage.read(key: StorageKeys.otpPhoneE164),
         '+923001234567',
       );
+    });
+
+    test('auto-sign-in does not persist a fabricated OTP session', () async {
+      const user = AuthUser(
+        uid: 'uid-1',
+        phoneNumber: '+923001234567',
+        isEmailVerified: false,
+      );
+      await storage.write(key: StorageKeys.otpSessionId, value: 'stale');
+      when(() => firebase.startPhoneVerification(
+          phoneE164: any(named: 'phoneE164'))).thenAnswer(
+        (_) async => const PhoneAutoSignedIn(user),
+      );
+
+      final result = await repository.requestOtp(phoneE164: '+923001234567');
+
+      expect(result, isA<PhoneAutoSignedIn>());
+      expect(await storage.read(key: StorageKeys.otpSessionId), isNull);
+      expect(await storage.read(key: StorageKeys.otpPhoneE164), isNull);
     });
   });
 
@@ -163,27 +186,22 @@ void main() {
       expect(await storage.read(key: 'auth_uid'), isNull);
     });
 
-    test('registers a first-time user against the backend', () async {
+    test('does not register during OTP verify (bootstrap owns register)',
+        () async {
       when(() => firebase.verifyOtpCode(
             verificationId: any(named: 'verificationId'),
             otpCode: any(named: 'otpCode'),
           )).thenAnswer((_) async => credentialFor(isNewUser: true));
-      when(() => remote.registerUser(
-            uid: any(named: 'uid'),
-            context: any(named: 'context'),
-          )).thenAnswer((_) async {});
 
       await repository.verifyOtp(session: _session, otpCode: '123456');
 
-      verify(() => remote.registerUser(
-            uid: 'uid-1',
+      verifyNever(() => remote.registerUser(
+            uid: any(named: 'uid'),
             context: any(named: 'context'),
-          )).called(1);
+          ));
     });
 
-    test('registers returning users idempotently as well', () async {
-      // isNewUser is not authoritative for Ora bootstrap — a prior register
-      // may have failed after Firebase already marked the account existing.
+    test('a backend registration is not invoked from verifyOtp', () async {
       when(() => firebase.verifyOtpCode(
             verificationId: any(named: 'verificationId'),
             otpCode: any(named: 'otpCode'),
@@ -191,27 +209,10 @@ void main() {
 
       await repository.verifyOtp(session: _session, otpCode: '123456');
 
-      verify(() => remote.registerUser(
-            uid: 'uid-1',
-            context: any(named: 'context'),
-          )).called(1);
-    });
-
-    test('a backend registration failure does not fail the sign-in', () async {
-      // The backend does not exist yet, so this is the current default path.
-      when(() => firebase.verifyOtpCode(
-            verificationId: any(named: 'verificationId'),
-            otpCode: any(named: 'otpCode'),
-          )).thenAnswer((_) async => credentialFor(isNewUser: true));
-      when(() => remote.registerUser(
+      verifyNever(() => remote.registerUser(
             uid: any(named: 'uid'),
             context: any(named: 'context'),
-          )).thenThrow(const AppFailure.network(message: 'no backend'));
-
-      final user =
-          await repository.verifyOtp(session: _session, otpCode: '123456');
-
-      expect(user.uid, 'uid-1');
+          ));
     });
 
     test('throws SessionExpiredFailure when the credential carries no user',
@@ -279,6 +280,45 @@ void main() {
     });
   });
 
+  group('registerUser', () {
+    test('propagates backend failures', () async {
+      when(() => remote.registerUser(
+            uid: any(named: 'uid'),
+            context: any(named: 'context'),
+          )).thenThrow(const AppFailure.network(message: 'no backend'));
+
+      expect(
+        () => repository.registerUser(uid: 'uid-1'),
+        throwsA(isA<NetworkFailure>()),
+      );
+    });
+  });
+
+  group('updateDisplayName', () {
+    test('returns the server profile and does not send uid', () async {
+      const model = UserProfileModel(
+        uid: 'uid-1',
+        phoneNumber: '+923001234567',
+        displayName: 'Ada',
+        profileComplete: true,
+      );
+      when(() => remote.updateProfile(
+            displayName: any(named: 'displayName'),
+            context: any(named: 'context'),
+          )).thenAnswer((_) async => model);
+
+      final profile =
+          await repository.updateDisplayName(displayName: 'Ada');
+
+      expect(profile.displayName, 'Ada');
+      expect(profile.profileComplete, isTrue);
+      verify(() => remote.updateProfile(
+            displayName: 'Ada',
+            context: any(named: 'context'),
+          )).called(1);
+    });
+  });
+
   group('logout', () {
     test('signs out of Firebase and wipes secure storage', () async {
       when(() => firebase.signOut()).thenAnswer((_) async {});
@@ -315,7 +355,9 @@ void main() {
   group('secure storage contents', () {
     test('never holds an ID token or refresh token', () async {
       when(() => firebase.startPhoneVerification(
-          phoneE164: any(named: 'phoneE164'))).thenAnswer((_) async => _session);
+          phoneE164: any(named: 'phoneE164'))).thenAnswer(
+        (_) async => const PhoneCodeSent(_session),
+      );
       when(() => firebase.verifyOtpCode(
             verificationId: any(named: 'verificationId'),
             otpCode: any(named: 'otpCode'),
@@ -331,7 +373,9 @@ void main() {
 
     test('the OTP code and phone number never reach the logs', () async {
       when(() => firebase.startPhoneVerification(
-          phoneE164: any(named: 'phoneE164'))).thenAnswer((_) async => _session);
+          phoneE164: any(named: 'phoneE164'))).thenAnswer(
+        (_) async => const PhoneCodeSent(_session),
+      );
       when(() => firebase.verifyOtpCode(
             verificationId: any(named: 'verificationId'),
             otpCode: any(named: 'otpCode'),

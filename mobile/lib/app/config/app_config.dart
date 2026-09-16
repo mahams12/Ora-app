@@ -47,6 +47,24 @@ class AppConfig {
       _ => !environment.isDevelopment,
     };
 
+    // Fail-closed: production/release must never ship with App Check disabled.
+    if (kReleaseMode &&
+        environment.isProduction &&
+        !appCheckEnabled) {
+      throw StateError(
+        'REFUSING_START: production release requires App Check '
+        '(unset ORA_APP_CHECK=false).',
+      );
+    }
+
+    // Fail-closed: release builds must never use HTTP API endpoints.
+    // (resolveApiBaseUrl already throws; this documents the invariant.)
+    if (kReleaseMode && apiBaseUrl.startsWith('http://')) {
+      throw StateError(
+        'REFUSING_START: release builds require HTTPS API base URL.',
+      );
+    }
+
     return AppConfig(
       environment: environment,
       apiBaseUrl: apiBaseUrl,

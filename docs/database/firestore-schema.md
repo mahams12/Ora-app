@@ -173,6 +173,7 @@ Document ID: auto-generated UUID
 | cancelledBy | string | [S] | "passenger" \| "driver" \| "server" |
 | cancellationFeeMinor | number | [S] | From cancellation policy; may be 0 |
 | assignedAt | timestamp | [S] | |
+| arrivedAt | timestamp | [S] | Phase 2L wait-clock; set once on DRIVER_ARRIVED; immutable |
 | startedAt | timestamp | [S] | |
 | completedAt | timestamp | [S] | |
 | closedAt | timestamp | [S] | |
@@ -184,6 +185,7 @@ Document ID: auto-generated UUID
 - `passengerId` + `createdAt` DESC (My Rides query)
 - `assignedDriverId` + `state` (driver's active ride)
 - `state` + `expiresAt` (expiry sweeper)
+- `state` + `arrivedAt` (Phase 2M NO_SHOW sweeper)
 
 ---
 

@@ -21,6 +21,8 @@
 | STATE_CONFLICT | 409 | Invalid state transition | Refresh ride state from server |
 | VERSION_CONFLICT | 409 | Optimistic concurrency failure | Refresh and retry |
 | IDEMPOTENCY_KEY_REUSED | 409 | Same idempotency key reused with different payload | Generate a new key; do not retry blindly |
+| ALREADY_RATED | 409 | Rating already exists for this ride and direction | Show existing rating; do not overwrite |
+| RATING_NOT_FOUND | 404 | Caller has no rating for this ride | Show rate CTA or empty state |
 | OFFER_ALREADY_EXISTS | 409 | Driver already has a live offer | Show existing offer; wait for selection |
 | INVALID_STATE_TRANSITION | 422 | Cannot go from A to B | Show state error; log |
 | PROXIMITY_VIOLATION | 422 | Driver too far from pickup/destination | Show "Please move closer" |

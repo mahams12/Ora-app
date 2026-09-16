@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../../../core/errors/app_failure.dart';
 import '../../../../core/errors/failure_mapper.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../domain/entities/auth_user.dart';
-import '../../domain/entities/otp_session.dart';
+import '../../domain/entities/phone_verification_result.dart';
+import '../../domain/phone_verification_coordinator.dart';
 
 /// Firebase Auth wrapper.
 ///
@@ -28,8 +30,6 @@ class FirebaseAuthDataSource {
   final FailureMapper _failureMapper;
   final AppLogger _logger;
 
-  // ── Auth state ────────────────────────────────────────────────────────────
-
   Stream<AuthUser?> get authStateChanges =>
       _auth.authStateChanges().map(_mapFirebaseUser);
 
@@ -37,59 +37,62 @@ class FirebaseAuthDataSource {
 
   AuthUser? get currentUser => _mapFirebaseUser(_auth.currentUser);
 
-  // ── Phone OTP ─────────────────────────────────────────────────────────────
-
-  /// Starts the Firebase phone verification flow.
+  /// Starts Firebase phone verification.
   ///
-  /// Firebase SDK returns a [verificationId] used to confirm the code.
-  /// The returned [OtpSession] wraps this along with the phone for transport
-  /// to the verify step.
-  Future<OtpSession> startPhoneVerification({required String phoneE164}) async {
-    final completer = Completer<String>();
-
+  /// Android instant/auto-retrieval signs in with the real
+  /// [PhoneAuthCredential] — it never invents a verification ID.
+  Future<PhoneVerificationResult> startPhoneVerification({
+    required String phoneE164,
+  }) async {
     _logger.info(
       'OTP request initiated',
       metadata: {'op': 'request_otp'},
     );
 
+    final coordinator = PhoneVerificationCoordinator(
+      phoneE164: phoneE164,
+      signInWithCredential: (credential) async {
+        final result = await _auth.signInWithCredential(
+          credential as PhoneAuthCredential,
+        );
+        final user = _mapFirebaseUser(result.user);
+        if (user == null) {
+          throw const AppFailure.sessionExpired(
+            message: 'Firebase credential produced no user.',
+          );
+        }
+        _logger.info(
+          'Phone auto-verification signed in',
+          metadata: {'op': 'auto_verify'},
+        );
+        return user;
+      },
+    );
+
     await _auth.verifyPhoneNumber(
       phoneNumber: phoneE164,
       verificationCompleted: (PhoneAuthCredential credential) {
-        // Auto-verification (Android SMS retrieval) — complete immediately.
-        // The verificationId is not needed for auto-verified credentials, but
-        // we still need to complete our completer; use empty string as sentinel.
-        if (!completer.isCompleted) completer.complete('auto');
+        unawaited(coordinator.onAutoVerified(credential));
       },
       verificationFailed: (FirebaseAuthException error) {
         _logger.warning(
           'OTP verification failed',
           metadata: {'code': error.code, 'op': 'request_otp'},
         );
-        if (!completer.isCompleted) {
-          completer.completeError(
-            _failureMapper.fromFirebaseAuthException(error),
-          );
-        }
+        coordinator.onFailed(_failureMapper.fromFirebaseAuthException(error));
       },
       codeSent: (String verificationId, int? resendToken) {
-        if (!completer.isCompleted) completer.complete(verificationId);
+        coordinator.onCodeSent(verificationId);
       },
       codeAutoRetrievalTimeout: (String verificationId) {
-        if (!completer.isCompleted) completer.complete(verificationId);
+        coordinator.onAutoRetrievalTimeout(verificationId);
       },
       timeout: const Duration(seconds: 60),
     );
 
-    final verificationId = await completer.future;
-
-    return OtpSession(
-      sessionId: verificationId,
-      phoneE164: phoneE164,
-      otpState: OtpState.otpSent,
-    );
+    return coordinator.future;
   }
 
-  /// Verifies the user-entered [otpCode] against the Firebase session.
   Future<UserCredential> verifyOtpCode({
     required String verificationId,
     required String otpCode,
@@ -110,10 +113,6 @@ class FirebaseAuthDataSource {
     }
   }
 
-  // ── Token management ──────────────────────────────────────────────────────
-
-  /// Returns a Firebase ID token.  Throws [SessionExpiredFailure] when the
-  /// token cannot be refreshed.
   Future<String?> getIdToken({bool forceRefresh = false}) async {
     try {
       return await _auth.currentUser?.getIdToken(forceRefresh);
@@ -122,14 +121,10 @@ class FirebaseAuthDataSource {
     }
   }
 
-  // ── Logout ────────────────────────────────────────────────────────────────
-
   Future<void> signOut() async {
     _logger.info('User signing out', metadata: {'op': 'logout'});
     await _auth.signOut();
   }
-
-  // ── Helpers ───────────────────────────────────────────────────────────────
 
   AuthUser? _mapFirebaseUser(User? user) {
     if (user == null) return null;

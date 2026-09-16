@@ -1,4 +1,4 @@
-# Phase 2A-S — Security Gate + OTP Path Lock
+> **Historical (2026-08-20).** This gate predates Phase 2B/2C. App Check is now wired in code; Firestore rules exist in-repo; API rate limits exist (process-local). See `phase-02b-security-closure.md` and `phase-02c-auth-onboarding-closure.md` for current status.
 
 **Date:** 2026-08-20  
 **Security gate:** `PASS WITH REQUIRED HARDENING`  

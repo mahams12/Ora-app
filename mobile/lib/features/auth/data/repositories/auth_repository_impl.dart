@@ -1,30 +1,25 @@
 import 'package:firebase_auth/firebase_auth.dart' show User;
 
 import '../../../../core/errors/app_failure.dart';
-import '../../../../core/errors/failure_mapper.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/storage/secure_storage.dart';
 import '../../../../core/storage/storage_keys.dart';
 import '../../domain/entities/auth_user.dart';
 import '../../domain/entities/otp_session.dart';
+import '../../domain/entities/phone_verification_result.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../data_sources/auth_remote_data_source.dart';
 import '../data_sources/firebase_auth_data_source.dart';
 
 /// Concrete implementation of [AuthRepository].
-///
-/// Coordinates between [FirebaseAuthDataSource] (identity layer) and
-/// [AuthRemoteDataSource] (Ora Cloud Run API) while persisting opaque
-/// session tokens to [SecureStorage] for app-kill / restart recovery.
 class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl({
     required FirebaseAuthDataSource firebaseDataSource,
     required AuthRemoteDataSource remoteDataSource,
     required SecureStorage secureStorage,
     required ApiClient apiClient,
-    required FailureMapper failureMapper,
     required AppLogger logger,
   })  : _firebase = firebaseDataSource,
         _remote = remoteDataSource,
@@ -45,21 +40,32 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthUser?> getCurrentUser() async => _firebase.currentUser;
 
   @override
-  Future<OtpSession> requestOtp({required String phoneE164}) async {
-    final session = await _firebase.startPhoneVerification(
+  Future<PhoneVerificationResult> requestOtp({
+    required String phoneE164,
+  }) async {
+    final result = await _firebase.startPhoneVerification(
       phoneE164: phoneE164,
     );
-    // Persist session ID so the user can return to OTP entry after an app kill.
-    await _secureStorage.write(
-      key: StorageKeys.otpSessionId,
-      value: session.sessionId,
-    );
-    await _secureStorage.write(
-      key: StorageKeys.otpPhoneE164,
-      value: phoneE164,
-    );
-    _logger.info('OTP session stored', metadata: {'op': 'request_otp'});
-    return session;
+    switch (result) {
+      case PhoneCodeSent(:final session):
+        await _secureStorage.write(
+          key: StorageKeys.otpSessionId,
+          value: session.sessionId,
+        );
+        await _secureStorage.write(
+          key: StorageKeys.otpPhoneE164,
+          value: phoneE164,
+        );
+        _logger.info('OTP session stored', metadata: {'op': 'request_otp'});
+      case PhoneAutoSignedIn():
+        await _secureStorage.delete(key: StorageKeys.otpSessionId);
+        await _secureStorage.delete(key: StorageKeys.otpPhoneE164);
+        _logger.info(
+          'Phone auto-verification completed',
+          metadata: {'op': 'auto_verify'},
+        );
+    }
+    return result;
   }
 
   @override
@@ -79,18 +85,8 @@ class AuthRepositoryImpl implements AuthRepository {
       );
     }
 
-    // Clear persisted OTP session after successful verification.
     await _secureStorage.delete(key: StorageKeys.otpSessionId);
     await _secureStorage.delete(key: StorageKeys.otpPhoneE164);
-
-    // The signed-in identity is NOT persisted here: Firebase Auth owns session
-    // persistence and `currentUser` is the single source for it.  Mirroring the
-    // uid would create a second copy that can go stale.
-
-    // Always attempt idempotent registration. Relying only on isNewUser can
-    // skip bootstrap when a prior register failed after Firebase already
-    // marked the account as existing.
-    await _registerUser(uid: firebaseUser.uid);
 
     _logger.info('OTP verified; user signed in', metadata: {
       'op': 'verify_otp',
@@ -101,12 +97,8 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<OtpSession> resendOtp({required OtpSession session}) async {
-    // Firebase does not expose a dedicated "resend" API; we re-initiate
-    // phone verification. Quotas/throttling are Firebase-owned (ADR-016).
-    // Ora client applies a 30s resend UX cooldown only.
-    return requestOtp(phoneE164: session.phoneE164);
-  }
+  Future<PhoneVerificationResult> resendOtp({required OtpSession session}) =>
+      requestOtp(phoneE164: session.phoneE164);
 
   @override
   Future<AuthUser?> restoreSession() async {
@@ -118,10 +110,8 @@ class AuthRepositoryImpl implements AuthRepository {
     }
 
     try {
-      // Force-refresh to validate the token is still good.
       await user.getIdToken(true);
-      _logger.info('Session restored',
-          metadata: {'op': 'restore_session'});
+      _logger.info('Session restored', metadata: {'op': 'restore_session'});
       return _toAuthUser(user);
     } catch (e) {
       _logger.warning(
@@ -153,6 +143,16 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> registerUser({required String uid}) => _registerUser(uid: uid);
 
   @override
+  Future<UserProfile> updateDisplayName({required String displayName}) async {
+    final context = _apiClient.newContext(operationId: 'update_profile');
+    final model = await _remote.updateProfile(
+      displayName: displayName,
+      context: context,
+    );
+    return model.toDomain();
+  }
+
+  @override
   Future<void> logout() async {
     await _firebase.signOut();
     await _secureStorage.deleteAll();
@@ -160,25 +160,13 @@ class AuthRepositoryImpl implements AuthRepository {
         metadata: {'op': 'logout'});
   }
 
-  // ── Private helpers ───────────────────────────────────────────────────────
-
   Future<void> _registerUser({required String uid}) async {
-    try {
-      final context = _apiClient.newContext(
-        operationId: 'register_user',
-        idempotencyKey: 'register_$uid',
-      );
-      await _remote.registerUser(uid: uid, context: context);
-      _logger.info('New user registered',
-          metadata: {'op': 'register_user'});
-    } catch (e) {
-      // Non-fatal: if registration fails, the profile check on next launch
-      // will detect the missing document and retry.
-      _logger.warning(
-        'User registration call failed (will retry on next launch)',
-        metadata: {'op': 'register_user', 'error': e.toString()},
-      );
-    }
+    final context = _apiClient.newContext(
+      operationId: 'register_user',
+      idempotencyKey: 'register_$uid',
+    );
+    await _remote.registerUser(uid: uid, context: context);
+    _logger.info('User registered', metadata: {'op': 'register_user'});
   }
 
   AuthUser _toAuthUser(User user) => AuthUser(

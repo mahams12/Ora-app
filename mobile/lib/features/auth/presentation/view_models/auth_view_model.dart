@@ -7,6 +7,7 @@ import '../../../../core/errors/app_failure.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../domain/entities/auth_user.dart';
 import '../../domain/entities/otp_session.dart';
+import '../../domain/entities/phone_verification_result.dart';
 import '../../domain/use_cases/logout_use_case.dart';
 import '../../domain/use_cases/request_otp_use_case.dart';
 import '../../domain/use_cases/resend_otp_use_case.dart';
@@ -59,8 +60,8 @@ class AuthViewModel extends Notifier<AuthFlowState> {
     state = const AuthFlowRequestingOtp();
     _logger.info('Requesting OTP', metadata: {'op': 'request_otp'});
     try {
-      final session = await _requestOtp(phoneE164: phoneE164);
-      state = AuthFlowOtpSent(session: session);
+      final result = await _requestOtp(phoneE164: phoneE164);
+      _applyVerificationResult(result);
     } catch (e) {
       _handleError(e, fallback: const AuthFlowPhoneEntry());
     }
@@ -103,8 +104,13 @@ class AuthViewModel extends Notifier<AuthFlowState> {
     _logger.info('Resending OTP', metadata: {'op': 'resend_otp'});
 
     try {
-      final newSession = await _resendOtp(session: session);
-      _startCooldownTimer(newSession);
+      final result = await _resendOtp(session: session);
+      switch (result) {
+        case PhoneCodeSent(:final session):
+          _startCooldownTimer(session);
+        case PhoneAutoSignedIn(:final user):
+          state = AuthFlowAuthenticated(user: user);
+      }
     } catch (e) {
       _handleError(e, fallback: AuthFlowOtpSent(session: session));
     }
@@ -129,6 +135,15 @@ class AuthViewModel extends Notifier<AuthFlowState> {
   }
 
   // ── Private helpers ───────────────────────────────────────────────────────
+
+  void _applyVerificationResult(PhoneVerificationResult result) {
+    switch (result) {
+      case PhoneCodeSent(:final session):
+        state = AuthFlowOtpSent(session: session);
+      case PhoneAutoSignedIn(:final user):
+        state = AuthFlowAuthenticated(user: user);
+    }
+  }
 
   /// Starts the 30-second countdown for the resend button UX.
   void _startCooldownTimer(OtpSession session) {

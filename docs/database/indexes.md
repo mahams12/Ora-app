@@ -12,6 +12,11 @@ These require no configuration:
 
 ## Composite Indexes Required
 
+Phase 2I ride history (`GET /v1/rides`) requires the passenger/driver
+`createdAt` + `rideId` keyset composites (and optional `state` /
+`serviceType` variants) that are present in the repo root
+`firestore.indexes.json`. Prefer that file as the deploy source of truth.
+
 ```json
 // firestore.indexes.json
 
@@ -22,7 +27,8 @@ These require no configuration:
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "passengerId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
+        { "fieldPath": "createdAt", "order": "DESCENDING" },
+        { "fieldPath": "rideId", "order": "DESCENDING" }
       ]
     },
     {

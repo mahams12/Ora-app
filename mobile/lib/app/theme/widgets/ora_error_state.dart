@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../ora_colors.dart';
+import '../ora_spacing.dart';
+import '../ora_typography.dart';
 import 'ora_button.dart';
 
 class OraErrorState extends StatelessWidget {
@@ -16,29 +19,33 @@ class OraErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleColor = isDark
+        ? OraColors.textPrimary
+        : OraColors.textPrimaryLight;
+    final messageColor = isDark
+        ? OraColors.textMuted
+        : OraColors.textSecondaryLight;
+
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(OraSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: Theme.of(context).colorScheme.error,
-            ),
-            const SizedBox(height: 16),
-            Text(title, style: Theme.of(context).textTheme.titleLarge),
+            const Icon(Icons.error_outline, size: 48, color: OraColors.danger),
+            const SizedBox(height: OraSpacing.md),
+            Text(title, style: OraTypography.title(titleColor)),
             if (message != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: OraSpacing.xs),
               Text(
                 message!,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: OraTypography.body(messageColor),
               ),
             ],
             if (onRetry != null) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: OraSpacing.lg),
               OraButton(
                 label: 'Try again',
                 onPressed: onRetry,

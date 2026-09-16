@@ -3,46 +3,7 @@ import request from 'supertest';
 import { createApp } from '../app';
 import type { AuthenticatedCaller } from '../types';
 import { deriveProfileComplete, toPublicProfile } from '../services/profile';
-
-function memoryDb() {
-  const store = new Map<string, Record<string, unknown>>();
-
-  const doc = (id: string) => ({
-    id,
-    async get() {
-      const data = store.get(id);
-      return {
-        exists: data != null,
-        data: () => data,
-      };
-    },
-    async set(value: Record<string, unknown>) {
-      store.set(id, value);
-    },
-  });
-
-  return {
-    store,
-    collection(_name: string) {
-      return {
-        doc,
-      };
-    },
-    async runTransaction(fn: (tx: {
-      get: (ref: ReturnType<typeof doc>) => Promise<{ exists: boolean; data: () => Record<string, unknown> | undefined }>;
-      set: (ref: ReturnType<typeof doc>, value: Record<string, unknown>) => void;
-    }) => Promise<void>) {
-      await fn({
-        async get(ref) {
-          return ref.get();
-        },
-        set(ref, value) {
-          store.set(ref.id, value);
-        },
-      });
-    },
-  };
-}
+import { memoryDb } from './helpers/memory_db';
 
 describe('deriveProfileComplete', () => {
   it('fails closed for banned or inactive accounts', () => {
@@ -159,8 +120,8 @@ describe('auth HTTP security', () => {
     expect(res.status).toBe(200);
     expect(res.body.uid).toBe('real-uid');
     expect(res.body.role).toBe('passenger');
-    expect(db.store.has('real-uid')).toBe(true);
-    expect(db.store.has('forged-attacker-uid')).toBe(false);
+    expect(db.store.has('users/real-uid')).toBe(true);
+    expect(db.store.has('users/forged-attacker-uid')).toBe(false);
   });
 
   it('rejects register when Idempotency-Key is for another uid', async () => {
@@ -189,7 +150,7 @@ describe('auth HTTP security', () => {
 
   it('GET /me never uses ?userId= as identity', async () => {
     const db = memoryDb();
-    db.store.set('real-uid', {
+    db.seed('users', 'real-uid', {
       uid: 'real-uid',
       phoneNumber: '+923001234567',
       displayName: 'Ada',
@@ -198,7 +159,7 @@ describe('auth HTTP security', () => {
       isActive: true,
       banned: false,
     });
-    db.store.set('victim-uid', {
+    db.seed('users', 'victim-uid', {
       uid: 'victim-uid',
       phoneNumber: '+923009999999',
       displayName: 'Victim',
@@ -261,6 +222,6 @@ describe('auth HTTP security', () => {
     expect(b.status).toBe(200);
     expect(a.body.uid).toBe('uid-1');
     expect(b.body.uid).toBe('uid-1');
-    expect([...db.store.keys()]).toEqual(['uid-1']);
+    expect([...db.store.keys()]).toEqual(['users/uid-1']);
   });
 });

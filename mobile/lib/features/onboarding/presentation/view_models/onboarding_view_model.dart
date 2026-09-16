@@ -1,20 +1,64 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/di/providers.dart';
+import '../../../../core/errors/app_failure.dart';
+import '../../../../core/utils/display_name.dart';
+import '../../../auth/domain/use_cases/update_display_name_use_case.dart';
 import 'onboarding_view_state.dart';
 
-/// ViewModel for the Phase 2 onboarding placeholder.
+/// Onboarding ViewModel — collects displayName and persists via the API.
 ///
-/// Completeness is server-derived (`GET /v1/auth/me` → `profileComplete`).
-/// The placeholder does not forge readiness: it asks [AuthStateNotifier] to
-/// re-resolve the profile. Home is granted only when the server says so.
+/// Completeness is server-derived. This ViewModel never calls
+/// [AuthStateNotifier.setAuthenticatedReady].
 class OnboardingViewModel extends Notifier<OnboardingViewState> {
-  @override
-  OnboardingViewState build() => OnboardingViewState.idle;
+  late final UpdateDisplayNameUseCase _updateDisplayName;
 
-  /// Re-fetches authoritative profile state from the backend.
-  Future<void> completePlaceholder() async {
-    state = OnboardingViewState.completed;
-    await ref.read(authStateNotifierProvider.notifier).retryProfileBootstrap();
+  @override
+  OnboardingViewState build() {
+    _updateDisplayName = ref.read(updateDisplayNameUseCaseProvider);
+    return const OnboardingViewState();
+  }
+
+  void onNameChanged(String value) {
+    if (state.fieldError != null || state.serverError != null) {
+      state = state.copyWith(fieldError: null, serverError: null);
+    }
+  }
+
+  Future<void> submit({required String rawName}) async {
+    if (state.isSubmitting) {
+      return;
+    }
+
+    final error = DisplayName.validationError(rawName);
+    if (error != null) {
+      state = state.copyWith(fieldError: error, serverError: null);
+      return;
+    }
+
+    final name = DisplayName.normalize(rawName);
+    state = state.copyWith(
+      status: OnboardingStatus.submitting,
+      fieldError: null,
+      serverError: null,
+    );
+
+    try {
+      await _updateDisplayName(displayName: name);
+      await ref
+          .read(authStateNotifierProvider.notifier)
+          .refreshCanonicalProfile();
+      state = state.copyWith(status: OnboardingStatus.submitted);
+    } on AppFailure catch (failure) {
+      state = state.copyWith(
+        status: OnboardingStatus.idle,
+        serverError: failure.userMessage,
+      );
+    } catch (_) {
+      state = state.copyWith(
+        status: OnboardingStatus.idle,
+        serverError: 'Could not save your name. Please try again.',
+      );
+    }
   }
 }

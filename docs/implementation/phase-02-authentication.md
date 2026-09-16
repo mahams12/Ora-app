@@ -20,7 +20,7 @@ Phase 2 implements the full phone-OTP authentication foundation for Ora: Firebas
 - **DI:** Riverpod `NotifierProvider` / `Provider` graph in `app/di/providers.dart`
 - **Router:** go_router with `AuthRouteGuard` reading `AuthStateNotifier` (Riverpod)
 - **Auth identity:** Firebase Auth (phone OTP via `verifyPhoneNumber`)
-- **Auth REST:** Ora Cloud Run API — `POST /v1/auth/register`, `GET /v1/auth/me`
+- **Auth REST:** Ora Cloud Run API — `POST /v1/auth/register`, `GET /v1/auth/me`, `PATCH /v1/auth/profile`
 - **Secure storage:** `flutter_secure_storage` (Keychain/Keystore) replacing Phase 1 in-memory placeholder
 
 ---
@@ -69,7 +69,7 @@ Phase 2 implements the full phone-OTP authentication foundation for Ora: Firebas
 ### Onboarding Foundation
 | File | Purpose |
 |---|---|
-| `mobile/lib/features/onboarding/presentation/views/onboarding_placeholder_view.dart` | Phase 2 placeholder; full flow deferred |
+| `mobile/lib/features/onboarding/presentation/views/onboarding_view.dart` | Display-name onboarding (Phase 2C) |
 
 ### Router / DI / Entry
 | File | Purpose |
@@ -77,7 +77,7 @@ Phase 2 implements the full phone-OTP authentication foundation for Ora: Firebas
 | `mobile/lib/app/router/routes.dart` | Added `/auth/phone`, `/auth/otp`, `/onboarding` routes |
 | `mobile/lib/app/router/route_guards.dart` | `AuthRouteGuard` with 5-state auth guard logic |
 | `mobile/lib/app/router/app_router.dart` | Wired guard into `createAppRouter` |
-| `mobile/lib/app/app.dart` | `appRouterProvider` now watches `authStateNotifierProvider` |
+| `mobile/lib/app/app.dart` | `GoRouter` uses `refreshListenable`; auth status changes do not recreate the router |
 | `mobile/lib/app/di/providers.dart` | Full Phase 2 provider graph |
 | `mobile/lib/main.dart` | `Firebase.initializeApp()` before `runApp` |
 
@@ -138,12 +138,13 @@ resend:
 
 cooldown countdown: 1s tick timer in ViewModel; drives resend button disable + "Xs" label
 
-Server limits (authoritative; not enforced by client):
-  maxAttempts  = 5    | lock duration  = 15 min
-  maxResends   = 3    | resend cooldown = 30 s
-  OTP expiry   = 5 min
-  per-IP       = 10 OTP req/hr, 3 concurrent open sessions
-```
+**OTP authority (ADR-016 Path A — locked):** Firebase Phone Auth owns OTP
+issuance, delivery, verification, expiry, and abuse throttling. Ora does
+**not** implement or enforce `otpSessions` counters (`maxAttempts`,
+`maxResends`, per-IP OTP quotas). Client UX only: ~30s resend cooldown.
+
+Historical Phase 1.6 numeric freeze for custom `otpSessions` is Path B /
+deferred and must not be claimed as Ora-enforced.```
 
 Client actions on server error codes:
 - `INVALID_OTP` / `invalid-verification-code` → `InvalidOtpFailure` → error state (session remains)
@@ -274,11 +275,14 @@ Counts below include the Phase 2 correction pass (see
 
 ## Known Limitations
 
-1. **Firebase config files absent** — device builds require real Firebase project setup (Phase 3 ops task).
-2. **App Check not initialized** — Phase 1.6 §2 specifies App Check (`DeviceCheck`/`Play Integrity`). Integrated in post-Phase 2 ops step when firebase config is present.
-3. **Google/Apple Sign-In deferred** — architecture defines them; Phase 2 implements only phone OTP per scope.
-4. **Full onboarding flow deferred** — `OnboardingPlaceholderView` holds the route. Full passenger/driver onboarding (CNIC, vehicle docs) is Phase 4.
-5. **`GET /v1/auth/me` profile fetch** — not yet called automatically after sign-in. `AuthStateNotifier` stays at `authenticated`; caller must promote to `authenticatedReady` / `onboardingRequired`. This will be wired in Phase 3 when the home shell profile loader is implemented.
+1. **Firebase config files absent from git** — device/CI Android builds require `google-services.json` / `GoogleService-Info.plist` present in the checkout (gitignored).
+2. **App Check is wired in code** — client bootstrap + optional server `REQUIRE_APP_CHECK`. Console Enforce / Play Integrity live proof is still an ops task. See Phase 2B.
+3. **Google/Apple Sign-In deferred** — architecture defines them; phone OTP remains the only implemented method.
+4. **Passenger display-name onboarding is implemented (Phase 2C).** CNIC / vehicle / driver onboarding remains a later phase.
+5. **`GET /v1/auth/me` is called after sign-in** — `AuthStateNotifier` bootstraps via register + `/me` and routes to onboarding or home from `profileComplete`. Profile writes use `PATCH /v1/auth/profile`.
+6. **Ride mutation durable local storage is not implemented.** `InMemoryLocalStorage` is not sufficient for future ride/payment idempotency keys.
+
+Superseding detail: `docs/implementation/phase-02c-auth-onboarding-closure.md`.
 
 ---
 

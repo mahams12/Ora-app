@@ -20,7 +20,7 @@
 | Phone / Google / Email providers (Console) | Enabled |
 | `Firebase.initializeApp()` once in `main.dart` | Verified |
 | Graceful init failure UI | **Added** — no raw Firebase exceptions to users |
-| App Check on client | **Not wired** (deferred; backend flag `REQUIRE_APP_CHECK`) |
+| App Check on client | **Wired in Phase 2B** (`firebase_app_check`); Console Enforce deferred until staging green |
 
 ---
 
@@ -80,6 +80,7 @@ New service: `backend/auth-service/` (Cloud Run–ready Node/TypeScript + Fireba
 |---|---|---|---|---|
 | `POST /v1/auth/register` | **YES (code)** | Bearer Firebase JWT | Required `register_{uid}` bound to token uid | Ignores body `uid`/`role`; creates `users/{uid}` |
 | `GET /v1/auth/me` | **YES (code)** | Bearer Firebase JWT | N/A | Ignores `?userId=`; returns frozen profile shape |
+| `PATCH /v1/auth/profile` | **YES (Phase 2C)** | Bearer Firebase JWT | Display name only | See `phase-02c-auth-onboarding-closure.md` |
 | `GET /healthz` | **YES** | none | N/A | Liveness |
 
 | Question | Answer |

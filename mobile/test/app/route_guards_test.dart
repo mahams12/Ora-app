@@ -70,6 +70,16 @@ void main() {
             AppRoutes.otpEntry,
             AppRoutes.onboarding,
             AppRoutes.home,
+            AppRoutes.rideRequest,
+            AppRoutes.rideRequestCreated,
+            '/rides/:rideId/offers',
+            '/rides/:rideId/active',
+            '/rides/:rideId/detail',
+            '/rides/:rideId/rate',
+            AppRoutes.driverHome,
+            AppRoutes.driverRides,
+            AppRoutes.driverRide,
+            AppRoutes.driverDirectOffer,
           ])
             GoRoute(
               path: path,
@@ -276,6 +286,15 @@ void main() {
         AppRoutes.onboarding,
       );
     });
+
+    testWidgets('splash redirects to onboarding', (tester) async {
+      expect(
+        await resolve(tester,
+            requested: AppRoutes.splash,
+            status: AuthStatus.onboardingRequired),
+        AppRoutes.onboarding,
+      );
+    });
   });
 
   group('AuthRouteGuard — authenticated (profile bootstrap in flight)', () {
@@ -330,6 +349,15 @@ void main() {
       expect(
         await resolve(tester,
             requested: AppRoutes.onboarding,
+            status: AuthStatus.authenticatedReady),
+        AppRoutes.home,
+      );
+    });
+
+    testWidgets('splash redirects to home', (tester) async {
+      expect(
+        await resolve(tester,
+            requested: AppRoutes.splash,
             status: AuthStatus.authenticatedReady),
         AppRoutes.home,
       );

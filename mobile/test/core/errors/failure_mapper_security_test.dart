@@ -67,4 +67,25 @@ void main() {
     );
     expect(failure.userMessage, 'Something went wrong. Please try again.');
   });
+
+  test('HTTP 400 maps to ValidationFailure', () {
+    final failure = mapper.fromDioException(
+      DioException(
+        requestOptions: RequestOptions(path: '/v1/auth/profile'),
+        response: Response(
+          requestOptions: RequestOptions(path: '/v1/auth/profile'),
+          statusCode: 400,
+          data: {
+            'error': {
+              'code': 'VALIDATION_ERROR',
+              'message': 'displayName is required.',
+            },
+          },
+        ),
+        type: DioExceptionType.badResponse,
+      ),
+    );
+    expect(failure, isA<ValidationFailure>());
+    expect(failure.userMessage, contains('displayName'));
+  });
 }

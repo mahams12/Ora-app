@@ -107,6 +107,25 @@ class ApiClient {
         idempotent: idempotent,
       );
 
+  Future<Response<T>> patch<T>(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    RequestContext? context,
+    bool idempotent = false,
+    CancelToken? cancelToken,
+  }) =>
+      _execute<T>(
+        () => _dio.patch<T>(
+          path,
+          data: data,
+          queryParameters: queryParameters,
+          cancelToken: cancelToken,
+          options: _options(context, idempotent: idempotent),
+        ),
+        idempotent: idempotent,
+      );
+
   Future<Response<T>> _execute<T>(
     Future<Response<T>> Function() action, {
     required bool idempotent,

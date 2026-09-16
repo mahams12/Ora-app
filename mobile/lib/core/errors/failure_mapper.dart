@@ -75,6 +75,12 @@ class FailureMapper {
     // Only trust short, stable messages from our own API envelope.
     final message = _publicApiMessage(_extractMessage(body));
 
+    if (statusCode == 400) {
+      return AppFailure.validation(
+        message: message,
+        fieldErrors: _extractFieldErrors(body),
+      );
+    }
     if (statusCode == 401) {
       if (code == 'OTP_EXPIRED') {
         return AppFailure.otpExpired(message: message);
@@ -96,9 +102,27 @@ class FailureMapper {
       return AppFailure.forbidden(message: message);
     }
     if (statusCode == 404) {
+      if (code == 'RATING_NOT_FOUND') {
+        return AppFailure.notFound(
+          message: message ?? 'You have not rated this ride yet.',
+        );
+      }
       return AppFailure.notFound(message: message);
     }
     if (statusCode == 409) {
+      if (code == 'ALREADY_RATED') {
+        return AppFailure.conflict(
+          message: message ?? 'You already rated this ride.',
+          code: code,
+        );
+      }
+      if (code == 'STATE_CONFLICT') {
+        return AppFailure.conflict(
+          message: message ??
+              'This ride cannot be rated in its current server state.',
+          code: code,
+        );
+      }
       return AppFailure.conflict(message: message, code: code);
     }
     if (statusCode == 422) {

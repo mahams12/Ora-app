@@ -10,6 +10,7 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../domain/use_cases/resolve_auth_profile_use_case.dart';
 import '../../domain/use_cases/restore_session_use_case.dart';
 import 'auth_view_state.dart';
+import 'session_user_profile.dart';
 
 /// Tracks the global authentication status used by route guards.
 ///
@@ -39,6 +40,7 @@ class AuthStateNotifier extends Notifier<AuthStatus> {
     _authSub = _authRepository.authStateChanges.listen(
       _onAuthStateChanged,
       onError: (_) {
+        ref.read(sessionUserProfileProvider.notifier).clear();
         state = AuthStatus.unauthenticated;
       },
     );
@@ -62,6 +64,7 @@ class AuthStateNotifier extends Notifier<AuthStatus> {
   Future<void> _onAuthStateChanged(AuthUser? user) async {
     if (user == null) {
       _profileEpoch++;
+      ref.read(sessionUserProfileProvider.notifier).clear();
       state = AuthStatus.unauthenticated;
       return;
     }
@@ -84,6 +87,7 @@ class AuthStateNotifier extends Notifier<AuthStatus> {
           'Account disabled by server; clearing session',
           metadata: {'op': 'resolve_profile'},
         );
+        ref.read(sessionUserProfileProvider.notifier).clear();
         await _authRepository.logout();
         if (epoch == _profileEpoch) {
           state = AuthStatus.unauthenticated;
@@ -91,6 +95,7 @@ class AuthStateNotifier extends Notifier<AuthStatus> {
         return;
       }
 
+      ref.read(sessionUserProfileProvider.notifier).setProfile(profile);
       state = profile.profileComplete
           ? AuthStatus.authenticatedReady
           : AuthStatus.onboardingRequired;
@@ -120,8 +125,10 @@ class AuthStateNotifier extends Notifier<AuthStatus> {
     }
   }
 
-  /// Re-runs register + /me for the current Firebase user (backend recovery /
-  /// onboarding placeholder refresh).
+  /// Re-runs register + /me (splash recovery after a failed bootstrap).
+  ///
+  /// Holds [AuthStatus.authenticated] until the server answers so the guard
+  /// cannot grant home. Does not throw — splash owns retry UX.
   Future<void> retryProfileBootstrap() async {
     final user = await _authRepository.getCurrentUser();
     if (user == null) {
@@ -132,6 +139,43 @@ class AuthStateNotifier extends Notifier<AuthStatus> {
     await _bootstrapProfile(user);
   }
 
+  /// Reloads canonical `GET /v1/auth/me` after a profile mutation.
+  ///
+  /// Does not register again, does not move to splash first, and does not
+  /// forge [AuthStatus.authenticatedReady]. Failures propagate so onboarding
+  /// can retry without leaving the form.
+  Future<void> refreshCanonicalProfile() async {
+    final user = await _authRepository.getCurrentUser();
+    if (user == null) {
+      state = AuthStatus.unauthenticated;
+      throw const AppFailure.sessionExpired();
+    }
+
+    final epoch = ++_profileEpoch;
+    final profile = await _authRepository.getUserProfile(uid: user.uid);
+    if (epoch != _profileEpoch) {
+      return;
+    }
+
+    if (!profile.isActive || profile.banned) {
+      _logger.warning(
+        'Account disabled by server; clearing session',
+        metadata: {'op': 'refresh_profile'},
+      );
+      ref.read(sessionUserProfileProvider.notifier).clear();
+      await _authRepository.logout();
+      if (epoch == _profileEpoch) {
+        state = AuthStatus.unauthenticated;
+      }
+      return;
+    }
+
+    ref.read(sessionUserProfileProvider.notifier).setProfile(profile);
+    state = profile.profileComplete
+        ? AuthStatus.authenticatedReady
+        : AuthStatus.onboardingRequired;
+  }
+
   /// Called after profile fetch confirms full readiness.
   void setAuthenticatedReady() => state = AuthStatus.authenticatedReady;
 
@@ -139,5 +183,8 @@ class AuthStateNotifier extends Notifier<AuthStatus> {
   void setOnboardingRequired() => state = AuthStatus.onboardingRequired;
 
   /// Called on logout.
-  void clearSession() => state = AuthStatus.unauthenticated;
+  void clearSession() {
+    ref.read(sessionUserProfileProvider.notifier).clear();
+    state = AuthStatus.unauthenticated;
+  }
 }

@@ -1,3 +1,4 @@
+/// Spacing scale derived from the Ora HTML prototype (4px base).
 class OraSpacing {
   OraSpacing._();
 
@@ -8,4 +9,10 @@ class OraSpacing {
   static const lg = 24.0;
   static const xl = 32.0;
   static const xxl = 48.0;
+
+  /// Common screen horizontal inset on phones.
+  static const screenHorizontal = 20.0;
+
+  /// Compact inset used inside dense lists / sheets.
+  static const sheetHorizontal = 18.0;
 }
