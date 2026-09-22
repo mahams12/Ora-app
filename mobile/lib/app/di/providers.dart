@@ -40,7 +40,11 @@ import '../../features/onboarding/presentation/view_models/onboarding_view_model
 import '../../features/onboarding/presentation/view_models/onboarding_view_state.dart';
 import '../../features/passenger/presentation/view_models/home_view_model.dart';
 import '../../features/ride/data/data_sources/ride_remote_data_source.dart';
+import '../../features/ride/data/location/geolocator_device_location.dart';
+import '../../features/ride/data/location/google_places_http_search.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
+import '../../features/ride/domain/ports/device_location_port.dart';
+import '../../features/ride/domain/ports/place_search_port.dart';
 import '../../features/ride/domain/repositories/ride_repository.dart';
 import '../../features/ride/domain/use_cases/ride_use_cases.dart';
 
@@ -104,6 +108,17 @@ final rideRepositoryProvider = Provider<RideRepository>(
 final createRideUseCaseProvider = Provider<CreateRideUseCase>(
   (ref) => CreateRideUseCase(ref.watch(rideRepositoryProvider)),
 );
+
+/// One-shot passenger GPS (Phase 4A). No background tracking.
+final deviceLocationPortProvider = Provider<DeviceLocationPort>(
+  (ref) => const GeolocatorDeviceLocation(),
+);
+
+/// Google Places autocomplete + details (Phase 4A). Not Routes.
+final placeSearchPortProvider = Provider<PlaceSearchPort>((ref) {
+  final key = ref.watch(appConfigProvider).googlePlacesApiKey;
+  return GooglePlacesHttpSearch(apiKey: key);
+});
 
 final getRideUseCaseProvider = Provider<GetRideUseCase>(
   (ref) => GetRideUseCase(ref.watch(rideRepositoryProvider)),

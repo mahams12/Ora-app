@@ -7,6 +7,9 @@ import 'package:ora/app/di/providers.dart';
 import 'package:ora/app/router/routes.dart';
 import 'package:ora/app/theme/theme.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';
+import 'package:ora/features/ride/domain/models/resolved_passenger_location.dart';
+import 'package:ora/features/ride/domain/ports/device_location_port.dart';
+import 'package:ora/features/ride/domain/ports/place_search_port.dart';
 import 'package:ora/features/ride/domain/use_cases/ride_use_cases.dart';
 import 'package:ora/features/ride/presentation/view_models/offers_inbox_view_model.dart';
 import 'package:ora/features/ride/presentation/view_models/ride_request_view_model.dart';
@@ -20,6 +23,70 @@ class MockGetRideUseCase extends Mock implements GetRideUseCase {}
 
 class MockListOffersUseCase extends Mock implements ListOffersUseCase {}
 
+class _UiPlaceSearch implements PlaceSearchPort {
+  @override
+  Future<List<PlaceSuggestion>> autocomplete({
+    required String query,
+    required String sessionToken,
+  }) async {
+    final q = query.trim().toLowerCase();
+    if (q.contains('gulberg') || q == 'a') {
+      return const [
+        PlaceSuggestion(
+          placeId: 'p1',
+          primaryText: 'Gulberg III',
+          secondaryText: 'Lahore',
+        ),
+      ];
+    }
+    if (q.contains('liberty') || q == 'b') {
+      return const [
+        PlaceSuggestion(
+          placeId: 'p2',
+          primaryText: 'Liberty Market',
+          secondaryText: 'Lahore',
+        ),
+      ];
+    }
+    return const [];
+  }
+
+  @override
+  Future<ResolvedPassengerLocation> resolvePlace({
+    required String placeId,
+    required String sessionToken,
+  }) async {
+    if (placeId == 'p1') {
+      return const ResolvedPassengerLocation(
+        lat: 31.51,
+        lng: 74.35,
+        address: 'Gulberg III',
+        placeId: 'p1',
+        source: PassengerLocationSource.place,
+      );
+    }
+    return const ResolvedPassengerLocation(
+      lat: 31.52,
+      lng: 74.34,
+      address: 'Liberty Market',
+      placeId: 'p2',
+      source: PassengerLocationSource.place,
+    );
+  }
+}
+
+class _UiDeviceLocation implements DeviceLocationPort {
+  @override
+  Future<ResolvedPassengerLocation> getCurrentLocation() async {
+    return const ResolvedPassengerLocation(
+      lat: 31.46,
+      lng: 74.26,
+      address: 'Current location',
+      source: PassengerLocationSource.gps,
+    );
+  }
+}
+
 Widget _wrap(
   Widget child, {
   List<Override> overrides = const [],
@@ -27,7 +94,11 @@ Widget _wrap(
   double textScale = 1,
 }) {
   return ProviderScope(
-    overrides: overrides,
+    overrides: [
+      placeSearchPortProvider.overrideWithValue(_UiPlaceSearch()),
+      deviceLocationPortProvider.overrideWithValue(_UiDeviceLocation()),
+      ...overrides,
+    ],
     child: MediaQuery(
       data: MediaQueryData(
         size: size,
@@ -39,6 +110,40 @@ Widget _wrap(
       ),
     ),
   );
+}
+
+Future<void> _confirmTrip(WidgetTester tester) async {
+  final element = tester.element(find.byType(RideRequestView));
+  final container = ProviderScope.containerOf(element);
+  final vm = container.read(rideRequestViewModelProvider.notifier);
+
+  await vm.selectPlaceSuggestion(
+    field: LocationField.pickup,
+    suggestion: const PlaceSuggestion(
+      placeId: 'p1',
+      primaryText: 'Gulberg III',
+      secondaryText: 'Lahore',
+    ),
+  );
+  await tester.pumpAndSettle();
+  vm.confirmPickup();
+  await tester.pumpAndSettle();
+
+  await vm.selectPlaceSuggestion(
+    field: LocationField.destination,
+    suggestion: const PlaceSuggestion(
+      placeId: 'p2',
+      primaryText: 'Liberty Market',
+      secondaryText: 'Lahore',
+    ),
+  );
+  await tester.pumpAndSettle();
+  vm.confirmDestination();
+  await tester.pumpAndSettle();
+
+  expect(find.text('Continue'), findsOneWidget);
+  await tester.tap(find.text('Continue'));
+  await tester.pumpAndSettle();
 }
 
 void main() {
@@ -55,27 +160,46 @@ void main() {
     expect(find.text('Where to?'), findsOneWidget);
     expect(find.text('Pickup'), findsOneWidget);
     expect(find.text('Destination'), findsOneWidget);
-    expect(find.text('Confirm destination'), findsOneWidget);
-    expect(find.textContaining('not your location'), findsOneWidget);
+    expect(find.text('Use current location'), findsOneWidget);
+    expect(find.text('Continue'), findsOneWidget);
+    expect(find.textContaining('Search and GPS'), findsOneWidget);
     expect(find.textContaining('Rs '), findsNothing);
   });
 
-  testWidgets('filled destinations advance to category review', (tester) async {
+  testWidgets('search suggestions appear after debounce', (tester) async {
+    await tester.pumpWidget(_wrap(const RideRequestView()));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).at(0), 'Gulberg');
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
+    expect(find.text('Gulberg III'), findsWidgets);
+    expect(find.text('Use current location'), findsOneWidget);
+  });
+
+  testWidgets('text alone does not open review', (tester) async {
     await tester.pumpWidget(_wrap(const RideRequestView()));
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField).at(0), 'Gulberg III');
     await tester.enterText(find.byType(TextField).at(1), 'Liberty Market');
     await tester.pump();
-
-    await tester.tap(find.text('Confirm destination'));
+    expect(find.text('Continue'), findsOneWidget);
+    // Disabled CTA — tapping should not open review.
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
+    expect(find.text('Select a ride'), findsNothing);
+  });
+
+  testWidgets('confirmed places advance to category review', (tester) async {
+    await tester.pumpWidget(_wrap(const RideRequestView()));
+    await tester.pumpAndSettle();
+    await _confirmTrip(tester);
 
     expect(find.text('Select a ride'), findsOneWidget);
     expect(find.text('Easy'), findsWidgets);
     expect(find.text('Price TBD'), findsWidgets);
     expect(find.text('Request Easy'), findsOneWidget);
-    expect(find.textContaining('Rs '), findsNothing);
+    expect(find.textContaining('confirmed'), findsWidgets);
   });
 
   testWidgets('request CTA shows pricing unavailable — no createRide', (
@@ -91,12 +215,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-
-    await tester.enterText(find.byType(TextField).at(0), 'A');
-    await tester.enterText(find.byType(TextField).at(1), 'B');
-    await tester.pump();
-    await tester.tap(find.text('Confirm destination'));
-    await tester.pumpAndSettle();
+    await _confirmTrip(tester);
 
     await tester.tap(find.text('Request Easy'));
     await tester.pumpAndSettle();
@@ -114,15 +233,10 @@ void main() {
   testWidgets('category selection updates request CTA label', (tester) async {
     await tester.pumpWidget(_wrap(const RideRequestView()));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField).at(0), 'A');
-    await tester.enterText(find.byType(TextField).at(1), 'B');
-    await tester.pump();
-    await tester.tap(find.text('Confirm destination'));
-    await tester.pumpAndSettle();
+    await _confirmTrip(tester);
 
     expect(find.text('Request Easy'), findsOneWidget);
 
-    // Zip is first in the list — safely above the sticky CTA.
     await tester.ensureVisible(find.text('Zip'));
     await tester.tap(find.text('Zip'));
     await tester.pumpAndSettle();
@@ -246,21 +360,20 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          placeSearchPortProvider.overrideWithValue(_UiPlaceSearch()),
+          deviceLocationPortProvider.overrideWithValue(_UiDeviceLocation()),
           createRideUseCaseProvider.overrideWithValue(createRide),
           getRideUseCaseProvider.overrideWithValue(getRide),
           listOffersUseCaseProvider.overrideWithValue(listOffers),
           offerPollingPolicyProvider.overrideWithValue(
             const OfferPollingPolicy(
               intervals: [Duration(days: 1)],
-              maxLifetime: Duration(days: 1),
             ),
           ),
           rideRequestCapabilitiesProvider.overrideWithValue(
             const RideRequestCapabilities(
               pricingSnapshotId: 'snap-1',
               passengerOfferMinor: 100,
-              resolvedPickup: LatLngPoint(lat: 1, lng: 2),
-              resolvedDestination: LatLngPoint(lat: 3, lng: 4),
             ),
           ),
         ],
@@ -275,11 +388,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextField).at(0), 'A');
-    await tester.enterText(find.byType(TextField).at(1), 'B');
-    await tester.pump();
-    await tester.tap(find.text('Confirm destination'));
-    await tester.pumpAndSettle();
+    await _confirmTrip(tester);
     await tester.tap(find.text('Request Easy'));
     await tester.pumpAndSettle();
 

@@ -1,0 +1,1063 @@
+--------- beginning of main
+09-22 12:49:08.603 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb,raw:input tap'
+09-22 12:49:08.611 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb:export ANDROID_LOG_TAGS=''; exec logcat '-v' 'time''
+09-22 12:49:08.795 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0026274058]
+09-22 12:49:08.796 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.9078456]
+09-22 12:49:08.796 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.54131144]
+09-22 12:49:08.796 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.231385 msecs
+09-22 12:49:08.798 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 2.02923 msecs
+09-22 12:49:08.800 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.508692 msecs
+--------- beginning of system
+09-22 12:49:08.924 D/io_stats(  590): !@ 179,0 r 2107146 31004502 w 995518 13035392 d 0 0 f 0 0 iot 847212 0 th 0 0 0 pt 0 inp 0 0 5926.686
+09-22 12:49:09.289 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:49:09.292 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:49:09.292 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:49:09.681 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:49:09.681 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:49:09.682 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:49:09.682 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:49:09.682 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:49:09.683 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:49:09.689 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1646, isSameBssidAndFreq true
+09-22 12:49:09.691 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:49:09.691 D/ConnectivityService( 1451): notifyType CALLBACK_CAP_CHANGED for [100 WIFI]
+09-22 12:49:09.695 D/SemWifiSwitchForIndividualAppsService( 1451): stopTCPMonitoring : already stopped
+09-22 12:49:09.696 I/WifiConnectivityMonitor.NCC( 1451): sNetworkCallback(oCC) FULL : 100(true/false)[ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED LinkUpBandwidth>=12000Kbps LinkDnBandwidth>=60000Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:**:**:00, MAC: 02:00:00:**:**:00, IP: /192.168.18.253, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 5, RSSI: -62, Link speed: 390Mbps, Tx Link speed: 390Mbps, Max Supported Tx Link speed: 433Mbps, Rx Link speed: 433Mbps, Max Supported Rx Link speed: 433Mbps, Frequency: 5745MHz, Net ID: -1, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>> SignalStrength: -62 AdminUids: [1000] SSID: "HUAWEI-5G-3zZa" UnderlyingNetworks: Null]
+09-22 12:49:09.697 I/WifiConnectivityMonitor( 1451): current mode : 1
+09-22 12:49:09.697 D/OpenNetworkQos[4.00]( 1451): updateBssidNoInternet: mBssidNoInternet = false
+09-22 12:49:09.697 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosNoInternetStatus: false
+09-22 12:49:09.698 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosScores: 26 30 30 
+09-22 12:49:09.698 D/SettingsProvider( 1451): isChangeAllowed() : name = wifi_wcm_qos_sharing_score_summary
+09-22 12:49:09.698 I/WifiProfileShare( 1451): network QoS data was changed (internet), updateQoSData networkType: true, qosData: false
+09-22 12:49:09.699 V/WifiProfileShare.Caster( 1451): update wips network, size: 0
+09-22 12:49:09.699 D/WifiProfileShare( 1451): nearby scanning settings run
+09-22 12:49:09.699 D/WifiProfileShare( 1451): network score provider settings enabled
+09-22 12:49:09.700 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosScores: 26 30 30 
+09-22 12:49:09.700 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosNoInternetStatus: false
+09-22 12:49:09.700 I/WifiProfileShare.Caster( 1451): current network type: 0, score: [26, 30, 30]
+09-22 12:49:09.701 V/WifiProfileShare.Cache( 1451): update network score 22:87:ec:**:**:08
+09-22 12:49:09.701 D/WifiProfileShare.ScanMatcher( 1451): getMcfDataList size:1
+09-22 12:49:09.701 I/WifiProfileShare.Caster( 1451): qos data was updated , before:type:QOS, pBssid:6a:c4:2a, qosData:7c after:type:QOS, pBssid:6a:c4:2a, qosData:7c
+09-22 12:49:09.703 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-22 12:49:09.703 D/WifiProfileShare.McfCast( 1451): -ME--- mIsNetworkEnabled :true
+09-22 12:49:09.703 D/WifiProfileShare.McfCast( 1451): updateQoSData ignored, same contents
+09-22 12:49:09.703 D/WifiProfileShare.MCF( 1451): success update QosData !
+09-22 12:49:09.704 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-22 12:49:09.704 I/HBD     ( 4518): g onCapabilitiesChanged network : 100 current network state : wifi 
+09-22 12:49:09.705 D/WifiProfileShare.McfCast( 1451): -ME--- mIsNetworkEnabled :true
+09-22 12:49:09.705 D/NetworkController.WifiSignalController( 1950): notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-22 12:49:09.705 D/WifiProfileShare.McfCast( 1451): -ME--- updatePasswordDate pwdData size:1
+09-22 12:49:09.715 D/ConnectivityManager( 2224): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4744)] [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4912)] [android.net.ConnectivityManager.registerNetworkCallback(ConnectivityManager.java:5329)] [android.net.ConnectivityManager.registerNetworkCallback(ConnectivityManager.java:5299)] [duey.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):34)] [lsc.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):19)] [dufk.j(:com.google.android.gms@263234029@26.32.34 (190400-968093310):19)] [dufk.O(:com.google.android.gms@263234029@26.32.34 (190400-968093310):14)] [dufk.K(:com.google.android.gms@263234029@26.32.34 (190400-968093310):7)] [dufk.I(:com.google.android.gms@263234029@26.32.34 (190400-968093310):23)] [dufc.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):9)] [blzn.d(:com.google.android.gms@263234029@26.32.34 (190400-968093310):50)] [blzn.c(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [blzn.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):33)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [bmfk.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):8)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:09.719 D/ConnectivityManager( 3497): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4744)] [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4912)] [android.net.ConnectivityManager.registerNetworkCallback(ConnectivityManager.java:5329)] [android.net.ConnectivityManager.registerNetworkCallback(ConnectivityManager.java:5299)] [duey.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):34)] [lsc.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):19)] [dufk.j(:com.google.android.gms@263234029@26.32.34 (190400-968093310):19)] [dufk.O(:com.google.android.gms@263234029@26.32.34 (190400-968093310):14)] [dufk.K(:com.google.android.gms@263234029@26.32.34 (190400-968093310):7)] [dufk.I(:com.google.android.gms@263234029@26.32.34 (190400-968093310):23)] [dufc.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):9)] [blzn.d(:com.google.android.gms@263234029@26.32.34 (190400-968093310):50)] [blzn.c(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [blzn.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):33)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [bmfk.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):8)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:09.729 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.33 dur=3001.94 max=3001.94 min=3001.94
+09-22 12:49:09.730 D/ConnectivityManager( 2224): StackLog: [android.net.ConnectivityManager.unregisterNetworkCallback(ConnectivityManager.java:5579)] [dufk.j(:com.google.android.gms@263234029@26.32.34 (190400-968093310):43)] [dufk.O(:com.google.android.gms@263234029@26.32.34 (190400-968093310):14)] [dufk.K(:com.google.android.gms@263234029@26.32.34 (190400-968093310):7)] [dufk.I(:com.google.android.gms@263234029@26.32.34 (190400-968093310):23)] [dufc.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):9)] [blzn.d(:com.google.android.gms@263234029@26.32.34 (190400-968093310):50)] [blzn.c(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [blzn.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):33)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [bmfk.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):8)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:09.731 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:0.880683,dur:2270.96,max:2255.68,min:15.28  
+09-22 12:49:09.731 I/NearbyMediums( 2224): Wifi changed new SSID: <unknown ssid>
+09-22 12:49:09.731 I/NearbyMediums( 2224): WifiLanConnectivityInfo is not changed, skip notify.
+09-22 12:49:09.736 D/ConnectivityService( 1451): Rematched networks [computed 1ms] [applied 4ms] [issued 7]
+09-22 12:49:09.736 D/ConnectivityService( 1451): NetworkReassignment : no changes
+09-22 12:49:09.742 D/ConnectivityManager( 3497): StackLog: [android.net.ConnectivityManager.unregisterNetworkCallback(ConnectivityManager.java:5579)] [dufk.j(:com.google.android.gms@263234029@26.32.34 (190400-968093310):43)] [dufk.O(:com.google.android.gms@263234029@26.32.34 (190400-968093310):14)] [dufk.K(:com.google.android.gms@263234029@26.32.34 (190400-968093310):7)] [dufk.I(:com.google.android.gms@263234029@26.32.34 (190400-968093310):23)] [dufc.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):9)] [blzn.d(:com.google.android.gms@263234029@26.32.34 (190400-968093310):50)] [blzn.c(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [blzn.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):33)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [bmfk.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):8)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:09.743 I/NearbyMediums( 3497): Wifi changed new SSID: <unknown ssid>
+09-22 12:49:09.743 I/NearbyMediums( 3497): WifiLanConnectivityInfo is not changed, skip notify.
+09-22 12:49:09.747 D/ConnectivityService( 1451): Rematched networks [computed 1ms] [applied 3ms] [issued 6]
+09-22 12:49:09.747 D/ConnectivityService( 1451): NetworkReassignment : no changes
+09-22 12:49:09.778 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.004207507]
+09-22 12:49:09.779 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.91289693]
+09-22 12:49:09.779 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.4768758]
+09-22 12:49:09.779 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.973615 msecs
+09-22 12:49:09.780 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.975693 msecs
+09-22 12:49:09.781 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.743384 msecs
+09-22 12:49:09.807 E/HBD     ( 4518): g activeNetwork is null 
+09-22 12:49:10.095 D/BoundBrokerSvc( 3105): onUnbind: Intent { act=com.google.android.gms.people.contactssync.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+09-22 12:49:10.215 I/NearbySharing( 2224): Network state changed: NetworkState(isRestricted=false, isOnline=true, isCongested=false, isMetered=false, isWifiConnected=true)
+09-22 12:49:10.215 I/NearbySharing( 2224): Network state changed: NetworkState(isRestricted=false, isOnline=true, isCongested=false, isMetered=false, isWifiConnected=true)
+09-22 12:49:10.282 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0063546854]
+09-22 12:49:10.283 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.474875]
+09-22 12:49:10.283 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.71955985]
+09-22 12:49:10.283 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.179077 msecs
+09-22 12:49:10.286 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 2.039692 msecs
+09-22 12:49:10.287 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.511692 msecs
+09-22 12:49:10.359 E/audit   (  828): type=1400 audit(1790063350.354:1767): avc:  denied  { write } for  pid=2224 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12885 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-22 12:49:10.359 E/audit   (  828): type=1300 audit(1790063350.354:1767): arch=c00000b7 syscall=203 success=no exit=-13 a0=51 a1=b4000074d5514be0 a2=1e a3=ffffffff954de431 items=0 ppid=846 pid=2224 auid=4294967295 uid=10226 gid=10226 euid=10226 suid=10226 fsuid=10226 egid=10226 sgid=10226 fsgid=10226 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+09-22 12:49:10.359 E/audit   (  828): type=1327 audit(1790063350.354:1767): proctitle="com.google.android.gms.persistent"
+09-22 12:49:10.566 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:49:10.568 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:49:10.569 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:49:10.789 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0059403735]
+09-22 12:49:10.790 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.6407369]
+09-22 12:49:10.790 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.55188555]
+09-22 12:49:10.790 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.311 msecs
+09-22 12:49:10.792 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.993846 msecs
+09-22 12:49:10.795 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.889462 msecs
+09-22 12:49:10.925 D/io_stats(  590): !@ 179,0 r 2107146 31004502 w 995534 13035836 d 0 0 f 0 0 iot 847220 0 th 0 0 0 pt 0 inp 0 0 5928.687
+09-22 12:49:11.296 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.005441334]
+09-22 12:49:11.296 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.738393]
+09-22 12:49:11.297 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.7578693]
+09-22 12:49:11.297 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.204308 msecs
+09-22 12:49:11.299 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 2.025923 msecs
+09-22 12:49:11.301 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.533538 msecs
+09-22 12:49:11.301 I/SemWifiServiceDetector( 1451): NSD results: [1, 1, 1, 0, 1, 1, 1, 2, 0] Traff. type 1 Thr 0
+09-22 12:49:11.303 D/SemWifiOptimizer( 1451): enable=1 state=0x10 prev=0x10 new=0x10 force=0 mode=0
+09-22 12:49:11.551 D/connsyslogger( 1163): Open FIFO for close
+09-22 12:49:11.803 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.006573055]
+09-22 12:49:11.804 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.15165608]
+09-22 12:49:11.804 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.7080304]
+09-22 12:49:11.804 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.279308 msecs
+09-22 12:49:11.807 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 2.289924 msecs
+09-22 12:49:11.809 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.798769 msecs
+09-22 12:49:11.845 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:49:11.847 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:49:11.849 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:49:12.458 E/android.hardware.health@2.1-service-samsung(  861): Could not open /sys/class/power_supply/battery/lrp
+09-22 12:49:12.461 D/BatteryService( 1451): Sending ACTION_BATTERY_CHANGED: level:28, status:2, health:2, ac:true, usb:false, wireless:false, pogo:false, misc:0x10000, charge_type:1, charger_type:0, voltage:3988, temperature:377, online:19, current_avg:1724, ps:false, hvc:false, capacity:280000, current_event:0x8000, current_now:1679, mcc:0, mcv:0, cc:1410000, present:true, scale:100, technology:Li-ion
+09-22 12:49:12.464 D/MotionRecognitionService( 1451): [SAR]  onReceive : ACTION_BATTERY_CHANGED, Plugged: 1
+09-22 12:49:12.464 E/PocketModeEvent( 1451): PocketModeSetting is off 
+09-22 12:49:12.465 D/PhoneWindowManagerExt( 1451): ACTION_BATTERY_CHANGED - Level=28, status=2
+09-22 12:49:12.466 D/AdaptiveBrightnessLongtermModelBuilder( 1451): Received android.intent.action.BATTERY_CHANGED
+09-22 12:49:12.466 I/DeviceBatteryInfoService( 1451): action: android.intent.action.BATTERY_CHANGED
+09-22 12:49:12.467 I/DeviceBatteryInfoService( 1451): phone battery level: 28
+09-22 12:49:12.467 I/DeviceBatteryInfoService( 1451): phone battery status: 2
+09-22 12:49:12.468 D/SemWifiApBroadcastReceiver( 1451): Received : android.intent.action.BATTERY_CHANGED
+09-22 12:49:12.469 D/SemBigDataInfoController( 1894): Intent: android.intent.action.BATTERY_CHANGED
+09-22 12:49:12.470 D/SemBigDataInfoController( 1894): Intent: android.intent.action.BATTERY_CHANGED
+09-22 12:49:12.471 D/KeyguardUpdateMonitor( 1950): received broadcast android.intent.action.BATTERY_CHANGED
+09-22 12:49:12.472 I/PowerUI ( 1950): mBootCompleted = true |  mFullyConnected = true
+09-22 12:49:12.472 I/PowerUI ( 1950): BATTERY_HEALTH_CHECK extraHealth=2 mBatteryMiscEvent=65536
+09-22 12:49:12.472 W/PowerUI ( 1950): Plug reason
+09-22 12:49:12.472 W/PowerUI ( 1950): Skip charging animation - by plug status
+09-22 12:49:12.472 D/PowerUI ( 1950): priorPlugType = 1 mPlugType = 1 priorBatteryStatus = 2 mBatteryStatus = 2
+09-22 12:49:12.472 W/PowerUI ( 1950): Plug reason
+09-22 12:49:12.472 W/PowerUI ( 1950): Skip charging sound - by plug status
+09-22 12:49:12.472 I/PowerUI ( 1950): oldMisalign : false, curMisalign : false
+09-22 12:49:12.472 D/SecPowerUI.Notification( 1950): dismissing low battery warning: level=28
+09-22 12:49:12.472 D/SecPowerUI.Notification( 1950): updateNotification mWarning=false mPlaySound=false
+09-22 12:49:12.472 D/SecPowerUI.Notification( 1950): SecBatteryStatsSnapshot{batteryLevel=28, currentBatteryMode=1, chargingTime=6840000, chargingType=11, batteryHealth=2, automaticTestMode=false, isHiccupState=false}
+09-22 12:49:12.473 D/SecPowerUI.Notification( 1950): 1. restoreScreenTimeOut - saved_value : :
+09-22 12:49:12.473 E/SecPowerUI.Notification( 1950): no saved value, so we do nothing !!
+09-22 12:49:12.474 I/[SCPMV2][SystemMonitorReceiver](13318): onReceive: android.intent.action.BATTERY_CHANGED
+09-22 12:49:12.474 D/SecPowerUI.Notification( 1950): showChargingNotice oldChargingType : 11 / currentChargingType : 11, oldChargingTime : 6840000 / mChargingTime : 6829000
+09-22 12:49:12.474 D/SecPowerUI.Notification( 1950): showChargingNotification()
+09-22 12:49:12.474 D/SecPowerUI.Notification( 1950): SecBatteryStatsSnapshot{batteryLevel=28, currentBatteryMode=1, chargingTime=6829000, chargingType=11, batteryHealth=2, automaticTestMode=false, isHiccupState=false}
+09-22 12:49:12.478 D/ApplicationPolicy( 1451): isStatusBarNotificationAllowedAsUser: packageName = com.android.systemui,userId = 0
+09-22 12:49:12.479 D/ApplicationPolicy( 1451): isStatusBarNotificationAllowedAsUser: packageName = com.android.systemui,userId = -1
+09-22 12:49:12.479 D/ApplicationPolicy( 1451): isStatusBarNotificationAllowedAsUser: converting userId from USER_ALLto 0
+09-22 12:49:12.481 D/PowerUI ( 1950): Battery swelling mode - priorBatterySwellingMode = 0 mBatterySwellingMode = 0 mBatteryStatus = 2
+09-22 12:49:12.481 I/PowerUI ( 1950): mBatteryMiscEvent = 65536
+09-22 12:49:12.481 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:49:12.482 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:49:12.482 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:49:12.483 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:49:12.483 D/KeyguardUpdateMonitor( 1950): handleBatteryUpdate
+09-22 12:49:12.488 D/KeyguardSecIndicationController( 1950): addIndicationTimeout() returned - unlocking
+09-22 12:49:12.489 D/KeyguardSecIndicationController( 1950): addIndication() returned - unlocking
+09-22 12:49:12.489 D/KeyguardSecIndicationPolicy( 1950):  remove Item pos = DEFAULT, type =           OWNER_INFO
+09-22 12:49:12.489 D/KeyguardSecIndicationController( 1950): addBatteryAndOwnerInfoIndication() battery status = BatteryStatus{status=2,level=28,plugged=1,health=2,maxChargingWattage=-1,remaining=6829000ultraFastCharger=0}
+09-22 12:49:12.489 I/AODBatteryManager( 1950): updateBatteryData: ACTION_BATTERY_CHANGED
+09-22 12:49:12.491 I/AODBatteryManager( 1950): saveBatteryData : AOD BatteryData [mBatteryLevel=28, mBatteryStatus=CHARGING, mBatteryPlugType=AC, mBatteryPlugged=true, mRemainingChargeTime=6829000, mBatteryChargingType=1, mBatteryChargerType=NORMAL, mBatteryOnline=NOT_DEFINED, mBatterySwellingMode=NONE, mBatteryProtectMode=false]
+09-22 12:49:12.491 I/ChargingInfoManager( 1950): updateChargingInfo: newState = AOD ChargingInfo [mState=BATTERY_AND_REMAIN_TIME, mIsCharging=true, mIsFullyCharged=false, mIsBatteryProtectMode=false], oldState = AOD ChargingInfo [mState=BATTERY_AND_REMAIN_TIME, mIsCharging=true, mIsFullyCharged=false, mIsBatteryProtectMode=false]
+09-22 12:49:12.687 I/Telecom:SamsungTelecomServiceImpl( 1451): isInManagedCall - callingPackage : android
+09-22 12:49:12.694 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:49:12.694 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:49:12.694 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:49:12.695 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:49:12.695 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:49:12.696 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:49:12.700 I/Launcher.NotificationListener( 2341): onNotificationPosted : com.android.systemui number : 0
+09-22 12:49:12.701 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.701 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.701 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.701 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.701 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.702 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.702 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.702 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.702 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.702 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.702 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.702 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.702 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.703 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.703 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.703 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.703 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:12.706 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1647, isSameBssidAndFreq true
+09-22 12:49:12.708 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:49:12.749 I/SurfaceFlinger(  904): SFWD update time=5930511624043
+09-22 12:49:12.750 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.33 dur=3021.05 max=3021.05 min=3021.05
+09-22 12:49:12.753 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:0.330892,dur:3022.13,max:3022.13,min:3022.13  
+09-22 12:49:12.781 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.004420275]
+09-22 12:49:12.782 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.2888488]
+09-22 12:49:12.782 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.56731814]
+09-22 12:49:12.782 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.102846 msecs
+09-22 12:49:12.784 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.484307 msecs
+09-22 12:49:12.785 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.173154 msecs
+09-22 12:49:12.903 D/BubblesManager( 1950): onEntryUpdated : shouldBubbleUp=false ,key=-1|com.android.systemui|2131428972|charging_state|10063
+09-22 12:49:12.932 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 0, real height = 333
+09-22 12:49:12.932 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 63, real height = 333
+09-22 12:49:12.932 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:49:12.932 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:49:12.962 E/OpenGLRenderer( 1950): Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+09-22 12:49:12.962 W/OpenGLRenderer( 1950): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+09-22 12:49:12.990 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 0, real height = 333
+09-22 12:49:12.990 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 63, real height = 333
+09-22 12:49:12.990 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:49:12.990 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:49:13.034 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 0, real height = 333
+09-22 12:49:13.034 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 63, real height = 333
+09-22 12:49:13.035 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:49:13.035 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:49:13.166 E/Watchdog( 1451): !@Sync: 198 heap: 105 / 117 FD: 1070 [2026-09-22 12:49:13.165]
+09-22 12:49:13.286 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.01093787]
+09-22 12:49:13.286 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.26870984]
+09-22 12:49:13.286 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.7832445]
+09-22 12:49:13.287 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.296615 msecs
+09-22 12:49:13.289 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.924846 msecs
+09-22 12:49:13.291 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.620077 msecs
+09-22 12:49:13.746 I/SDHMS:D ( 3951): SIOP:: AP:343 BAT:377 USB:0 CHG:396 PA:328 BLK:0 SUBBAT:0 SKIN:369 SKINF:369 SKINB:363 LRP:368 LRP2:369 LRF:368 LRB:363 LRF2:369 LRB2:363 AP2:369 CHG2:368 WIFI2:362 SPK2:358 
+09-22 12:49:13.792 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0025116738]
+09-22 12:49:13.792 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.8021458]
+09-22 12:49:13.793 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.7359231]
+09-22 12:49:13.793 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.216308 msecs
+09-22 12:49:13.795 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 2.043461 msecs
+09-22 12:49:13.797 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.525923 msecs
+09-22 12:49:14.298 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0039843265]
+09-22 12:49:14.299 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.5466892]
+09-22 12:49:14.299 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.67619115]
+09-22 12:49:14.299 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.226077 msecs
+09-22 12:49:14.301 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.923692 msecs
+09-22 12:49:14.303 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.523077 msecs
+09-22 12:49:14.406 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:49:14.408 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:49:14.409 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:49:14.804 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0026710047]
+09-22 12:49:14.804 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.8371558]
+09-22 12:49:14.804 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.6372014]
+09-22 12:49:14.805 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.213616 msecs
+09-22 12:49:14.807 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.991769 msecs
+09-22 12:49:14.809 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.529616 msecs
+09-22 12:49:15.636 I/wpa_supplicant( 1879): Heartbeat 588
+09-22 12:49:15.686 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:49:15.688 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:49:15.689 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:49:15.711 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:49:15.711 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:49:15.711 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:49:15.711 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:49:15.712 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:49:15.713 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:49:15.720 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1648, isSameBssidAndFreq true
+09-22 12:49:15.721 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:49:15.786 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0033757284]
+09-22 12:49:15.786 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.6005234]
+09-22 12:49:15.787 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.4031686]
+09-22 12:49:15.787 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.251616 msecs
+09-22 12:49:15.789 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.929539 msecs
+09-22 12:49:15.791 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.630385 msecs
+09-22 12:49:16.292 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.009163421]
+09-22 12:49:16.293 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.5498899]
+09-22 12:49:16.293 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.46674]
+09-22 12:49:16.293 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.187923 msecs
+09-22 12:49:16.295 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.924385 msecs
+09-22 12:49:16.297 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.501 msecs
+09-22 12:49:16.552 D/connsyslogger( 1163): Open FIFO for close
+09-22 12:49:16.798 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.005111122]
+09-22 12:49:16.799 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.044891145]
+09-22 12:49:16.799 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.72016525]
+09-22 12:49:16.799 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.297846 msecs
+09-22 12:49:16.801 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.912692 msecs
+09-22 12:49:16.803 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.503077 msecs
+09-22 12:49:17.008 D/SGM:GameManager( 1451): identifyForegroundApp. com.sec.android.app.launcher, mCurrentUserId: 0, callerUserId: 0
+09-22 12:49:17.008 D/SGM:PkgDataHelper( 1451): getGamePkgData(). com.sec.android.app.launcher
+09-22 12:49:17.008 I/PolicyManager( 7817): [#CMH#] Is foreground game app: false
+09-22 12:49:17.304 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0151238665]
+09-22 12:49:17.304 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.18586846]
+09-22 12:49:17.304 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.8529978]
+09-22 12:49:17.304 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.937538 msecs
+09-22 12:49:17.306 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.302154 msecs
+09-22 12:49:17.307 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.727308 msecs
+09-22 12:49:17.311 D/ConnectivityManager( 2224): StackLog: [android.net.ConnectivityManager.reportNetworkConnectivity(ConnectivityManager.java:3691)] [cgmf.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):15)] [cgou.n(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [cgnf.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):443)] [cgoh.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):13)] [cgpf.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [hkhu.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):23)] [blzn.d(:com.google.android.gms@263234029@26.32.34 (190400-968093310):50)] [blzn.c(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [blzn.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):33)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [bmfk.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):8)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:17.314 I/AlarmManager( 2224): setExactAndAllowWhileIdle [name: GCM_HB_ALARM type: 2 triggerAtMillis: 6775076]
+09-22 12:49:17.328 I/AlarmManager( 2224): setExactAndAllowWhileIdle [name: FcmRetry type: 2 triggerAtMillis: 6055089]
+09-22 12:49:17.335 D/CompatibilityChangeReporter( 1451): Compat change id reported: 135634846; UID 10278; state: DISABLED
+09-22 12:49:17.336 D/CompatibilityChangeReporter( 1451): Compat change id reported: 177438394; UID 10278; state: DISABLED
+09-22 12:49:17.336 D/CompatibilityChangeReporter( 1451): Compat change id reported: 135772972; UID 10278; state: DISABLED
+09-22 12:49:17.336 D/CompatibilityChangeReporter( 1451): Compat change id reported: 135754954; UID 10278; state: ENABLED
+09-22 12:49:17.337 D/CompatibilityChangeReporter( 1451): Compat change id reported: 143937733; UID 10278; state: ENABLED
+09-22 12:49:17.352 D/Zygote  (  846): Forked child process 15371
+09-22 12:49:17.353 I/ActivityManager( 1451): Start proc 15371:com.whatsapp/u0a278 for broadcast {com.whatsapp/com.google.firebase.iid.FirebaseInstanceIdReceiver}
+09-22 12:49:17.387 I/com.whatsapp(15371): Using generational CollectorTypeCC GC.
+09-22 12:49:17.399 D/nativeloader(15371): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+09-22 12:49:17.402 D/ActivityThread(15371): setConscryptValidator
+09-22 12:49:17.402 D/ActivityThread(15371): setConscryptValidator - put
+09-22 12:49:17.406 I/ActivityManager( 1451): DSS OFF for com.whatsapp
+09-22 12:49:17.415 D/CompatibilityChangeReporter(15371): Compat change id reported: 171979766; UID 10278; state: ENABLED
+09-22 12:49:17.431 D/nativeloader(15371): Configuring clns-4 for other apk /system/framework/org.apache.http.legacy.jar. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/lib/arm64:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk!/lib/arm64-v8a:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_config.arm64_v8a.apk!/lib/arm64-v8a:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_config.xxhdpi.apk!/lib/arm64-v8a:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_i18n_pa.apk!/lib/arm64-v8a:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_i18n_ur.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.whatsapp
+09-22 12:49:17.431 D/nativeloader(15371): Extending system_exposed_libraries: libFacialStickerEngine.arcsoft.so:liblow_light_hdr.arcsoft.so:libhigh_dynamic_range.arcsoft.so:libFacialAttributeDetection.arcsoft.so:libBeauty_v4.camera.samsung.so:libexifa.camera.samsung.so:libjpega.camera.samsung.so:libOpenCv.camera.samsung.so:libImageScreener.camera.samsung.so:libMyFilter.camera.samsung.so:libtensorflowLite.myfilter.camera.samsung.so:libtensorflowlite_inference_api.myfilter.camera.samsung.so:libHpr_RecGAE_cvFeature_v1.0.camera.samsung.so:libHprFace_GAE_api.camera.samsung.so:libFace_Landmark_API.camera.samsung.so:libHprFace_GAE_jni.camera.samsung.so:libcolor_engine.camera.samsung.so:libDLInterface_aidl.camera.samsung.so:libImageTagger.camera.samsung.so:libSceneDetector_v1.camera.samsung.so:libQREngine.camera.samsung.so:libEventDetector.camera.samsung.so:libFood.camera.samsung.so:libFoodDetector.camera.samsung.so:libPortraitSolution.camera.samsung.so:libsrib_CNNInterface.camera.samsung.so:libsrib_humanaware_engine.camera.samsung.so:libsupernight_wrapper_
+09-22 12:49:17.485 D/SecPowerUI.Notification( 1950): showChargingNotice oldChargingType : 11 / currentChargingType : 11, oldChargingTime : 6829000 / mChargingTime : 6829000
+09-22 12:49:17.486 D/SecPowerUI.Notification( 1950): There is no change about charging status, so return!
+09-22 12:49:17.515 W/com.whatsapp(15371): Failed to find entry 'classes.dex': Entry not found
+09-22 12:49:17.517 W/com.whatsapp(15371): Failed to find entry 'classes.dex': Entry not found
+09-22 12:49:17.520 W/com.whatsapp(15371): Failed to find entry 'classes.dex': Entry not found
+09-22 12:49:17.523 W/com.whatsapp(15371): Failed to find entry 'classes.dex': Entry not found
+09-22 12:49:17.525 D/nativeloader(15371): Configuring clns-5 for other apk /data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_config.arm64_v8a.apk:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_config.xxhdpi.apk:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_i18n_pa.apk:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_i18n_ur.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/lib/arm64:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk!/lib/arm64-v8a:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_config.arm64_v8a.apk!/lib/arm64-v8a:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_config.xxhdpi.apk!/lib/arm64-v8a:/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-
+09-22 12:49:17.551 D/nativeloader(15371): Load libframework-connectivity-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity.jar: ok
+09-22 12:49:17.559 V/GraphicsEnvironment(15371): ANGLE Developer option for 'com.whatsapp' set to: 'default'
+09-22 12:49:17.559 V/GraphicsEnvironment(15371): ANGLE GameManagerService for com.whatsapp: false
+09-22 12:49:17.560 V/GraphicsEnvironment(15371): Neither updatable production driver nor prerelease driver is supported.
+09-22 12:49:17.567 D/NetworkSecurityConfig(15371): Using Network Security Config from resource (name removed) debugBuild: false
+09-22 12:49:17.574 D/NetworkSecurityConfig(15371): Using Network Security Config from resource (name removed) debugBuild: false
+09-22 12:49:17.624 D/CompatibilityChangeReporter(15371): Compat change id reported: 183155436; UID 10278; state: ENABLED
+09-22 12:49:17.630 I/FirebaseApp(15371): Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+09-22 12:49:17.648 I/FirebaseInitProvider(15371): FirebaseApp initialization successful
+09-22 12:49:17.651 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:49:17.683 I/ProcessNameUtil(15371): getMyProcessName
+09-22 12:49:17.683 I/ProcessNameUtil(15371): isSecondaryProcess/process name: com.whatsapp/processing time: 0 ms
+09-22 12:49:17.808 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0069168196]
+09-22 12:49:17.808 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.060750775]
+09-22 12:49:17.809 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.84943783]
+09-22 12:49:17.809 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.141461 msecs
+09-22 12:49:17.811 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 2.225461 msecs
+09-22 12:49:17.813 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.740384 msecs
+09-22 12:49:17.829 E/audit   (  828): type=1400 audit(1790063357.822:1768): avc:  denied  { write } for  pid=3105 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12885 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-22 12:49:17.829 E/audit   (  828): type=1300 audit(1790063357.822:1768): arch=c00000b7 syscall=203 success=no exit=-13 a0=129 a1=b40000754ece5800 a2=1e a3=ffffffff954de431 items=0 ppid=846 pid=3105 auid=4294967295 uid=10226 gid=10226 euid=10226 suid=10226 fsuid=10226 egid=10226 sgid=10226 fsgid=10226 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+09-22 12:49:17.829 E/audit   (  828): type=1327 audit(1790063357.822:1768): proctitle="com.google.android.gms"
+09-22 12:49:17.881 W/SoLoader(15371): Initializing SoLoader: 8192
+09-22 12:49:17.883 I/SoLoader(15371): Recording new base apk path: /data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk
+09-22 12:49:17.883 I/SoLoader(15371): Previously recorded 0 base apk paths.
+09-22 12:49:17.884 I/SoLoader(15371): Preparing SO source: DirectorySoSource[root = /vendor/lib64 flags = 2]
+09-22 12:49:17.884 I/SoLoader(15371): Preparing SO source: DirectorySoSource[root = /system/system_ext/lib64 flags = 2]
+09-22 12:49:17.884 I/SoLoader(15371): Preparing SO source: DirectorySoSource[root = /system/lib64 flags = 2]
+09-22 12:49:17.884 W/SoLoader(15371): SoLoader initialized: 8200
+09-22 12:49:17.893 D/nativeloader(15371): Load /data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/split_config.arm64_v8a.apk!/lib/arm64-v8a/libsuperpack.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.902 W/SoLoader(15371): Loading wa_log on the main thread
+09-22 12:49:17.909 E/audit   (  828): type=1400 audit(1790063357.902:1769): avc:  granted  { execute } for  pid=15371 comm="com.whatsapp" path="/data/data/com.whatsapp/files/decompressed/libs.spo/libwa_log.so" dev="dm-47" ino=628337 scontext=u:r:untrusted_app:s0:c22,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c22,c257,c512,c768 tclass=file SEPF_SM-A325F_12_0001 audit_filtered
+09-22 12:49:17.909 E/audit   (  828): type=1300 audit(1790063357.902:1769): arch=c00000b7 syscall=222 success=yes exit=504126377984 a0=7560461000 a1=27b8 a2=5 a3=12 items=0 ppid=846 pid=15371 auid=4294967295 uid=10278 gid=10278 euid=10278 suid=10278 fsuid=10278 egid=10278 sgid=10278 fsgid=10278 tty=(none) ses=4294967295 comm="com.whatsapp" exe="/system/bin/app_process64" subj=u:r:untrusted_app:s0:c22,c257,c512,c768 key=(null)
+09-22 12:49:17.909 E/audit   (  828): type=1327 audit(1790063357.902:1769): proctitle="com.whatsapp"
+09-22 12:49:17.910 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libwa_log.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.910 W/SoLoader(15371): Loading essential on the main thread
+09-22 12:49:17.923 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libc++_shared.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.927 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libfbjni.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.930 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libfbsofterror.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.936 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libglog.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.940 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libfb.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.941 W/SoLoader(15371): Loading fb on the main thread
+09-22 12:49:17.942 I/com.whatsapp(15371): Thread[1,tid=15371,Native,Thread*=0xb400007634b78800,peer=0x7275c7b8,"main"] recursive attempt to load library "/data/data/com.whatsapp/files/decompressed/libs.spo/libfb.so"
+09-22 12:49:17.947 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libforce_dlopen.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.954 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libessential.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.954 I/essential-jni(15371): JNI_OnLoad start
+09-22 12:49:17.954 I/essential-jni(15371): fbjni lambda running
+09-22 12:49:17.954 I/essential-jni(15371): JNI_OnLoad lambda complete
+09-22 12:49:17.972 I/SigquitBasedANRDetector(15371): Function PaletteWriteCrashThreadStacks hooked with result=0
+09-22 12:49:17.972 W/SoLoader(15371): Loading rtvip on the main thread
+09-22 12:49:17.978 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/librtvip.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.978 W/SoLoader(15371): Loading rtvip on the main thread
+09-22 12:49:17.979 E/rtvip   (15371): error 10 (0xd503245f)
+09-22 12:49:17.979 E/rtvip   (15371): error 2
+09-22 12:49:17.979 W/SoLoader(15371): Loading vlc on the main thread
+09-22 12:49:17.984 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libvlc.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.984 W/SoLoader(15371): Loading native_utils on the main thread
+09-22 12:49:17.989 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libnative_utils.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:17.989 W/SoLoader(15371): Loading curve25519 on the main thread
+09-22 12:49:17.994 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libcurve25519.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.085 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libar-bundle3.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.091 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libopus_mlow.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.098 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libqpl.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.120 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libar-bundle2.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.125 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libsimplejni.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.130 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libgraphutil.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.134 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libgraphstorecerealutil.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.165 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libwhatsappmerged.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.177 W/libc    (15371): Access denied finding property "ro.mediatek.platform"
+09-22 12:49:18.186 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libexecutorch.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.190 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libfortify.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.195 I/ChimeraAggressivePolicyHandler( 1451): executePolicy() - triggerSource: TRIGGER_SOURCE_LMKD
+09-22 12:49:18.196 I/ChimeraAggressivePolicyHandler( 1451): available memory: 2837888, free memory target: 1126400, quit chimera
+09-22 12:49:18.202 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libpyspeech.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.235 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libwhatsapp.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.239 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:49:18.241 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:49:18.241 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:49:18.290 I/WhatsAppJni(15371): EnsureThreadAttached: attached current thread to JVM
+09-22 12:49:18.317 I/WhatsAppJni(15371): EnsureThreadAttached: attached current thread to JVM
+09-22 12:49:18.318 I/WhatsAppJni(15371): EnsureThreadAttached: attached current thread to JVM
+09-22 12:49:18.337 W/ActivityManager( 1451): Background start not allowed: service Intent { act=com.whatsapp.messageservice.messaging.MessageService.START cmp=com.whatsapp/.messageservice.messaging.MessageService } to com.whatsapp/.messageservice.messaging.MessageService from pid=15371 uid=10278 pkg=com.whatsapp startFg?=false
+09-22 12:49:18.409 D/ConnectivityManager(15371): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4744)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5469)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5436)] [X.0a8.Caj(:30)] [X.0a1.handleMessage(:92)]
+09-22 12:49:18.413 D/ConnectivityService( 1451): requestNetwork for uid/pid:10278/15371 activeRequest: null callbackRequest: 814 [NetworkRequest [ REQUEST id=815, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|LOST|UNAVAIL|BLK
+09-22 12:49:18.414 D/ConnectivityService( 1451):    accepting network in place of null for NetworkRequest [ REQUEST id=815, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.418 D/WifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=815, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.418 D/UntrustedWifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=815, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.419 D/OemPaidWifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=815, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.419 D/MultiInternetWifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=815, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.419 D/ConnectivityService( 1451): Rematched networks [computed 1ms] [applied 2ms] [issued 4]
+09-22 12:49:18.419 D/ConnectivityService( 1451): NetworkReassignment :
+09-22 12:49:18.419 D/ConnectivityService( 1451):   815 : null → 100
+09-22 12:49:18.449 D/ccci_mdinit(  908): (1):monitor_time_update_thread round:200 ########
+09-22 12:49:18.459 I/PlayCore(15371): UID: [10278]  PID: [15371] SplitInstallListenerRegistry : registerListener
+09-22 12:49:18.462 D/CompatibilityChangeReporter( 1451): Compat change id reported: 161145287; UID 10278; state: DISABLED
+09-22 12:49:18.485 E/com.whatsapp(15371): No implementation found for void com.facebook.quicklog.QuickPerformanceLoggerNativeProvider.nativeUpdateQPLInstance() (tried Java_com_facebook_quicklog_QuickPerformanceLoggerNativeProvider_nativeUpdateQPLInstance and Java_com_facebook_quicklog_QuickPerformanceLoggerNativeProvider_nativeUpdateQPLInstance__) - is the library loaded, e.g. System.loadLibrary?
+09-22 12:49:18.486 W/QPLProvider(15371): QuickPerformanceLoggerProvider failed to update native QPL instance, native library. This is expected during early app initialization
+09-22 12:49:18.487 D/CompatibilityChangeReporter(15371): Compat change id reported: 160794467; UID 10278; state: ENABLED
+09-22 12:49:18.490 D/WM-PackageManagerHelper(15371): Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+09-22 12:49:18.491 D/WM-Schedulers(15371): Created SystemJobScheduler and enabled SystemJobService
+09-22 12:49:18.499 D/WM-ForceStopRunnable(15371): Is default app process = true
+09-22 12:49:18.500 D/WM-ForceStopRunnable(15371): Performing cleanup operations.
+09-22 12:49:18.540 I/ActivityManager( 1451): Killing 3512:com.android.vending:background/u0a225 (adj 999): empty #31
+09-22 12:49:18.545 D/WM-SystemJobScheduler(15371): Reconciling jobs
+09-22 12:49:18.547 I/libprocessgroup( 1451): Successfully killed process cgroup uid 10225 pid 3512 in 5ms
+09-22 12:49:18.608 I/Zygote  (  846): Process 3512 exited due to signal 9 (Killed)
+09-22 12:49:18.612 D/ConnectivityService( 1451): releasing NetworkRequest [ REQUEST id=551, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10225 RequestorUid: 10225 RequestorPkg: com.android.vending UnderlyingNetworks: Null] ] (release request)
+09-22 12:49:18.612 D/ConnectivityService( 1451):  Removing from current network [100 WIFI], leaving 144 requests.
+09-22 12:49:18.613 D/ConnectivityService( 1451): releasing NetworkRequest [ REQUEST id=545, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10225 RequestorUid: 10225 RequestorPkg: com.android.vending UnderlyingNetworks: Null] ] (release request)
+09-22 12:49:18.613 D/ConnectivityService( 1451):  Removing from current network [100 WIFI], leaving 143 requests.
+09-22 12:49:18.613 D/ConnectivityService( 1451): releasing NetworkRequest [ REQUEST id=543, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10225 RequestorUid: 10225 RequestorPkg: com.android.vending UnderlyingNetworks: Null] ] (release request)
+09-22 12:49:18.613 D/ConnectivityService( 1451):  Removing from current network [100 WIFI], leaving 142 requests.
+09-22 12:49:18.645 D/WM-ForceStopRunnable(15371): Found unfinished work, scheduling it.
+09-22 12:49:18.660 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libtigon-ue-reporter.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.665 D/CompatibilityChangeReporter(15371): Compat change id reported: 194532703; UID 10278; state: ENABLED
+09-22 12:49:18.665 D/WM-SystemJobScheduler(15371): Scheduling work ID bd2ed8d8-d841-45b0-9263-9152a113a9e8Job ID 120545
+09-22 12:49:18.666 D/CompatibilityChangeReporter( 1451): Compat change id reported: 194532703; UID 10278; state: ENABLED
+09-22 12:49:18.669 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libfbsocketthreadlocalscope.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.670 D/WM-SystemJobScheduler(15371): Scheduling work ID 5b8d9b89-7759-4d8b-85e1-5334bb351aceJob ID 120560
+09-22 12:49:18.675 D/WM-SystemJobScheduler(15371): Scheduling work ID db68dc6d-f1e5-4637-8c11-8b8a4962705dJob ID 120579
+09-22 12:49:18.675 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libfb_sqlite_3530200.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.687 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libffsingletonmerged.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:18.698 W/SoLoader(15371): SoLoader already initialized
+09-22 12:49:18.703 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb,raw:uiautomator dump /sdcard/ui.xml'
+09-22 12:49:18.704 D/WM-SystemJobScheduler(15371): Scheduling work ID 9ccc0d32-4c52-4ee6-84b0-07561e5fece4Job ID 120580
+09-22 12:49:18.715 D/WM-GreedyScheduler(15371): Starting tracking for 9ccc0d32-4c52-4ee6-84b0-07561e5fece4
+09-22 12:49:18.723 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:49:18.723 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:49:18.723 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:49:18.723 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:49:18.723 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:49:18.724 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:49:18.727 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1649, isSameBssidAndFreq true
+09-22 12:49:18.728 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:49:18.758 D/WM-ConstraintTracker(15371): GKD: initial state = NetworkState(isConnected=false, isValidated=false, isMetered=true, isNotRoaming=true)
+09-22 12:49:18.758 D/WM-NetworkStateTracker(15371): Registering network callback
+09-22 12:49:18.759 D/ConnectivityManager(15371): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4744)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5469)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5436)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5410)] [X.GKD.A03(:20)] [X.IV3.invokeSuspend(:455)] [X.IV3.invoke(:13)] [X.1bi.A00(:2)] [X.1bj.A00(:58)] [X.1Xy.invokeSuspend(:84)] [X.0oB.resumeWith(:8)] [X.0oV.run(:89)] [X.G76.run(:2)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:18.762 D/ConnectivityService( 1451): requestNetwork for uid/pid:10278/15371 activeRequest: null callbackRequest: 816 [NetworkRequest [ REQUEST id=817, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|LOST|NC
+09-22 12:49:18.763 D/ConnectivityService( 1451):    accepting network in place of null for NetworkRequest [ REQUEST id=817, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.764 D/WM-PackageManagerHelper(15371): Skipping component enablement for androidx.work.impl.background.systemalarm.RescheduleReceiver
+09-22 12:49:18.765 D/WM-NetworkStateTracker(15371): Network capabilities changed: [ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED LinkUpBandwidth>=12000Kbps LinkDnBandwidth>=60000Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, IP: /192.168.18.253, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 5, RSSI: -62, Link speed: 390Mbps, Tx Link speed: 390Mbps, Max Supported Tx Link speed: 433Mbps, Rx Link speed: 433Mbps, Max Supported Rx Link speed: 433Mbps, Frequency: 5745MHz, Net ID: -1, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: -1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>> SignalStrength: -62 UnderlyingNetworks: Null]
+09-22 12:49:18.766 D/WM-GreedyScheduler(15371): Constraints not met: Cancelling work ID WorkGenerationalId(workSpecId=9ccc0d32-4c52-4ee6-84b0-07561e5fece4, generation=0)
+09-22 12:49:18.767 D/WM-GreedyScheduler(15371): Constraints met: Scheduling work ID WorkGenerationalId(workSpecId=9ccc0d32-4c52-4ee6-84b0-07561e5fece4, generation=0)
+09-22 12:49:18.768 D/WifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=817, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.768 D/UntrustedWifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=817, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.769 D/OemPaidWifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=817, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.769 D/MultiInternetWifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=817, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:18.769 D/ConnectivityService( 1451): Rematched networks [computed 1ms] [applied 3ms] [issued 3]
+09-22 12:49:18.769 D/ConnectivityService( 1451): NetworkReassignment :
+09-22 12:49:18.769 D/ConnectivityService( 1451):   817 : null → 100
+09-22 12:49:18.773 D/WM-Processor(15371): I0r: processing WorkGenerationalId(workSpecId=9ccc0d32-4c52-4ee6-84b0-07561e5fece4, generation=0)
+09-22 12:49:18.791 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.0052173557]
+09-22 12:49:18.791 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.20265499]
+09-22 12:49:18.791 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.70932144]
+09-22 12:49:18.791 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.797846 msecs
+09-22 12:49:18.793 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.029539 msecs
+09-22 12:49:18.794 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.989231 msecs
+09-22 12:49:18.795 D/WM-WorkerWrapper(15371): Starting work for com.whatsapp.networkavailable.service.RestoreChatConnectionWorker
+09-22 12:49:18.804 D/NetdEventListenerService( 1451): DNS Requested by : 100, 10278, 4, true
+09-22 12:49:18.826 E/msys    (15371): E[N mns:TigonMNS]_LogError(356)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+09-22 12:49:18.831 D/NetdEventListenerService( 1451): DNS Requested by : 100, 10278, 4, true
+09-22 12:49:18.833 E/msys    (15371): E[N mns:TigonMNS]_LogError(356)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+09-22 12:49:18.846 E/audit   (  828): type=1400 audit(1790063358.842:1798): avc:  denied  { write } for  pid=3578 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12885 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-22 12:49:18.846 E/audit   (  828): type=1300 audit(1790063358.842:1798): arch=c00000b7 syscall=203 success=no exit=-13 a0=67 a1=b40000754eb74980 a2=1e a3=ffffffff954de431 items=0 ppid=846 pid=3578 auid=4294967295 uid=9510226 gid=9510226 euid=9510226 suid=9510226 fsuid=9510226 egid=9510226 sgid=9510226 fsgid=9510226 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+09-22 12:49:18.846 E/audit   (  828): type=1327 audit(1790063358.842:1798): proctitle="com.google.android.gms"
+09-22 12:49:18.851 W/ActivityManager( 1451): Background started FGS: Disallowed [callingPackage: com.whatsapp; callingUid: 10278; uidState: CEM ; intent: Intent { cmp=com.whatsapp/.messaging.service.GcmFGService }; code:DENIED; tempAllowListReason:<null>; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:0; bindFromPackage:null]
+09-22 12:49:18.851 D/CompatibilityChangeReporter( 1451): Compat change id reported: 170668199; UID 10278; state: ENABLED
+09-22 12:49:18.851 W/ActivityManager( 1451): startForegroundService() not allowed due to mAllowStartForeground false: service com.whatsapp/.messaging.service.GcmFGService
+09-22 12:49:18.851 D/CompatibilityChangeReporter( 1451): Compat change id reported: 174041399; UID 10278; state: ENABLED
+09-22 12:49:18.852 I/DropBoxManagerService( 1451): add tag=system_server_wtf isTagEnabled=true flags=0x2
+09-22 12:49:18.852 W/DropBoxManagerService( 1451): Dropping: system_server_wtf (1212 > 0 bytes)
+09-22 12:49:18.874 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.874 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.875 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.875 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.875 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.875 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.876 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.876 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.876 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.876 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.876 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.876 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.877 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.877 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.877 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.877 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.879 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.879 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.879 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.879 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.880 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.880 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.881 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.881 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.881 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.881 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.882 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.882 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.883 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.883 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.883 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.883 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.884 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.884 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.884 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.884 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.885 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.885 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.885 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.885 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.886 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.886 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.887 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.887 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.887 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.887 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.888 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.888 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.888 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.888 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.889 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.889 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.889 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.889 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.890 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.890 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.890 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.890 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.890 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.891 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.891 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.891 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.892 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.892 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.892 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.892 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.893 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.893 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.893 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.893 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.894 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.894 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.894 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.894 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.894 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.894 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.895 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.895 E/msys    (15371): E[ADNSUCTIMHO WAJMNSRuntime]WAJContextInitMNSRuntime(480)=>[LogLevel:I] Secondary DNS resolver enabled
+09-22 12:49:18.895 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.895 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.895 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.897 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.897 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.897 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.897 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.898 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.898 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.898 E/msys    (15371): E[N WA]_WAJMNSStreamImplMNSTCPStreamCreate(410)=>[LogLevel:I] WAJMNSStream/impl/tcpStreamCreate/MNSStreamRaw/p=0xb4000074c0343d00
+09-22 12:49:18.898 E/msys    (15371): E[N WA]WAJMNSStreamImplCreate(485)=>[LogLevel:I] WAJMNSStream/impl/create/p=0xb4000074c0343d00 (mnsConn=0xb4000074c0342f80)
+09-22 12:49:18.898 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.899 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.899 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.899 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.900 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.900 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.900 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.900 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.900 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.901 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.901 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.901 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.901 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.901 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.902 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.902 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.902 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.902 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.902 E/msys    (15371): E[N WA]_WAJMNSStreamCreateMnsIpsFromIpAddressStrings(98)=>[LogLevel:I] no ip addresses provided, using DNS resolution
+09-22 12:49:18.902 E/msys    (15371): E[N WA]WAJMNSStreamImplConnect(513)=>[LogLevel:I] WAJMNSStream/impl/connect/p=0xb4000074c0343d00 (endpoint=g.whatsapp.net:443)(ipAddressCount=0)
+09-22 12:49:18.902 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.902 E/msys    (15371): E[N WA]_WAJMNSStreamImplUpdateStreamState(238)=>[LogLevel:I] WAJMNSStream/impl/state-changed/p=0xb4000074c0343d00 (initial=>connecting)
+09-22 12:49:18.903 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.903 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.903 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.903 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.903 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.904 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.904 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.904 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.904 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.904 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.904 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.904 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.905 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.905 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.905 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-22 12:49:18.906 E/msys    (15371): E[N mns]_LogError(356)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+09-22 12:49:18.906 D/NetdEventListenerService( 1451): DNS Requested by : 100, 10278, 4, true
+09-22 12:49:18.907 E/msys    (15371): E[N mns]_TryFallbackToSecondary(847)=>Falling back to secondary DNS resolver
+09-22 12:49:18.926 D/AndroidRuntime(15440): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-22 12:49:18.928 D/io_stats(  590): !@ 179,0 r 2115333 31097958 w 995904 13038200 d 0 0 f 0 0 iot 848356 0 th 0 0 0 pt 0 inp 0 0 5936.690
+09-22 12:49:18.932 E/msys    (15371): E[N mns]_LogError(356)=>Failed to resolve using secondary DNS resolver, ares error: Could not contact DNS servers, timeouts: 0
+09-22 12:49:18.938 I/AndroidRuntime(15440): Using default boot image
+09-22 12:49:18.938 I/AndroidRuntime(15440): Leaving lock profiling enabled
+09-22 12:49:18.939 D/SecNativeFeatureCppIf(15440): encoded
+09-22 12:49:18.939 D/SecNativeFeatureCppIf(15440): decoding and unzip finish
+09-22 12:49:18.939 D/SecNativeFeatureCppIf(15440): use unCompDataBuff. encoded
+09-22 12:49:18.939 D/SecNativeFeatureCppIf(15440): Free unCompDataBuff
+09-22 12:49:18.939 D/AndroidRuntime(15440): addProductProperty: pBrand1 is not null
+09-22 12:49:18.939 D/AndroidRuntime(15440): addProductProperty: not brand or 7
+09-22 12:49:18.946 I/app_process(15440): Using generational CollectorTypeCC GC.
+09-22 12:49:19.082 D/nativeloader(15440): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+09-22 12:49:19.117 D/IpClient/wlan0( 1929): interfaceLinkStateChanged: ifindex 40 up
+09-22 12:49:19.119 D/nativeloader(15440): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-22 12:49:19.119 D/app_process(15440): Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+09-22 12:49:19.119 D/app_process(15440): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+09-22 12:49:19.122 D/nativeloader(15440): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-22 12:49:19.125 D/nativeloader(15440): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-22 12:49:19.127 I/app_process(15440): Priority-to-niceness mapping: 19, 16, 13, 10, 0, -2, -4, -5, -6, -8
+09-22 12:49:19.135 D/SettingsProvider( 1451): isChangeAllowed() : name = enabled_notification_listeners
+09-22 12:49:19.164 E/SemDvfsManager_JNI(15440): SemDvfsManager: registerfunction enter
+09-22 12:49:19.164 E/SemAffinityControl(15440): SemAffinityControl: registerfunction enter
+09-22 12:49:19.188 D/nativeloader(15440): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+09-22 12:49:19.189 D/AndroidRuntime(15440): Calling main entry com.android.commands.uiautomator.Launcher
+09-22 12:49:19.200 I/SurfaceFlinger(  904): id=573 createSurf flag=80004, WindowToken{4b4f9d6 type=2032 android.os.Binder@8dba9f1}#573
+09-22 12:49:19.202 D/SettingsProvider( 1451): isChangeAllowed() : name = accessibility_enabled
+09-22 12:49:19.203 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:49:19.203 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:49:19.203 D/WindowMagnificationMgr( 1451): requestConnection :false mConnectionState : 3
+09-22 12:49:19.204 W/WindowMagnificationMgr( 1451): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-22 12:49:19.207 D/SettingsProvider( 1451): isChangeAllowed() : name = accessibility_enabled
+09-22 12:49:19.207 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:49:19.207 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:49:19.207 D/WindowMagnificationMgr( 1451): requestConnection :false mConnectionState : 3
+09-22 12:49:19.207 W/WindowMagnificationMgr( 1451): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-22 12:49:19.209 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:0.464689,dur:6455.93,max:6139.08,min:99.00  
+09-22 12:49:19.219 I/AccessibilityManagerService( 1451): semIsAccessibilityServiceEnabled()
+09-22 12:49:19.219 I/AccessibilityManagerService( 1451): semIsAccessibilityServiceEnabled()
+09-22 12:49:19.220 W/WindowManager( 1451): Cannot find window which accessibility connection is added to
+09-22 12:49:19.220 D/AS.AudioService( 1451): Accessibility volume enabled = false
+09-22 12:49:19.220 I/SafetyCenterAccessibilityListener(13387): accessibility event occurred, safety center feature not enabled.
+09-22 12:49:19.220 D/BatterySaverPolicy( 1451): accessibility changed to true, updating policy.
+09-22 12:49:19.223 I/mtkpower@impl(  873): [setMode] type:1, enabled:1
+09-22 12:49:19.224 E/mtkpower@impl(  873): [setMode] unknown type
+09-22 12:49:19.224 D/BatterySaverController( 1451): send ACTION_POWER_SAVE_MODE_CHANGED
+09-22 12:49:19.224 D/BatterySaverController( 1451): send ACTION_POWER_SAVE_MODE_CHANGED_INTERNAL
+09-22 12:49:19.227 I/AiAiCaptions( 3812): onReceive(): Battery saver mode turned on.
+09-22 12:49:19.230 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: BATTERY_STATS: true
+09-22 12:49:19.230 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: ANIMATION: false
+09-22 12:49:19.231 I/ActivityScheduler( 2224): nextTriggerTime: 5977839, in 40846ms, detectorType: 39, FULL_TYPE alarmWindowMillis: 7500
+09-22 12:49:19.231 I/TouchInteractionService( 2341): onActiveNavBarRegionChanges, region : SkRegion((0,2274,388,2400)(389,2274,690,2400)(691,2274,961,2400))
+09-22 12:49:19.231 V/Navbar.Store( 1950): ----handleEvent(0) OnUpdateRemoteViewContainer(leftContainer=android.widget.LinearLayout{40b00f0 I.E...... ......I. 0,0-118,126 #7f0b04f6 app:id/left_remoteview}, rightContainer=android.widget.LinearLayout{c98b669 I.E...... ......I. 962,0-1080,126 #7f0b07aa app:id/right_remoteview}, contextualButtonVisible=false, darkIntensity=0.0) [Module] SamsungNavigationBarView
+09-22 12:49:19.231 V/Navbar.Store( 1950): ------[Band]REMOTE_VIEW_PACK_SET_REMOTEVIEW_CONTAINER
+09-22 12:49:19.231 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: VIBRATION: false
+09-22 12:49:19.231 V/Navbar.Store( 1950): --------apply(0) UpdateRemoteViewContainer
+09-22 12:49:19.232 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: false
+09-22 12:49:19.232 I/SelfLocationFetcher( 3497): Device is opted-out of last known location reporting. [CONTEXT service_id=284 ]
+09-22 12:49:19.232 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_ALL_APPS_STANDBY: true
+09-22 12:49:19.232 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-22 12:49:19.232 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-22 12:49:19.232 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_BACKGROUND_CHECK: true
+09-22 12:49:19.232 V/Navbar.Store( 1950): --------apply(0) UpdateRemoteViewDarkIntensity
+09-22 12:49:19.232 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: NETWORK_FIREWALL: true
+09-22 12:49:19.232 V/Navbar.Store( 1950): handleEvent(0) OnNavBarUpdateA11YService(clickable=false, longClickable=false) [Module] NavigationBar
+09-22 12:49:19.232 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: DATA_SAVER: false
+09-22 12:49:19.232 V/Navbar.Store( 1950): --[Band]SETUPWIZARD_PACK_UPDATE_A11Y_SERVICE
+09-22 12:49:19.232 I/AODTileStateController( 1950): onReceive: BR = [android.os.action.POWER_SAVE_MODE_CHANGED]
+09-22 12:49:19.232 I/AODTileStateController( 1950): requestListeningState: 
+09-22 12:49:19.233 D/StatusBarManagerService( 1451): isSecCustomTile : componentName =ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-22 12:49:19.233 I/SelfLocationFetcher( 2224): Starting self-location fetching naive strategy. [CONTEXT service_id=284 ]
+09-22 12:49:19.233 W/PersonalSafety( 2224): Auto detection is null. Ignoring power-saver updates. [CONTEXT service_id=310 ]
+09-22 12:49:19.233 I/PersonalSafety( 2224): (REDACTED) [Settings] power saver mode changed to %s
+09-22 12:49:19.234 W/PowerUI ( 1950): unknown intent: Intent { act=android.os.action.POWER_SAVE_MODE_CHANGED flg=0x40000010 }
+09-22 12:49:19.241 I/TouchInteractionService( 2341): onActiveNavBarRegionChanges, region : SkRegion((0,2274,388,2400)(389,2274,690,2400)(691,2274,961,2400))
+09-22 12:49:19.241 D/TileServices( 1950): Couldn't find tile for ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-22 12:49:19.294 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.012045917]
+09-22 12:49:19.295 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.09154796]
+09-22 12:49:19.295 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.8448873]
+09-22 12:49:19.295 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.828 msecs
+09-22 12:49:19.296 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.271692 msecs
+09-22 12:49:19.298 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.094461 msecs
+09-22 12:49:19.298 I/SemWifiServiceDetector( 1451): NSD results: [0, 1, 2, 0, 0, 1, 1, 3, 0] Traff. type 1 Thr 0
+09-22 12:49:19.299 D/SemWifiOptimizer( 1451): enable=0 state=0x10 prev=0x10 new=0x00 force=0 mode=0
+09-22 12:49:19.613 I/WifiConnectivityMonitor.NetworkStatsAnalyzer( 1451): pull out the line???
+09-22 12:49:19.768 D/BoundBrokerSvc( 2224): onUnbind: Intent { act=com.google.android.gms.auth.aang.events.services.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentApiService }
+09-22 12:49:19.800 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.005825555]
+09-22 12:49:19.800 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.34206083]
+09-22 12:49:19.801 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.63855565]
+09-22 12:49:19.801 D/SemNscXgbMsL1( 1451): 1 sample inference time: 1.157615 msecs
+09-22 12:49:19.803 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 2.15877 msecs
+09-22 12:49:19.805 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 1.771615 msecs
+09-22 12:49:19.923 D/WifiConnectivityMonitor.DnsThread( 1451):  [|205] []
+09-22 12:49:19.924 D/WifiConnectivityMonitor.NetworkStatsAnalyzer( 1451): DNS resultType : 0, responseTime : 205
+09-22 12:49:19.924 D/OpenNetworkQos[4.00]( 1451): updateBssidLatestDnsResultType - result: 0
+09-22 12:49:19.924 D/OpenNetworkQos[4.00]( 1451): updateBssidNoInternet: mBssidNoInternet = false
+09-22 12:49:19.924 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosNoInternetStatus: false
+09-22 12:49:19.924 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosScores: 26 30 30 
+09-22 12:49:19.924 D/SettingsProvider( 1451): isChangeAllowed() : name = wifi_wcm_qos_sharing_score_summary
+09-22 12:49:19.925 I/WifiProfileShare( 1451): network QoS data was changed (internet), updateQoSData networkType: true, qosData: false
+09-22 12:49:19.925 V/WifiProfileShare.Caster( 1451): update wips network, size: 0
+09-22 12:49:19.926 D/WifiProfileShare( 1451): nearby scanning settings run
+09-22 12:49:19.926 D/WifiProfileShare( 1451): network score provider settings enabled
+09-22 12:49:19.926 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosScores: 26 30 30 
+09-22 12:49:19.926 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosNoInternetStatus: false
+09-22 12:49:19.926 I/WifiProfileShare.Caster( 1451): current network type: 0, score: [26, 30, 30]
+09-22 12:49:19.927 V/WifiProfileShare.Cache( 1451): update network score 22:87:ec:**:**:08
+09-22 12:49:19.928 D/WifiProfileShare.ScanMatcher( 1451): getMcfDataList size:1
+09-22 12:49:19.928 I/WifiProfileShare.Caster( 1451): qos data was updated , before:type:QOS, pBssid:6a:c4:2a, qosData:7c after:type:QOS, pBssid:6a:c4:2a, qosData:7c
+09-22 12:49:19.930 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-22 12:49:19.930 D/WifiProfileShare.McfCast( 1451): -ME--- mIsNetworkEnabled :true
+09-22 12:49:19.930 D/WifiProfileShare.McfCast( 1451): updateQoSData ignored, same contents
+09-22 12:49:19.930 D/WifiProfileShare.MCF( 1451): success update QosData !
+09-22 12:49:19.931 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-22 12:49:19.931 D/WifiProfileShare.McfCast( 1451): -ME--- mIsNetworkEnabled :true
+09-22 12:49:19.931 D/WifiProfileShare.McfCast( 1451): -ME--- updatePasswordDate pwdData size:1
+09-22 12:49:20.232 D/SemCscFeature(15440): Encoded
+09-22 12:49:20.246 I/AccessibilityNodeInfoDumper(15440): Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@8476; boundsInParent: Rect(0, 0 - 1080, 2400); boundsInScreen: Rect(0, 0 - 1080, 2400); packageName: com.sec.android.app.launcher; className: android.view.View; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: com.sec.android.app.launcher:id/capture_blur_view; uniqueId: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: false; visible: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]; isTextSelectable: false
+09-22 12:49:20.247 I/AccessibilityNodeInfoDumper(15440): Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@23f6c; boundsInParent: Rect(0, 0 - 1026, 1797); boundsInScreen: Rect(0, 134 - -1075, 1931); packageName: com.sec.android.app.launcher; className: android.view.ViewGroup; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; uniqueId: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: true; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: false; visible: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_LONG_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]; isTextSelectable: false
+09-22 12:49:20.247 I/AccessibilityNodeInfoDumper(15440): Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@273fa; boundsInParent: Rect(0, 0 - 1026, 1797); boundsInScreen: Rect(0, 134 - -11, 1931); packageName: com.sec.android.app.launcher; className: android.view.ViewGroup; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; uniqueId: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: true; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: false; visible: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_LONG_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]; isTextSelectable: false
+09-22 12:49:20.252 D/CompatibilityChangeReporter(15371): Compat change id reported: 147600208; UID 10278; state: ENABLED
+09-22 12:49:20.254 D/CompatibilityChangeReporter( 1451): Compat change id reported: 157233955; UID 10278; state: ENABLED
+09-22 12:49:20.300 I/AccessibilityNodeInfoDumper(15440): Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@264f6; boundsInParent: Rect(0, 0 - 50, 50); boundsInScreen: Rect(434, 1942 - 484, 1992); packageName: com.sec.android.app.launcher; className: android.widget.ImageView; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: com.sec.android.app.launcher:id/active; uniqueId: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: false; visible: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]; isTextSelectable: false
+09-22 12:49:20.306 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.01099197]
+09-22 12:49:20.306 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.5095246]
+09-22 12:49:20.306 I/AccessibilityNodeInfoDumper(15440): Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@27039; boundsInParent: Rect(0, 0 - 50, 50); boundsInScreen: Rect(488, 1942 - 538, 1992); packageName: com.sec.android.app.launcher; className: android.widget.ImageView; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: com.sec.android.app.launcher:id/active; uniqueId: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: false; visible: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]; isTextSelectable: false
+09-22 12:49:20.306 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.65710413]
+09-22 12:49:20.306 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.600616 msecs
+09-22 12:49:20.307 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.037539 msecs
+09-22 12:49:20.308 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.812538 msecs
+09-22 12:49:20.312 I/AccessibilityNodeInfoDumper(15440): Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@29984; boundsInParent: Rect(0, 0 - 50, 50); boundsInScreen: Rect(542, 1942 - 592, 1992); packageName: com.sec.android.app.launcher; className: android.widget.ImageView; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: com.sec.android.app.launcher:id/active; uniqueId: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: false; visible: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]; isTextSelectable: false
+09-22 12:49:20.316 I/AccessibilityNodeInfoDumper(15440): Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@2bf0e; boundsInParent: Rect(0, 0 - 50, 50); boundsInScreen: Rect(596, 1942 - 646, 1992); packageName: com.sec.android.app.launcher; className: android.widget.ImageView; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: com.sec.android.app.launcher:id/inactive; uniqueId: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: false; visible: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]; isTextSelectable: false
+09-22 12:49:20.330 I/AccessibilityNodeInfoDumper(15440): Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@9ebd; boundsInParent: Rect(0, 0 - 0, 0); boundsInScreen: Rect(540, 2238 - 540, 2238); packageName: com.sec.android.app.launcher; className: android.view.View; text: null; error: null; maxTextLength: -1; stateDescription: null; contentDescription: null; tooltipText: null; viewIdResName: null; uniqueId: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; importantForAccessibility: false; visible: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]; isTextSelectable: false
+09-22 12:49:20.332 W/AccessibilityNodeInfoDumper(15440): Fetch time: 96ms
+09-22 12:49:20.334 D/SettingsProvider( 1451): isChangeAllowed() : name = accessibility_enabled
+09-22 12:49:20.335 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:49:20.335 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:49:20.335 D/WindowMagnificationMgr( 1451): requestConnection :false mConnectionState : 3
+09-22 12:49:20.335 W/WindowMagnificationMgr( 1451): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-22 12:49:20.336 D/SettingsProvider( 1451): isChangeAllowed() : name = accelerometer_rotation
+09-22 12:49:20.336 D/SettingsProvider( 1451): isChangeAllowed() : name = user_rotation
+09-22 12:49:20.337 V/WindowManager( 1451): rotationForOrientation(orient=SCREEN_ORIENTATION_NOSENSOR (5), last=ROTATION_0 (0)); user=ROTATION_0 (0) 
+09-22 12:49:20.337 D/WindowManager( 1451): rotationForOrientation, orientationSource=ActivityRecord{239ab2b u0 com.sec.android.app.launcher/.activities.LauncherActivity} t533}
+09-22 12:49:20.338 V/WindowManager( 1451): Computed rotation=ROTATION_0 (0) for display id=0 based on lastOrientation=SCREEN_ORIENTATION_NOSENSOR (5) and oldRotation=ROTATION_0 (0), caller=com.android.server.wm.DisplayContent.updateRotationUnchecked:2410 com.android.server.wm.WindowManagerService.updateRotationUnchecked:4778 com.android.server.wm.WindowManagerService.thawDisplayRotation:4719 com.android.server.wm.WindowManagerService.thawRotation:4683 android.view.IWindowManager$Stub.onTransact:2536 com.android.server.wm.WindowManagerService.onTransact:1608 
+09-22 12:49:20.343 D/AndroidRuntime(15440): Shutting down VM
+09-22 12:49:20.346 W/WindowManager( 1451): Cannot find window which accessibility connection is added to
+09-22 12:49:20.348 D/BatterySaverPolicy( 1451): accessibility changed to false, updating policy.
+09-22 12:49:20.349 I/mtkpower@impl(  873): [setMode] type:1, enabled:1
+09-22 12:49:20.349 E/mtkpower@impl(  873): [setMode] unknown type
+09-22 12:49:20.349 D/BatterySaverController( 1451): send ACTION_POWER_SAVE_MODE_CHANGED
+09-22 12:49:20.350 D/BatterySaverController( 1451): send ACTION_POWER_SAVE_MODE_CHANGED_INTERNAL
+09-22 12:49:20.351 W/PowerUI ( 1950): unknown intent: Intent { act=android.os.action.POWER_SAVE_MODE_CHANGED flg=0x40000010 }
+09-22 12:49:20.352 I/AODTileStateController( 1950): onReceive: BR = [android.os.action.POWER_SAVE_MODE_CHANGED]
+09-22 12:49:20.353 I/AODTileStateController( 1950): requestListeningState: 
+09-22 12:49:20.353 D/StatusBarManagerService( 1451): isSecCustomTile : componentName =ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-22 12:49:20.353 I/AiAiCaptions( 3812): onReceive(): Battery saver mode turned on.
+09-22 12:49:20.353 D/TileServices( 1950): Couldn't find tile for ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-22 12:49:20.355 I/Layer   (  904): id=573 removeFromCurrentState WindowToken{4b4f9d6 type=2032 android.os.Binder@8dba9f1}#573 (113)
+09-22 12:49:20.356 I/SurfaceFlinger(  904): id=573 Removed WindowToken{4b4f9d6 type=2032 android.os.Binder@8dba9f1}#573 (113)
+09-22 12:49:20.356 I/Layer   (  904): id=573 Destroyed WindowToken{4b4f9d6 type=2032 android.os.Binder@8dba9f1}#573
+09-22 12:49:20.357 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: BATTERY_STATS: true
+09-22 12:49:20.357 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: ANIMATION: false
+09-22 12:49:20.358 I/ActivityScheduler( 2224): nextTriggerTime: 5977839, in 39719ms, detectorType: 39, FULL_TYPE alarmWindowMillis: 7500
+09-22 12:49:20.358 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:2.609858,dur:1149.49,max:1116.64,min:14.90  
+09-22 12:49:20.359 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: VIBRATION: true
+09-22 12:49:20.359 D/VibratorManagerService( 1451): Updating device state...
+09-22 12:49:20.361 I/SelfLocationFetcher( 3497): Device is opted-out of last known location reporting. [CONTEXT service_id=284 ]
+09-22 12:49:20.361 W/PersonalSafety( 2224): Auto detection is null. Ignoring power-saver updates. [CONTEXT service_id=310 ]
+09-22 12:49:20.361 I/SelfLocationFetcher( 2224): Starting self-location fetching naive strategy. [CONTEXT service_id=284 ]
+09-22 12:49:20.361 I/PersonalSafety( 2224): (REDACTED) [Settings] power saver mode changed to %s
+09-22 12:49:20.361 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: false
+09-22 12:49:20.361 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_ALL_APPS_STANDBY: true
+09-22 12:49:20.361 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-22 12:49:20.361 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-22 12:49:20.361 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_BACKGROUND_CHECK: true
+09-22 12:49:20.362 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: NETWORK_FIREWALL: true
+09-22 12:49:20.362 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: DATA_SAVER: false
+09-22 12:49:20.460 D/WM-SystemJobScheduler(15371): Scheduling work ID c6d04930-8c1c-4299-941f-408da29c7525Job ID 120581
+09-22 12:49:20.481 D/WM-SystemJobScheduler(15371): Scheduling work ID 23769145-43ec-477b-a9d0-db58c8d69c30Job ID 120582
+09-22 12:49:20.485 D/WM-GreedyScheduler(15371): Starting tracking for 23769145-43ec-477b-a9d0-db58c8d69c30
+09-22 12:49:20.488 D/WM-GreedyScheduler(15371): Constraints met: Scheduling work ID WorkGenerationalId(workSpecId=23769145-43ec-477b-a9d0-db58c8d69c30, generation=0)
+09-22 12:49:20.490 D/WM-Processor(15371): I0r: processing WorkGenerationalId(workSpecId=23769145-43ec-477b-a9d0-db58c8d69c30, generation=0)
+09-22 12:49:20.507 D/WM-SystemJobScheduler(15371): Scheduling work ID 471158ec-251b-4e78-a07d-a5c4ab7b0e9eJob ID 120583
+09-22 12:49:20.520 D/WM-WorkerWrapper(15371): Starting work for com.whatsapp.stickers.stickerpack.FetchDiscoveryPackWorker
+09-22 12:49:20.528 I/WM-WorkerWrapper(15371): Worker result SUCCESS for Work [ id=23769145-43ec-477b-a9d0-db58c8d69c30, tags={ com.whatsapp.stickers.stickerpack.FetchDiscoveryPackWorker } ]
+09-22 12:49:20.529 D/PackageManager( 1451): setEnabledSetting : userId = 0 packageName = com.whatsapp cmp = com.whatsapp.car.androidauto.WhatsAppCarAppService newState = 1 callingPackage = 10278/com.whatsapp
+09-22 12:49:20.530 D/ApplicationPolicy( 1451): getApplicationStateEnabled : pkg = com.whatsapp userId : 0
+09-22 12:49:20.531 D/ApplicationPolicy( 1451): getApplicationComponentState : pkg = com.whatsapp userId : 0
+09-22 12:49:20.532 D/WM-Processor(15371): I0r 23769145-43ec-477b-a9d0-db58c8d69c30 executed; reschedule = false
+09-22 12:49:20.533 D/WM-GreedyScheduler(15371): Stopping tracking for WorkGenerationalId(workSpecId=23769145-43ec-477b-a9d0-db58c8d69c30, generation=0)
+09-22 12:49:20.542 D/CompatibilityChangeReporter( 1451): Compat change id reported: 177438394; UID 10224; state: DISABLED
+09-22 12:49:20.542 D/WM-GreedyScheduler(15371): Cancelling work ID 23769145-43ec-477b-a9d0-db58c8d69c30
+09-22 12:49:20.542 D/CompatibilityChangeReporter( 1451): Compat change id reported: 135772972; UID 10224; state: DISABLED
+09-22 12:49:20.542 D/CompatibilityChangeReporter( 1451): Compat change id reported: 135754954; UID 10224; state: ENABLED
+09-22 12:49:20.543 D/CompatibilityChangeReporter( 1451): Compat change id reported: 143937733; UID 10224; state: ENABLED
+09-22 12:49:20.544 E/audit   (  828): type=1400 audit(1790063360.538:1799): avc:  granted  { execute } for  pid=15371 comm=576861747341707020576F726B6572 path="/data/data/com.whatsapp/files/decompressed/libs.spo/libdav1d.so" dev="dm-47" ino=903749 scontext=u:r:untrusted_app:s0:c22,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c22,c257,c512,c768 tclass=file SEPF_SM-A325F_12_0001 audit_filtered
+09-22 12:49:20.544 E/audit   (  828): type=1300 audit(1790063360.538:1799): arch=c00000b7 syscall=222 success=yes exit=500569407488 a0=748c430000 a1=61d60 a2=5 a3=12 items=0 ppid=846 pid=15371 auid=4294967295 uid=10278 gid=10278 euid=10278 suid=10278 fsuid=10278 egid=10278 sgid=10278 fsgid=10278 tty=(none) ses=4294967295 comm=576861747341707020576F726B6572 exe="/system/bin/app_process64" subj=u:r:untrusted_app:s0:c22,c257,c512,c768 key=(null)
+09-22 12:49:20.544 E/audit   (  828): type=1327 audit(1790063360.538:1799): proctitle="com.whatsapp"
+09-22 12:49:20.546 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libdav1d.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:20.551 E/audit   (  828): type=1400 audit(1790063360.546:1800): avc:  granted  { execute } for  pid=15371 comm=576861747341707020576F726B6572 path="/data/data/com.whatsapp/files/decompressed/libs.spo/libwzav1.so" dev="dm-47" ino=868653 scontext=u:r:untrusted_app:s0:c22,c257,c512,c768 tcontext=u:object_r:app_data_file:s0:c22,c257,c512,c768 tclass=file SEPF_SM-A325F_12_0001 audit_filtered
+09-22 12:49:20.551 E/audit   (  828): type=1300 audit(1790063360.546:1800): arch=c00000b7 syscall=222 success=yes exit=500567977984 a0=748c2d3000 a1=10eb60 a2=5 a3=12 items=0 ppid=846 pid=15371 auid=4294967295 uid=10278 gid=10278 euid=10278 suid=10278 fsuid=10278 egid=10278 sgid=10278 fsgid=10278 tty=(none) ses=4294967295 comm=576861747341707020576F726B6572 exe="/system/bin/app_process64" subj=u:r:untrusted_app:s0:c22,c257,c512,c768 key=(null)
+09-22 12:49:20.552 D/nativeloader(15371): Load /data/data/com.whatsapp/files/decompressed/libs.spo/libwzav1.so using class loader ns clns-5 (caller=/data/app/~~F1k0RAdufPqXO1BT8aXq4w==/com.whatsapp-8FiXtwfrJ3geXh3k_OYZvg==/base.apk): ok
+09-22 12:49:20.557 D/Zygote  (  846): Forked child process 15492
+09-22 12:49:20.558 I/ActivityManager( 1451): Start proc 15492:com.google.android.projection.gearhead:provider/u0a224 for content provider {com.google.android.projection.gearhead/com.google.android.apps.auto.components.projectionstate.ProjectionStateProvider}
+09-22 12:49:20.589 I/arhead:provider(15492): Using generational CollectorTypeCC GC.
+09-22 12:49:20.597 I/adbd    (24013): jdwp connection from 15492
+09-22 12:49:20.602 D/nativeloader(15492): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+09-22 12:49:20.605 D/ActivityThread(15492): setConscryptValidator
+09-22 12:49:20.605 D/ActivityThread(15492): setConscryptValidator - put
+09-22 12:49:20.609 D/CompatibilityChangeReporter( 1451): Compat change id reported: 168419799; UID 10224; state: DISABLED
+09-22 12:49:20.611 I/ActivityManager( 1451): DSS OFF for com.google.android.projection.gearhead
+09-22 12:49:20.620 D/CompatibilityChangeReporter(15492): Compat change id reported: 171979766; UID 10224; state: ENABLED
+09-22 12:49:20.687 D/PackageManager( 1451): setEnabledSetting : userId = 0 packageName = com.whatsapp cmp = com.whatsapp.contact.ui.picker.ExternalShareAlias newState = 1 callingPackage = 10278/com.whatsapp
+09-22 12:49:20.688 D/ApplicationPolicy( 1451): getApplicationStateEnabled : pkg = com.whatsapp userId : 0
+09-22 12:49:20.689 D/ApplicationPolicy( 1451): getApplicationComponentState : pkg = com.whatsapp userId : 0
+09-22 12:49:20.695 W/arhead:provider(15492): Failed to find entry 'classes.dex': Entry not found
+09-22 12:49:20.698 W/arhead:provider(15492): Failed to find entry 'classes.dex': Entry not found
+09-22 12:49:20.703 W/arhead:provider(15492): Failed to find entry 'classes.dex': Entry not found
+09-22 12:49:20.705 D/nativeloader(15492): Configuring clns-4 for other apk /data/app/~~AeQtr-xInlgZegDdVEdN9Q==/com.google.android.projection.gearhead-1KtbQEQa0vcdTP9-I1sYVg==/base.apk:/data/app/~~AeQtr-xInlgZegDdVEdN9Q==/com.google.android.projection.gearhead-1KtbQEQa0vcdTP9-I1sYVg==/split_config.arm64_v8a.apk:/data/app/~~AeQtr-xInlgZegDdVEdN9Q==/com.google.android.projection.gearhead-1KtbQEQa0vcdTP9-I1sYVg==/split_config.en.apk:/data/app/~~AeQtr-xInlgZegDdVEdN9Q==/com.google.android.projection.gearhead-1KtbQEQa0vcdTP9-I1sYVg==/split_config.xxhdpi.apk. target_sdk_version=37, uses_libraries=, library_path=/data/app/~~AeQtr-xInlgZegDdVEdN9Q==/com.google.android.projection.gearhead-1KtbQEQa0vcdTP9-I1sYVg==/lib/arm64:/data/app/~~AeQtr-xInlgZegDdVEdN9Q==/com.google.android.projection.gearhead-1KtbQEQa0vcdTP9-I1sYVg==/base.apk!/lib/arm64-v8a:/data/app/~~AeQtr-xInlgZegDdVEdN9Q==/com.google.android.projection.gearhead-1KtbQEQa0vcdTP9-I1sYVg==/split_config.arm64_v8a.apk!/lib/arm64-v8a:/data/app/~~AeQtr-xInlgZegDdVEdN9Q==/com.google.android.projection.gearhe
+09-22 12:49:20.735 D/ConnectivityManager(15371): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4744)] [android.net.ConnectivityManager.registerDefaultNetworkCallbackForUid(ConnectivityManager.java:5469)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5436)] [android.net.ConnectivityManager.registerDefaultNetworkCallback(ConnectivityManager.java:5410)] [X.Io9.A02(:14)] [X.Io8.A00(:33)] [X.Io9.A00(:5)] [X.InP.<init>(:84)] [X.InO.<init>(:44)] [com.facebook.video.heroplayer.service.live.HeroDashLiveManagerImpl.<init>(:17)] [X.Iml.<init>(:439)] [X.Iml.A02(:15)] [X.ImJ.Baf(:72)] [X.2JL.A00(:34)] [com.whatsapp.app.shell.AbstractAppShellDelegate.lambda$performAsyncInit$1(:84)] [X.3gt.run(:1337)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [X.1X3.run(:1458)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:20.738 D/ConnectivityService( 1451): requestNetwork for uid/pid:10278/15371 activeRequest: null callbackRequest: 818 [NetworkRequest [ REQUEST id=819, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647 isUidTracked: false declaredMethods: AVAIL|LOST|NC
+09-22 12:49:20.739 D/ConnectivityService( 1451):    accepting network in place of null for NetworkRequest [ REQUEST id=819, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:20.742 D/nativeloader(15492): Load libframework-connectivity-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity.jar: ok
+09-22 12:49:20.742 D/WifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=819, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:20.743 D/UntrustedWifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=819, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:20.743 D/OemPaidWifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=819, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:20.743 D/MultiInternetWifiNetworkFactory( 1451): got request NetworkRequest [ REQUEST id=819, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10278 RequestorUid: 10278 RequestorPkg: com.whatsapp UnderlyingNetworks: Null] ]
+09-22 12:49:20.744 D/ConnectivityService( 1451): Rematched networks [computed 0ms] [applied 2ms] [issued 3]
+09-22 12:49:20.744 D/ConnectivityService( 1451): NetworkReassignment :
+09-22 12:49:20.744 D/ConnectivityService( 1451):   819 : null → 100
+09-22 12:49:20.747 D/LiveTrace(15371): Initializing Live Trace with Player Id: 1A0C8173AEB:Ovj
+09-22 12:49:20.751 V/GraphicsEnvironment(15492): ANGLE Developer option for 'com.google.android.projection.gearhead' set to: 'default'
+09-22 12:49:20.751 V/GraphicsEnvironment(15492): ANGLE GameManagerService for com.google.android.projection.gearhead: false
+09-22 12:49:20.752 V/GraphicsEnvironment(15492): Neither updatable production driver nor prerelease driver is supported.
+09-22 12:49:20.757 D/NetworkSecurityConfig(15492): Using Network Security Config from resource network_security_config debugBuild: false
+09-22 12:49:20.763 W/OneFabricEventHandler(15371): Event client_register_trusteddevice_init has no session descriptor; using the current session (0 further occurrences suppressed in the last 60000 ms)
+09-22 12:49:20.765 D/NetworkSecurityConfig(15492): Using Network Security Config from resource network_security_config debugBuild: false
+09-22 12:49:20.778 D/BoundBrokerSvc( 2224): onUnbind: Intent { act=com.google.android.gms.libs.gmscorelogger.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+09-22 12:49:20.781 I/ActivityManager( 1451): Killing 12802:com.sec.unifiedwfc/u0a171 (adj 999): empty #31
+09-22 12:49:20.807 I/Zygote  (  846): Process 12802 exited due to signal 9 (Killed)
+09-22 12:49:20.808 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.007620359]
+09-22 12:49:20.809 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.19492061]
+09-22 12:49:20.809 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.48686478]
+09-22 12:49:20.809 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.680923 msecs
+09-22 12:49:20.810 I/libprocessgroup( 1451): Successfully killed process cgroup uid 10171 pid 12802 in 25ms
+09-22 12:49:20.810 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 1.167615 msecs
+09-22 12:49:20.811 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.794769 msecs
+09-22 12:49:20.816 I/ContactsProvider_EventLog( 3050): cp_s: [CONTACT con(778) dat(11092) acc({phone(1)=46, google(166)=161, google(107)=599, com.whatsapp(8)=598, com.google.android.apps.tachyon(110)=52}) trash_acc([.google:731])  trash(731) calls([logtype:100 cnt:2000, logtype:300 cnt:500]) Iso(PK) uId(0) ]
+09-22 12:49:20.816 I/ContactsProvider_EventLog( 3050): cp_s: [ agr({[8]=5, [8 ,166 ,166]=1, [107 ,8 ,8]=14, [107 ,8 ,110]=43, [8 ,166]=86, [107 ,166]=3, [107 ,110]=1, [1 ,8 ,166]=2, [1 ,8 ,110]=3, [107]=126, [1 ,107]=2, [107 ,8 ,166]=1, [8 ,107 ,110]=2, [1]=18, [8 ,107 ,8 ,166]=2, [8 ,107]=34, [166 ,166]=1, [8 ,107 ,166]=12, [1 ,8]=15, [8 ,107 ,166 ,110]=1, [8 ,107 ,8]=2, [107 ,8 ,8 ,110]=1, [1 ,8 ,107]=3, [1 ,166]=3, [107 ,8]=348, [107 ,8 ,107]=2, [110 ,166]=1, [166]=45, [8 ,8 ,166]=1}) ]
+09-22 12:49:20.816 I/ContactsProvider_EventLog( 3050): cp_s: [ cnt({acore(3050)=1, gms(3105)=16}) ]
+09-22 12:49:20.816 I/ContactsProvider_EventLog( 3050): cp_s: [PROFILE ] [SAPROFILE con(1) dat(4) acc({phone(1)=1}) ]
+09-22 12:49:20.816 I/ContactsProvider_EventLog( 3050): cp_s: [STATE R(F) ]
+09-22 12:49:20.856 W/BroadcastQueue( 1451): Background execution not allowed: receiving Intent { act=android.intent.action.DROPBOX_ENTRY_ADDED flg=0x10 (has extras) } to com.google.android.gms/.stats.service.DropBoxEntryAddedReceiver
+09-22 12:49:20.857 W/BroadcastQueue( 1451): Background execution not allowed: receiving Intent { act=android.intent.action.DROPBOX_ENTRY_ADDED flg=0x10 (has extras) } to com.google.android.gms/.stats.service.DropBoxEntryAddedReceiver
+09-22 12:49:20.929 D/io_stats(  590): !@ 179,0 r 2117584 31125210 w 996267 13039984 d 0 0 f 0 0 iot 848880 0 th 0 0 0 pt 0 inp 0 0 5938.691
+09-22 12:49:20.973 I/CAR.GH  (15492): onCreate
+09-22 12:49:20.988 D/CompatibilityChangeReporter(15492): Compat change id reported: 183155436; UID 10224; state: ENABLED
+09-22 12:49:21.002 D/CompatibilityChangeReporter( 1451): Compat change id reported: 161145287; UID 10224; state: DISABLED
+09-22 12:49:21.024 I/GH.PrimesMgr(15492): transmitting to prod
+09-22 12:49:21.032 V/GH.ProjStateSvc(15492): No binder to the car, notifying not projecting
+09-22 12:49:21.054 I/CAR.GH  (15492): Process: PROVIDER
+09-22 12:49:21.055 I/CAR.GH  (15492): Channel: PROD
+09-22 12:49:21.203 D/BluetoothManagerService( 1451): mDisableBleCallbacks count 15
+09-22 12:49:21.203 W/RefBase (15440): RefBase: Explicit destruction, weak count = 0 (in 0x7402760988). Use sp<> to manage this object.
+09-22 12:49:21.204 I/BluetoothAdapter(15371): BluetoothAdapter() : com.whatsapp
+09-22 12:49:21.210 D/BluetoothHeadset(15371): BTStateChangeCB is registed by 15371 @ com.whatsapp
+09-22 12:49:21.217 D/RefBase (15440): #00 pc 0000000000101358  /apex/com.android.runtime/lib64/bionic/libc.so (__cxa_finalize+280)
+09-22 12:49:21.217 D/RefBase (15440): #01 pc 00000000000f3078  /apex/com.android.runtime/lib64/bionic/libc.so (exit+24)
+09-22 12:49:21.217 D/RefBase (15440): #02 pc 0000000000085e14  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+100)
+09-22 12:49:21.266 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb,raw:cat /sdcard/ui.xml'
+09-22 12:49:21.295 I/SemWifiServiceDetector( 1451): Traff. tracking stopped
+09-22 12:49:21.325 I/adbd    (24013): adbd service requested 'exec:screencap '-p''
+09-22 12:49:21.551 I/EDMNativeHelperService( 1451): isScreenCaptureEnabled
+09-22 12:49:21.552 D/connsyslogger( 1163): Open FIFO for close
+09-22 12:49:21.553 D/RestrictionPolicy( 1451): isScreenCaptureEnabled : ret=true userId=0
+09-22 12:49:21.554 W/ProcessState(15521): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+09-22 12:49:21.561 I/SurfaceFlinger(  904): operator()(), mtkRenderCntDebug 33, screenshot (Wallpaper BBQ wrapper#77)
+09-22 12:49:21.561 I/SurfaceFlinger(  904): operator()(), mtkRenderCntDebug 33, screenshot (com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity$_2341#564)
+09-22 12:49:21.562 I/SurfaceFlinger(  904): operator()(), mtkRenderCntDebug 33, screenshot (StatusBar$_1950#83)
+09-22 12:49:21.562 I/SurfaceFlinger(  904): operator()(), mtkRenderCntDebug 33, screenshot (NavigationBar0$_1950#78)
+09-22 12:49:21.614 E/ion     (15521): ioctl c0044901 failed with code -1: Invalid argument
+09-22 12:49:21.614 I/servicemanager(  542): Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+09-22 12:49:21.732 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:49:21.732 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:49:21.732 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:49:21.732 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:49:21.732 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:49:21.734 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:49:21.746 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1650, isSameBssidAndFreq true
+09-22 12:49:21.747 D/ConnectivityService( 1451): notifyType CALLBACK_CAP_CHANGED for [100 WIFI]
+09-22 12:49:21.747 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:49:21.750 D/SemWifiSwitchForIndividualAppsService( 1451): stopTCPMonitoring : already stopped
+09-22 12:49:21.751 I/WifiConnectivityMonitor.NCC( 1451): sNetworkCallback(oCC) FULL : 100(true/false)[ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED LinkUpBandwidth>=12000Kbps LinkDnBandwidth>=60000Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:**:**:00, MAC: 02:00:00:**:**:00, IP: /192.168.18.253, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 5, RSSI: -64, Link speed: 390Mbps, Tx Link speed: 390Mbps, Max Supported Tx Link speed: 433Mbps, Rx Link speed: 6Mbps, Max Supported Rx Link speed: 433Mbps, Frequency: 5745MHz, Net ID: -1, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: 1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>> SignalStrength: -64 AdminUids: [1000] SSID: "HUAWEI-5G-3zZa" UnderlyingNetworks: Null]
+09-22 12:49:21.752 I/WifiConnectivityMonitor( 1451): current mode : 1
+09-22 12:49:21.752 D/OpenNetworkQos[4.00]( 1451): updateBssidNoInternet: mBssidNoInternet = false
+09-22 12:49:21.752 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosNoInternetStatus: false
+09-22 12:49:21.752 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosScores: 26 30 30 
+09-22 12:49:21.752 D/SettingsProvider( 1451): isChangeAllowed() : name = wifi_wcm_qos_sharing_score_summary
+09-22 12:49:21.752 I/WifiProfileShare( 1451): network QoS data was changed (internet), updateQoSData networkType: true, qosData: false
+09-22 12:49:21.753 V/WifiProfileShare.Caster( 1451): update wips network, size: 0
+09-22 12:49:21.753 D/WifiProfileShare( 1451): nearby scanning settings run
+09-22 12:49:21.753 D/WifiProfileShare( 1451): network score provider settings enabled
+09-22 12:49:21.753 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosScores: 26 30 30 
+09-22 12:49:21.753 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosNoInternetStatus: false
+09-22 12:49:21.753 I/WifiProfileShare.Caster( 1451): current network type: 0, score: [26, 30, 30]
+09-22 12:49:21.754 V/WifiProfileShare.Cache( 1451): update network score 22:87:ec:**:**:08
+09-22 12:49:21.754 D/WifiProfileShare.ScanMatcher( 1451): getMcfDataList size:1
+09-22 12:49:21.754 I/WifiProfileShare.Caster( 1451): qos data was updated , before:type:QOS, pBssid:6a:c4:2a, qosData:7c after:type:QOS, pBssid:6a:c4:2a, qosData:7c
+09-22 12:49:21.755 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-22 12:49:21.755 D/WifiProfileShare.McfCast( 1451): -ME--- mIsNetworkEnabled :true
+09-22 12:49:21.755 D/WifiProfileShare.McfCast( 1451): updateQoSData ignored, same contents
+09-22 12:49:21.755 D/WifiProfileShare.MCF( 1451): success update QosData !
+09-22 12:49:21.756 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-22 12:49:21.756 D/WifiProfileShare.McfCast( 1451): -ME--- mIsNetworkEnabled :true
+09-22 12:49:21.756 D/WifiProfileShare.McfCast( 1451): -ME--- updatePasswordDate pwdData size:1
+09-22 12:49:21.757 I/HBD     ( 4518): g onCapabilitiesChanged network : 100 current network state : invalid 
+09-22 12:49:21.757 D/NetworkController.WifiSignalController( 1950): notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-22 12:49:21.764 D/ConnectivityManager( 3497): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4744)] [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4912)] [android.net.ConnectivityManager.registerNetworkCallback(ConnectivityManager.java:5329)] [android.net.ConnectivityManager.registerNetworkCallback(ConnectivityManager.java:5299)] [duey.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):34)] [lsc.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):19)] [dufk.j(:com.google.android.gms@263234029@26.32.34 (190400-968093310):19)] [dufk.O(:com.google.android.gms@263234029@26.32.34 (190400-968093310):14)] [dufk.K(:com.google.android.gms@263234029@26.32.34 (190400-968093310):7)] [dufk.I(:com.google.android.gms@263234029@26.32.34 (190400-968093310):23)] [dufc.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):9)] [blzn.d(:com.google.android.gms@263234029@26.32.34 (190400-968093310):50)] [blzn.c(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [blzn.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):33)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [bmfk.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):8)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:21.766 D/ConnectivityManager( 2224): StackLog: [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4744)] [android.net.ConnectivityManager.sendRequestForNetwork(ConnectivityManager.java:4912)] [android.net.ConnectivityManager.registerNetworkCallback(ConnectivityManager.java:5329)] [android.net.ConnectivityManager.registerNetworkCallback(ConnectivityManager.java:5299)] [duey.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):34)] [lsc.a(:com.google.android.gms@263234029@26.32.34 (190400-968093310):19)] [dufk.j(:com.google.android.gms@263234029@26.32.34 (190400-968093310):19)] [dufk.O(:com.google.android.gms@263234029@26.32.34 (190400-968093310):14)] [dufk.K(:com.google.android.gms@263234029@26.32.34 (190400-968093310):7)] [dufk.I(:com.google.android.gms@263234029@26.32.34 (190400-968093310):23)] [dufc.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):9)] [blzn.d(:com.google.android.gms@263234029@26.32.34 (190400-968093310):50)] [blzn.c(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [blzn.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):33)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [bmfk.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):8)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:21.770 D/WM-NetworkStateTracker(15371): Network capabilities changed: [ Transports: WIFI Capabilities: NOT_METERED&INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VPN&VALIDATED&NOT_ROAMING&FOREGROUND&NOT_CONGESTED&NOT_SUSPENDED&NOT_VCN_MANAGED LinkUpBandwidth>=12000Kbps LinkDnBandwidth>=60000Kbps TransportInfo: <SSID: <unknown ssid>, BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, IP: /192.168.18.253, Security type: 2, Supplicant state: COMPLETED, Wi-Fi standard: 5, RSSI: -64, Link speed: 390Mbps, Tx Link speed: 390Mbps, Max Supported Tx Link speed: 433Mbps, Rx Link speed: 6Mbps, Max Supported Rx Link speed: 433Mbps, Frequency: 5745MHz, Net ID: -1, Metered hint: false, score: 60, isUsable: true, CarrierMerged: false, SubscriptionId: -1, IsPrimary: -1, Trusted: true, Restricted: false, Ephemeral: false, OEM paid: false, OEM private: false, OSU AP: false, FQDN: <none>, Provider friendly name: <none>, Requesting package name: <none><none>MLO Information: , AP MLD Address: <none>, AP MLO Link Id: <none>, AP MLO Affiliated links: <none>> SignalStrength: -64 UnderlyingNetworks: Null]
+09-22 12:49:21.774 D/ConnectivityManager( 2224): StackLog: [android.net.ConnectivityManager.unregisterNetworkCallback(ConnectivityManager.java:5579)] [dufk.j(:com.google.android.gms@263234029@26.32.34 (190400-968093310):43)] [dufk.O(:com.google.android.gms@263234029@26.32.34 (190400-968093310):14)] [dufk.K(:com.google.android.gms@263234029@26.32.34 (190400-968093310):7)] [dufk.I(:com.google.android.gms@263234029@26.32.34 (190400-968093310):23)] [dufc.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):9)] [blzn.d(:com.google.android.gms@263234029@26.32.34 (190400-968093310):50)] [blzn.c(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [blzn.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):33)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [bmfk.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):8)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:21.775 I/NearbyMediums( 2224): Wifi changed new SSID: <unknown ssid>
+09-22 12:49:21.775 I/NearbyMediums( 2224): WifiLanConnectivityInfo is not changed, skip notify.
+09-22 12:49:21.780 D/ConnectivityService( 1451): Rematched networks [computed 0ms] [applied 2ms] [issued 7]
+09-22 12:49:21.780 D/ConnectivityService( 1451): NetworkReassignment : no changes
+09-22 12:49:21.786 D/ConnectivityManager( 3497): StackLog: [android.net.ConnectivityManager.unregisterNetworkCallback(ConnectivityManager.java:5579)] [dufk.j(:com.google.android.gms@263234029@26.32.34 (190400-968093310):43)] [dufk.O(:com.google.android.gms@263234029@26.32.34 (190400-968093310):14)] [dufk.K(:com.google.android.gms@263234029@26.32.34 (190400-968093310):7)] [dufk.I(:com.google.android.gms@263234029@26.32.34 (190400-968093310):23)] [dufc.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):9)] [blzn.d(:com.google.android.gms@263234029@26.32.34 (190400-968093310):50)] [blzn.c(:com.google.android.gms@263234029@26.32.34 (190400-968093310):6)] [blzn.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):33)] [java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1100)] [java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)] [bmfk.run(:com.google.android.gms@263234029@26.32.34 (190400-968093310):8)] [java.lang.Thread.run(Thread.java:1572)]
+09-22 12:49:21.787 I/NearbyMediums( 3497): Wifi changed new SSID: <unknown ssid>
+09-22 12:49:21.788 I/NearbyMediums( 3497): WifiLanConnectivityInfo is not changed, skip notify.
+09-22 12:49:21.793 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.33 dur=9043.35 max=8726.29 min=99.45
+09-22 12:49:21.792 D/ConnectivityService( 1451): Rematched networks [computed 0ms] [applied 4ms] [issued 7]
+09-22 12:49:21.794 D/ConnectivityService( 1451): NetworkReassignment : no changes
+09-22 12:49:21.795 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:0.696004,dur:1436.77,max:1436.77,min:1436.77  
+09-22 12:49:21.859 E/HBD     ( 4518): g activeNetwork is null 
+09-22 12:49:22.268 I/NearbySharing( 2224): Network state changed: NetworkState(isRestricted=false, isOnline=true, isCongested=false, isMetered=false, isWifiConnected=true)
+09-22 12:49:22.272 I/NearbySharing( 2224): Network state changed: NetworkState(isRestricted=false, isOnline=true, isCongested=false, isMetered=false, isWifiConnected=true)
+09-22 12:49:22.495 E/android.hardware.health@2.1-service-samsung(  861): Could not open /sys/class/power_supply/battery/lrp
+09-22 12:49:22.497 D/BatteryService( 1451): Sending ACTION_BATTERY_CHANGED: level:28, status:2, health:2, ac:true, usb:false, wireless:false, pogo:false, misc:0x10000, charge_type:1, charger_type:0, voltage:3979, temperature:377, online:19, current_avg:1616, ps:false, hvc:false, capacity:280000, current_event:0x8000, current_now:1666, mcc:0, mcv:0, cc:1415000, present:true, scale:100, technology:Li-ion
+09-22 12:49:22.500 D/MotionRecognitionService( 1451): [SAR]  onReceive : ACTION_BATTERY_CHANGED, Plugged: 1
+09-22 12:49:22.501 E/PocketModeEvent( 1451): PocketModeSetting is off 
+09-22 12:49:22.501 D/PhoneWindowManagerExt( 1451): ACTION_BATTERY_CHANGED - Level=28, status=2
+09-22 12:49:22.502 I/DeviceBatteryInfoService( 1451): action: android.intent.action.BATTERY_CHANGED
+09-22 12:49:22.502 I/DeviceBatteryInfoService( 1451): phone battery level: 28
+09-22 12:49:22.502 I/DeviceBatteryInfoService( 1451): phone battery status: 2
+09-22 12:49:22.503 D/AdaptiveBrightnessLongtermModelBuilder( 1451): Received android.intent.action.BATTERY_CHANGED
+09-22 12:49:22.503 D/SemWifiApBroadcastReceiver( 1451): Received : android.intent.action.BATTERY_CHANGED
+09-22 12:49:22.504 D/SemBigDataInfoController( 1894): Intent: android.intent.action.BATTERY_CHANGED
+09-22 12:49:22.506 D/KeyguardUpdateMonitor( 1950): received broadcast android.intent.action.BATTERY_CHANGED
+09-22 12:49:22.506 I/PowerUI ( 1950): mBootCompleted = true |  mFullyConnected = true
+09-22 12:49:22.507 D/SemBigDataInfoController( 1894): Intent: android.intent.action.BATTERY_CHANGED
+09-22 12:49:22.507 I/PowerUI ( 1950): BATTERY_HEALTH_CHECK extraHealth=2 mBatteryMiscEvent=65536
+09-22 12:49:22.507 W/PowerUI ( 1950): Plug reason
+09-22 12:49:22.507 W/PowerUI ( 1950): Skip charging animation - by plug status
+09-22 12:49:22.507 D/PowerUI ( 1950): priorPlugType = 1 mPlugType = 1 priorBatteryStatus = 2 mBatteryStatus = 2
+09-22 12:49:22.507 W/PowerUI ( 1950): Plug reason
+09-22 12:49:22.507 D/SecPowerUI.Notification( 1950): dismissing low battery warning: level=28
+09-22 12:49:22.507 W/PowerUI ( 1950): Skip charging sound - by plug status
+09-22 12:49:22.507 I/PowerUI ( 1950): oldMisalign : false, curMisalign : false
+09-22 12:49:22.507 D/SecPowerUI.Notification( 1950): updateNotification mWarning=false mPlaySound=false
+09-22 12:49:22.507 D/SecPowerUI.Notification( 1950): SecBatteryStatsSnapshot{batteryLevel=28, currentBatteryMode=1, chargingTime=6829000, chargingType=11, batteryHealth=2, automaticTestMode=false, isHiccupState=false}
+09-22 12:49:22.508 D/SecPowerUI.Notification( 1950): 1. restoreScreenTimeOut - saved_value : :
+09-22 12:49:22.508 E/SecPowerUI.Notification( 1950): no saved value, so we do nothing !!
+09-22 12:49:22.509 D/SecPowerUI.Notification( 1950): showChargingNotice oldChargingType : 11 / currentChargingType : 11, oldChargingTime : 6829000 / mChargingTime : 6822000
+09-22 12:49:22.509 D/SecPowerUI.Notification( 1950): showChargingNotification()
+09-22 12:49:22.509 D/SecPowerUI.Notification( 1950): SecBatteryStatsSnapshot{batteryLevel=28, currentBatteryMode=1, chargingTime=6822000, chargingType=11, batteryHealth=2, automaticTestMode=false, isHiccupState=false}
+09-22 12:49:22.510 I/[SCPMV2][SystemMonitorReceiver](13318): onReceive: android.intent.action.BATTERY_CHANGED
+09-22 12:49:22.512 D/ApplicationPolicy( 1451): isStatusBarNotificationAllowedAsUser: packageName = com.android.systemui,userId = 0
+09-22 12:49:22.513 D/ApplicationPolicy( 1451): isStatusBarNotificationAllowedAsUser: packageName = com.android.systemui,userId = -1
+09-22 12:49:22.513 D/ApplicationPolicy( 1451): isStatusBarNotificationAllowedAsUser: converting userId from USER_ALLto 0
+09-22 12:49:22.513 D/PowerUI ( 1950): Battery swelling mode - priorBatterySwellingMode = 0 mBatterySwellingMode = 0 mBatteryStatus = 2
+09-22 12:49:22.514 I/PowerUI ( 1950): mBatteryMiscEvent = 65536
+09-22 12:49:22.514 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:49:22.514 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:49:22.514 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:49:22.515 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:49:22.515 D/KeyguardUpdateMonitor( 1950): handleBatteryUpdate
+09-22 12:49:22.522 D/KeyguardSecIndicationController( 1950): addIndicationTimeout() returned - unlocking
+09-22 12:49:22.522 D/KeyguardSecIndicationController( 1950): addIndication() returned - unlocking
+09-22 12:49:22.523 D/KeyguardSecIndicationPolicy( 1950):  remove Item pos = DEFAULT, type =           OWNER_INFO
+09-22 12:49:22.523 D/KeyguardSecIndicationController( 1950): addBatteryAndOwnerInfoIndication() battery status = BatteryStatus{status=2,level=28,plugged=1,health=2,maxChargingWattage=-1,remaining=6822000ultraFastCharger=0}
+09-22 12:49:22.523 I/AODBatteryManager( 1950): updateBatteryData: ACTION_BATTERY_CHANGED
+09-22 12:49:22.526 I/AODBatteryManager( 1950): saveBatteryData : AOD BatteryData [mBatteryLevel=28, mBatteryStatus=CHARGING, mBatteryPlugType=AC, mBatteryPlugged=true, mRemainingChargeTime=6822000, mBatteryChargingType=1, mBatteryChargerType=NORMAL, mBatteryOnline=NOT_DEFINED, mBatterySwellingMode=NONE, mBatteryProtectMode=false]
+09-22 12:49:22.526 I/ChargingInfoManager( 1950): updateChargingInfo: newState = AOD ChargingInfo [mState=BATTERY_AND_REMAIN_TIME, mIsCharging=true, mIsFullyCharged=false, mIsBatteryProtectMode=false], oldState = AOD ChargingInfo [mState=BATTERY_AND_REMAIN_TIME, mIsCharging=true, mIsFullyCharged=false, mIsBatteryProtectMode=false]
+09-22 12:49:22.720 I/Telecom:SamsungTelecomServiceImpl( 1451): isInManagedCall - callingPackage : android
+09-22 12:49:22.737 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.737 I/Launcher.NotificationListener( 2341): onNotificationPosted : com.android.systemui number : 0
+09-22 12:49:22.737 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.738 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.739 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.739 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.739 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.739 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.739 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:49:22.930 D/io_stats(  590): !@ 179,0 r 2118418 31137002 w 996415 13040908 d 0 0 f 0 0 iot 849048 0 th 0 0 0 pt 0 inp 0 0 5940.692
+09-22 12:49:22.938 D/BubblesManager( 1950): onEntryUpdated : shouldBubbleUp=false ,key=-1|com.android.systemui|2131428972|charging_state|10063
+09-22 12:49:22.967 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 0, real height = 333
+09-22 12:49:22.967 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 63, real height = 333
+09-22 12:49:22.968 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:49:22.968 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:49:22.992 E/OpenGLRenderer( 1950): Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+09-22 12:49:22.993 W/OpenGLRenderer( 1950): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+09-22 12:49:23.003 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=1.65 dur=1210.01 max=988.92 min=221.09
+09-22 12:49:23.006 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:1.651158,dur:1211.27,max:989.03,min:222.24  
+09-22 12:49:23.017 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 0, real height = 333
+09-22 12:49:23.018 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 63, real height = 333
+09-22 12:49:23.018 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:49:23.018 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:49:23.054 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 0, real height = 333
+09-22 12:49:23.054 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 63, real height = 333
+09-22 12:49:23.054 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:49:23.054 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:49:23.365 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:49:23.367 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:49:23.367 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:49:23.747 I/SDHMS:D ( 3951): SIOP:: AP:352 BAT:377 USB:0 CHG:396 PA:330 BLK:0 SUBBAT:0 SKIN:370 SKINF:370 SKINB:363 LRP:369 LRP2:370 LRF:369 LRB:364 LRF2:370 LRB2:363 AP2:370 CHG2:368 WIFI2:362 SPK2:358 
+09-22 12:49:24.751 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:49:24.751 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:49:24.751 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:49:24.751 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:49:24.751 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:49:24.754 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:49:24.764 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1651, isSameBssidAndFreq true
+09-22 12:49:24.765 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:49:24.931 D/io_stats(  590): !@ 179,0 r 2118456 31137314 w 996467 13041392 d 0 0 f 0 0 iot 849096 0 th 0 0 0 pt 0 inp 0 0 5942.693
+09-22 12:49:25.499 W/RefBase (15521): RefBase: Explicit destruction, weak count = 0 (in 0x73c1161988). Use sp<> to manage this object.
+09-22 12:49:25.510 D/RefBase (15521): #00 pc 0000000000101358  /apex/com.android.runtime/lib64/bionic/libc.so (__cxa_finalize+280)
+09-22 12:49:25.510 D/RefBase (15521): #01 pc 00000000000f3078  /apex/com.android.runtime/lib64/bionic/libc.so (exit+24)
+09-22 12:49:25.510 D/RefBase (15521): #02 pc 0000000000085e14  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+100)
+09-22 12:49:25.645 I/wpa_supplicant( 1879): Heartbeat 589
+09-22 12:49:25.926 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:49:25.928 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:49:25.929 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:49:26.553 D/connsyslogger( 1163): Open FIFO for close
+09-22 12:49:27.344 D/BoundBrokerSvc( 2224): onRebind: Intent { act=com.google.android.gms.libs.gmscorelogger.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+09-22 12:49:27.520 D/SecPowerUI.Notification( 1950): showChargingNotice oldChargingType : 11 / currentChargingType : 11, oldChargingTime : 6822000 / mChargingTime : 6822000
+09-22 12:49:27.520 D/SecPowerUI.Notification( 1950): There is no change about charging status, so return!
+09-22 12:49:27.592 W/DeviceStorageMonitorService( 1451): updateBroadcasts(/data) oldLevel:0, newLevel:0, seq:1
+09-22 12:49:27.594 D/DeviceStorageMonitorService( 1451): Available File Node Number is [13308655]
+09-22 12:49:27.594 W/DeviceStorageMonitorService( 1451): updateBroadcasts_filenode(/data) fn_oldLevel:0, fn_newLevel:0, seq:1
+09-22 12:49:27.769 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:49:27.769 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:49:27.769 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:49:27.769 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:49:27.769 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:49:27.771 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:49:27.781 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1652, isSameBssidAndFreq true
+09-22 12:49:27.783 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:49:28.169 V/ClearcutMetricXmitter(15492): Transmission is done.
+09-22 12:49:28.933 D/io_stats(  590): !@ 179,0 r 2118647 31140626 w 996467 13041392 d 0 0 f 0 0 iot 849140 0 th 0 0 0 pt 0 inp 0 0 5946.695
+09-22 12:49:28.952 W/System  (15371): A resource failed to call AbstractCursor.close. 
+09-22 12:49:28.953 W/System  (15371): A resource failed to call CursorWrapperInner.close. 
+09-22 12:49:29.766 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:49:29.768 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:49:29.769 D/NetworkController( 1950): SignalStrength from intent slotId=0

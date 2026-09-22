@@ -9,7 +9,8 @@ import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../auth/presentation/widgets/ora_auth_chrome.dart';
 
-/// Display-name onboarding. Completeness is decided by the server via `/me`.
+/// Display-name onboarding. Completeness comes from the PATCH `/auth/profile`
+/// response (`profileComplete`); the client does not forge readiness.
 class OnboardingView extends ConsumerStatefulWidget {
   const OnboardingView({super.key});
 

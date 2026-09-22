@@ -6,6 +6,7 @@ import '../../../../app/di/providers.dart';
 import '../../../../core/errors/app_failure.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../domain/entities/auth_user.dart';
+import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/use_cases/resolve_auth_profile_use_case.dart';
 import '../../domain/use_cases/restore_session_use_case.dart';
@@ -139,11 +140,22 @@ class AuthStateNotifier extends Notifier<AuthStatus> {
     await _bootstrapProfile(user);
   }
 
+  /// Applies a server-returned [UserProfile] (e.g. PATCH `/auth/profile`).
+  ///
+  /// Prefer this after a successful profile mutation so navigation does not
+  /// depend on a second `/me` round-trip that can fail with a connection error
+  /// even though Firestore already has `profileComplete=true`.
+  ///
+  /// Does not forge readiness — [profile.profileComplete] is server-derived.
+  Future<void> applyCanonicalProfile(UserProfile profile) async {
+    await _applyServerProfile(profile, epoch: ++_profileEpoch);
+  }
+
   /// Reloads canonical `GET /v1/auth/me` after a profile mutation.
   ///
   /// Does not register again, does not move to splash first, and does not
-  /// forge [AuthStatus.authenticatedReady]. Failures propagate so onboarding
-  /// can retry without leaving the form.
+  /// forge [AuthStatus.authenticatedReady]. Failures propagate so callers
+  /// that require a fresh `/me` can retry without leaving the form.
   Future<void> refreshCanonicalProfile() async {
     final user = await _authRepository.getCurrentUser();
     if (user == null) {
@@ -156,11 +168,21 @@ class AuthStateNotifier extends Notifier<AuthStatus> {
     if (epoch != _profileEpoch) {
       return;
     }
+    await _applyServerProfile(profile, epoch: epoch);
+  }
+
+  Future<void> _applyServerProfile(
+    UserProfile profile, {
+    required int epoch,
+  }) async {
+    if (epoch != _profileEpoch) {
+      return;
+    }
 
     if (!profile.isActive || profile.banned) {
       _logger.warning(
         'Account disabled by server; clearing session',
-        metadata: {'op': 'refresh_profile'},
+        metadata: {'op': 'apply_profile'},
       );
       ref.read(sessionUserProfileProvider.notifier).clear();
       await _authRepository.logout();

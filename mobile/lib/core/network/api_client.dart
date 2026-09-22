@@ -240,7 +240,12 @@ class _OraInterceptors extends Interceptor {
         'HTTP error ${err.response?.statusCode ?? err.type.name}',
         metadata: {
           'requestId': err.requestOptions.headers['X-Request-Id'],
+          'method': err.requestOptions.method,
           'path': err.requestOptions.path,
+          'dioType': err.type.name,
+          'status': err.response?.statusCode,
+          // Host only — never Authorization / body / tokens.
+          'host': err.requestOptions.uri.host,
         },
       );
     }

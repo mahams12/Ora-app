@@ -15,19 +15,26 @@ class MockUpdateDisplayNameUseCase extends Mock
     implements UpdateDisplayNameUseCase {}
 
 class _RecordingAuthStateNotifier extends AuthStateNotifier {
+  int applyCalls = 0;
   int refreshCalls = 0;
   int readyForgeCalls = 0;
-  Object? refreshError;
+  UserProfile? lastApplied;
 
   @override
   AuthStatus build() => AuthStatus.onboardingRequired;
 
   @override
+  Future<void> applyCanonicalProfile(UserProfile profile) async {
+    applyCalls++;
+    lastApplied = profile;
+    state = profile.profileComplete
+        ? AuthStatus.authenticatedReady
+        : AuthStatus.onboardingRequired;
+  }
+
+  @override
   Future<void> refreshCanonicalProfile() async {
     refreshCalls++;
-    if (refreshError != null) {
-      throw refreshError!;
-    }
     state = AuthStatus.authenticatedReady;
   }
 
@@ -88,11 +95,12 @@ void main() {
     verifyNever(
       () => updateDisplayName(displayName: any(named: 'displayName')),
     );
+    expect(notifier.applyCalls, 0);
     expect(notifier.refreshCalls, 0);
     expect(notifier.readyForgeCalls, 0);
   });
 
-  test('saves a valid name then refreshes /me instead of forging ready',
+  test('saves a valid name then applies PATCH profile (not a second /me)',
       () async {
     when(() => updateDisplayName(displayName: any(named: 'displayName')))
         .thenAnswer((_) async => completeProfile);
@@ -105,8 +113,10 @@ void main() {
         .submit(rawName: '  Ada   Khan  ');
 
     verify(() => updateDisplayName(displayName: 'Ada Khan')).called(1);
-    expect(notifier.refreshCalls, 1);
+    expect(notifier.applyCalls, 1);
+    expect(notifier.refreshCalls, 0);
     expect(notifier.readyForgeCalls, 0);
+    expect(notifier.lastApplied?.profileComplete, isTrue);
     expect(
       container.read(onboardingViewModelProvider).status,
       OnboardingStatus.submitted,
@@ -132,14 +142,13 @@ void main() {
     await Future.wait([first, second]);
 
     verify(() => updateDisplayName(displayName: 'Ada Khan')).called(1);
-    expect(notifier.refreshCalls, 1);
+    expect(notifier.applyCalls, 1);
+    expect(notifier.refreshCalls, 0);
   });
 
-  test('keeps the user on onboarding when /me fails after a successful PATCH',
-      () async {
+  test('reaches home from PATCH profile without calling /me', () async {
     when(() => updateDisplayName(displayName: any(named: 'displayName')))
         .thenAnswer((_) async => completeProfile);
-    notifier.refreshError = const AppFailure.timeout();
 
     final container = makeContainer();
     addTearDown(container.dispose);
@@ -150,16 +159,13 @@ void main() {
 
     expect(
       container.read(onboardingViewModelProvider).status,
-      OnboardingStatus.idle,
-    );
-    expect(
-      container.read(onboardingViewModelProvider).serverError,
-      isNotNull,
+      OnboardingStatus.submitted,
     );
     expect(
       container.read(authStateNotifierProvider),
-      AuthStatus.onboardingRequired,
+      AuthStatus.authenticatedReady,
     );
+    expect(notifier.refreshCalls, 0);
     expect(notifier.readyForgeCalls, 0);
   });
 
@@ -178,6 +184,7 @@ void main() {
       container.read(onboardingViewModelProvider).serverError,
       isNotNull,
     );
+    expect(notifier.applyCalls, 0);
     expect(notifier.refreshCalls, 0);
 
     when(() => updateDisplayName(displayName: any(named: 'displayName')))
@@ -190,6 +197,6 @@ void main() {
       container.read(onboardingViewModelProvider).status,
       OnboardingStatus.submitted,
     );
-    expect(notifier.refreshCalls, 1);
+    expect(notifier.applyCalls, 1);
   });
 }

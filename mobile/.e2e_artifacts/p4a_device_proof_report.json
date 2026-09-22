@@ -1,0 +1,37 @@
+{
+  "phase": "4A",
+  "verdict": "GREEN",
+  "device": "RF8R40ZQ1JH SM-A325F",
+  "timestamp": "2026-09-22T15:05:59+0500",
+  "checks": {
+    "gps_pickup_resolve": "PASS \u2014 Use current location \u2192 proposed GPS coords (mock inject 31.52040,74.35870; later fused 31.41273,74.17250)",
+    "gps_pickup_confirm": "PASS \u2014 Pickup confirmed",
+    "places_destination_search": "PASS \u2014 Liberty Market Lahore \u2192 Gulberg III suggestion",
+    "places_destination_resolve": "PASS \u2014 Place search \u00b7 31.51058, 74.34445",
+    "destination_confirm": "PASS \u2014 Destination confirmed",
+    "text_alone_insufficient": "PASS \u2014 Continue disabled until confirm; text entry alone not enough",
+    "invalidate_on_edit": "PASS \u2014 editing destination \u2192 Pickup confirmed \u00b7 destination needed; Continue disabled",
+    "continue_to_review": "PASS \u2014 review shows Price TBD with confirmed pickup/dest labels",
+    "pricing_gate": "PASS \u2014 Request Easy \u2192 Pricing unavailable dialog; no ride create",
+    "no_pricing_http": "PASS \u2014 backend auth-service log shows no pricing/estimate or ride create during proof (only prior register/profile)",
+    "no_phase_5a": "PASS \u2014 stopped; no code changes this proof session"
+  },
+  "artifacts": {
+    "p4a_03_ride_request.png": true,
+    "p4a_05_gps_retry.png": true,
+    "p4a_06_pickup_confirmed.png": true,
+    "p4a_08_places_retry.png": true,
+    "p4a_09b_after_kb.png": true,
+    "p4a_10_both_confirmed.png": true,
+    "p4a_11_invalidate.png": true,
+    "p4a_19_both.png": true,
+    "p4a_20_review_price_tbd.png": true,
+    "p4a_21_pricing_gate.png": true
+  },
+  "notes": [
+    "Device location was OFF at start; enabled via adb (location_mode=3) before GPS success.",
+    "Mock GPS test provider used for reliable indoor fix; Places used live Google Places API (New).",
+    "adb input text must use %s for spaces (literal %20 fails).",
+    "KEYCODE_BACK dismisses ride-request route; dismiss keyboard via tap outside instead."
+  ]
+}

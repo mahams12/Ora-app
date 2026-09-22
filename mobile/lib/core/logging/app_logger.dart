@@ -96,6 +96,12 @@ class ConsoleAppLogger extends AppLogger {
       buffer.write('op=${record.operationId} ');
     }
     buffer.write(record.message);
+    if (record.metadata != null && record.metadata!.isNotEmpty) {
+      // Never log Authorization / App Check / raw tokens — callers must not
+      // put those in metadata.
+      buffer.write(' ');
+      buffer.write(record.metadata);
+    }
 
     developer.log(
       buffer.toString(),

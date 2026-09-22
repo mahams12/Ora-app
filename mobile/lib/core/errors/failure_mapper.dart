@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
+import 'package:flutter/foundation.dart';
 
 import 'app_failure.dart';
 
@@ -54,7 +55,14 @@ class FailureMapper {
       case DioExceptionType.receiveTimeout:
         return const AppFailure.timeout();
       case DioExceptionType.connectionError:
-        return const AppFailure.network();
+        // True transport failure (API down, reverse tunnel missing, offline).
+        // Do not confuse with HTTP 4xx/5xx — those use badResponse below.
+        return AppFailure.network(
+          message: kDebugMode
+              ? 'Cannot reach Ora API (${error.requestOptions.uri.host}). '
+                  'Is auth-service running and adb reverse / LAN configured?'
+              : null,
+        );
       case DioExceptionType.badResponse:
         return _fromResponse(error.response);
       case DioExceptionType.cancel:
@@ -64,6 +72,18 @@ class FailureMapper {
       case DioExceptionType.transformTimeout:
         return const AppFailure.timeout();
       case DioExceptionType.unknown:
+        // Dio wraps some socket failures as unknown.
+        final underlying = error.error?.toString() ?? '';
+        if (underlying.contains('SocketException') ||
+            underlying.contains('Connection refused') ||
+            underlying.contains('Network is unreachable')) {
+          return AppFailure.network(
+            message: kDebugMode
+                ? 'Cannot reach Ora API (${error.requestOptions.uri.host}). '
+                    'Is auth-service running and adb reverse / LAN configured?'
+                : null,
+          );
+        }
         return const AppFailure.unknown();
     }
   }

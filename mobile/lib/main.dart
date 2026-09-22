@@ -38,6 +38,11 @@ void main() async {
       const String.fromEnvironment('ORA_ENV', defaultValue: 'development'),
     );
     final config = AppConfig.fromEnvironment(env);
+    // Debug-only: prove which API the physical device build is targeting.
+    // Never log tokens or credentials.
+    if (kDebugMode) {
+      debugPrint('ORA API BASE URL = ${config.apiBaseUrl}');
+    }
     if (config.appCheckEnabled) {
       await activateOraAppCheck(
         useDebugProvider: shouldUseAppCheckDebugProvider(),

@@ -9,12 +9,13 @@ import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
+import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/models/ride_category_option.dart';
 import '../view_models/ride_request_view_model.dart';
 import '../widgets/ride_category_selector.dart';
 import '../widgets/ride_location_placeholder.dart';
 
-/// Passenger ride compose + review. Create is gated without real pricing/GPS.
+/// Passenger ride compose + review. Create gated without pricing (Phase 5).
 class RideRequestView extends ConsumerStatefulWidget {
   const RideRequestView({super.key, this.initialCategoryId});
 
@@ -77,7 +78,24 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
     final vm = ref.read(rideRequestViewModelProvider.notifier);
     final padding = Responsive.horizontalPadding(context);
 
+    // Keep text controllers aligned when VM sets labels (GPS / place select).
     ref.listen(rideRequestViewModelProvider, (prev, next) {
+      if (prev?.pickupText != next.pickupText &&
+          _pickupController.text != next.pickupText) {
+        _pickupController.value = TextEditingValue(
+          text: next.pickupText,
+          selection: TextSelection.collapsed(offset: next.pickupText.length),
+        );
+      }
+      if (prev?.destinationText != next.destinationText &&
+          _destinationController.text != next.destinationText) {
+        _destinationController.value = TextEditingValue(
+          text: next.destinationText,
+          selection:
+              TextSelection.collapsed(offset: next.destinationText.length),
+        );
+      }
+
       if (next.phase == RideRequestPhase.created && next.createdRide != null) {
         final rideId = next.createdRide!.rideId;
         context.go(AppRoutes.offersInboxPath(rideId));
@@ -105,6 +123,8 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
         child: Column(
           children: [
             RideLocationPlaceholder(
+              pickupConfirmed: state.hasConfirmedPickup,
+              destinationConfirmed: state.hasConfirmedDestination,
               onBack: () {
                 if (state.phase == RideRequestPhase.review) {
                   vm.goToCompose();
@@ -162,6 +182,20 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                       _destinationController,
                                   onPickupChanged: vm.setPickupText,
                                   onDestinationChanged: vm.setDestinationText,
+                                  onUseCurrentLocation:
+                                      vm.useCurrentLocationForPickup,
+                                  onSelectPickupSuggestion: (s) =>
+                                      vm.selectPlaceSuggestion(
+                                    field: LocationField.pickup,
+                                    suggestion: s,
+                                  ),
+                                  onSelectDestinationSuggestion: (s) =>
+                                      vm.selectPlaceSuggestion(
+                                    field: LocationField.destination,
+                                    suggestion: s,
+                                  ),
+                                  onConfirmPickup: vm.confirmPickup,
+                                  onConfirmDestination: vm.confirmDestination,
                                   onContinue: vm.goToReview,
                                 ),
                 ),
@@ -182,6 +216,11 @@ class _ComposePane extends StatelessWidget {
     required this.destinationController,
     required this.onPickupChanged,
     required this.onDestinationChanged,
+    required this.onUseCurrentLocation,
+    required this.onSelectPickupSuggestion,
+    required this.onSelectDestinationSuggestion,
+    required this.onConfirmPickup,
+    required this.onConfirmDestination,
     required this.onContinue,
   });
 
@@ -191,6 +230,11 @@ class _ComposePane extends StatelessWidget {
   final TextEditingController destinationController;
   final ValueChanged<String> onPickupChanged;
   final ValueChanged<String> onDestinationChanged;
+  final VoidCallback onUseCurrentLocation;
+  final ValueChanged<PlaceSuggestion> onSelectPickupSuggestion;
+  final ValueChanged<PlaceSuggestion> onSelectDestinationSuggestion;
+  final VoidCallback onConfirmPickup;
+  final VoidCallback onConfirmDestination;
   final VoidCallback onContinue;
 
   @override
@@ -225,8 +269,8 @@ class _ComposePane extends StatelessWidget {
               ),
               const SizedBox(height: OraSpacing.xxs),
               Text(
-                'Enter places as text. Coordinates stay unresolved until '
-                'location services are ready.',
+                'Search a place or use your current location. Confirm each '
+                'point before continuing — text alone is not enough.',
                 style: OraTypography.caption(OraColors.textMuted),
               ),
               const SizedBox(height: OraSpacing.md),
@@ -268,25 +312,101 @@ class _ComposePane extends StatelessWidget {
                         OraTextField(
                           controller: pickupController,
                           label: 'Pickup',
-                          hint: 'Pickup area or landmark',
+                          hint: 'Search pickup place',
                           textInputAction: TextInputAction.next,
                           textCapitalization: TextCapitalization.words,
                           prefixIcon: Icons.radio_button_checked,
                           onChanged: onPickupChanged,
                         ),
+                        const SizedBox(height: OraSpacing.xs),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            onPressed:
+                                state.pickupBusy ? null : onUseCurrentLocation,
+                            icon: const Icon(Icons.my_location, size: 18),
+                            label: const Text('Use current location'),
+                          ),
+                        ),
+                        if (state.pickupBusy)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: OraSpacing.xs),
+                            child: LinearProgressIndicator(minHeight: 2),
+                          ),
+                        if (state.pickupLookupError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: OraSpacing.xs),
+                            child: Text(
+                              state.pickupLookupError!,
+                              style: OraTypography.caption(OraColors.danger),
+                            ),
+                          ),
+                        ...state.pickupSuggestions.map(
+                          (s) => OraListRow(
+                            title: s.primaryText,
+                            subtitle: s.secondaryText,
+                            leading: const Icon(
+                              Icons.place_outlined,
+                              color: OraColors.tealBright,
+                              size: 20,
+                            ),
+                            onTap: () => onSelectPickupSuggestion(s),
+                            showDivider: true,
+                          ),
+                        ),
+                        if (state.proposedPickup != null &&
+                            !state.hasConfirmedPickup)
+                          _ProposalCard(
+                            title: 'Confirm pickup',
+                            location: state.proposedPickup!,
+                            onConfirm: onConfirmPickup,
+                          ),
                         const SizedBox(height: OraSpacing.sm),
                         OraTextField(
                           controller: destinationController,
                           label: 'Destination',
-                          hint: 'Where are you headed?',
+                          hint: 'Search destination',
                           textInputAction: TextInputAction.done,
                           textCapitalization: TextCapitalization.words,
                           prefixIcon: Icons.location_on_outlined,
                           onChanged: onDestinationChanged,
-                          onSubmitted: (_) {
-                            if (state.canAdvanceToReview) onContinue();
-                          },
                         ),
+                        if (state.destinationBusy)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: OraSpacing.xs),
+                            child: LinearProgressIndicator(minHeight: 2),
+                          ),
+                        if (state.destinationLookupError != null)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: OraSpacing.xs,
+                              bottom: OraSpacing.xs,
+                            ),
+                            child: Text(
+                              state.destinationLookupError!,
+                              style: OraTypography.caption(OraColors.danger),
+                            ),
+                          ),
+                        ...state.destinationSuggestions.map(
+                          (s) => OraListRow(
+                            title: s.primaryText,
+                            subtitle: s.secondaryText,
+                            leading: const Icon(
+                              Icons.flag_outlined,
+                              color: OraColors.primary,
+                              size: 20,
+                            ),
+                            onTap: () => onSelectDestinationSuggestion(s),
+                            showDivider: true,
+                          ),
+                        ),
+                        if (state.proposedDestination != null &&
+                            !state.hasConfirmedDestination)
+                          _ProposalCard(
+                            title: 'Confirm destination',
+                            location: state.proposedDestination!,
+                            onConfirm: onConfirmDestination,
+                          ),
                       ],
                     ),
                   ),
@@ -294,31 +414,21 @@ class _ComposePane extends StatelessWidget {
               ),
               const SizedBox(height: OraSpacing.sm),
               _StatusChip(
-                label: state.hasPickupText
-                    ? 'Pickup entered · unresolved'
-                    : 'Pickup needed',
-                ok: state.hasPickupText,
+                label: state.hasConfirmedPickup
+                    ? 'Pickup confirmed'
+                    : state.proposedPickup != null
+                        ? 'Pickup selected · confirm needed'
+                        : 'Pickup needed',
+                ok: state.hasConfirmedPickup,
               ),
               const SizedBox(height: OraSpacing.xs),
               _StatusChip(
-                label: state.hasDestinationText
-                    ? 'Destination entered · unresolved'
-                    : 'Destination needed',
-                ok: state.hasDestinationText,
-              ),
-              const SizedBox(height: OraSpacing.lg),
-              const OraSectionHeader(
-                title: 'Saved & recent',
-                description:
-                    'Saved places are not connected. Nothing is invented locally.',
-              ),
-              const SizedBox(height: OraSpacing.sm),
-              const OraEmptyState(
-                icon: Icons.bookmark_border_rounded,
-                title: 'No saved places',
-                message:
-                    'When saved places ship, they will appear here. '
-                    'Continue with typed locations for now.',
+                label: state.hasConfirmedDestination
+                    ? 'Destination confirmed'
+                    : state.proposedDestination != null
+                        ? 'Destination selected · confirm needed'
+                        : 'Destination needed',
+                ok: state.hasConfirmedDestination,
               ),
             ],
           ),
@@ -331,11 +441,57 @@ class _ComposePane extends StatelessWidget {
             OraSpacing.md + MediaQuery.paddingOf(context).bottom,
           ),
           child: OraButton(
-            label: 'Confirm destination',
+            label: 'Continue',
             onPressed: state.canAdvanceToReview ? onContinue : null,
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ProposalCard extends StatelessWidget {
+  const _ProposalCard({
+    required this.title,
+    required this.location,
+    required this.onConfirm,
+  });
+
+  final String title;
+  final ResolvedPassengerLocation location;
+  final VoidCallback onConfirm;
+
+  @override
+  Widget build(BuildContext context) {
+    final sourceLabel = switch (location.source) {
+      PassengerLocationSource.gps => 'Current location',
+      PassengerLocationSource.place => 'Place search',
+      PassengerLocationSource.mapPin => 'Map pin',
+      PassengerLocationSource.savedPlace => 'Saved place',
+    };
+
+    return Padding(
+      padding: const EdgeInsets.only(top: OraSpacing.sm),
+      child: OraCard(
+        padding: const EdgeInsets.all(OraSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              location.displayLabel,
+              style: OraTypography.bodyEmphasis(OraColors.textPrimary),
+            ),
+            const SizedBox(height: OraSpacing.xxs),
+            Text(
+              '$sourceLabel · ${location.lat.toStringAsFixed(5)}, '
+              '${location.lng.toStringAsFixed(5)}',
+              style: OraTypography.caption(OraColors.textMuted),
+            ),
+            const SizedBox(height: OraSpacing.sm),
+            OraButton(label: title, onPressed: onConfirm),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -360,6 +516,8 @@ class _ReviewPane extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cat = state.selectedCategory;
+    final pickup = state.confirmedPickup;
+    final destination = state.confirmedDestination;
 
     return Column(
       children: [
@@ -403,16 +561,18 @@ class _ReviewPane extends StatelessWidget {
                     ),
                     const SizedBox(height: OraSpacing.xs),
                     Text(
-                      state.pickupText.trim(),
+                      pickup?.displayLabel ?? state.pickupText.trim(),
                       style: OraTypography.bodyEmphasis(OraColors.textPrimary),
                     ),
                     Text(
-                      'to ${state.destinationText.trim()}',
+                      'to ${destination?.displayLabel ?? state.destinationText.trim()}',
                       style: OraTypography.body(OraColors.textSecondary),
                     ),
                     const SizedBox(height: OraSpacing.xxs),
                     Text(
-                      'Locations are text-only until GPS/geocoding ships',
+                      pickup != null && destination != null
+                          ? 'Pickup & destination confirmed'
+                          : 'Locations need confirmation',
                       style: OraTypography.caption(OraColors.goldSoft),
                     ),
                   ],

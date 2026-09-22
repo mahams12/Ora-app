@@ -1,14 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../app/di/providers.dart';
 import '../../../../core/errors/failure_mapper.dart';
 import '../../domain/entities/ride.dart';
+import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/models/ride_category_option.dart';
+import '../../domain/ports/device_location_port.dart';
+import '../../domain/ports/place_search_port.dart';
 import '../../domain/use_cases/ride_use_cases.dart';
 
-/// Production capabilities for ride create. Defaults are empty — no invented
-/// pricing snapshot or GPS coordinates.
+/// Pricing fields remain externally injected (Phase 5). Coordinates come from
+/// passenger-confirmed locations in [RideRequestUiState] (Phase 4A).
 class RideRequestCapabilities {
   const RideRequestCapabilities({
     this.pricingSnapshotId,
@@ -32,7 +37,24 @@ class RideRequestCapabilities {
       resolvedPickup != null && resolvedDestination != null;
 
   bool get canCreateRide => hasPricing && hasResolvedLocations;
+
+  RideRequestCapabilities withResolvedLocations({
+    LatLngPoint? pickup,
+    LatLngPoint? destination,
+  }) {
+    return RideRequestCapabilities(
+      pricingSnapshotId: pricingSnapshotId,
+      passengerOfferMinor: passengerOfferMinor,
+      resolvedPickup: pickup,
+      resolvedDestination: destination,
+    );
+  }
 }
+
+/// Pricing-only defaults for production. Empty until Phase 5.
+final rideRequestCapabilitiesProvider = Provider<RideRequestCapabilities>(
+  (ref) => const RideRequestCapabilities(),
+);
 
 enum RideRequestPhase {
   compose,
@@ -49,6 +71,8 @@ enum RideRequestBlockReason {
   locationUnavailable,
 }
 
+enum LocationField { pickup, destination }
+
 class RideRequestUiState {
   const RideRequestUiState({
     this.phase = RideRequestPhase.compose,
@@ -59,6 +83,16 @@ class RideRequestUiState {
     this.blockReason,
     this.errorMessage,
     this.createdRide,
+    this.pickupSuggestions = const [],
+    this.destinationSuggestions = const [],
+    this.proposedPickup,
+    this.proposedDestination,
+    this.confirmedPickup,
+    this.confirmedDestination,
+    this.pickupBusy = false,
+    this.destinationBusy = false,
+    this.pickupLookupError,
+    this.destinationLookupError,
   });
 
   final RideRequestPhase phase;
@@ -70,10 +104,26 @@ class RideRequestUiState {
   final String? errorMessage;
   final Ride? createdRide;
 
+  final List<PlaceSuggestion> pickupSuggestions;
+  final List<PlaceSuggestion> destinationSuggestions;
+  final ResolvedPassengerLocation? proposedPickup;
+  final ResolvedPassengerLocation? proposedDestination;
+  final ResolvedPassengerLocation? confirmedPickup;
+  final ResolvedPassengerLocation? confirmedDestination;
+  final bool pickupBusy;
+  final bool destinationBusy;
+  final String? pickupLookupError;
+  final String? destinationLookupError;
+
   bool get hasPickupText => pickupText.trim().isNotEmpty;
   bool get hasDestinationText => destinationText.trim().isNotEmpty;
 
-  bool get canAdvanceToReview => hasPickupText && hasDestinationText;
+  bool get hasConfirmedPickup => confirmedPickup != null;
+  bool get hasConfirmedDestination => confirmedDestination != null;
+
+  /// Review requires passenger-confirmed coordinates (not free text alone).
+  bool get canAdvanceToReview =>
+      hasConfirmedPickup && hasConfirmedDestination;
 
   RideCategoryOption get selectedCategory =>
       rideCategoryById(categoryId) ?? kRideCategoryOptions[2];
@@ -87,9 +137,27 @@ class RideRequestUiState {
     RideRequestBlockReason? blockReason,
     String? errorMessage,
     Ride? createdRide,
+    List<PlaceSuggestion>? pickupSuggestions,
+    List<PlaceSuggestion>? destinationSuggestions,
+    ResolvedPassengerLocation? proposedPickup,
+    ResolvedPassengerLocation? proposedDestination,
+    ResolvedPassengerLocation? confirmedPickup,
+    ResolvedPassengerLocation? confirmedDestination,
+    bool? pickupBusy,
+    bool? destinationBusy,
+    String? pickupLookupError,
+    String? destinationLookupError,
     bool clearBlock = false,
     bool clearError = false,
     bool clearCreated = false,
+    bool clearProposedPickup = false,
+    bool clearProposedDestination = false,
+    bool clearConfirmedPickup = false,
+    bool clearConfirmedDestination = false,
+    bool clearPickupSuggestions = false,
+    bool clearDestinationSuggestions = false,
+    bool clearPickupLookupError = false,
+    bool clearDestinationLookupError = false,
   }) {
     return RideRequestUiState(
       phase: phase ?? this.phase,
@@ -100,27 +168,77 @@ class RideRequestUiState {
       blockReason: clearBlock ? null : (blockReason ?? this.blockReason),
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       createdRide: clearCreated ? null : (createdRide ?? this.createdRide),
+      pickupSuggestions: clearPickupSuggestions
+          ? const []
+          : (pickupSuggestions ?? this.pickupSuggestions),
+      destinationSuggestions: clearDestinationSuggestions
+          ? const []
+          : (destinationSuggestions ?? this.destinationSuggestions),
+      proposedPickup: clearProposedPickup
+          ? null
+          : (proposedPickup ?? this.proposedPickup),
+      proposedDestination: clearProposedDestination
+          ? null
+          : (proposedDestination ?? this.proposedDestination),
+      confirmedPickup: clearConfirmedPickup
+          ? null
+          : (confirmedPickup ?? this.confirmedPickup),
+      confirmedDestination: clearConfirmedDestination
+          ? null
+          : (confirmedDestination ?? this.confirmedDestination),
+      pickupBusy: pickupBusy ?? this.pickupBusy,
+      destinationBusy: destinationBusy ?? this.destinationBusy,
+      pickupLookupError: clearPickupLookupError
+          ? null
+          : (pickupLookupError ?? this.pickupLookupError),
+      destinationLookupError: clearDestinationLookupError
+          ? null
+          : (destinationLookupError ?? this.destinationLookupError),
     );
   }
 }
 
-/// Compose → review → create (when capabilities allow). Never invents pricing
-/// or coordinates.
+/// Compose → confirm coords → review → create (when capabilities allow).
+/// Never invents pricing or coordinates.
 class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   late final CreateRideUseCase _createRide;
   late final FailureMapper _failures;
-  late final RideRequestCapabilities _capabilities;
+  late final RideRequestCapabilities _pricingCapabilities;
+  late final DeviceLocationPort _deviceLocation;
+  late final PlaceSearchPort _placeSearch;
 
-  /// Stable idempotency operation key for this compose session.
   String? _createOperationKey;
+  String _pickupSessionToken = const Uuid().v4();
+  String _destinationSessionToken = const Uuid().v4();
+  int _pickupSearchGen = 0;
+  int _destinationSearchGen = 0;
+  int _pickupResolveGen = 0;
+  int _destinationResolveGen = 0;
+  Timer? _pickupDebounce;
+  Timer? _destinationDebounce;
+
+  static const _debounce = Duration(milliseconds: 350);
 
   @override
   RideRequestUiState build() {
     _createRide = ref.read(createRideUseCaseProvider);
     _failures = ref.read(failureMapperProvider);
-    _capabilities = ref.read(rideRequestCapabilitiesProvider);
+    _pricingCapabilities = ref.read(rideRequestCapabilitiesProvider);
+    _deviceLocation = ref.read(deviceLocationPortProvider);
+    _placeSearch = ref.read(placeSearchPortProvider);
+    ref.onDispose(() {
+      _pickupDebounce?.cancel();
+      _destinationDebounce?.cancel();
+    });
     return const RideRequestUiState();
   }
+
+  /// Effective create capabilities: pricing from provider + confirmed coords.
+  RideRequestCapabilities get capabilities =>
+      _pricingCapabilities.withResolvedLocations(
+        pickup: state.confirmedPickup?.toLatLngPoint(),
+        destination: state.confirmedDestination?.toLatLngPoint(),
+      );
 
   void seedCategory(String? categoryId) {
     if (categoryId == null || categoryId.isEmpty) return;
@@ -129,16 +247,258 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   }
 
   void setPickupText(String value) {
+    _pickupDebounce?.cancel();
+    _pickupSearchGen++;
+    _pickupResolveGen++;
     state = state.copyWith(
       pickupText: value,
+      clearBlock: true,
+      clearError: true,
+      clearProposedPickup: true,
+      clearConfirmedPickup: true,
+      clearPickupSuggestions: true,
+      clearPickupLookupError: true,
+      pickupBusy: false,
+    );
+    final trimmed = value.trim();
+    if (trimmed.length < 2) return;
+    final gen = _pickupSearchGen;
+    _pickupDebounce = Timer(_debounce, () {
+      unawaited(_runAutocomplete(LocationField.pickup, trimmed, gen));
+    });
+  }
+
+  void setDestinationText(String value) {
+    _destinationDebounce?.cancel();
+    _destinationSearchGen++;
+    _destinationResolveGen++;
+    state = state.copyWith(
+      destinationText: value,
+      clearBlock: true,
+      clearError: true,
+      clearProposedDestination: true,
+      clearConfirmedDestination: true,
+      clearDestinationSuggestions: true,
+      clearDestinationLookupError: true,
+      destinationBusy: false,
+    );
+    final trimmed = value.trim();
+    if (trimmed.length < 2) return;
+    final gen = _destinationSearchGen;
+    _destinationDebounce = Timer(_debounce, () {
+      unawaited(_runAutocomplete(LocationField.destination, trimmed, gen));
+    });
+  }
+
+  Future<void> _runAutocomplete(
+    LocationField field,
+    String query,
+    int generation,
+  ) async {
+    final isPickup = field == LocationField.pickup;
+    if (isPickup) {
+      state = state.copyWith(
+        pickupBusy: true,
+        clearPickupLookupError: true,
+      );
+    } else {
+      state = state.copyWith(
+        destinationBusy: true,
+        clearDestinationLookupError: true,
+      );
+    }
+
+    try {
+      final suggestions = await _placeSearch.autocomplete(
+        query: query,
+        sessionToken:
+            isPickup ? _pickupSessionToken : _destinationSessionToken,
+      );
+      if (!_isSearchCurrent(field, generation)) return;
+      if (isPickup) {
+        state = state.copyWith(
+          pickupSuggestions: suggestions,
+          pickupBusy: false,
+          clearPickupLookupError: true,
+        );
+      } else {
+        state = state.copyWith(
+          destinationSuggestions: suggestions,
+          destinationBusy: false,
+          clearDestinationLookupError: true,
+        );
+      }
+    } catch (error) {
+      if (!_isSearchCurrent(field, generation)) return;
+      final message = _mapLookupError(error);
+      if (isPickup) {
+        state = state.copyWith(
+          pickupBusy: false,
+          pickupSuggestions: const [],
+          pickupLookupError: message,
+        );
+      } else {
+        state = state.copyWith(
+          destinationBusy: false,
+          destinationSuggestions: const [],
+          destinationLookupError: message,
+        );
+      }
+    }
+  }
+
+  bool _isSearchCurrent(LocationField field, int generation) {
+    return field == LocationField.pickup
+        ? generation == _pickupSearchGen
+        : generation == _destinationSearchGen;
+  }
+
+  bool _isResolveCurrent(LocationField field, int generation) {
+    return field == LocationField.pickup
+        ? generation == _pickupResolveGen
+        : generation == _destinationResolveGen;
+  }
+
+  Future<void> selectPlaceSuggestion({
+    required LocationField field,
+    required PlaceSuggestion suggestion,
+  }) async {
+    final isPickup = field == LocationField.pickup;
+    final generation =
+        isPickup ? ++_pickupResolveGen : ++_destinationResolveGen;
+    // Selecting a suggestion supersedes in-flight autocomplete.
+    if (isPickup) {
+      _pickupDebounce?.cancel();
+      _pickupSearchGen++;
+      state = state.copyWith(
+        pickupText: suggestion.displayText,
+        pickupBusy: true,
+        clearPickupSuggestions: true,
+        clearProposedPickup: true,
+        clearConfirmedPickup: true,
+        clearPickupLookupError: true,
+        clearBlock: true,
+        clearError: true,
+      );
+    } else {
+      _destinationDebounce?.cancel();
+      _destinationSearchGen++;
+      state = state.copyWith(
+        destinationText: suggestion.displayText,
+        destinationBusy: true,
+        clearDestinationSuggestions: true,
+        clearProposedDestination: true,
+        clearConfirmedDestination: true,
+        clearDestinationLookupError: true,
+        clearBlock: true,
+        clearError: true,
+      );
+    }
+
+    try {
+      final resolved = await _placeSearch.resolvePlace(
+        placeId: suggestion.placeId,
+        sessionToken:
+            isPickup ? _pickupSessionToken : _destinationSessionToken,
+      );
+      if (!_isResolveCurrent(field, generation)) return;
+
+      // New session after a successful details call (Places billing practice).
+      if (isPickup) {
+        _pickupSessionToken = const Uuid().v4();
+        state = state.copyWith(
+          proposedPickup: resolved,
+          pickupText: resolved.displayLabel,
+          pickupBusy: false,
+          clearPickupSuggestions: true,
+          clearPickupLookupError: true,
+        );
+      } else {
+        _destinationSessionToken = const Uuid().v4();
+        state = state.copyWith(
+          proposedDestination: resolved,
+          destinationText: resolved.displayLabel,
+          destinationBusy: false,
+          clearDestinationSuggestions: true,
+          clearDestinationLookupError: true,
+        );
+      }
+    } catch (error) {
+      if (!_isResolveCurrent(field, generation)) return;
+      final message = _mapLookupError(error);
+      if (isPickup) {
+        state = state.copyWith(
+          pickupBusy: false,
+          pickupLookupError: message,
+          clearProposedPickup: true,
+        );
+      } else {
+        state = state.copyWith(
+          destinationBusy: false,
+          destinationLookupError: message,
+          clearProposedDestination: true,
+        );
+      }
+    }
+  }
+
+  Future<void> useCurrentLocationForPickup() async {
+    final generation = ++_pickupResolveGen;
+    _pickupDebounce?.cancel();
+    _pickupSearchGen++;
+    state = state.copyWith(
+      pickupBusy: true,
+      clearPickupSuggestions: true,
+      clearProposedPickup: true,
+      clearConfirmedPickup: true,
+      clearPickupLookupError: true,
+      clearBlock: true,
+      clearError: true,
+    );
+
+    try {
+      final resolved = await _deviceLocation.getCurrentLocation();
+      if (!_isResolveCurrent(LocationField.pickup, generation)) return;
+      state = state.copyWith(
+        proposedPickup: resolved,
+        pickupText: resolved.displayLabel,
+        pickupBusy: false,
+        clearPickupSuggestions: true,
+        clearPickupLookupError: true,
+      );
+    } catch (error) {
+      if (!_isResolveCurrent(LocationField.pickup, generation)) return;
+      state = state.copyWith(
+        pickupBusy: false,
+        pickupLookupError: _mapLookupError(error),
+        clearProposedPickup: true,
+      );
+    }
+  }
+
+  void confirmPickup() {
+    final proposed = state.proposedPickup;
+    if (proposed == null || !proposed.hasValidCoordinates) return;
+    state = state.copyWith(
+      confirmedPickup: proposed,
+      pickupText: proposed.displayLabel,
+      clearProposedPickup: true,
+      clearPickupSuggestions: true,
+      clearPickupLookupError: true,
       clearBlock: true,
       clearError: true,
     );
   }
 
-  void setDestinationText(String value) {
+  void confirmDestination() {
+    final proposed = state.proposedDestination;
+    if (proposed == null || !proposed.hasValidCoordinates) return;
     state = state.copyWith(
-      destinationText: value,
+      confirmedDestination: proposed,
+      destinationText: proposed.displayLabel,
+      clearProposedDestination: true,
+      clearDestinationSuggestions: true,
+      clearDestinationLookupError: true,
       clearBlock: true,
       clearError: true,
     );
@@ -177,19 +537,18 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     );
   }
 
-  RideRequestCapabilities get capabilities => _capabilities;
-
   bool get canSubmitRideRequest =>
-      state.canAdvanceToReview && _capabilities.canCreateRide;
+      state.canAdvanceToReview && capabilities.canCreateRide;
 
   RideRequestBlockReason? get submitBlockReason {
     if (!state.canAdvanceToReview) {
       return RideRequestBlockReason.incomplete;
     }
-    if (!_capabilities.hasPricing) {
+    final caps = capabilities;
+    if (!caps.hasPricing) {
       return RideRequestBlockReason.pricingUnavailable;
     }
-    if (!_capabilities.hasResolvedLocations) {
+    if (!caps.hasResolvedLocations) {
       return RideRequestBlockReason.locationUnavailable;
     }
     return null;
@@ -198,7 +557,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   String messageFor(RideRequestBlockReason reason) {
     return switch (reason) {
       RideRequestBlockReason.incomplete =>
-        'Enter both a pickup and a destination to continue.',
+        'Confirm both a pickup and a destination to continue.',
       RideRequestBlockReason.pricingUnavailable =>
         'Pricing isn\'t available right now. Please try again later.',
       RideRequestBlockReason.locationUnavailable =>
@@ -207,7 +566,38 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     };
   }
 
-  /// Attempts create only when pricing + resolved coordinates exist.
+  String _mapLookupError(Object error) {
+    if (error is DeviceLocationException) {
+      return switch (error.kind) {
+        DeviceLocationFailureKind.permissionDenied =>
+          'Location permission is required to use current location.',
+        DeviceLocationFailureKind.permissionDeniedForever =>
+          'Location permission is permanently denied. Enable it in Settings.',
+        DeviceLocationFailureKind.serviceDisabled =>
+          'Turn on location services, then try again.',
+        DeviceLocationFailureKind.timeout =>
+          'Timed out waiting for GPS. Try again or search for a place.',
+        DeviceLocationFailureKind.unavailable =>
+          'We couldn\'t use that location. Pick another point.',
+      };
+    }
+    if (error is PlaceSearchException) {
+      return switch (error.kind) {
+        PlaceSearchFailureKind.notConfigured =>
+          'Location lookup isn\'t available right now. Try again.',
+        PlaceSearchFailureKind.network ||
+        PlaceSearchFailureKind.unavailable =>
+          'Location lookup isn\'t available right now. Try again.',
+        PlaceSearchFailureKind.empty =>
+          'No places found. Try a different search.',
+        PlaceSearchFailureKind.invalid =>
+          'We couldn\'t use that location. Pick another point.',
+      };
+    }
+    return 'Location lookup isn\'t available right now. Try again.';
+  }
+
+  /// Attempts create only when pricing + confirmed coordinates exist.
   Future<void> submit() async {
     if (state.phase == RideRequestPhase.submitting) return;
 
@@ -221,10 +611,11 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       return;
     }
 
-    final pickup = _capabilities.resolvedPickup!;
-    final destination = _capabilities.resolvedDestination!;
-    final snapshotId = _capabilities.pricingSnapshotId!;
-    final offerMinor = _capabilities.passengerOfferMinor!;
+    final caps = capabilities;
+    final pickup = caps.resolvedPickup!;
+    final destination = caps.resolvedDestination!;
+    final snapshotId = caps.pricingSnapshotId!;
+    final offerMinor = caps.passengerOfferMinor!;
 
     _createOperationKey ??= 'ride:create:${const Uuid().v4()}';
 
@@ -273,7 +664,9 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
 
   void clearBlocked() {
     state = state.copyWith(
-      phase: RideRequestPhase.review,
+      phase: state.canAdvanceToReview
+          ? RideRequestPhase.review
+          : RideRequestPhase.compose,
       clearBlock: true,
     );
   }
@@ -285,10 +678,6 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     );
   }
 }
-
-final rideRequestCapabilitiesProvider = Provider<RideRequestCapabilities>(
-  (ref) => const RideRequestCapabilities(),
-);
 
 final rideRequestViewModelProvider =
     NotifierProvider.autoDispose<RideRequestViewModel, RideRequestUiState>(

@@ -6,7 +6,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:ora/app/di/providers.dart';
 import 'package:ora/app/router/routes.dart';
 import 'package:ora/app/theme/theme.dart';
-import 'package:ora/app/theme/widgets/ora_star_rating.dart';
 import 'package:ora/core/errors/app_failure.dart';
 import 'package:ora/core/errors/failure_mapper.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';

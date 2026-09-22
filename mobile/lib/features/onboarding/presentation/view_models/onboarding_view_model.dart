@@ -44,10 +44,13 @@ class OnboardingViewModel extends Notifier<OnboardingViewState> {
     );
 
     try {
-      await _updateDisplayName(displayName: name);
+      // PATCH returns the authoritative profile (incl. profileComplete).
+      // Apply it directly — do not require a second GET /me that can fail with
+      // a connection error after Firestore already wrote the name.
+      final profile = await _updateDisplayName(displayName: name);
       await ref
           .read(authStateNotifierProvider.notifier)
-          .refreshCanonicalProfile();
+          .applyCanonicalProfile(profile);
       state = state.copyWith(status: OnboardingStatus.submitted);
     } on AppFailure catch (failure) {
       state = state.copyWith(

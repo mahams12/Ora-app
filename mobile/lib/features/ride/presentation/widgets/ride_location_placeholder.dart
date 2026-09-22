@@ -5,19 +5,31 @@ import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 
-/// Honest location surface — decorative only. Not GPS, not a live map.
+/// Location surface header — not a live map (Maps SDK deferred past 4A).
 class RideLocationPlaceholder extends StatelessWidget {
   const RideLocationPlaceholder({
     super.key,
     this.height = 168,
     this.onBack,
+    this.pickupConfirmed = false,
+    this.destinationConfirmed = false,
   });
 
   final double height;
   final VoidCallback? onBack;
+  final bool pickupConfirmed;
+  final bool destinationConfirmed;
 
   @override
   Widget build(BuildContext context) {
+    final status = pickupConfirmed && destinationConfirmed
+        ? 'Pickup & destination confirmed'
+        : pickupConfirmed
+            ? 'Pickup confirmed · destination needed'
+            : destinationConfirmed
+                ? 'Destination confirmed · pickup needed'
+                : 'Confirm pickup & destination to continue';
+
     return SizedBox(
       height: height,
       width: double.infinity,
@@ -67,8 +79,8 @@ class RideLocationPlaceholder extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Live maps and GPS open in a later build. '
-                      'This is not your location.',
+                      'Interactive map pins open in a later build. '
+                      'Search and GPS resolve your coordinates now.',
                       textAlign: TextAlign.center,
                       style: OraTypography.caption(OraColors.textMuted),
                     ),
@@ -107,7 +119,7 @@ class RideLocationPlaceholder extends StatelessWidget {
                   border: Border.all(color: OraColors.border),
                 ),
                 child: Text(
-                  'Location unresolved — text only for now',
+                  status,
                   textAlign: TextAlign.center,
                   style: OraTypography.caption(OraColors.goldSoft),
                 ),
