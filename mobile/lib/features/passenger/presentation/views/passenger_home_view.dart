@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/ora_colors.dart';
-import '../../../../app/theme/ora_motion.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
@@ -10,7 +9,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../view_models/home_view_model.dart';
 
-/// Visual-only ride category (no fare / no booking side effects).
+/// Visual-only ride category (fares come from backend estimate — never fabricated).
 class _RideCategory {
   const _RideCategory({
     required this.id,
@@ -29,13 +28,13 @@ const _categories = <_RideCategory>[
   _RideCategory(
     id: 'zip',
     name: 'Zip',
-    blurb: 'Bike',
+    blurb: 'Bike, fastest way',
     icon: Icons.two_wheeler_rounded,
   ),
   _RideCategory(
     id: 'trio',
     name: 'Trio',
-    blurb: 'Rickshaw',
+    blurb: 'Rickshaw, 3 seats',
     icon: Icons.airport_shuttle_rounded,
   ),
   _RideCategory(
@@ -47,40 +46,44 @@ const _categories = <_RideCategory>[
   _RideCategory(
     id: 'breeze',
     name: 'Breeze',
-    blurb: 'AC comfort',
+    blurb: 'AC comfort car',
     icon: Icons.ac_unit_rounded,
   ),
   _RideCategory(
     id: 'executive',
     name: 'Executive',
-    blurb: 'Larger',
+    blurb: 'Big trunk · events',
     icon: Icons.airport_shuttle_outlined,
   ),
   _RideCategory(
     id: 'premium',
     name: 'Premium',
-    blurb: 'Luxury feel',
+    blurb: 'Luxury feel ride',
     icon: Icons.workspace_premium_rounded,
   ),
 ];
 
-/// Authenticated passenger Home — prototype-faithful, backend-honest.
+/// Authenticated passenger Home — matches the Ora HTML prototype shell.
 class PassengerHomeView extends StatefulWidget {
   const PassengerHomeView({
     required this.state,
+    required this.onOpenDrawer,
     required this.onRetryProfile,
     required this.onRequestRideEntry,
-    required this.onOpenRidesTab,
-    required this.onOpenAccountTab,
+    required this.onOpenProfile,
+    required this.onOpenRides,
+    required this.onSwitchToDriver,
     required this.onUnavailableFeature,
     super.key,
   });
 
   final HomeUiState state;
+  final VoidCallback onOpenDrawer;
   final VoidCallback onRetryProfile;
   final ValueChanged<String?> onRequestRideEntry;
-  final VoidCallback onOpenRidesTab;
-  final VoidCallback onOpenAccountTab;
+  final VoidCallback onOpenProfile;
+  final VoidCallback onOpenRides;
+  final VoidCallback onSwitchToDriver;
   final ValueChanged<String> onUnavailableFeature;
 
   @override
@@ -113,7 +116,14 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
-        SliverToBoxAdapter(child: _HomeHeroHeader(state: widget.state)),
+        SliverToBoxAdapter(
+          child: _HomeHeroHeader(
+            state: widget.state,
+            onOpenDrawer: widget.onOpenDrawer,
+            onOpenProfile: widget.onOpenProfile,
+            onSearchTap: () => widget.onRequestRideEntry(null),
+          ),
+        ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(
             padding,
@@ -123,13 +133,52 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
           ),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              _DestinationSearchCard(onTap: () => widget.onRequestRideEntry(null)),
+              _PromoCard(
+                onTap: () => widget.onUnavailableFeature('Intercity'),
+              ),
               const SizedBox(height: OraSpacing.md),
-              const _InfoBanner(
-                title: 'Compose a ride',
-                body:
-                    'Set pickup and destination next. Live pricing is not '
-                    'available yet, so Ora will not send a create request.',
+              OraCard(
+                onTap: widget.onSwitchToDriver,
+                padding: const EdgeInsets.all(OraSpacing.md),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: OraColors.navy,
+                        borderRadius: BorderRadius.circular(OraRadius.sm),
+                      ),
+                      child: const Icon(
+                        Icons.directions_car_filled_rounded,
+                        color: OraColors.primary,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: OraSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Earn on ${AppConstants.appName}',
+                            style: OraTypography.bodyEmphasis(
+                              OraColors.textPrimary,
+                            ),
+                          ),
+                          Text(
+                            'Passenger & driver — switch anytime',
+                            style: OraTypography.caption(OraColors.textMuted),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      color: OraColors.textMuted,
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: OraSpacing.lg),
               const OraSectionHeader(title: 'Services'),
@@ -141,7 +190,6 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
               const SizedBox(height: OraSpacing.lg),
               OraSectionHeader(
                 title: 'Choose a ride',
-                description: 'Categories only — fares come from Ora pricing.',
                 action: Text(
                   '${_categories.length} options',
                   style: OraTypography.caption(OraColors.textMuted),
@@ -149,7 +197,7 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
               ),
               const SizedBox(height: OraSpacing.sm),
               SizedBox(
-                height: 148,
+                height: 156,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: _categories.length,
@@ -172,32 +220,36 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
               const SizedBox(height: OraSpacing.lg),
               OraSectionHeader(
                 title: 'Saved places',
-                action: Text(
-                  'Soon',
-                  style: OraTypography.caption(OraColors.primary),
+                action: GestureDetector(
+                  onTap: () => widget.onUnavailableFeature('Saved places'),
+                  child: Text(
+                    'See all',
+                    style: OraTypography.caption(OraColors.primary).copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: OraSpacing.sm),
               OraCard(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: OraSpacing.sm,
+                  vertical: OraSpacing.xxs,
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'No saved places yet',
-                      style: OraTypography.bodyEmphasis(OraColors.textPrimary),
+                    _SavedPlaceRow(
+                      icon: Icons.home_rounded,
+                      title: 'Home',
+                      subtitle: 'DHA Phase 5, Lahore',
+                      onTap: () => widget.onRequestRideEntry(null),
                     ),
-                    const SizedBox(height: OraSpacing.xxs),
-                    Text(
-                      'Saved places are not connected in this build. '
-                      'Nothing is stored locally as a stand-in.',
-                      style: OraTypography.caption(OraColors.textMuted),
-                    ),
-                    const SizedBox(height: OraSpacing.sm),
-                    OraButton(
-                      label: 'Notify me later',
-                      variant: OraButtonVariant.ghost,
-                      onPressed: () =>
-                          widget.onUnavailableFeature('Saved places'),
+                    const Divider(height: 1, color: OraColors.border),
+                    _SavedPlaceRow(
+                      icon: Icons.work_outline_rounded,
+                      title: 'Work',
+                      subtitle: 'MM Alam Road, Gulberg',
+                      onTap: () => widget.onRequestRideEntry(null),
                     ),
                   ],
                 ),
@@ -208,17 +260,17 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
               Row(
                 children: [
                   Expanded(
-                    child: _QuickAction(
+                    child: _QuickActionTile(
                       icon: Icons.history_rounded,
-                      label: 'Trips',
+                      label: 'My rides',
                       color: OraColors.info,
-                      onTap: widget.onOpenRidesTab,
+                      onTap: widget.onOpenRides,
                     ),
                   ),
                   const SizedBox(width: OraSpacing.sm),
                   Expanded(
-                    child: _QuickAction(
-                      icon: Icons.account_balance_wallet_outlined,
+                    child: _QuickActionTile(
+                      icon: Icons.account_balance_wallet_rounded,
                       label: 'Wallet',
                       color: OraColors.tealBright,
                       onTap: () => widget.onUnavailableFeature('Wallet'),
@@ -226,39 +278,36 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
                   ),
                   const SizedBox(width: OraSpacing.sm),
                   Expanded(
-                    child: _QuickAction(
-                      icon: Icons.shield_outlined,
+                    child: _QuickActionTile(
+                      icon: Icons.shield_rounded,
                       label: 'Safety',
                       color: OraColors.goldSoft,
-                      onTap: () => widget.onUnavailableFeature('Safety'),
+                      onTap: () =>
+                          widget.onUnavailableFeature('Safety centre'),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: OraSpacing.md),
-              OraListRow(
-                title: 'Account',
-                subtitle: 'Sign out and preferences',
-                leading: const OraIconBadge(
-                  icon: Icons.person_outline_rounded,
-                  backgroundColor: OraColors.primaryMuted,
-                  iconColor: OraColors.primary,
-                ),
-                onTap: widget.onOpenAccountTab,
-              ),
             ]),
           ),
         ),
-        const SliverToBoxAdapter(child: SizedBox(height: 72)),
       ],
     );
   }
 }
 
 class _HomeHeroHeader extends StatelessWidget {
-  const _HomeHeroHeader({required this.state});
+  const _HomeHeroHeader({
+    required this.state,
+    required this.onOpenDrawer,
+    required this.onOpenProfile,
+    required this.onSearchTap,
+  });
 
   final HomeUiState state;
+  final VoidCallback onOpenDrawer;
+  final VoidCallback onOpenProfile;
+  final VoidCallback onSearchTap;
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +316,7 @@ class _HomeHeroHeader extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(
         padding,
-        OraSpacing.md,
+        OraSpacing.sm,
         padding,
         OraSpacing.lg,
       ),
@@ -278,50 +327,110 @@ class _HomeHeroHeader extends StatelessWidget {
           colors: [OraColors.navy, OraColors.navyElevated],
         ),
         borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(OraRadius.xxl),
+          bottom: Radius.circular(30),
         ),
       ),
       child: SafeArea(
         bottom: false,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               children: [
+                IconButton(
+                  tooltip: 'Menu',
+                  onPressed: onOpenDrawer,
+                  icon: const Icon(Icons.menu_rounded),
+                  color: OraColors.textPrimary,
+                ),
                 Expanded(
                   child: Text(
                     AppConstants.appName,
-                    style: OraTypography.title(OraColors.textPrimary),
-                  ),
-                ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [OraColors.gold, OraColors.goldDeep],
+                    textAlign: TextAlign.center,
+                    style: OraTypography.title(OraColors.textPrimary).copyWith(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.4,
                     ),
                   ),
-                  child: Text(
-                    state.avatarInitials,
-                    style: OraTypography.label(
-                      OraColors.primaryForeground,
-                    ).copyWith(fontWeight: FontWeight.w800),
+                ),
+                InkWell(
+                  onTap: onOpenProfile,
+                  borderRadius: BorderRadius.circular(OraRadius.avatar),
+                  child: Container(
+                    width: 38,
+                    height: 38,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [OraColors.gold, OraColors.goldDeep],
+                      ),
+                    ),
+                    child: Text(
+                      state.avatarInitials,
+                      style: OraTypography.label(
+                        OraColors.primaryForeground,
+                      ).copyWith(fontWeight: FontWeight.w800),
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: OraSpacing.md),
-            Text(
-              'Hello, ${state.greetingName}',
-              style: OraTypography.headline(OraColors.textPrimary),
-            ),
-            const SizedBox(height: OraSpacing.xxs),
-            Text(
-              'Where can Ora take you?',
-              style: OraTypography.body(OraColors.textSecondary),
+            Material(
+              color: const Color(0x14FFFFFF),
+              borderRadius: BorderRadius.circular(OraRadius.lg),
+              child: InkWell(
+                onTap: onSearchTap,
+                borderRadius: BorderRadius.circular(OraRadius.lg),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: OraSpacing.md,
+                    vertical: 13,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(OraRadius.lg),
+                    border: Border.all(color: const Color(0x1FFFFFFF)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: OraColors.primaryMuted,
+                          borderRadius: BorderRadius.circular(9),
+                        ),
+                        child: const Icon(
+                          Icons.location_on_rounded,
+                          color: OraColors.primary,
+                          size: 16,
+                        ),
+                      ),
+                      const SizedBox(width: OraSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Where are you headed?',
+                              style: OraTypography.bodyEmphasis(
+                                OraColors.textPrimary,
+                              ).copyWith(fontSize: 13.5),
+                            ),
+                            Text(
+                              'Set pickup & destination',
+                              style: OraTypography.caption(
+                                const Color(0xFFB9BDD1),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -330,80 +439,48 @@ class _HomeHeroHeader extends StatelessWidget {
   }
 }
 
-class _DestinationSearchCard extends StatelessWidget {
-  const _DestinationSearchCard({required this.onTap});
+class _PromoCard extends StatelessWidget {
+  const _PromoCard({required this.onTap});
 
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return OraCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(OraSpacing.md),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: OraColors.primaryMuted,
-              borderRadius: BorderRadius.circular(OraRadius.sm),
-            ),
-            child: const Icon(
-              Icons.location_on_rounded,
-              color: OraColors.primary,
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: OraSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Where are you headed?',
-                  style: OraTypography.bodyEmphasis(OraColors.textPrimary),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Set pickup & destination when booking opens',
-                  style: OraTypography.caption(OraColors.textMuted),
-                ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Ink(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                OraColors.navy,
+                OraColors.navyElevated,
+                Color(0xFF1B75AE),
               ],
+              stops: [0, 0.55, 1],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: OraColors.textMuted),
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoBanner extends StatelessWidget {
-  const _InfoBanner({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(OraSpacing.md),
-      decoration: BoxDecoration(
-        color: OraColors.primaryMuted,
-        borderRadius: BorderRadius.circular(OraRadius.card),
-        border: Border.all(color: OraColors.primary.withValues(alpha: 0.35)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title.toUpperCase(),
-            style: OraTypography.sectionTitle(OraColors.primary),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'COMING LATER',
+                style: OraTypography.sectionTitle(OraColors.goldSoft),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Intercity trips across Pakistan cities',
+                style: OraTypography.title(OraColors.textPrimary),
+              ),
+            ],
           ),
-          const SizedBox(height: OraSpacing.xxs),
-          Text(body, style: OraTypography.body(OraColors.goldSoft)),
-        ],
+        ),
       ),
     );
   }
@@ -417,83 +494,279 @@ class _ServicesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      mainAxisSpacing: OraSpacing.sm,
-      crossAxisSpacing: OraSpacing.sm,
-      childAspectRatio: 1.35,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    // Fixed 112px tiles (prototype) — avoid GridView aspect-ratio overflow.
+    Widget row(_ServiceImageTile a, _ServiceImageTile b) {
+      return Row(
+        children: [
+          Expanded(child: a),
+          const SizedBox(width: OraSpacing.sm),
+          Expanded(child: b),
+        ],
+      );
+    }
+
+    return Column(
       children: [
-        _ServiceTile(
-          title: 'City rides',
-          subtitle: 'Zip to Premium',
-          icon: Icons.directions_car_filled_rounded,
-          accent: OraColors.primary,
-          onTap: onCityRides,
+        row(
+          _ServiceImageTile(
+            title: 'City rides',
+            subtitle: 'Zip to Premium',
+            imageAsset: AppConstants.serviceCityRidesAsset,
+            icon: Icons.directions_car_filled_rounded,
+            badgeColor: OraColors.primary,
+            onTap: onCityRides,
+          ),
+          _ServiceImageTile(
+            title: 'Intercity',
+            subtitle: 'City to city',
+            imageAsset: AppConstants.serviceIntercityAsset,
+            icon: Icons.alt_route_rounded,
+            badgeColor: OraColors.info,
+            onTap: () => onUnavailable('Intercity'),
+          ),
         ),
-        _ServiceTile(
-          title: 'Intercity',
-          subtitle: 'Coming later',
-          icon: Icons.alt_route_rounded,
-          accent: OraColors.info,
-          onTap: () => onUnavailable('Intercity'),
-        ),
-        _ServiceTile(
-          title: 'Courier',
-          subtitle: 'Coming later',
-          icon: Icons.inventory_2_outlined,
-          accent: OraColors.accentPurple,
-          onTap: () => onUnavailable('Courier'),
-        ),
-        _ServiceTile(
-          title: 'Move',
-          subtitle: 'Coming later',
-          icon: Icons.local_shipping_outlined,
-          accent: OraColors.tealBright,
-          onTap: () => onUnavailable('Move'),
+        const SizedBox(height: OraSpacing.sm),
+        row(
+          _ServiceImageTile(
+            title: 'Courier',
+            subtitle: 'Send anything same day',
+            imageAsset: AppConstants.serviceCourierAsset,
+            icon: Icons.inventory_2_outlined,
+            badgeColor: OraColors.accentPurple,
+            onTap: () => onUnavailable('Courier'),
+          ),
+          _ServiceImageTile(
+            title: 'Move',
+            subtitle: 'Truck + helpers',
+            imageAsset: AppConstants.serviceMoveAsset,
+            icon: Icons.local_shipping_outlined,
+            badgeColor: OraColors.tealBright,
+            onTap: () => onUnavailable('Move'),
+          ),
         ),
       ],
     );
   }
 }
 
-class _ServiceTile extends StatelessWidget {
-  const _ServiceTile({
+class _ServiceImageTile extends StatelessWidget {
+  const _ServiceImageTile({
     required this.title,
     required this.subtitle,
+    required this.imageAsset,
     required this.icon,
-    required this.accent,
+    required this.badgeColor,
     required this.onTap,
   });
 
   final String title;
   final String subtitle;
+  final String imageAsset;
   final IconData icon;
-  final Color accent;
+  final Color badgeColor;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return OraCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(OraSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 36,
-            height: 36,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(OraRadius.card),
+        child: SizedBox(
+          height: 112,
+          child: Ink(
             decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(OraRadius.sm),
+              borderRadius: BorderRadius.circular(OraRadius.card),
+              color: OraColors.navyElevated,
             ),
-            child: Icon(icon, color: accent, size: 20),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(OraRadius.card),
+              child: Stack(
+                fit: StackFit.expand,
+                clipBehavior: Clip.hardEdge,
+                children: [
+                  Image.asset(
+                    imageAsset,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.medium,
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0x26140F05),
+                          Color(0xC7140F05),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: const Color(0xF2FFFFFF),
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                      child: Icon(icon, size: 15, color: badgeColor),
+                    ),
+                  ),
+                  Positioned(
+                    left: 12,
+                    right: 10,
+                    bottom: 9,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              OraTypography.bodyEmphasis(Colors.white).copyWith(
+                            fontSize: 14,
+                            height: 1.1,
+                          ),
+                        ),
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: OraTypography.caption(
+                            const Color(0xD9FFFFFF),
+                          ).copyWith(fontSize: 10.5, height: 1.15),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          const Spacer(),
-          Text(title, style: OraTypography.bodyEmphasis(OraColors.textPrimary)),
-          Text(subtitle, style: OraTypography.caption(OraColors.textMuted)),
-        ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SavedPlaceRow extends StatelessWidget {
+  const _SavedPlaceRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(OraRadius.md),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0x0FFFFFFF),
+              ),
+              child: Icon(icon, size: 18, color: OraColors.textSecondary),
+            ),
+            const SizedBox(width: 13),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: OraTypography.bodyEmphasis(OraColors.textPrimary)
+                        .copyWith(fontSize: 13.5),
+                  ),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: OraTypography.caption(OraColors.textMuted)
+                        .copyWith(fontSize: 11.5),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: OraColors.textMuted,
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickActionTile extends StatelessWidget {
+  const _QuickActionTile({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: OraColors.surfaceElevated,
+      borderRadius: BorderRadius.circular(OraRadius.lg),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(OraRadius.lg),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(OraRadius.lg),
+            border: Border.all(color: OraColors.border),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: color, size: 20),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: OraTypography.caption(OraColors.textPrimary).copyWith(
+                  fontFamily: OraTypography.displayFamily,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11.5,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -512,47 +785,63 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedScale(
-      scale: selected ? 1.02 : 1,
-      duration: OraMotion.select,
-      child: SizedBox(
-        width: 112,
-        child: OraCard(
-          selected: selected,
+    return SizedBox(
+      width: 128,
+      child: Material(
+        color: selected ? OraColors.primaryMuted : OraColors.surfaceElevated,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
           onTap: onTap,
-          padding: const EdgeInsets.all(OraSpacing.sm),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(
-                category.icon,
-                color: selected ? OraColors.primary : OraColors.textSecondary,
-                size: 22,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: selected ? OraColors.primary : OraColors.border,
+                width: selected ? 1.5 : 1,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    category.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: OraTypography.bodyEmphasis(OraColors.textPrimary),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  category.icon,
+                  color:
+                      selected ? OraColors.primary : OraColors.textSecondary,
+                  size: 20,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  category.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: OraTypography.bodyEmphasis(OraColors.textPrimary)
+                      .copyWith(fontSize: 13.5, height: 1.1),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  category.blurb,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: OraTypography.caption(OraColors.textMuted).copyWith(
+                    fontSize: 11,
+                    height: 1.15,
                   ),
-                  Text(
-                    category.blurb,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: OraTypography.caption(OraColors.textMuted),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Fare on request',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: OraTypography.caption(OraColors.primary).copyWith(
+                    fontSize: 11,
+                    height: 1.1,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Price TBD',
-                    style: OraTypography.caption(OraColors.primary),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -560,41 +849,3 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-class _QuickAction extends StatelessWidget {
-  const _QuickAction({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return OraCard(
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(
-        vertical: OraSpacing.md,
-        horizontal: OraSpacing.xs,
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color),
-          const SizedBox(height: OraSpacing.xs),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: OraTypography.caption(OraColors.textPrimary).copyWith(
-              fontFamily: OraTypography.displayFamily,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

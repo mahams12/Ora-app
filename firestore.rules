@@ -81,6 +81,22 @@ service cloud.firestore {
     match /pricingSnapshots/{id} {
       allow read, write: if false;
     }
+    // Server-managed Pakistan city catalog (Slice 1). Clients must use future API.
+    match /cities/{id} {
+      allow read, write: if false;
+    }
+    // N4 — server-managed dispatch wave invite ledger. Clients must not read/write.
+    match /rideDispatchWaves/{id} {
+      allow read, write: if false;
+    }
+    // D1 — server-managed FCM device tokens. Clients use API; no direct SDK access.
+    match /driverDeviceTokens/{id} {
+      allow read, write: if false;
+    }
+    // D1 — per-subscriber outbox delivery tracking (server-only).
+    match /outboxDeliveries/{id} {
+      allow read, write: if false;
+    }
     match /feePolicies/{id} {
       allow read, write: if false;
     }

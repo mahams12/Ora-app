@@ -94,6 +94,7 @@ function appFor(db: ReturnType<typeof memoryDb>, uid: string) {
 const createBody = {
   pickup: { lat: 24.86, lng: 67.0, address: 'A' },
   destination: { lat: 24.9, lng: 67.1, address: 'B' },
+  city: 'Karachi',
   category: 'economy',
   serviceType: 'ride',
   passengerOfferMinor: 25000,

@@ -1,7 +1,24 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { Auth } from 'firebase-admin/auth';
 import type { AuthenticatedCaller } from '../types';
-import { sendApiError } from '../http/errors';
+import { logSafe, sendApiError } from '../http/errors';
+
+function isPricingEstimatePath(req: Request): boolean {
+  const url = req.originalUrl ?? req.url ?? '';
+  return url.includes('/pricing/estimate');
+}
+
+function logPricingAuthDiagnostic(
+  req: Request,
+  reason: string,
+): void {
+  if (!isPricingEstimatePath(req)) return;
+  logSafe('pricing_estimate_auth', {
+    result: 'rejected',
+    reason,
+    hasAuthorizationHeader: Boolean(req.header('Authorization')?.trim()),
+  });
+}
 
 export type AuthedRequest = Request & { caller?: AuthenticatedCaller };
 
@@ -41,6 +58,7 @@ export function createAuthMiddleware(auth: Auth, options: {
 
       const header = req.header('Authorization');
       if (!header?.startsWith('Bearer ')) {
+        logPricingAuthDiagnostic(req, 'missing_or_malformed_bearer');
         sendApiError(
           req,
           res,
@@ -53,6 +71,7 @@ export function createAuthMiddleware(auth: Auth, options: {
 
       const idToken = header.slice('Bearer '.length).trim();
       if (!idToken) {
+        logPricingAuthDiagnostic(req, 'empty_bearer');
         sendApiError(
           req,
           res,
@@ -85,6 +104,7 @@ export function createAuthMiddleware(auth: Auth, options: {
       };
       next();
     } catch (err) {
+      logPricingAuthDiagnostic(req, 'invalid_or_expired_token');
       sendApiError(
         req,
         res,

@@ -7,41 +7,55 @@ import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../core/constants/app_constants.dart';
 
-/// Gold gradient brand mark used on auth surfaces.
+/// Official ORA logo mark used on auth and brand surfaces.
+///
+/// Always renders as a square. Safe inside [CrossAxisAlignment.stretch]
+/// columns (phone entry) — those used to stretch this into a wide bar.
 class OraBrandMark extends StatelessWidget {
   const OraBrandMark({
     super.key,
     this.size = 72,
+    this.alignment = Alignment.centerLeft,
     this.semanticLabel = AppConstants.appName,
   });
 
   final double size;
+  final AlignmentGeometry alignment;
   final String semanticLabel;
 
   @override
   Widget build(BuildContext context) {
+    final mark = SizedBox(
+      width: size,
+      height: size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(size * 0.28),
+          color: OraColors.navy,
+          boxShadow: OraElevation.primaryButtonShadow,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(size * 0.28),
+          child: Image.asset(
+            AppConstants.logoAsset,
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+            filterQuality: FilterQuality.high,
+          ),
+        ),
+      ),
+    );
+
     return Semantics(
       label: semanticLabel,
       image: true,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(size * 0.3),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [OraColors.gold, OraColors.goldDeep],
-          ),
-          boxShadow: OraElevation.primaryButtonShadow,
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          'O',
-          style: OraTypography.display(
-            OraColors.primaryForeground,
-          ).copyWith(fontSize: size * 0.42, height: 1),
-        ),
+      child: Align(
+        alignment: alignment,
+        widthFactor: 1,
+        heightFactor: 1,
+        child: mark,
       ),
     );
   }

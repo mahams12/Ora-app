@@ -1,5 +1,10 @@
 # Phase 2J — Architecture / Next-Slice Investigation
 
+> **STATUS: HISTORICAL investigation**  
+> Written before N1/N2C. Statements that driver go-online / Redis / location APIs are “missing” are **stale as live repo status**.  
+> Closure for 2J sweeper: `phase-02j-ride-expired-sweeper.md`.  
+> Live status: [`docs/ORA_CURRENT_STATE.md`](../ORA_CURRENT_STATE.md).
+
 **Date:** 2026-09-09  
 **Status:** INVESTIGATION ONLY — no production code modified  
 **Verdict:** see §27

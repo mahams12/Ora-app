@@ -1,5 +1,9 @@
 # ORA — Backend Architecture
 
+> **STATUS: PLANNING / PARTIALLY STALE**  
+> Describes a multi-service / RTDB / nearby target architecture. Actual ship is a single modular monolith in `backend/auth-service` with N2A/N2C and **no** `GET /v1/location/nearby` or `GET /v1/drivers/nearby`.  
+> **Authoritative:** [`docs/ORA_CURRENT_STATE.md`](../ORA_CURRENT_STATE.md), [`docs/architecture/API_CONTRACT_INDEX.md`](API_CONTRACT_INDEX.md).
+
 ## Services
 
 ### 1. Ride Engine (Cloud Run)
@@ -132,9 +136,10 @@ timeoutSeconds: 30
 ## Redis Usage Patterns
 
 ```
-# GEO index for driver proximity
-GEOADD geo:drivers:lahore {lng} {lat} {driverId}
-GEORADIUS geo:drivers:lahore {pickupLng} {pickupLat} 10 km ASC COUNT 30
+# GEO index for driver proximity (coordinate-primary)
+GEOADD geo:drivers {lng} {lat} {driverId}
+GEORADIUS geo:drivers {pickupLng} {pickupLat} 10 km ASC COUNT 100
+# Legacy dual-write only: geo:drivers:{city} — not used by N3/N4 reads
 
 # Assignment contention lock (optional, 30-second TTL)
 SET lock:ride:{rideId} {driverId} NX EX 30

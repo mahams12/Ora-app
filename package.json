@@ -20,7 +20,10 @@
     "test:ride-no-show-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-no-show-firestore-concurrency\"",
     "test:ride-rating-firestore-concurrency": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:ride-rating-firestore-concurrency\"",
     "test:driver-availability-firestore": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:driver-availability-firestore\"",
-    "test:location-update-firestore": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:location-update-firestore\""
+    "test:location-update-firestore": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:location-update-firestore\"",
+    "test:city-catalog-firestore": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:city-catalog-firestore\"",
+    "test:dispatch-live-proof": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:dispatch-live-proof\"",
+    "test:dispatch-fcm-live-proof": "npx --yes firebase-tools@13 emulators:exec --only firestore --project ora-app-d8112 \"npm --prefix backend/auth-service run test:dispatch-fcm-live-proof\""
   },
   "repository": {
     "type": "git",

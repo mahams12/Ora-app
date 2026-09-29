@@ -203,7 +203,7 @@ class _OraInterceptors extends Interceptor {
         options.headers.containsKey('Authorization');
 
     if (!carriesRefreshedToken) {
-      final token = await _authTokenProvider.getAccessToken();
+      final token = await _resolveBearerToken();
       if (token != null && token.isNotEmpty) {
         // NEVER log the token value.
         options.headers['Authorization'] = 'Bearer $token';
@@ -223,6 +223,8 @@ class _OraInterceptors extends Interceptor {
           'requestId': options.headers['X-Request-Id'],
           'idempotent': options.extra['idempotent'],
           'hasAppCheck': options.headers.containsKey('X-Firebase-AppCheck'),
+          'hasAuthorization':
+              options.headers.containsKey('Authorization'),
         },
       );
     }
@@ -278,4 +280,15 @@ class _OraInterceptors extends Interceptor {
   }
 
   String _platformHeader() => 'mobile';
+
+  /// Prefer cached ID token; if missing, force one refresh before sending
+  /// unauthenticated (register after OTP often has a token; later calls may not).
+  Future<String?> _resolveBearerToken() async {
+    var token = await _authTokenProvider.getAccessToken();
+    if (token != null && token.isNotEmpty) return token;
+    if (_authTokenProvider is FirebaseAuthTokenProvider) {
+      token = await (_authTokenProvider).forceRefresh();
+    }
+    return token;
+  }
 }

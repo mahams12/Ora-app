@@ -1,7 +1,13 @@
 # Phase 5 — Pricing Engine
 
-**Status:** NOT STARTED  
-**Dependencies:** Phase 4
+**Status:** **5A IMPLEMENTED**; **4B/5B IMPLEMENTED / VERIFIED** (Google Routes + `POST /v1/pricing/estimate`); **5C NOT STARTED**  
+**Dependencies:** Phase **4A** coordinates; **5A** calculator/rules  
+**Decision freeze (authoritative):** [`phase-4-5-location-pricing-decision.md`](phase-4-5-location-pricing-decision.md)
+
+> **2026-09-22:** Slice order: **5A** → **4B/5B** estimate → **5C** Flutter.  
+> **5A (done):** pure `calculateFare` + `PricingRulesRepository`.  
+> **4B/5B (done):** `GoogleRoutesProvider` + `POST /v1/pricing/estimate` writes immutable `pricingSnapshots` (10 min TTL). Client must never fabricate snapshot IDs.  
+> Proofs: `npm run test:phase-5b-unit-proof`, `npm run test:phase-5b-live-proof` (requires `GOOGLE_MAPS_SERVER_KEY`).
 
 ## Objectives
 
@@ -25,13 +31,25 @@ Server-side fare calculation, pricing snapshot, passenger fare offer confirmatio
 
 ## Acceptance Criteria
 
-- [ ] `POST /pricing/estimate` returns in < 400ms P95
-- [ ] Fare formula unit tests: all categories, night adjustment, demand multiplier, min/max
-- [ ] Fare rounded to nearest Rs 10
-- [ ] `pricingSnapshot` written to Firestore on ride create
-- [ ] Snapshot is immutable (Firestore rules + Admin SDK only)
-- [ ] Expired snapshot → 422 `PRICING_SNAPSHOT_EXPIRED`
-- [ ] Out-of-bounds fare offer → 422 `FARE_OUT_OF_BOUNDS`
-- [ ] Demand multiplier clamped to [1.0, 1.8]
+### 5A (calculator + rules) — VERIFIED
+
+- [x] Fare formula unit tests (distance/time, category mult, min/max, Rs-10 round, paisas, OfferBoundPolicy, version, fail-closed)
+- [x] Fare rounded to nearest Rs 10 (then clamp)
+- [x] Demand multiplier MVP = 1.0; formula clamp [1.0, 1.8] preserved
+- [x] Pricing rules version stamped on every calculation
+- [x] Missing/inactive/malformed rules → fail closed (`PRICING_UNAVAILABLE`)
+- [x] Client cannot write/read `pricingRules` (existing Firestore deny rules unchanged)
+
+### 5B (estimate + Routes + snapshot) — VERIFIED
+
+- [x] `POST /v1/pricing/estimate` (auth + validation + Google Routes + 5A fare + snapshot write)
+- [x] Snapshot immutable write; 10 min `expiresAt`
+- [x] Missing rules / Routes failure fail closed
+- [x] Live Google Routes proof (`test:phase-5b-live-proof`)
+- [x] Client cannot write/read `pricingSnapshots` (Firestore deny unchanged)
+
+### 5C (Flutter) — NOT STARTED
+
+- [ ] Flutter estimate + offer UI + city on create + capabilities
 - [ ] Night adjustment applies exactly 23:00–05:00
-- [ ] Pricing rules version stamped on every snapshot
+- [ ] Live Redis demand / historical median

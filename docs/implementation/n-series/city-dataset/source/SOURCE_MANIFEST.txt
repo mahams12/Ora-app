@@ -1,0 +1,6 @@
+download_date_utc=2026-09-21T09:16:41Z
+primary_page=https://www.pbs.gov.pk/result-excel/
+primary_excel=https://www.pbs.gov.pk/wp-content/uploads/2020/07/table_2_national.xlsx
+primary_pdf=https://www.pbs.gov.pk/wp-content/uploads/census_tables/tables/table_2_national.pdf
+dataset=PBS 7th Population and Housing Census 2023 — Table 2 Urban localities by population size and their population by sex, annual growth rate and household size
+note=Official PBS Excel preferred; PDF retained for cross-check. Source files unmodified.

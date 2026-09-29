@@ -39,12 +39,14 @@ import '../../features/auth/presentation/view_models/splash_view_state.dart';
 import '../../features/onboarding/presentation/view_models/onboarding_view_model.dart';
 import '../../features/onboarding/presentation/view_models/onboarding_view_state.dart';
 import '../../features/passenger/presentation/view_models/home_view_model.dart';
+import '../../features/ride/data/data_sources/pricing_remote_data_source.dart';
 import '../../features/ride/data/data_sources/ride_remote_data_source.dart';
 import '../../features/ride/data/location/geolocator_device_location.dart';
 import '../../features/ride/data/location/google_places_http_search.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
 import '../../features/ride/domain/ports/device_location_port.dart';
 import '../../features/ride/domain/ports/place_search_port.dart';
+import '../../features/ride/domain/ports/pricing_estimate_port.dart';
 import '../../features/ride/domain/repositories/ride_repository.dart';
 import '../../features/ride/domain/use_cases/ride_use_cases.dart';
 
@@ -119,6 +121,11 @@ final placeSearchPortProvider = Provider<PlaceSearchPort>((ref) {
   final key = ref.watch(appConfigProvider).googlePlacesApiKey;
   return GooglePlacesHttpSearch(apiKey: key);
 });
+
+/// Backend POST /v1/pricing/estimate (Phase 5C). Never fabricates fares.
+final pricingEstimatePortProvider = Provider<PricingEstimatePort>(
+  (ref) => PricingRemoteDataSource(ref.watch(apiClientProvider)),
+);
 
 final getRideUseCaseProvider = Provider<GetRideUseCase>(
   (ref) => GetRideUseCase(ref.watch(rideRepositoryProvider)),

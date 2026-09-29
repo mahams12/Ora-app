@@ -9,6 +9,9 @@ import {
 export const OPEN_DISCOVERY_DEFAULT_LIMIT = 10;
 export const OPEN_DISCOVERY_MAX_LIMIT = 50;
 
+/** Max docs fetched per open-discovery scan (unordered query — no composite index). */
+export const OPEN_DISCOVERY_SCAN_CAP = 200;
+
 /** Stable binding so discovery cursors cannot be reused on owner-scoped list endpoints. */
 export function discoveryBinding(): string {
   return createHash('sha256')

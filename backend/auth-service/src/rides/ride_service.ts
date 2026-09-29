@@ -59,10 +59,12 @@ import {
   type RideListQueryRole,
 } from './list_query';
 import {
+  OPEN_DISCOVERY_SCAN_CAP,
   RIDE_LIST_CURSOR_VERSION,
   discoveryBinding,
   parseOpenDiscoveryQuery,
 } from './open_discovery_query';
+import { normalizeCitySlug } from '../redis/types';
 
 const RIDES = 'rides';
 const OFFERS = 'rideOffers';
@@ -217,7 +219,10 @@ function publicOpenRide(ride: RideDoc) {
     paymentMethod: ride.paymentMethod,
     passengerCount: ride.passengerCount,
     distanceKm: ride.distanceKm,
-    estimatedDurationMin: ride.estimatedDurationMin,
+    estimatedDurationMin:
+      ride.estimatedDurationMin == null
+        ? null
+        : Math.round(ride.estimatedDurationMin),
     expiresAt: ride.expiresAt,
     createdAt: ride.createdAt,
   };
@@ -236,6 +241,30 @@ function isOpenDiscoverable(ride: RideDoc, nowMs: number): boolean {
   return true;
 }
 
+/** Matches Firestore keyset `startAfter` on (createdAt desc, rideId desc). */
+function openRideBeforeCursor(
+  ride: RideDoc,
+  cursor: { createdAt: string; rideId: string },
+): boolean {
+  if (ride.createdAt < cursor.createdAt) {
+    return true;
+  }
+  if (ride.createdAt > cursor.createdAt) {
+    return false;
+  }
+  return ride.rideId < cursor.rideId;
+}
+
+function compareOpenDiscovery(a: RideDoc, b: RideDoc): number {
+  if (a.createdAt !== b.createdAt) {
+    return a.createdAt > b.createdAt ? -1 : 1;
+  }
+  if (a.rideId === b.rideId) {
+    return 0;
+  }
+  return a.rideId > b.rideId ? -1 : 1;
+}
+
 function publicRide(ride: RideDoc) {
   return {
     rideId: ride.rideId,
@@ -246,6 +275,7 @@ function publicRide(ride: RideDoc) {
     requestVersion: ride.requestVersion,
     category: ride.category,
     serviceType: ride.serviceType,
+    ...(typeof ride.city === 'string' ? { city: ride.city } : {}),
     pickup: ride.pickup,
     destination: ride.destination,
     pricingSnapshotId: ride.pricingSnapshotId,
@@ -492,6 +522,7 @@ export class RideService {
       new Set([
         'pickup',
         'destination',
+        'city',
         'category',
         'serviceType',
         'passengerOfferMinor',
@@ -515,6 +546,14 @@ export class RideService {
     const now = new Date();
     const pickup = parseLatLng(body.pickup, 'pickup');
     const destination = parseLatLng(body.destination, 'destination');
+    const city = normalizeCitySlug(body.city);
+    if (!city) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        'city is required.',
+      );
+    }
     const category =
       typeof body.category === 'string' && body.category.trim()
         ? body.category.trim()
@@ -576,6 +615,7 @@ export class RideService {
       requestVersion: 1,
       category,
       serviceType,
+      city,
       pickup,
       destination,
       routePolyline: null,
@@ -816,33 +856,35 @@ export class RideService {
       : null;
 
     const nowMs = Date.now();
-    const fetchLimit = parsed.limit + 1;
+    const scanCap = Math.min(
+      Math.max(parsed.limit + 1, parsed.limit * 4),
+      OPEN_DISCOVERY_SCAN_CAP,
+    );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let q: any = this.db
+    // Unordered equality query — works without the composite index required for
+    // orderBy(createdAt, rideId). Sort and keyset pagination are applied in-process.
+    const snap = await this.db
       .collection(RIDES)
       .where('assignedDriverId', '==', null)
       .where('state', 'in', [...EXPIRABLE_STATES])
-      .orderBy('createdAt', 'desc')
-      .orderBy('rideId', 'desc');
+      .limit(scanCap)
+      .get();
 
-    if (cursor) {
-      q = q.startAfter(cursor.createdAt, cursor.rideId);
-    }
-    q = q.limit(fetchLimit);
-
-    const snap = await q.get();
-    const eligible: RideDoc[] = [];
+    let eligible: RideDoc[] = [];
     for (const doc of snap.docs) {
       const ride = doc.data() as RideDoc;
       if (!isOpenDiscoverable(ride, nowMs)) continue;
       eligible.push(ride);
-      if (eligible.length >= parsed.limit + 1) break;
+    }
+    eligible.sort(compareOpenDiscovery);
+
+    if (cursor) {
+      eligible = eligible.filter((ride) => openRideBeforeCursor(ride, cursor));
     }
 
-    const page = eligible.slice(0, parsed.limit).map(publicOpenRide);
     const hasNextPage =
-      eligible.length > parsed.limit || snap.docs.length === fetchLimit;
+      eligible.length > parsed.limit || snap.docs.length === scanCap;
+    const page = eligible.slice(0, parsed.limit).map(publicOpenRide);
 
     let nextCursor: string | null = null;
     if (hasNextPage && page.length > 0) {

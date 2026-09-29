@@ -1,7 +1,25 @@
 # Phase 4 — Maps & Location
 
-**Status:** NOT STARTED  
-**Dependencies:** Phase 3
+**Status:** NOT STARTED (full Maps polish) — **4A IN PROGRESS / shipping**  
+**Dependencies:** Auth/ride baseline CLOSED; see CURRENT_STATE  
+**Decision freeze (authoritative):** [`phase-4-5-location-pricing-decision.md`](phase-4-5-location-pricing-decision.md)
+
+> **2026-09-22:** **Phase 4A** = passenger GPS + Places search + confirm → real lat/lng in Ride Request capabilities. Map-pin / Maps SDK / Routes / pricing are **out of scope** for 4A.
+
+## Phase 4A — GCP / build setup (required for device Places)
+
+1. Google Cloud project (same as Firebase `ora-app` if possible).
+2. Enable **Places API (New)** only for 4A (not Routes yet).
+3. Create an API key restricted to **Places API (New)**.
+   - For Flutter HTTP Places calls, Android package+SHA restriction does **not** apply the same way as native Maps SDK keys. Prefer API restriction + monitor quotas; rotate if leaked.
+4. Build / run with:
+   ```bash
+   flutter run --dart-define=ORA_GOOGLE_PLACES_API_KEY=YOUR_KEY \
+     --dart-define=ORA_API_BASE_URL=http://127.0.0.1:8080/v1 \
+     --dart-define=ORA_ALLOW_HTTP_API=true
+   ```
+5. Android permissions: `ACCESS_FINE_LOCATION` / `ACCESS_COARSE_LOCATION` (manifest).
+6. Do **not** put Routes/server keys in the Flutter app.
 
 ## Objectives
 

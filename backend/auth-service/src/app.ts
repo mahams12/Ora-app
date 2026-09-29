@@ -13,6 +13,10 @@ import { createInternalWorkerMiddleware } from './middleware/internal_worker';
 import { sendApiError } from './http/errors';
 import { createRequestIdMiddleware } from './http/request_id';
 import type { RedisGeoProjectionService } from './redis/geo_projection';
+import type { RedisGeoClient } from './redis/types';
+import type { FcmSender } from './delivery/fcm_sender';
+import type { RoutingProvider } from './routing/types';
+import { createPricingRouter } from './pricing/routes';
 
 export interface CreateAppOptions {
   auth: Auth;
@@ -28,10 +32,28 @@ export interface CreateAppOptions {
   };
   /** Exposed for tests. */
   rateLimiter?: ReturnType<typeof createRateLimiter>;
+  /**
+   * Phase 5B estimate-specific limiter. Defaults: 10 req / 60s per uid+ip.
+   * In-memory only (same local caveat as the global auth limiter).
+   */
+  pricingEstimateRateLimit?: {
+    windowMs: number;
+    max: number;
+  };
+  pricingEstimateRateLimiter?: ReturnType<typeof createRateLimiter>;
   /** Phase 2J internal worker token override (tests). */
   internalWorkerToken?: string;
   /** N2C Redis GEO projection (optional; null = skip projection). */
   geoProjection?: RedisGeoProjectionService | null;
+  /** N3 nearby GEORADIUS client (optional; null = DEPENDENCY_ERROR). */
+  redis?: RedisGeoClient | null;
+  /** D1 FCM sender (optional; null = null sender / no real FCM). */
+  fcmSender?: FcmSender | null;
+  /**
+   * Phase 4B/5B Google Routes (or test double).
+   * When omitted, POST /v1/pricing/estimate returns 503 PRICING_UNAVAILABLE.
+   */
+  routingProvider?: RoutingProvider | null;
 }
 
 export function createApp(options: CreateAppOptions) {
@@ -86,12 +108,49 @@ export function createApp(options: CreateAppOptions) {
     createLocationRouter(options.db, geo),
   );
 
+  // Phase 4B/5B — pricing estimate (stricter per-uid limit than global auth).
+  const estimateLimiter =
+    options.pricingEstimateRateLimiter ??
+    createRateLimiter({
+      windowMs: options.pricingEstimateRateLimit?.windowMs ?? 60_000,
+      max: options.pricingEstimateRateLimit?.max ?? 10,
+      keyFn: (req) => {
+        const uid = req.caller?.uid ?? 'anonymous';
+        const ip = req.ip ?? 'unknown';
+        return `pricing-estimate:${uid}:${ip}`;
+      },
+    });
+  const estimateRateLimit = createRateLimitMiddleware(estimateLimiter);
+  const routing = options.routingProvider;
+  if (routing) {
+    app.use(
+      '/v1/pricing',
+      requireAuth,
+      estimateRateLimit,
+      createPricingRouter(options.db, routing),
+    );
+  } else {
+    app.use('/v1/pricing', requireAuth, estimateRateLimit, (req, res) => {
+      sendApiError(
+        req,
+        res,
+        503,
+        'PRICING_UNAVAILABLE',
+        'Pricing isn\'t available right now.',
+      );
+    });
+  }
+
   const workerToken =
     options.internalWorkerToken ?? process.env.ORA_INTERNAL_WORKER_TOKEN;
   app.use(
     '/v1/internal',
     createInternalWorkerMiddleware(workerToken),
-    createInternalRouter(options.db),
+    createInternalRouter(
+      options.db,
+      options.redis ?? null,
+      options.fcmSender ?? null,
+    ),
   );
 
   app.use((req, res) => {

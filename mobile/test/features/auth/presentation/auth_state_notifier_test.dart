@@ -15,6 +15,7 @@ import 'package:ora/features/auth/domain/repositories/auth_repository.dart';
 import 'package:ora/features/auth/domain/use_cases/resolve_auth_profile_use_case.dart';
 import 'package:ora/features/auth/domain/use_cases/restore_session_use_case.dart';
 import 'package:ora/features/auth/presentation/view_models/auth_view_state.dart';
+import 'package:ora/features/auth/presentation/view_models/profile_bootstrap_ui_notifier.dart';
 
 class _FakeAuthRepository implements AuthRepository {
   final StreamController<AuthUser?> controller =
@@ -23,6 +24,8 @@ class _FakeAuthRepository implements AuthRepository {
   AuthUser? current;
   UserProfile? profile;
   Object? profileError;
+  Object? firstProfileErrorOnly;
+  int getProfileCalls = 0;
   int registerCalls = 0;
   int logoutCalls = 0;
 
@@ -55,6 +58,10 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<UserProfile> getUserProfile({required String uid}) async {
+    getProfileCalls++;
+    if (firstProfileErrorOnly != null && getProfileCalls == 1) {
+      throw firstProfileErrorOnly!;
+    }
     if (profileError != null) {
       throw profileError!;
     }
@@ -202,11 +209,37 @@ void main() {
       container.read(authStateNotifierProvider);
       repository.controller.add(user);
       await settle();
+      await Future<void>.delayed(const Duration(seconds: 3));
 
       expect(
         container.read(authStateNotifierProvider),
         AuthStatus.authenticated,
       );
+      expect(
+        container.read(profileBootstrapUiProvider).failureMessage,
+        isNotNull,
+      );
+      expect(container.read(profileBootstrapUiProvider).inProgress, isFalse);
+    });
+
+    test('transient failure auto-retries then reaches authenticatedReady',
+        () async {
+      when(() => restoreSession()).thenAnswer((_) async => user);
+      repository.profile = completeProfile;
+      repository.firstProfileErrorOnly =
+          const AppFailure.network(message: 'flaky');
+
+      final container = makeContainer();
+      container.read(authStateNotifierProvider);
+      repository.controller.add(user);
+      await settle();
+      await Future<void>.delayed(const Duration(seconds: 3));
+
+      expect(
+        container.read(authStateNotifierProvider),
+        AuthStatus.authenticatedReady,
+      );
+      expect(repository.getProfileCalls, greaterThan(1));
     });
 
     test('a restore failure does not leave the guard stuck on unknown',

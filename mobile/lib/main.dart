@@ -9,6 +9,21 @@ import 'app/config/app_config.dart';
 import 'app/config/environment.dart';
 import 'core/security/firebase_app_check_bootstrap.dart';
 
+void _startupMark(String name) {
+  if (kDebugMode) {
+    debugPrint('[STARTUP] $name ${DateTime.now().toUtc().toIso8601String()}');
+  }
+}
+
+void _scheduleFirstFrameMark() {
+  if (!kDebugMode) {
+    return;
+  }
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _startupMark('first_frame');
+  });
+}
+
 /// Entrypoint.
 ///
 /// [Firebase.initializeApp] must complete before any Firebase service is
@@ -19,19 +34,24 @@ import 'core/security/firebase_app_check_bootstrap.dart';
 /// Firebase exceptions are never shown to the user.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  _startupMark('main_enter');
 
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
   };
 
   try {
+    _startupMark('firebase_init_begin');
     await Firebase.initializeApp();
+    _startupMark('firebase_init_done');
     // Debug/emulator only: skip Play Integrity / reCAPTCHA so Firebase
     // Console test phone numbers work without Chrome. Never in release.
     if (kDebugMode) {
+      _startupMark('firebase_auth_settings_begin');
       await FirebaseAuth.instance.setSettings(
         appVerificationDisabledForTesting: true,
       );
+      _startupMark('firebase_auth_settings_done');
     }
 
     final env = environmentFromString(
@@ -44,20 +64,26 @@ void main() async {
       debugPrint('ORA API BASE URL = ${config.apiBaseUrl}');
     }
     if (config.appCheckEnabled) {
+      _startupMark('app_check_begin');
       await activateOraAppCheck(
         useDebugProvider: shouldUseAppCheckDebugProvider(),
       );
+      _startupMark('app_check_done');
     }
   } catch (_) {
+    _startupMark('run_app_begin');
     runApp(const _FirebaseInitFailedApp());
+    _scheduleFirstFrameMark();
     return;
   }
 
+  _startupMark('run_app_begin');
   runApp(
     const ProviderScope(
       child: OraApp(),
     ),
   );
+  _scheduleFirstFrameMark();
 }
 
 /// Shown when native Firebase config is missing or invalid.

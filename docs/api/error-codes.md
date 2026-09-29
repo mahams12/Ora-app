@@ -1,5 +1,11 @@
 # ORA — Complete Error Code Reference
 
+> **STATUS: MIXED (planning + implemented)**  
+> Codes actually thrown by `backend/auth-service` are indexed in  
+> [`docs/diagnostics/BACKEND_ERROR_INDEX.md`](../diagnostics/BACKEND_ERROR_INDEX.md).  
+> Rows below may include **aspirational** codes (payments, proximity, etc.) not present in code.  
+> Prefer the diagnostic index when debugging.
+
 ## Authentication & Authorization
 
 | Code | HTTP | Description | Client Action |
@@ -39,7 +45,8 @@
 |---|---|---|---|
 | FARE_OUT_OF_BOUNDS | 422 | Offered fare outside allowed range | Show allowed range; ask to adjust |
 | PRICING_SNAPSHOT_EXPIRED | 422 | pricingSnapshotId older than 10 min | Re-fetch estimate; re-confirm |
-| PRICING_UNAVAILABLE | 503 | Google Routes API temporarily unavailable | Retry after 3s; show loading state |
+| PRICING_UNAVAILABLE | 503 | Google Routes API temporarily unavailable / pricing config outage | Retry after 3s; show loading state |
+| ROUTE_UNAVAILABLE | 422 | No drive route for the given pickup/destination | Ask user to adjust points |
 
 ## Location
 

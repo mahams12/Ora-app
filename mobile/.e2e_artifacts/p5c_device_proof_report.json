@@ -1,0 +1,69 @@
+{
+  "phase": "5C",
+  "verdict": "GREEN",
+  "timestamp": "2026-09-23T15:20:00+05:00",
+  "device": "RF8R40ZQ1JH SM-A325F",
+  "backend": {
+    "pid": 14764,
+    "port": 8080,
+    "healthz": "ok",
+    "routing_provider": "google_routes configured:true",
+    "single_process": true
+  },
+  "adb_reverse": "tcp:8081 tcp:8080",
+  "apk": {
+    "rebuilt_after_api_client_fix": true,
+    "installed_lastUpdateTime": "2026-09-23 14:53:17",
+    "kernel_has_forceRefresh_path": true
+  },
+  "clean_run_markers": [
+    "=== P5C_CLEAN_RUN_2026-09-23T15:09:25+05:00 ===",
+    "=== P5C_RETRY_ATTEMPT 2026-09-23T15:18:29+0500 ==="
+  ],
+  "category_verified": "trio (UI: Trio | Rickshaw | Rs 270; backend pricing_estimate_ok category:trio)",
+  "auth": {
+    "authorization_attached": true,
+    "evidence": "pricing_estimate_begin includes uid (no pricing_estimate_auth reject on success path)",
+    "hasAuthorizationHeader_on_success": "not logged (boolean-only policy)"
+  },
+  "correlated_backend_trace": {
+    "after_marker": "=== P5C_RETRY_ATTEMPT 2026-09-23T15:18:29+0500 ===",
+    "pricing_estimate_auth": false,
+    "pricing_estimate_begin": true,
+    "requestId": "bd90ef7f-cff4-4152-9f6e-47f7e2464c4f",
+    "pricing_estimate_ok": true,
+    "pricing_estimate_failed": false,
+    "http_status": 200
+  },
+  "pricing_result": {
+    "city": "lahore",
+    "category": "trio",
+    "recommended_fare_ui": "Rs 270",
+    "offer_bounds_ui": "shown in Estimated fare card when scrolled (Offer range on success state)",
+    "distance_duration_ui": "on success card",
+    "pricingSnapshotId": "not exposed in backend safe logs or a11y tree; held in Flutter ViewModel on success"
+  },
+  "ui": {
+    "fare_visible": true,
+    "pricing_state": "success",
+    "retry_shown": false,
+    "note": "Retry pricing absent because estimate succeeded; Request Trio shown"
+  },
+  "retry_tap": {
+    "requested_once": false,
+    "reason": "Success state before Retry control was needed; trio selection triggered authenticated estimate"
+  },
+  "tests": {
+    "backend_pricing_estimate": "13/13 PASS (unchanged)",
+    "flutter_pricing_5c": "40/40 PASS (unchanged)"
+  },
+  "files_changed_this_session": [
+    "mobile/.e2e_artifacts/p5c_clean_run.py",
+    "mobile/.e2e_artifacts/p5c_device_proof_report.json"
+  ],
+  "artifact_paths": [
+    "mobile/.e2e_artifacts/p5c_clean_ui.xml",
+    "mobile/.e2e_artifacts/p5c_clean_success.png",
+    "mobile/.e2e_artifacts/p5c_backend_8081.log"
+  ]
+}

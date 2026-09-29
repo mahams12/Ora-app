@@ -28,7 +28,7 @@ void main() {
       addTearDown(container.dispose);
 
       final bootstrap = await container.read(getAppBootstrapUseCaseProvider)();
-      expect(bootstrap.appName, 'Ora');
+      expect(bootstrap.appName, 'ORA');
       expect(bootstrap.environmentName, 'Development');
     });
   });

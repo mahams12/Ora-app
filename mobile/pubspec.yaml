@@ -35,6 +35,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/branding/ora_logo.png
+    - assets/branding/ora_app_icon.png
+    - assets/branding/services/city_rides.jpg
+    - assets/branding/services/intercity.jpg
+    - assets/branding/services/courier.jpg
+    - assets/branding/services/move.jpg
   fonts:
     - family: Sora
       fonts:

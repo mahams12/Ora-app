@@ -41,6 +41,39 @@ void main() {
       expect(results, everyElement('token'));
     });
 
+    test('getIdToken hang times out instead of blocking forever', () async {
+      final provider = FirebaseAuthTokenProvider(
+        getIdToken: (_) async {
+          await Future<void>.delayed(const Duration(seconds: 30));
+          return 'late';
+        },
+        idTokenTimeout: const Duration(milliseconds: 50),
+      );
+      expect(await provider.getAccessToken(), isNull);
+    });
+
+    test('concurrent callers recover when refresh times out', () async {
+      var refreshCalls = 0;
+      final provider = FirebaseAuthTokenProvider(
+        getIdToken: (forceRefresh) async {
+          if (forceRefresh) {
+            refreshCalls++;
+            await Future<void>.delayed(const Duration(seconds: 30));
+            return 'refreshed';
+          }
+          return 'cached';
+        },
+        idTokenTimeout: const Duration(milliseconds: 50),
+      );
+
+      final refresh = provider.forceRefresh();
+      final joined = provider.getAccessToken();
+      expect(await refresh, isNull);
+      expect(await joined, isNull);
+      expect(refreshCalls, 1);
+      expect(await provider.getAccessToken(), 'cached');
+    });
+
     test('after refresh completes, second forceRefresh issues new call', () async {
       var callCount = 0;
       final provider = FirebaseAuthTokenProvider(

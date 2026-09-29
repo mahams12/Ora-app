@@ -1,5 +1,5 @@
 /**
- * LIVE Redis proof for N2C.
+ * LIVE Redis proof for N2C coordinate-primary projection.
  *
  * Requires REDIS_URL pointing at a real Redis instance.
  * If unset, exits with BLOCKED (does not fake success).
@@ -10,8 +10,9 @@
 import { createRedisGeoClientFromEnv } from '../src/redis/client';
 import { RedisGeoProjectionService } from '../src/redis/geo_projection';
 import {
+  GEO_DRIVERS_KEY,
   driverOnlineKey,
-  geoDriversKey,
+  geoDriversCityKey,
 } from '../src/redis/types';
 import { createApp } from '../src/app';
 import { memoryDb } from '../src/__tests__/helpers/memory_db';
@@ -52,25 +53,30 @@ async function main(): Promise<void> {
 
   const prefix = `n2c-${Date.now()}`;
   const driverId = `${prefix}-drv`;
+  const driverNoCity = `${prefix}-nocity`;
   const city = 'lahore';
 
-  // Isolate: use unique driverId; flush is dangerous on shared redis — avoid flushdb.
   const db = memoryDb();
-  db.seed('users', driverId, {
-    uid: driverId,
-    role: 'driver',
-    driverStatus: 'approved',
-    isActive: true,
-    banned: false,
-    phoneNumber: '+923001111111',
-    displayName: driverId,
-  });
-  db.seed('drivers', driverId, {
-    driverId,
-    userId: driverId,
-    availabilityState: 'online',
-    homeCity: 'Lahore',
-  });
+  for (const [id, homeCity] of [
+    [driverId, 'Lahore'],
+    [driverNoCity, null],
+  ] as const) {
+    db.seed('users', id, {
+      uid: id,
+      role: 'driver',
+      driverStatus: 'approved',
+      isActive: true,
+      banned: false,
+      phoneNumber: '+923001111111',
+      displayName: id,
+    });
+    db.seed('drivers', id, {
+      driverId: id,
+      userId: id,
+      availabilityState: 'online',
+      ...(homeCity != null ? { homeCity } : {}),
+    });
+  }
   db.seed('rides', `${prefix}-ride`, {
     rideId: `${prefix}-ride`,
     sentinel: 'untouched-by-n2c',
@@ -80,10 +86,12 @@ async function main(): Promise<void> {
   const geo = new RedisGeoProjectionService(redis);
   const app = createApp({
     auth: {
-      verifyIdToken: async () => ({
-        uid: driverId,
-        phone_number: '+923001111111',
-      }),
+      verifyIdToken: async (tok: string) => {
+        if (tok === 'nocity') {
+          return { uid: driverNoCity, phone_number: '+923001111111' };
+        }
+        return { uid: driverId, phone_number: '+923001111111' };
+      },
     } as never,
     db: db as never,
     requireAppCheck: false,
@@ -105,41 +113,62 @@ async function main(): Promise<void> {
   });
 
   try {
-    await test('1-5. clean + accepted location → GEO + online marker', async () => {
-      await redis!.zrem(geoDriversKey(city), driverId);
+    await test('1-5. accepted location → geo:drivers + online marker', async () => {
+      await redis!.zrem(GEO_DRIVERS_KEY, driverId);
+      await redis!.zrem(geoDriversCityKey(city), driverId);
       await redis!.del(driverOnlineKey(driverId));
       const res = await request(app)
         .post('/v1/location/update')
         .set('Authorization', 'Bearer t')
         .send(body());
       assert(res.status === 200, `got ${res.status}`);
-      const pos = await redis!.geopos(geoDriversKey(city), driverId);
-      assert(pos != null, 'geo membership');
+      const pos = await redis!.geopos(GEO_DRIVERS_KEY, driverId);
+      assert(pos != null, 'primary geo membership');
+      assert(
+        (await redis!.geopos(geoDriversCityKey(city), driverId)) != null,
+        'legacy dual-write',
+      );
       const marker = await redis!.get(driverOnlineKey(driverId));
       assert(marker != null, 'online marker');
-      assert(JSON.parse(marker).city === city, 'city');
+      assert(JSON.parse(marker).city === city, 'city metadata');
     });
 
-    await test('6-7. newer location updates GEO', async () => {
+    await test('1b. no homeCity still projects to geo:drivers', async () => {
+      const res = await request(app)
+        .post('/v1/location/update')
+        .set('Authorization', 'Bearer nocity')
+        .send(body({ locationStreamId: 'live-nocity' }));
+      assert(res.status === 200, `got ${res.status}`);
+      assert(
+        (await redis!.geopos(GEO_DRIVERS_KEY, driverNoCity)) != null,
+        'primary without homeCity',
+      );
+    });
+
+    await test('6-7. newer location updates primary GEO', async () => {
       const res = await request(app)
         .post('/v1/location/update')
         .set('Authorization', 'Bearer t')
         .send(body({ locationSeq: 2, lat: 31.53, lng: 74.36 }));
       assert(res.status === 200, 'ok');
-      const pos = await redis!.geopos(geoDriversKey(city), driverId);
+      const pos = await redis!.geopos(GEO_DRIVERS_KEY, driverId);
       assert(pos != null, 'pos');
       assert(Math.abs(Number(pos[1]) - 31.53) < 0.01, 'lat moved');
     });
 
-    await test('8-10. go-offline removes GEO + marker', async () => {
+    await test('8-10. go-offline removes primary GEO + marker', async () => {
       const res = await request(app)
         .post('/v1/drivers/go-offline')
         .set('Authorization', 'Bearer t')
         .send({});
       assert(res.status === 200, 'offline');
       assert(
-        (await redis!.geopos(geoDriversKey(city), driverId)) == null,
-        'geo gone',
+        (await redis!.geopos(GEO_DRIVERS_KEY, driverId)) == null,
+        'primary geo gone',
+      );
+      assert(
+        (await redis!.geopos(geoDriversCityKey(city), driverId)) == null,
+        'legacy geo gone',
       );
       assert((await redis!.get(driverOnlineKey(driverId))) == null, 'marker gone');
     });
@@ -156,8 +185,11 @@ async function main(): Promise<void> {
       assert(!process.env.FIREBASE_DATABASE_URL, 'no rtdb url required');
     });
   } finally {
-    await redis!.zrem(geoDriversKey(city), driverId);
+    await redis!.zrem(GEO_DRIVERS_KEY, driverId);
+    await redis!.zrem(GEO_DRIVERS_KEY, driverNoCity);
+    await redis!.zrem(geoDriversCityKey(city), driverId);
     await redis!.del(driverOnlineKey(driverId));
+    await redis!.del(driverOnlineKey(driverNoCity));
     await redis!.quit?.();
   }
 

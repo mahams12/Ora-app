@@ -1,0 +1,4028 @@
+{
+  "_meta": {
+    "status": "DECISION_PENDING — NOT APPROVED — NOT SEEDED",
+    "warning": "This is the best deterministic candidate from Slice 2A plus countryCode. It is NOT an approved production catalog. Unresolved PBS rows are listed under unresolvedRecords and must not be silently dropped.",
+    "licensing": "BLOCKED_PENDING_LICENSING_REVIEW",
+    "productDecisionsApproved": false,
+    "generatedAtUtc": "2026-09-21T09:40:09.154641+00:00",
+    "source": {
+      "organization": "Pakistan Bureau of Statistics",
+      "dataset": "7th Population and Housing Census 2023 — Table 2",
+      "title": "Urban localities by population size and their population by sex, annual growth rate and household size",
+      "primaryPage": "https://www.pbs.gov.pk/result-excel/",
+      "primaryExcelUrl": "https://www.pbs.gov.pk/wp-content/uploads/2020/07/table_2_national.xlsx",
+      "primaryPdfUrl": "https://www.pbs.gov.pk/wp-content/uploads/census_tables/tables/table_2_national.pdf",
+      "localExcel": "source/table_2_national.xlsx",
+      "downloadDateUtc": "2026-09-21T09:16:41Z"
+    },
+    "counts": {
+      "deterministicCandidateCities": 555,
+      "unresolvedReviewRecords": 67,
+      "pbsSourceLocalityRows": 657
+    }
+  },
+  "cities": [
+    {
+      "id": "18-hazari",
+      "displayName": "18-hazari",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "46-adda",
+      "displayName": "46-adda",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "abbottabad",
+      "displayName": "Abbottabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "abdul-hakim",
+      "displayName": "Abdul Hakim",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "adilpur",
+      "displayName": "Adilpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "agra",
+      "displayName": "Agra",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ahmadpur-east",
+      "displayName": "Ahmadpur East",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ahmadpur-lumma",
+      "displayName": "Ahmadpur Lumma",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ahmadpur-sial",
+      "displayName": "Ahmadpur Sial",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ahmed-pur",
+      "displayName": "Ahmed Pur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ahmed-pur-mecleod-gunj",
+      "displayName": "Ahmed Pur Mecleod Gunj",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "akora-khattak",
+      "displayName": "Akora Khattak",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "alahabad",
+      "displayName": "Alahabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ali-pur-chatha",
+      "displayName": "Ali Pur Chatha",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "alipur",
+      "displayName": "Alipur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "amangarh",
+      "displayName": "Amangarh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "arif-wala",
+      "displayName": "Arif Wala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "arija",
+      "displayName": "Arija",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "attock",
+      "displayName": "Attock",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "awaran",
+      "displayName": "Awaran",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "babarloi",
+      "displayName": "Babarloi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "badah",
+      "displayName": "Badah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "badhomalhi",
+      "displayName": "Badhomalhi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "badin",
+      "displayName": "Badin",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "baffa",
+      "displayName": "Baffa",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bagerji",
+      "displayName": "Bagerji",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bagh",
+      "displayName": "Bagh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bahawalnagar",
+      "displayName": "Bahawalnagar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bahawalpur",
+      "displayName": "Bahawalpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bandhi",
+      "displayName": "Bandhi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bangla-gogera",
+      "displayName": "Bangla Gogera",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bannu",
+      "displayName": "Bannu",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "barkhan",
+      "displayName": "Barkhan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "barri-kot",
+      "displayName": "Barri Kot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "basirpur",
+      "displayName": "Basirpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "batkhela",
+      "displayName": "Batkhela",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "behrain",
+      "displayName": "Behrain",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "behram",
+      "displayName": "Behram",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bela",
+      "displayName": "Bela",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "berani",
+      "displayName": "Berani",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhag",
+      "displayName": "Bhag",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhagtan-wala",
+      "displayName": "Bhagtan Wala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhakkar",
+      "displayName": "Bhakkar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhalwal",
+      "displayName": "Bhalwal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhan",
+      "displayName": "Bhan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhaun",
+      "displayName": "Bhaun",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhawana",
+      "displayName": "Bhawana",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhera",
+      "displayName": "Bhera",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhiria-city",
+      "displayName": "Bhiria City",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhiria-road",
+      "displayName": "Bhiria Road",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhit-shah",
+      "displayName": "Bhit Shah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bhopalwala",
+      "displayName": "Bhopalwala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bolhari",
+      "displayName": "Bolhari",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bozdar-wada",
+      "displayName": "Bozdar Wada",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "buchery",
+      "displayName": "Buchery",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bulaida",
+      "displayName": "Bulaida",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "bulri-shah-karim",
+      "displayName": "Bulri Shah Karim",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "burewala",
+      "displayName": "Burewala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "buxapur",
+      "displayName": "Buxapur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chachro",
+      "displayName": "Chachro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chak",
+      "displayName": "Chak",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chak-jhumra",
+      "displayName": "Chak Jhumra",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chakwal",
+      "displayName": "Chakwal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chaman",
+      "displayName": "Chaman",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chambar",
+      "displayName": "Chambar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chani-goth",
+      "displayName": "Chani Goth",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "charsadda",
+      "displayName": "Charsadda",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chaubara",
+      "displayName": "Chaubara",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chawinda",
+      "displayName": "Chawinda",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chelhar",
+      "displayName": "Chelhar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chenab-nagar",
+      "displayName": "Chenab Nagar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chhore-old",
+      "displayName": "Chhore Old",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chichawatni",
+      "displayName": "Chichawatni",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chiniot",
+      "displayName": "Chiniot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chishtian",
+      "displayName": "Chishtian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chitkan",
+      "displayName": "Chitkan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chitral",
+      "displayName": "Chitral",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "choa-saidan-shah",
+      "displayName": "Choa Saidan Shah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "choti-zareen",
+      "displayName": "Choti Zareen",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chowk-azam",
+      "displayName": "Chowk Azam",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chowk-sarwar-shaheed",
+      "displayName": "Chowk Sarwar Shaheed",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chowndiko",
+      "displayName": "Chowndiko",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chuhar-jamali",
+      "displayName": "Chuhar Jamali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "chunian",
+      "displayName": "Chunian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dadu",
+      "displayName": "Dadu",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "daharanwala",
+      "displayName": "Daharanwala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "daharki",
+      "displayName": "Daharki",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "daira-din-panah",
+      "displayName": "Daira Din Panah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dajal",
+      "displayName": "Dajal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dalbandin",
+      "displayName": "Dalbandin",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "daro",
+      "displayName": "Daro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "darya-khan",
+      "displayName": "Darya Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "darya-khan-marri",
+      "displayName": "Darya Khan Marri",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "daska",
+      "displayName": "Daska",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "daud-khel",
+      "displayName": "Daud Khel",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "daulatpur",
+      "displayName": "Daulatpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "daultala",
+      "displayName": "Daultala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "daur",
+      "displayName": "Daur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "depalpur",
+      "displayName": "Depalpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dera-allah-yar",
+      "displayName": "Dera Allah Yar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dera-bugti",
+      "displayName": "Dera Bugti",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dera-ghazi-khan",
+      "displayName": "Dera Ghazi Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dera-ismail-khan",
+      "displayName": "Dera Ismail Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dera-murad-jamali",
+      "displayName": "Dera Murad Jamali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dhadar",
+      "displayName": "Dhadar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dhanote",
+      "displayName": "Dhanote",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dharema",
+      "displayName": "Dharema",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dhonkal",
+      "displayName": "Dhonkal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dhoronaro",
+      "displayName": "Dhoronaro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dhudial",
+      "displayName": "Dhudial",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "digri",
+      "displayName": "Digri",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dijkot",
+      "displayName": "Dijkot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dina",
+      "displayName": "Dina",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dinga",
+      "displayName": "Dinga",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "diplo",
+      "displayName": "Diplo",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dir",
+      "displayName": "Dir",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "doaba",
+      "displayName": "Doaba",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dokri",
+      "displayName": "Dokri",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "domeli",
+      "displayName": "Domeli",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "donga-bonga",
+      "displayName": "Donga Bonga",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "duki",
+      "displayName": "Duki",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dullewala",
+      "displayName": "Dullewala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dunyapur",
+      "displayName": "Dunyapur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "dureji",
+      "displayName": "Dureji",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "eminabad",
+      "displayName": "Eminabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "faisalabad",
+      "displayName": "Faisalabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "faqir-wali",
+      "displayName": "Faqir Wali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "faqirabad",
+      "displayName": "Faqirabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "farooka",
+      "displayName": "Farooka",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "farooq-abad",
+      "displayName": "Farooq Abad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "fateh-jang",
+      "displayName": "Fateh Jang",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "fateh-pur",
+      "displayName": "Fateh Pur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "fazalpur",
+      "displayName": "Fazalpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ferozewala",
+      "displayName": "Ferozewala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "fort-abbas",
+      "displayName": "Fort Abbas",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gaddani",
+      "displayName": "Gaddani",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gaji-khuhawar",
+      "displayName": "Gaji Khuhawar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gambat",
+      "displayName": "Gambat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gandawa",
+      "displayName": "Gandawa",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "garello",
+      "displayName": "Garello",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "garh-maharaja",
+      "displayName": "Garh Maharaja",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "garhi-khairo",
+      "displayName": "Garhi Khairo",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "garhi-yasin",
+      "displayName": "Garhi Yasin",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "garho",
+      "displayName": "Garho",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ghakkhar",
+      "displayName": "Ghakkhar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ghalwan",
+      "displayName": "Ghalwan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gharo",
+      "displayName": "Gharo",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ghorabari",
+      "displayName": "Ghorabari",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ghotki",
+      "displayName": "Ghotki",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ghouspur",
+      "displayName": "Ghouspur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ghur-ghushti",
+      "displayName": "Ghur Ghushti",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "girote",
+      "displayName": "Girote",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gojra",
+      "displayName": "Gojra",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "guddu",
+      "displayName": "Guddu",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gujar-khan",
+      "displayName": "Gujar Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gujar-mashkai",
+      "displayName": "Gujar Mashkai",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gujranwala",
+      "displayName": "Gujranwala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gujrat",
+      "displayName": "Gujrat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "gwadar",
+      "displayName": "Gwadar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hadali",
+      "displayName": "Hadali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hafizabad",
+      "displayName": "Hafizabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "haji-pur",
+      "displayName": "Haji Pur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hala",
+      "displayName": "Hala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hala-old",
+      "displayName": "Hala Old",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "halani",
+      "displayName": "Halani",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hangu",
+      "displayName": "Hangu",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "harappa",
+      "displayName": "Harappa",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "haripur",
+      "displayName": "Haripur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "harnai",
+      "displayName": "Harnai",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "harnoli",
+      "displayName": "Harnoli",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "haroonabad",
+      "displayName": "Haroonabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hasan-abdal",
+      "displayName": "Hasan Abdal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hasilpur",
+      "displayName": "Hasilpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "haveli-lakha-wasawewala",
+      "displayName": "Haveli Lakha Wasawewala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "havelian",
+      "displayName": "Havelian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hazro",
+      "displayName": "Hazro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hingorja",
+      "displayName": "Hingorja",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hingorno",
+      "displayName": "Hingorno",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hub",
+      "displayName": "Hub",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hujra-shah-muqeem",
+      "displayName": "Hujra Shah Muqeem",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hurram-zai",
+      "displayName": "Hurram Zai",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "husri",
+      "displayName": "Husri",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "hyderabad",
+      "displayName": "Hyderabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "isa-khel",
+      "displayName": "Isa Khel",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "islamabad",
+      "displayName": "Islamabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "islamkot",
+      "displayName": "Islamkot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jacobabad",
+      "displayName": "Jacobabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jahanian",
+      "displayName": "Jahanian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jalalpur-bhattian",
+      "displayName": "Jalalpur Bhattian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jalalpur-jattan",
+      "displayName": "Jalalpur Jattan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jalalpur-pirwala",
+      "displayName": "Jalalpur Pirwala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jalla-jeem",
+      "displayName": "Jalla Jeem",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jam-nawaz-ali",
+      "displayName": "Jam Nawaz Ali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jam-sahib",
+      "displayName": "Jam Sahib",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jamke-cheema",
+      "displayName": "Jamke Cheema",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jampur",
+      "displayName": "Jampur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jamrud",
+      "displayName": "Jamrud",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jamshoro",
+      "displayName": "Jamshoro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jand",
+      "displayName": "Jand",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jandanwala",
+      "displayName": "Jandanwala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jaranwala",
+      "displayName": "Jaranwala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jati",
+      "displayName": "Jati",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jatia",
+      "displayName": "Jatia",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jatoi",
+      "displayName": "Jatoi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jauharabad",
+      "displayName": "Jauharabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jehangira",
+      "displayName": "Jehangira",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jhang",
+      "displayName": "Jhang",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jhawarian",
+      "displayName": "Jhawarian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jhelum",
+      "displayName": "Jhelum",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jhol",
+      "displayName": "Jhol",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jhudo",
+      "displayName": "Jhudo",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "jiwani",
+      "displayName": "Jiwani",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "johi",
+      "displayName": "Johi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kabal",
+      "displayName": "Kabal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kabirwala",
+      "displayName": "Kabirwala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kadhan",
+      "displayName": "Kadhan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kahror-pacca",
+      "displayName": "Kahror Pacca",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kahuta",
+      "displayName": "Kahuta",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kalabagh",
+      "displayName": "Kalabagh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kalat",
+      "displayName": "Kalat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kallar-kahar",
+      "displayName": "Kallar Kahar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kallar-syedan",
+      "displayName": "Kallar Syedan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kalur-kot",
+      "displayName": "Kalur Kot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kamalia",
+      "displayName": "Kamalia",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kamar-mashani",
+      "displayName": "Kamar Mashani",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kambar",
+      "displayName": "Kambar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kameer",
+      "displayName": "Kameer",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kamoke",
+      "displayName": "Kamoke",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kandhkot",
+      "displayName": "Kandhkot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kandhra",
+      "displayName": "Kandhra",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kandiari",
+      "displayName": "Kandiari",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kandiaro",
+      "displayName": "Kandiaro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kanganpur",
+      "displayName": "Kanganpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "karachi",
+      "displayName": "Karachi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "karak",
+      "displayName": "Karak",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kario-ghanwar",
+      "displayName": "Kario Ghanwar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "karondi",
+      "displayName": "Karondi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "karor-lal-esan",
+      "displayName": "Karor Lal Esan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kashmore",
+      "displayName": "Kashmore",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kasur",
+      "displayName": "Kasur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kazi-ahmed",
+      "displayName": "Kazi Ahmed",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kernal-sher-killi",
+      "displayName": "Kernal Sher Killi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khadian",
+      "displayName": "Khadian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khadro",
+      "displayName": "Khadro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khair-pur-nathan-shah",
+      "displayName": "Khair Pur Nathan Shah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khair-pur-sadat",
+      "displayName": "Khair Pur Sadat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khairpur",
+      "displayName": "Khairpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khairpur-tamewali",
+      "displayName": "Khairpur Tamewali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khalabat",
+      "displayName": "Khalabat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khan-bela",
+      "displayName": "Khan Bela",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khanewal",
+      "displayName": "Khanewal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khanozai",
+      "displayName": "Khanozai",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khanqah-dogran",
+      "displayName": "Khanqah Dogran",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khanqah-sharif",
+      "displayName": "Khanqah Sharif",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kharan",
+      "displayName": "Kharan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kharian",
+      "displayName": "Kharian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khawaza-khela",
+      "displayName": "Khawaza Khela",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kheme-jo-par",
+      "displayName": "Kheme-jo-par",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khewra",
+      "displayName": "Khewra",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khichi-wala",
+      "displayName": "Khichi Wala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khipro",
+      "displayName": "Khipro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khoski",
+      "displayName": "Khoski",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khuhra",
+      "displayName": "Khuhra",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khurian-wala",
+      "displayName": "Khurian Wala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khushab",
+      "displayName": "Khushab",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khuzdar",
+      "displayName": "Khuzdar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "khyber",
+      "displayName": "Khyber",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "killa-abdullah",
+      "displayName": "Killa Abdullah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "killa-saifullah",
+      "displayName": "Killa Saifullah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kingri-pirjo-goth",
+      "displayName": "Kingri (pirjo Goth)",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kohat",
+      "displayName": "Kohat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kohlu",
+      "displayName": "Kohlu",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kot-abdul-malik",
+      "displayName": "Kot Abdul Malik",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kot-addu",
+      "displayName": "Kot Addu",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kot-chhuta",
+      "displayName": "Kot Chhuta",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kot-diji",
+      "displayName": "Kot Diji",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kot-ghulam-muhammad",
+      "displayName": "Kot Ghulam Muhammad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kot-mithan",
+      "displayName": "Kot Mithan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kot-momin",
+      "displayName": "Kot Momin",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kot-radha-kishan",
+      "displayName": "Kot Radha Kishan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kot-samaba",
+      "displayName": "Kot Samaba",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kotla-jam-dagger",
+      "displayName": "Kotla Jam Dagger",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kotla-mughlan",
+      "displayName": "Kotla Mughlan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kotli-loharan",
+      "displayName": "Kotli Loharan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kotli-sattian",
+      "displayName": "Kotli Sattian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kotri",
+      "displayName": "Kotri",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kulachi",
+      "displayName": "Kulachi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kumb",
+      "displayName": "Kumb",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kundian",
+      "displayName": "Kundian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kunjah",
+      "displayName": "Kunjah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "kunri",
+      "displayName": "Kunri",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "lachi",
+      "displayName": "Lachi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "lahore",
+      "displayName": "Lahore",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "lakhi",
+      "displayName": "Lakhi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "lakki-marwat",
+      "displayName": "Lakki Marwat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "lala-musa",
+      "displayName": "Lala Musa",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "lalian",
+      "displayName": "Lalian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "landi-kotal",
+      "displayName": "Landi Kotal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "larkana",
+      "displayName": "Larkana",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "lawa",
+      "displayName": "Lawa",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "layyah",
+      "displayName": "Layyah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "liaqatabad",
+      "displayName": "Liaqatabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "liaquatpur",
+      "displayName": "Liaquatpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "lodhran",
+      "displayName": "Lodhran",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "loralai",
+      "displayName": "Loralai",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ludhewala-waraich",
+      "displayName": "Ludhewala Waraich",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mach",
+      "displayName": "Mach",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "madeji",
+      "displayName": "Madeji",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mailsi",
+      "displayName": "Mailsi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "makhdoom-rashid",
+      "displayName": "Makhdoom Rashid",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "makhdoompur-pahoran",
+      "displayName": "Makhdoompur Pahoran",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "makli",
+      "displayName": "Makli",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "malakwal",
+      "displayName": "Malakwal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "malka-hans",
+      "displayName": "Malka Hans",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mamu-kanjan",
+      "displayName": "Mamu Kanjan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "manawala-jodh-singh",
+      "displayName": "Manawala Jodh Singh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mandi-ahmad-abad",
+      "displayName": "Mandi Ahmad Abad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mandi-bahauddin",
+      "displayName": "Mandi Bahauddin",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mandi-sadiq-ganj",
+      "displayName": "Mandi Sadiq Ganj",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mangowal",
+      "displayName": "Mangowal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "manjhand",
+      "displayName": "Manjhand",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mankera",
+      "displayName": "Mankera",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mansehra",
+      "displayName": "Mansehra",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mardan",
+      "displayName": "Mardan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "maroot",
+      "displayName": "Maroot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mastung",
+      "displayName": "Mastung",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "matiari",
+      "displayName": "Matiari",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "matli",
+      "displayName": "Matli",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "matta",
+      "displayName": "Matta",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mehar",
+      "displayName": "Mehar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mehrabpur",
+      "displayName": "Mehrabpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mian-channu",
+      "displayName": "Mian Channu",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "miani",
+      "displayName": "Miani",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mianwali",
+      "displayName": "Mianwali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "minchinabad",
+      "displayName": "Minchinabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mingora",
+      "displayName": "Mingora",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "miran-shah",
+      "displayName": "Miran Shah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "miro-khan",
+      "displayName": "Miro Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mirpur-bathoro",
+      "displayName": "Mirpur Bathoro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mirpur-buriro",
+      "displayName": "Mirpur Buriro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mirpur-khas",
+      "displayName": "Mirpur Khas",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mirpur-mathelo",
+      "displayName": "Mirpur Mathelo",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mirpur-sakro",
+      "displayName": "Mirpur Sakro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mirwah",
+      "displayName": "Mirwah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mirza",
+      "displayName": "Mirza",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mitha-tawana",
+      "displayName": "Mitha Tawana",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mithi",
+      "displayName": "Mithi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mithiani",
+      "displayName": "Mithiani",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mohammad-pur",
+      "displayName": "Mohammad Pur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "moro",
+      "displayName": "Moro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mubarak-pur",
+      "displayName": "Mubarak Pur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "multan",
+      "displayName": "Multan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "muridke",
+      "displayName": "Muridke",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "murree",
+      "displayName": "Murree",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "musakhel",
+      "displayName": "Musakhel",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "muslim-bagh",
+      "displayName": "Muslim Bagh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "mustafabad",
+      "displayName": "Mustafabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "muzaffargarh",
+      "displayName": "Muzaffargarh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nabi-sar-road",
+      "displayName": "Nabi Sar Road",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nagar-parkar",
+      "displayName": "Nagar Parkar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nal",
+      "displayName": "Nal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nankana",
+      "displayName": "Nankana",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "narang-mandi",
+      "displayName": "Narang Mandi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "narowal",
+      "displayName": "Narowal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nasirabad",
+      "displayName": "Nasirabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nasirpur",
+      "displayName": "Nasirpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "naudero",
+      "displayName": "Naudero",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "naukot",
+      "displayName": "Naukot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "naurang",
+      "displayName": "Naurang",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "naushahro-feroze",
+      "displayName": "Naushahro Feroze",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nawabshah",
+      "displayName": "Nawabshah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nawan-shehr",
+      "displayName": "Nawan Shehr",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "new-saeedabad",
+      "displayName": "New Saeedabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nindo",
+      "displayName": "Nindo",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "noor-pur",
+      "displayName": "Noor Pur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nowshera",
+      "displayName": "Nowshera",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nowshera-kalan",
+      "displayName": "Nowshera Kalan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nowshera-virkan",
+      "displayName": "Nowshera Virkan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "nushki",
+      "displayName": "Nushki",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "odero-lal-station",
+      "displayName": "Odero Lal Station",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "okara",
+      "displayName": "Okara",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ormara",
+      "displayName": "Ormara",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pabbi",
+      "displayName": "Pabbi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pacca-chang",
+      "displayName": "Pacca Chang",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "padidan",
+      "displayName": "Padidan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "paharpur",
+      "displayName": "Paharpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pakpattan",
+      "displayName": "Pakpattan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pangrio",
+      "displayName": "Pangrio",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pano-aqil",
+      "displayName": "Pano Aqil",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "panyala",
+      "displayName": "Panyala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "parachinar",
+      "displayName": "Parachinar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "paroa",
+      "displayName": "Paroa",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pasni",
+      "displayName": "Pasni",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pasrur",
+      "displayName": "Pasrur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pattoki",
+      "displayName": "Pattoki",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "perumal",
+      "displayName": "Perumal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "peshawar",
+      "displayName": "Peshawar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "phalia",
+      "displayName": "Phalia",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "phool-nagar",
+      "displayName": "Phool Nagar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "phularwan",
+      "displayName": "Phularwan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "phulji",
+      "displayName": "Phulji",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pind-dadan-khan",
+      "displayName": "Pind Dadan Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pindi-bhattian",
+      "displayName": "Pindi Bhattian",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pindi-gheb",
+      "displayName": "Pindi Gheb",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pir-mahal",
+      "displayName": "Pir Mahal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "piryaloi",
+      "displayName": "Piryaloi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pishin",
+      "displayName": "Pishin",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pithoro",
+      "displayName": "Pithoro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "pyaro-lund",
+      "displayName": "Pyaro Lund",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "qabula",
+      "displayName": "Qabula",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "qadirpur-ran",
+      "displayName": "Qadirpur Ran",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "qaim-pur",
+      "displayName": "Qaim Pur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "qasimabad",
+      "displayName": "Qasimabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "qila-didar-singh",
+      "displayName": "Qila Didar Singh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "qila-sobha-singh",
+      "displayName": "Qila Sobha Singh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "quaidabad",
+      "displayName": "Quaidabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "qubo-saeed-khan",
+      "displayName": "Qubo Saeed Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "quetta",
+      "displayName": "Quetta",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "radhan",
+      "displayName": "Radhan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "rahim-yar-khan",
+      "displayName": "Rahim Yar Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "raja-jang",
+      "displayName": "Raja Jang",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "rajanpur",
+      "displayName": "Rajanpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "rajo-khanani",
+      "displayName": "Rajo Khanani",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ranipur",
+      "displayName": "Ranipur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "rasool-nagar",
+      "displayName": "Rasool Nagar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ratodero",
+      "displayName": "Ratodero",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "rawalpindi",
+      "displayName": "Rawalpindi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "renala-khurd",
+      "displayName": "Renala Khurd",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "rohri",
+      "displayName": "Rohri",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "rojhan",
+      "displayName": "Rojhan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "rustam",
+      "displayName": "Rustam",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sadda",
+      "displayName": "Sadda",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sadiqabad",
+      "displayName": "Sadiqabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "safdarabad",
+      "displayName": "Safdarabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sakhi-sarwar",
+      "displayName": "Sakhi Sarwar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sakrand",
+      "displayName": "Sakrand",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "salehpat",
+      "displayName": "Salehpat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "samaro",
+      "displayName": "Samaro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "samasatta",
+      "displayName": "Samasatta",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sambrial",
+      "displayName": "Sambrial",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sammundari",
+      "displayName": "Sammundari",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sanghar",
+      "displayName": "Sanghar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sangla-hill",
+      "displayName": "Sangla Hill",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sanjar-chang",
+      "displayName": "Sanjar Chang",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sanjar-pur-nao",
+      "displayName": "Sanjar Pur Nao",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sann",
+      "displayName": "Sann",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sarai-alamgir",
+      "displayName": "Sarai Alamgir",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sarai-sidhu",
+      "displayName": "Sarai Sidhu",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "saranan",
+      "displayName": "Saranan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sargodha",
+      "displayName": "Sargodha",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sarhari",
+      "displayName": "Sarhari",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "seet-pur",
+      "displayName": "Seet Pur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sehwan",
+      "displayName": "Sehwan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "setharja",
+      "displayName": "Setharja",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shabqadar",
+      "displayName": "Shabqadar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shadan-lund",
+      "displayName": "Shadan Lund",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shadi-pali",
+      "displayName": "Shadi Pali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shadiwal",
+      "displayName": "Shadiwal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shahdad-kot",
+      "displayName": "Shahdad Kot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shahdadpur",
+      "displayName": "Shahdadpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shaheed-fazal-rahu",
+      "displayName": "Shaheed Fazal Rahu",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shahkot",
+      "displayName": "Shahkot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shahpur-chakar",
+      "displayName": "Shahpur Chakar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shahpur-city",
+      "displayName": "Shahpur City",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shahpur-jahania",
+      "displayName": "Shahpur Jahania",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shahpur-saddar",
+      "displayName": "Shahpur Saddar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shahrig",
+      "displayName": "Shahrig",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shakardara",
+      "displayName": "Shakardara",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shakargarh",
+      "displayName": "Shakargarh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sharak-pur",
+      "displayName": "Sharak Pur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shehr-sultan",
+      "displayName": "Shehr Sultan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sheikhupura",
+      "displayName": "Sheikhupura",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shikarpur",
+      "displayName": "Shikarpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shorkot",
+      "displayName": "Shorkot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "shujabad",
+      "displayName": "Shujabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sialkot",
+      "displayName": "Sialkot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sibi",
+      "displayName": "Sibi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sillanwali",
+      "displayName": "Sillanwali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sinawan",
+      "displayName": "Sinawan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sinjawi",
+      "displayName": "Sinjawi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sinjhoro",
+      "displayName": "Sinjhoro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sita-road",
+      "displayName": "Sita Road",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sobho-dero",
+      "displayName": "Sobho Dero",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sohawa",
+      "displayName": "Sohawa",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sohbatpur",
+      "displayName": "Sohbatpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sohdhra",
+      "displayName": "Sohdhra",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sohrab-khan-sarki",
+      "displayName": "Sohrab Khan Sarki",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sui",
+      "displayName": "Sui",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sujawal",
+      "displayName": "Sujawal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sukheke",
+      "displayName": "Sukheke",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "sultanabad",
+      "displayName": "Sultanabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "surab",
+      "displayName": "Surab",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "swabi",
+      "displayName": "Swabi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "takht-bhai",
+      "displayName": "Takht Bhai",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "talagang",
+      "displayName": "Talagang",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "talhar",
+      "displayName": "Talhar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tall",
+      "displayName": "Tall",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tandlian-wala",
+      "displayName": "Tandlian Wala",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-adam",
+      "displayName": "Tando Adam",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-allahyar",
+      "displayName": "Tando Allahyar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-bago",
+      "displayName": "Tando Bago",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-ghulam-ali",
+      "displayName": "Tando Ghulam Ali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-ghulam-hyder",
+      "displayName": "Tando Ghulam Hyder",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-jam",
+      "displayName": "Tando Jam",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-jan-muhammad",
+      "displayName": "Tando Jan Muhammad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-mir-ali",
+      "displayName": "Tando Mir Ali",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-mitha-khan",
+      "displayName": "Tando Mitha Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tando-muhammad-khan",
+      "displayName": "Tando Muhammad Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tangi",
+      "displayName": "Tangi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tangwani",
+      "displayName": "Tangwani",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tank",
+      "displayName": "Tank",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tasp",
+      "displayName": "Tasp",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "taunsa",
+      "displayName": "Taunsa",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "taxila",
+      "displayName": "Taxila",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "thano-bula-khan",
+      "displayName": "Thano Bula Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "thari-mirwah",
+      "displayName": "Thari Mirwah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "thari-mohabat",
+      "displayName": "Thari Mohabat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tharu-shah",
+      "displayName": "Tharu Shah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "thatta",
+      "displayName": "Thatta",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "therhi-i",
+      "displayName": "Therhi-i",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "therhi-ii",
+      "displayName": "Therhi Ii",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "thul",
+      "displayName": "Thul",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tibba-sultanpur",
+      "displayName": "Tibba Sultanpur",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "timargara",
+      "displayName": "Timargara",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "toba-tek-singh",
+      "displayName": "Toba Tek Singh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "topi",
+      "displayName": "Topi",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tordher",
+      "displayName": "Tordher",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "trinda-sawai-khan",
+      "displayName": "Trinda Sawai Khan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tulamba",
+      "displayName": "Tulamba",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "tump",
+      "displayName": "Tump",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "turbat",
+      "displayName": "Turbat",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ubauro",
+      "displayName": "Ubauro",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "uch-sharif",
+      "displayName": "Uch Sharif",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "umerkot",
+      "displayName": "Umerkot",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "usta-muhammad",
+      "displayName": "Usta Muhammad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "uthal",
+      "displayName": "Uthal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "utmanzai",
+      "displayName": "Utmanzai",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "vanike-tarar",
+      "displayName": "Vanike Tarar",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "vehari",
+      "displayName": "Vehari",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "vehowa",
+      "displayName": "Vehowa",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "wadh",
+      "displayName": "Wadh",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "wagan",
+      "displayName": "Wagan",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "warah",
+      "displayName": "Warah",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "warburton",
+      "displayName": "Warburton",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "washbood",
+      "displayName": "Washbood",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "washuk",
+      "displayName": "Washuk",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "wazirabad",
+      "displayName": "Wazirabad",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "winder",
+      "displayName": "Winder",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "yazman",
+      "displayName": "Yazman",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "zafarwal",
+      "displayName": "Zafarwal",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "zahirpir",
+      "displayName": "Zahirpir",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "zaida",
+      "displayName": "Zaida",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "zehri",
+      "displayName": "Zehri",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "zhob",
+      "displayName": "Zhob",
+      "countryCode": "PK",
+      "active": true
+    },
+    {
+      "id": "ziarat",
+      "displayName": "Ziarat",
+      "countryCode": "PK",
+      "active": true
+    }
+  ],
+  "unresolvedRecords": [
+    {
+      "sourceRow": 27,
+      "sourceName": "WALTON CANTONMENT",
+      "district": "LAHORE DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `lahore` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 30,
+      "sourceName": "RAWALPINDI CANTONMENT",
+      "district": "RAWALPINDI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `rawalpindi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 46,
+      "sourceName": "SAHIWAL METROPOLITAN CORPORATION",
+      "district": "SAHIWAL DISTRICT",
+      "category": "DUPLICATE_ID",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-DUPLICATE-ID",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Cross-district name collision on canonical id `sahiwal`; entities are distinct — naming/ID policy not product-approved (D-CITY-DUPLICATE-ID)"
+    },
+    {
+      "sourceRow": 55,
+      "sourceName": "LAHORE CANTONMENT",
+      "district": "LAHORE DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `lahore` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 57,
+      "sourceName": "WAH CANTONMENT",
+      "district": "RAWALPINDI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Wah often treated as distinct town vs Rawalpindi suburb"
+    },
+    {
+      "sourceRow": 63,
+      "sourceName": "CHAKLALA CANTONMENT",
+      "district": "RAWALPINDI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `rawalpindi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 66,
+      "sourceName": "SUKKUR MUNICIPAL CORPORATION (Part of New Sukkur Taluka)",
+      "district": "SUKKUR DISTRICT",
+      "category": "METRO_SPLIT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-SPLIT-LOCALITY",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Sukkur Municipal Corporation Part-of taluka rows — same pattern as Hyderabad but Sukkur coalesce is NOT approved; engineering may propose COALESCE under D-CITY-METRO-COALESCE / D-CITY-SPLIT-LOCALITY"
+    },
+    {
+      "sourceRow": 69,
+      "sourceName": "FAISAL CANTONMENT (Part of Gulshan-e-Iqbal Sub-Division)",
+      "district": "KARACHI EAST DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 75,
+      "sourceName": "SUKKUR MUNICIPAL CORPORATION (Part of Sukkur City Taluka)",
+      "district": "SUKKUR DISTRICT",
+      "category": "METRO_SPLIT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-SPLIT-LOCALITY",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Sukkur Municipal Corporation Part-of taluka rows — same pattern as Hyderabad but Sukkur coalesce is NOT approved; engineering may propose COALESCE under D-CITY-METRO-COALESCE / D-CITY-SPLIT-LOCALITY"
+    },
+    {
+      "sourceRow": 77,
+      "sourceName": "KHANPUR MC",
+      "district": "RAHIM YAR KHAN DISTRICT",
+      "category": "DUPLICATE_ID",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-DUPLICATE-ID",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Cross-district name collision on canonical id `khanpur`; entities are distinct — naming/ID policy not product-approved (D-CITY-DUPLICATE-ID)"
+    },
+    {
+      "sourceRow": 96,
+      "sourceName": "CLIFTON CANTONMENT (Part of Civil Lines Sub-Division)",
+      "district": "KARACHI SOUTH DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 101,
+      "sourceName": "SARGODHA CANTONMENT",
+      "district": "SARGODHA DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `sargodha` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 111,
+      "sourceName": "QUETTA CANTONMENT",
+      "district": "QUETTA DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `quetta` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 113,
+      "sourceName": "ABBOTTABAD CANTONMENT",
+      "district": "ABBOTTABAD DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `abbottabad` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 115,
+      "sourceName": "GUJRANWALA CANTONMENT",
+      "district": "GUJRANWALA DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `gujranwala` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 164,
+      "sourceName": "MALIR CANTONMENT (Part of Airport Sub-Division)",
+      "district": "MALIR DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Suggested parent `malir` is admin/district-shaped; passenger parent may be `karachi` but not product-approved"
+    },
+    {
+      "sourceRow": 190,
+      "sourceName": "BAHAWALPUR CANTONMENT",
+      "district": "BAHAWALPUR DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `bahawalpur` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 193,
+      "sourceName": "MALIR CANTONMENT (Part of Gulzar-e-Hijri Sub-Division)",
+      "district": "KARACHI EAST DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Suggested parent `karachi-east` is admin/district-shaped; passenger parent may be `karachi` but not product-approved"
+    },
+    {
+      "sourceRow": 215,
+      "sourceName": "SIALKOT CANTONMENT",
+      "district": "SIALKOT DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `sialkot` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 242,
+      "sourceName": "KARACHI CANTONMENT (Part of Sadar Sub-Division)",
+      "district": "KARACHI SOUTH DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 244,
+      "sourceName": "KAMRA CANTONMENT",
+      "district": "ATTOCK DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `attock` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 253,
+      "sourceName": "OKARA CANTONMENT",
+      "district": "OKARA DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `okara` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 257,
+      "sourceName": "PESHAWAR CANTONMENT",
+      "district": "PESHAWAR DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `peshawar` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 264,
+      "sourceName": "TAXILA CANTONMENT",
+      "district": "RAWALPINDI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `rawalpindi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 271,
+      "sourceName": "KHARIAN CANTONMENT",
+      "district": "GUJRAT DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `gujrat` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 275,
+      "sourceName": "SAHIWAL MC",
+      "district": "SARGODHA DISTRICT",
+      "category": "DUPLICATE_ID",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-DUPLICATE-ID",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Cross-district name collision on canonical id `sahiwal`; entities are distinct — naming/ID policy not product-approved (D-CITY-DUPLICATE-ID)"
+    },
+    {
+      "sourceRow": 289,
+      "sourceName": "HYDERABAD CANTONMENT (Part of Hyderabad City Taluka)",
+      "district": "HYDERABAD DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `hyderabad` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 296,
+      "sourceName": "KORANGI CREEK CANTONMENT (Part of Korangi Sub-Division)",
+      "district": "KORANGI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Suggested parent `korangi` is admin/district-shaped; passenger parent may be `karachi` but not product-approved"
+    },
+    {
+      "sourceRow": 330,
+      "sourceName": "MULTAN CANTONMENT",
+      "district": "MULTAN DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `multan` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 343,
+      "sourceName": "CLIFTON CANTONMENT (Part of Saddar Sub-Division)",
+      "district": "KARACHI SOUTH DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 373,
+      "sourceName": "HYDERABAD CANTONMENT (Part of Latifabad Taluka)",
+      "district": "HYDERABAD DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `hyderabad` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 387,
+      "sourceName": "HAVELIAN CANTONMENT",
+      "district": "ABBOTTABAD DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `abbottabad` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 401,
+      "sourceName": "RISALPUR CANTONMENT",
+      "district": "NOWSHERA DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `nowshera` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 417,
+      "sourceName": "NOWSHERA CANTONMENT",
+      "district": "NOWSHERA DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `nowshera` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 423,
+      "sourceName": "ATTOCK CANTONMENT",
+      "district": "ATTOCK DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `attock` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 432,
+      "sourceName": "KHANGARH TC",
+      "district": "GHOTKI DISTRICT",
+      "category": "DUPLICATE_ID",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-DUPLICATE-ID",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Cross-district name collision on canonical id `khangarh`; entities are distinct — naming/ID policy not product-approved (D-CITY-DUPLICATE-ID)"
+    },
+    {
+      "sourceRow": 434,
+      "sourceName": "KHANGARH MC",
+      "district": "MUZAFFARGARH DISTRICT",
+      "category": "DUPLICATE_ID",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-DUPLICATE-ID",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Cross-district name collision on canonical id `khangarh`; entities are distinct — naming/ID policy not product-approved (D-CITY-DUPLICATE-ID)"
+    },
+    {
+      "sourceRow": 438,
+      "sourceName": "KOHAT CANTONMENT",
+      "district": "KOHAT DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `kohat` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 439,
+      "sourceName": "FAISAL CANTONMENT (Part of Airport Sub-Division)",
+      "district": "MALIR DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 449,
+      "sourceName": "FAISAL CANTONMENT (Part of Shah Faisal Sub-Division)",
+      "district": "KORANGI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 470,
+      "sourceName": "KARAMPUR TC",
+      "district": "VEHARI DISTRICT",
+      "category": "DUPLICATE_ID",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-DUPLICATE-ID",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Cross-district name collision on canonical id `karampur`; entities are distinct — naming/ID policy not product-approved (D-CITY-DUPLICATE-ID)"
+    },
+    {
+      "sourceRow": 497,
+      "sourceName": "PANO AQIL CANTONMENT",
+      "district": "SUKKUR DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `sukkur` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 502,
+      "sourceName": "HYDERABAD TC",
+      "district": "BHAKKAR DISTRICT",
+      "category": "DUPLICATE_ID",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-DUPLICATE-ID",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Cross-district name collision on canonical id `hyderabad`; entities are distinct — naming/ID policy not product-approved (D-CITY-DUPLICATE-ID)"
+    },
+    {
+      "sourceRow": 523,
+      "sourceName": "MALIR CANTONMENT (Part of Murad Memon Sub-Division)",
+      "district": "MALIR DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Suggested parent `malir` is admin/district-shaped; passenger parent may be `karachi` but not product-approved"
+    },
+    {
+      "sourceRow": 539,
+      "sourceName": "JHELUM CANTONMENT",
+      "district": "JHELUM DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `jhelum` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 548,
+      "sourceName": "SHORKOT CANTONMENT (Part of Shorkot Tehsil)",
+      "district": "JHANG DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `jhang` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 552,
+      "sourceName": "KARAMPUR TC",
+      "district": "KASHMORE DISTRICT",
+      "category": "DUPLICATE_ID",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-DUPLICATE-ID",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Cross-district name collision on canonical id `karampur`; entities are distinct — naming/ID policy not product-approved (D-CITY-DUPLICATE-ID)"
+    },
+    {
+      "sourceRow": 564,
+      "sourceName": "MANGLA CANTONMENT",
+      "district": "JHELUM DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `jhelum` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 579,
+      "sourceName": "KHANPUR TC",
+      "district": "SHIKARPUR DISTRICT",
+      "category": "DUPLICATE_ID",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-DUPLICATE-ID",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Cross-district name collision on canonical id `khanpur`; entities are distinct — naming/ID policy not product-approved (D-CITY-DUPLICATE-ID)"
+    },
+    {
+      "sourceRow": 589,
+      "sourceName": "KORANGI CREEK CANTONMENT (Part of Ibrahim Hydri Sub-Division)",
+      "district": "MALIR DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Suggested parent `malir` is admin/district-shaped; passenger parent may be `karachi` but not product-approved"
+    },
+    {
+      "sourceRow": 602,
+      "sourceName": "KARACHI CANTONMENT (Part of Jamshed Quarters Sub-Division)",
+      "district": "KARACHI EAST DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 624,
+      "sourceName": "SHORKOT CANTONMENT (Part of Pirmahal Tehsil)",
+      "district": "TOBA TEK SINGH DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `toba-tek-singh` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 626,
+      "sourceName": "SANJWAL CANTONMENT",
+      "district": "ATTOCK DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `attock` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 643,
+      "sourceName": "MURREE HILLS CANTONMENT",
+      "district": "RAWALPINDI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `rawalpindi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 646,
+      "sourceName": "BANNU CANTONMENT",
+      "district": "BANNU DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `bannu` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 647,
+      "sourceName": "DERA ISMAIL KHAN CANTONMENT",
+      "district": "DERA ISMAIL KHAN DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `dera-ismail-khan` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 649,
+      "sourceName": "HYDERABAD CANTONMENT (Part of Qasimabad Taluka)",
+      "district": "HYDERABAD DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `hyderabad` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 653,
+      "sourceName": "CLIFTON CANTONMENT (Part of Korangi Sub-Division)",
+      "district": "KORANGI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 657,
+      "sourceName": "MARDAN CANTONMENT",
+      "district": "MARDAN DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `mardan` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 658,
+      "sourceName": "PESHAWAR UNIVERSITY TC",
+      "district": "PESHAWAR DISTRICT",
+      "category": "UNIVERSITY_TC",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-GEOGRAPHIC-UNIT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Peshawar University TC — institutional township; exclude vs absorb into peshawar is product policy (engineering lean: EXCLUDE) — not approved"
+    },
+    {
+      "sourceRow": 662,
+      "sourceName": "LORALAI CANTONMENT",
+      "district": "LORALAI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `loralai` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 663,
+      "sourceName": "MANORA CANTONMENT (Part of Keamari Sub-Division)",
+      "district": "KEAMARI DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 664,
+      "sourceName": "ORMARA CANTONMENT",
+      "district": "GWADAR DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Ormara Cantonment vs Ormara town / Gwadar relationship unresolved"
+    },
+    {
+      "sourceRow": 665,
+      "sourceName": "ZHOB CANTONMENT",
+      "district": "ZHOB DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `zhob` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 666,
+      "sourceName": "KARACHI CANTONMENT (Part of Civil Lines Sub-Division)",
+      "district": "KARACHI SOUTH DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "MERGE_WITH_PARENT",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "PROPOSED",
+      "evidence": "Engineering proposal: embedded cantonment with suggested parent `karachi` from district/name evidence — REQUIRES product approval (D-CITY-CANTONMENT)"
+    },
+    {
+      "sourceRow": 667,
+      "sourceName": "CHERAT CANTONMENT",
+      "district": "NOWSHERA DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "No clear passenger-facing parent / specialty military site (Cherat or unset)"
+    },
+    {
+      "sourceRow": 668,
+      "sourceName": "MURREE GALLIES CANTONMENT",
+      "district": "ABBOTTABAD DISTRICT",
+      "category": "CANTONMENT",
+      "proposedAction": "REQUIRE_PRODUCT_DECISION",
+      "decisionId": "D-CITY-CANTONMENT",
+      "status": "REVIEW_REQUIRED",
+      "evidence": "Murree vs Abbottabad parent ambiguity in source context"
+    }
+  ]
+}

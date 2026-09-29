@@ -15,12 +15,15 @@ import '../view_models/ride_history_view_model.dart';
 /// Passenger My Rides — server-backed list via GET /v1/rides.
 ///
 /// [active] gates the initial load so IndexedStack mounting Home does not
-/// fetch history until the Rides tab is first shown (Slice K-P2-01).
+/// fetch history until My rides is first shown (Slice K-P2-01).
 class RideHistoryView extends ConsumerStatefulWidget {
-  const RideHistoryView({super.key, this.active = false});
+  const RideHistoryView({super.key, this.active = false, this.onOpenDrawer});
 
-  /// True when the shell's Rides tab is selected.
+  /// True when the shell's My rides page is selected.
   final bool active;
+
+  /// Opens the passenger side drawer (prototype hamburger).
+  final VoidCallback? onOpenDrawer;
 
   @override
   ConsumerState<RideHistoryView> createState() => _RideHistoryViewState();
@@ -94,9 +97,22 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'My rides',
-                    style: OraTypography.headline(OraColors.textPrimary),
+                  Row(
+                    children: [
+                      if (widget.onOpenDrawer != null)
+                        IconButton(
+                          tooltip: 'Menu',
+                          onPressed: widget.onOpenDrawer,
+                          icon: const Icon(Icons.menu_rounded),
+                          color: OraColors.textPrimary,
+                        ),
+                      Expanded(
+                        child: Text(
+                          'My rides',
+                          style: OraTypography.headline(OraColors.textPrimary),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: OraSpacing.xxs),
                   Text(

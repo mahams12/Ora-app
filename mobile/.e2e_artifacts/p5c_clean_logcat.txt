@@ -1,0 +1,436 @@
+--------- beginning of system
+09-23 15:13:03.913  1451  1716 D SGM:FgCheckThread:   handleResume(). pkgName: com.ora.ora, userId: 0, isTunableApp: null
+09-23 15:13:03.913  1451  1716 D SGM:FgCheckThread: notifyFocusInOut(). of pkg: com.ora.ora, type: 4, isTunableApp: false, userId: 0
+09-23 15:13:03.913  1451  1716 D SGM:FgCheckThread:   notifyFocusInOut(). unexpected mPrevNotiType: -1
+09-23 15:13:03.913  1451  1716 D SGM:SystemHelper: callReleaseBlock needReleaseBlock:false
+09-23 15:13:03.913  1451  4744 W WindowManager: Execute app transition: mNextAppTransitionRequests=[TRANSIT_OPEN, TRANSIT_OPEN], mNextAppTransitionFlags=, displayId: 0 Callers=com.android.server.wm.RootWindowContainer.executeAppTransitionForAllDisplay:2580 com.android.server.wm.ActivityTaskSupervisor.reportResumedActivityLocked:2287 com.android.server.wm.ActivityRecord.completeResumeLocked:6987 com.android.server.wm.Task.minimalResumeActivityLocked:6156 com.android.server.wm.ActivityTaskSupervisor.realStartActivityLocked:1137 
+--------- beginning of main
+09-23 15:13:03.914  1451  1774 D AS.MultiSoundManager: mForegroundUid = 10284
+09-23 15:13:03.915  1451  1488 D WindowManager: performShow logReadyForDisplay win=Window{df39418 u0 Splash Screen com.ora.ora} mToken.waitingToShow:true isTransitionSet:true
+09-23 15:13:03.915  1451  3021 I MediaSessionMonitor: Media session stopped : controllerList empty
+09-23 15:13:03.916  1451  1488 D WindowManager: Loading animation for app transition. transit=TRANSIT_OLD_WALLPAPER_CLOSE enter=false frame=Rect(0, 0 - 1080, 2194) insets=Rect(0, 0 - 0, 0) surfaceInsets=Rect(0, 0 - 0, 0)
+09-23 15:13:03.917  1451  1488 I WindowManager: Reparenting to leash, surface=Surface(name=Task=1)/@0x8c7e5e5, leashParent=Surface(name=DefaultTaskDisplayArea)/@0x946d8ba
+09-23 15:13:03.917   904   965 I SurfaceFlinger: id=4007 createSurf flag=24000, Surface(name=Task=1)/@0x8c7e5e5 - animation-leash of app_transition#4007
+09-23 15:13:03.919  1451  1488 D WindowManager: makeSurface duration=1 leash=Surface(name=Surface(name=Task=1)/@0x8c7e5e5 - animation-leash of app_transition)/@0xeac158c
+09-23 15:13:03.919  1451  1488 D WindowManager: Loading animation for app transition. transit=TRANSIT_OLD_WALLPAPER_CLOSE enter=true frame=Rect(0, 0 - 1080, 2400) insets=Rect(0, 80 - 0, 126) surfaceInsets=Rect(0, 0 - 0, 0)
+09-23 15:13:03.921  1451  1488 I WindowManager: Reparenting to leash, surface=Surface(name=Task=622)/@0x7cafe78, leashParent=Surface(name=DefaultTaskDisplayArea)/@0x946d8ba
+09-23 15:13:03.921   904   965 I SurfaceFlinger: id=4008 createSurf flag=24004, Surface(name=Task=622)/@0x7cafe78 - animation-leash of app_transition#4008
+09-23 15:13:03.922  1451  1488 D WindowManager: makeSurface duration=1 leash=Surface(name=Surface(name=Task=622)/@0x7cafe78 - animation-leash of app_transition)/@0x3c71951
+09-23 15:13:03.922 24850 24850 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10284; state: ENABLED
+09-23 15:13:03.923  1451  1488 V WindowManager: performShowLocked: mDrawState=HAS_DRAWN in Window{df39418 u0 Splash Screen com.ora.ora}
+09-23 15:13:03.923   860   860 I hwcomposer: [HWCDisplay] [Display_0 (type:1)] fps:40.856174,dur:1003.52,max:287.18,min:10.51  
+09-23 15:13:03.926   904   965 I SurfaceFlinger: id=4009 createSurf flag=80000, ad62500 ActivityRecordInputSink com.ora.ora/.MainActivity#4009
+09-23 15:13:03.929  1950  2009 D Bubbles : onLocusVisibilityChanged: LocusId[17_chars] visible=false
+09-23 15:13:03.930  1451  1487 D SGM:GameManager: identifyGamePackage. com.ora.ora, mCurrentUserId: 0, callerUserId: 0, callingMethodInfo: com.android.server.ssrm.SortingMachine.isGame(SortingMachine.java:162)
+09-23 15:13:03.930  1451  1487 D SGM:PkgDataHelper: getGamePkgData(). com.ora.ora
+09-23 15:13:03.932  1451  1487 D SGM:GameManager: identifyGamePackage. com.ora.ora, mCurrentUserId: 0, callerUserId: 0, callingMethodInfo: com.samsung.android.game.SemGameManager.isGamePackage(SemGameManager.java:104)
+09-23 15:13:03.932  1451  1487 D SGM:PkgDataHelper: getGamePkgData(). com.ora.ora
+09-23 15:13:03.932  1451  1487 D SGM:SemGameManager: isGamePackage(), pkgName=com.ora.ora, ret=false
+09-23 15:13:03.933  1451  1487 I GameSDK@LifeCycle: noteResumeComponent(): package name  : com.ora.ora
+09-23 15:13:03.933  1451  1487 D SGM:FgCheckThread: noteResumeComponent(), received pkgName: com.ora.ora, userId: 0
+09-23 15:13:03.933  1451  1716 D SGM:FgCheckThread: onLooperPrepared(), msg: MSG_APP_RESUME, pkgName: com.ora.ora, userid: 0
+09-23 15:13:03.933  1451  1716 D SGM:FgCheckThread: handleResume().
+09-23 15:13:03.933  1451  1451 I CocktailBarManagerServiceContainer: handleMessage: entry what = 5
+09-23 15:13:03.933  1451  1716 D SGM:FgCheckThread: sendFocusOutConditionally() - mPrevNotiPkg: (unknown), userId: 0
+09-23 15:13:03.933  1451  1451 I CocktailBarManagerServiceImpl: noteResumeComponent : no active host
+09-23 15:13:03.933  1451  1716 D SGM:FgCheckThread:   handleResume(). pkgName: com.ora.ora, userId: 0, isTunableApp: null
+09-23 15:13:03.933  1451  1716 D SGM:FgCheckThread: notifyFocusInOut(). of pkg: com.ora.ora, type: 4, isTunableApp: false, userId: 0
+09-23 15:13:03.933  1451  1716 D SGM:FgCheckThread:   notifyFocusInOut(). unexpected mPrevNotiType: -1
+09-23 15:13:03.933  1451  1716 D SGM:SystemHelper: callReleaseBlock needReleaseBlock:false
+09-23 15:13:03.935  1451  1487 I ActivityManager: Changes in 10284 19 to 2, 0 to 15
+09-23 15:13:03.935  1451  1487 I AppOps  : updateUidProcState uid: 10284 procState: 2 capability:15
+09-23 15:13:03.935  1451  1487 I ActivityManager: updateOomAdj start time is before than pendingPid added, don't delete it
+09-23 15:13:03.938   904   904 I Layer   : Layer [Splash Screen com.ora.ora$_1950#4006] hidden!! flag(0)
+09-23 15:13:03.943 21148 21205 I Rubin   : [384] s9.a.c(SourceFile:1) : Notify com.samsung.android.rubin.inferenceengine.contextanalytics.engine.loggers.d's database is updated.
+09-23 15:13:03.944  1451  4036 D SGM:GameManager: identifyForegroundApp. com.ora.ora, mCurrentUserId: 0, callerUserId: 0
+09-23 15:13:03.944  1451  4036 D SGM:PkgDataHelper: getGamePkgData(). com.ora.ora
+09-23 15:13:03.946  1451  4744 D SGM:GameManager: identifyGamePackage. com.ora.ora, mCurrentUserId: 0, callerUserId: 0, callingMethodInfo: com.samsung.android.game.IGameManagerService$Stub.onTransact(IGameManagerService.java:233)
+09-23 15:13:03.946  1451  4744 D SGM:PkgDataHelper: getGamePkgData(). com.ora.ora
+09-23 15:13:03.948 21148 21205 I Rubin   : [384] ga.e.m(SourceFile:6) : isSatisfiedByCmh is false
+09-23 15:13:03.966   904   904 D SurfaceFlinger: Display 0 HWC layers:
+09-23 15:13:03.966   904   904 D SurfaceFlinger:      DEVICE | 0xb40000741894ef00 | 0100 | RGBx_8888    |  616.0    0.0 1624.0 2240.0 |    0    0 1080 2400 | Wallpaper BBQ wrapper#77
+09-23 15:13:03.966   904   904 D SurfaceFlinger:      DEVICE | 0xb400007442056580 | 0100 | RGBA_8888    |    0.0    0.0 1080.0 2400.0 |    0    0 1080 2400 | com.sec.android.app.launcher/com.sec[...]tivities.LauncherActivity$_2341#3998
+09-23 15:13:03.966   904   904 D SurfaceFlinger:      CLIENT | 0xb400007442055f80 | 0100 | RGBA_8888    |    0.0    0.0 1080.0 2400.0 |   76  168 1004 2232 | Splash Screen com.ora.ora$_1950#4006
+09-23 15:13:03.966   904   904 D SurfaceFlinger:      CLIENT | 0xb400007443dc0800 | 0100 | RGBA_8888    |    0.0    0.0 1080.0   80.0 |    0    0 1080   80 | StatusBar$_1950#83
+09-23 15:13:03.966   904   904 D SurfaceFlinger:      CLIENT | 0xb400007442056e80 | 0100 | RGBA_8888    |    0.0    0.0 1080.0  126.0 |    0 2274 1080 2400 | NavigationBar0$_1950#78
+09-23 15:13:03.966   904   904 D SurfaceFlinger:      DEVICE | 0xb40000741894ec00 | 0140 | RGBA_8888    |    0.0    0.0 1080.0  150.0 |    0    0 1080  150 | ScreenDecorOverlay$_1950#88
+09-23 15:13:03.966   904   904 D SurfaceFlinger:      DEVICE | 0xb400007420862c00 | 0140 | RGBA_8888    |    0.0    0.0 1080.0  150.0 |    0 2250 1080 2400 | ScreenDecorOverlayBottom$_1
+09-23 15:13:03.966   904   904 D SurfaceFlinger: 950#89
+09-23 15:13:03.966   904   904 D SurfaceFlinger: 
+09-23 15:13:04.060   870 24830 I mtkpower_client: perf_lock_rel, hdl:2156, tid:24830
+09-23 15:13:04.060   870 24830 I mtkpower_client: perf_lock_acq, hdl:0, dur:0, num:2, tid:24830
+09-23 15:13:04.061   873   938 I libPowerHal: [perfLockRel] hdl:2156, idx:0
+09-23 15:13:04.061   873   938 I libPowerHal: [PD] vendor.samsung. update cmd:1c3c000, param:1
+09-23 15:13:04.061   873   938 I libPowerHal: [PD] (less) /proc/mcdi/state set +prefix:enable 1;
+09-23 15:13:04.062   870 24830 I mtkpower_client: ret_hdl:2159
+09-23 15:13:04.062   873   938 I libPowerHal: [perfLockAcq] idx:2 hdl:2159 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:2159
+09-23 15:13:04.063   870 24830 I mtkpower_client: perf_lock_rel, hdl:2157, tid:24830
+09-23 15:13:04.063   873   938 I libPowerHal: [PE] (less) /proc/mcdi/state set +prefix:enable 0;
+09-23 15:13:04.064   870 24830 I mtkpower_client: perf_lock_acq, hdl:0, dur:0, num:2, tid:24830
+09-23 15:13:04.065   873   938 I libPowerHal: [perfLockRel] hdl:2157, idx:1
+09-23 15:13:04.066   873   938 I libPowerHal: vendor.samsung.: cpu_ctrl set cpu freq: -1 -1 -1 -1
+09-23 15:13:04.067   870 24830 I mtkpower_client: ret_hdl:2160
+09-23 15:13:04.067   873   938 I libPowerHal: [perfLockAcq] idx:0 hdl:2160 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:2160
+09-23 15:13:04.067   870 24830 I HYPER-HAL: [RequestManager.cpp]releaseLocked(): Released ID : 1097451
+09-23 15:13:04.067   873   938 I libPowerHal: vendor.samsung.: cpu_ctrl set cpu freq: 1800000 -1 -1 -1
+09-23 15:13:04.070  1451  2210 D MdnieScenarioControlService:  packageName : com.ora.ora    className : com.ora.ora.MainActivity
+09-23 15:13:04.070  1451  2210 V MdnieScenarioControlService: setUIMode from UI function(3)
+09-23 15:13:04.085  6569  6569 D BoundBrokerSvc: onRebind: Intent { act=com.google.android.gms.libs.gmscorelogger.service.START dat=chimera-action:/... cmp=com.google.android.gms/.chimera.PersistentDirectBootAwareApiService }
+09-23 15:13:04.171  1451  2210 V MdnieScenarioControlService: mAclOffEnabled : false mAclPreviewState : false mAclCompensationState : false
+09-23 15:13:04.180   908   916 D ccci_mdinit: (1):monitor_time_update_thread round:6286 ########
+09-23 15:13:04.232 24850 24850 D nativeloader: Configuring clns-4 for other apk /data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/lib/arm64:/data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.ora.ora
+09-23 15:13:04.244 24850 24850 D nativeloader: Load libframework-connectivity-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity.jar: ok
+09-23 15:13:04.252 24850 24850 V GraphicsEnvironment: ANGLE Developer option for 'com.ora.ora' set to: 'default'
+09-23 15:13:04.252 24850 24850 V GraphicsEnvironment: ANGLE GameManagerService for com.ora.ora: false
+09-23 15:13:04.253 24850 24850 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+09-23 15:13:04.258 24850 24850 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+09-23 15:13:04.273   590   590 D io_stats: !@ 179,0 r 5051427 61231210 w 2875903 32870804 d 0 0 f 0 0 iot 2461624 0 th 0 0 0 pt 0 inp 0 0 34074.580
+09-23 15:13:04.274  1451  1488 I WindowManager: Reparenting to original parent: Surface(name=DefaultTaskDisplayArea)/@0x946d8ba, destroy=true, surface=Surface(name=Task=1)/@0x8c7e5e5
+09-23 15:13:04.275  1451  1488 V WindowManager: Setting visibility of Window{dedd69c u0 com.samsung.android.app.spage}: false, caller=com.android.server.wm.WindowContainer.sendAppVisibilityToClients:1246 com.android.server.wm.WindowState.sendAppVisibilityToClients:4183 com.android.server.wm.WindowContainer.sendAppVisibilityToClients:1246 com.android.server.wm.WindowToken.setClientVisible:431 com.android.server.wm.ActivityRecord.setClientVisible:7691 
+09-23 15:13:04.275 12157 12157 I ViewRootImpl@65b0a51[]: handleAppVisibility mAppVisible = true visible = false
+09-23 15:13:04.275  1451  1488 V WindowManager: Setting visibility of Window{4f9bf8f u0 com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity}: false, caller=com.android.server.wm.WindowContainer.sendAppVisibilityToClients:1246 com.android.server.wm.WindowToken.setClientVisible:431 com.android.server.wm.ActivityRecord.setClientVisible:7691 com.android.server.wm.ActivityRecord.onAnimationFinished:8590 com.android.server.wm.WindowContainer.doAnimationFinished:3483 
+09-23 15:13:04.275  2341  2341 I ViewRootImpl@472a461[LauncherActivity]: handleAppVisibility mAppVisible = true visible = false
+09-23 15:13:04.275  1451  1488 I WindowManager: Reparenting to original parent: Surface(name=DefaultTaskDisplayArea)/@0x946d8ba, destroy=true, surface=Surface(name=Task=622)/@0x7cafe78
+09-23 15:13:04.277  1451  1488 V WindowManager: Setting visibility of Window{5677186 u0 com.android.systemui.ImageWallpaper}: false, caller=com.android.server.wm.WindowContainer.sendAppVisibilityToClients:1246 com.android.server.wm.WindowToken.setClientVisible:431 com.android.server.wm.WallpaperWindowToken.setVisible:160 com.android.server.wm.WallpaperWindowToken.updateWallpaperWindows:154 com.android.server.wm.WallpaperController.updateWallpaperTokens:676 
+09-23 15:13:04.277  1950  2238 D WallpaperService: dispatchAppVisibility onVisibilityChanged(): false
+09-23 15:13:04.277  1950  1950 D WallpaperService: reportVisibility onVisibilityChanged visible: false
+09-23 15:13:04.277  1950  2139 I ImageWallpaper[GLEngine]:  onVisibilityChanged false , 0
+09-23 15:13:04.279  1451  7406 D SGM:GameManager: identifyGamePackage. com.ora.ora, mCurrentUserId: 0, callerUserId: 0, callingMethodInfo: com.android.server.ssrm.SortingMachine.isGame(SortingMachine.java:162)
+09-23 15:13:04.279  1451  7406 D SGM:PkgDataHelper: getGamePkgData(). com.ora.ora
+09-23 15:13:04.281  1451  1487 D PowerManagerService: [api] setScreenDimDurationOverrideFromWindowManagerInternal: timeoutMillis: -1
+09-23 15:13:04.290   904   904 I Layer   : id=4007 removeFromCurrentState Surface(name=Task=1)/@0x8c7e5e5 - animation-leash of app_transition#4007 (110)
+09-23 15:13:04.291   904   904 I Layer   : id=4008 removeFromCurrentState Surface(name=Task=622)/@0x7cafe78 - animation-leash of app_transition#4008 (110)
+09-23 15:13:04.291   904   904 I Layer   : Layer [com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity$_2341#3998] hidden!! flag(1)
+09-23 15:13:04.291   904   904 I SurfaceFlinger: id=4008 Removed Surface(name=Task=622)/@0x7cafe78 - animation-leash of app_transition#4008 (110)
+09-23 15:13:04.291   904   904 I SurfaceFlinger: id=4007 Removed Surface(name=Task=1)/@0x8c7e5e5 - animation-leash of app_transition#4007 (110)
+09-23 15:13:04.291   904   904 I Layer   : id=4007 Destroyed Surface(name=Task=1)/@0x8c7e5e5 - animation-leash of app_transition#4007
+09-23 15:13:04.291   904   904 I Layer   : id=4008 Destroyed Surface(name=Task=622)/@0x7cafe78 - animation-leash of app_transition#4008
+09-23 15:13:04.295  2341  2341 I ViewRootImpl@472a461[LauncherActivity]: performTraversals mFirst=false windowShouldResize=false viewVisibilityChanged=true mForceNextWindowRelayout=false params=null
+09-23 15:13:04.295   860   860 I hwcomposer: [DBQ] (q2:0xb400007f44c43400) Buffer queue is destroyed, m_id(856)  
+09-23 15:13:04.296   860   860 I hwcomposer: [DBQ] (q2:0xb400007f44c43400) ~DisplayBufferQueue(), m_id(856), release buf  
+09-23 15:13:04.296   860   860 I hwcomposer: [DBQ] (q2:0xb400007f44c43400) Free Slot(0), handle=0xb400007f44c46880, 10368000 -> 0  
+09-23 15:13:04.296 12345 12345 I cgno    : onPause
+09-23 15:13:04.296  1451  4744 V WindowManager: Relayout Window{4f9bf8f u0 com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity}: viewVisibility=8 req=1080x2400 d0
+09-23 15:13:04.297   904   904 D SurfaceFlinger: Display 0 HWC layers:
+09-23 15:13:04.297   904   904 D SurfaceFlinger:      DEVICE | 0xb400007442055f80 | 0100 | RGBA_8888    |    0.0    0.0 1080.0 2400.0 |    0    0 1080 2400 | Splash Screen com.ora.ora$_1950#4006
+09-23 15:13:04.297   904   904 D SurfaceFlinger:      DEVICE | 0xb400007443dc0800 | 0100 | RGBA_8888    |    0.0    0.0 1080.0   80.0 |    0    0 1080   80 | StatusBar$_1950#83
+09-23 15:13:04.297   904   904 D SurfaceFlinger:      DEVICE | 0xb400007442056e80 | 0100 | RGBA_8888    |    0.0    0.0 1080.0  126.0 |    0 2274 1080 2400 | NavigationBar0$_1950#78
+09-23 15:13:04.297   904   904 D SurfaceFlinger:      DEVICE | 0xb40000741894ec00 | 0140 | RGBA_8888    |    0.0    0.0 1080.0  150.0 |    0    0 1080  150 | ScreenDecorOverlay$_1950#88
+09-23 15:13:04.297   904   904 D SurfaceFlinger:      DEVICE | 0xb400007420862c00 | 0140 | RGBA_8888    |    0.0    0.0 1080.0  150.0 |    0 2250 1080 2400 | ScreenDecorOverlayBottom$_1950#89
+09-23 15:13:04.297   904   904 D SurfaceFlinger: 
+09-23 15:13:04.300  1451  4744 V WindowManager: Relayout hash=4f9bf8f, pid=2341, syncId=-1: mAttrs={(0,0)(fillxfill) sim={adjust=nothing forwardNavigation} layoutInDisplayCutoutMode=shortEdges ty=BASE_APPLICATION fmt=TRANSPARENT wanim=0x10302f4
+09-23 15:13:04.300  1451  4744 V WindowManager:   fl=81910100
+09-23 15:13:04.300  1451  4744 V WindowManager:   pfl=1e020040
+09-23 15:13:04.300  1451  4744 V WindowManager:   vsysui=1700
+09-23 15:13:04.300  1451  4744 V WindowManager:   bhv=SHOW_TRANSIENT_BARS_BY_SWIPE
+09-23 15:13:04.300  1451  4744 V WindowManager:   fitSides= screenDimDuration=200000 naviIconColor=0}
+09-23 15:13:04.301  2341  2341 I BLASTBufferQueue: [ViewRootImpl@472a461[LauncherActivity]#78](f:0,a:1) destructor()
+09-23 15:13:04.303  2341  2341 I ViewRootImpl@472a461[LauncherActivity]: Relayout returned: old=(0,0,1080,2400) new=(0,0,1080,2400) req=(1080,2400)8 dur=6 res=0x2 s={false 0x0} ch=true seqId=0
+09-23 15:13:04.324 24850 24850 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+09-23 15:13:04.340 24850 24850 D CompatibilityChangeReporter: Compat change id reported: 183155436; UID 10284; state: ENABLED
+09-23 15:13:04.361 24850 24850 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+09-23 15:13:04.371 24850 24850 I FirebaseInitProvider: FirebaseApp initialization successful
+09-23 15:13:04.395 24850 24869 D OpenGLRenderer: RenderThread::requireGlContext()
+09-23 15:13:04.395 24850 24869 D libMEOW : meow new tls: 0xb400007557b6e980
+09-23 15:13:04.395 24850 24869 D libMEOW : meow reload base cfg path: na
+09-23 15:13:04.395 24850 24869 D libMEOW : meow reload overlay cfg path: na
+09-23 15:13:04.397 24850 24869 E QT      : [QT]file does not exist
+09-23 15:13:04.398 24850 24869 D libMEOW : applied 2 plugins for [com.ora.ora]:
+09-23 15:13:04.398 24850 24869 D libMEOW :   plugin 1: [libMEOW_gift.so]:
+09-23 15:13:04.398 24850 24869 D libMEOW :   plugin 2: [libMEOW_semaphore]:
+09-23 15:13:04.407  1451  4744 I GenerationRegistry: mBackingStore.isClosed() : false
+09-23 15:13:04.410   543   543 I hwservicemanager: getTransport: Cannot find entry android.hardware.configstore@1.0::ISurfaceFlingerConfigs/default in either framework or device VINTF manifest.
+09-23 15:13:04.410 24850 24869 E OpenGLRenderer: Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+09-23 15:13:04.410 24850 24869 W OpenGLRenderer: Failed to initialize 101010-2 format, error = EGL_SUCCESS
+09-23 15:13:04.417 24850 24869 D OpenGLRenderer: RenderThread::setGrContext()
+09-23 15:13:04.431 24850 24884 D FlutterJNI: Beginning load of flutter...
+09-23 15:13:04.431 24850 24885 I ResourceExtractor: Found extracted resources res_timestamp-1-1790157197251
+09-23 15:13:04.451 24850 24884 D nativeloader: Load /data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!/lib/arm64-v8a/libflutter.so using class loader ns clns-4 (caller=/data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk): ok
+09-23 15:13:04.453 24850 24884 D FlutterJNI: flutter (null) was loaded normally!
+09-23 15:13:04.482  2341  2606 I QuickstepModelDelegate: Widget predictions updated
+09-23 15:13:04.483 24850 24850 E com.ora.ora: hiddenapi: Accessing hidden method Landroid/window/BackEvent;->getTouchX()F (runtime_flags=0, domain=platform, api=blocked) from /data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!classes16.dex (domain=app, TargetSdkVersion=36) using linking: denied
+09-23 15:13:04.483 24850 24850 E com.ora.ora: hiddenapi: Accessing hidden method Landroid/window/BackEvent;->getTouchY()F (runtime_flags=0, domain=platform, api=blocked) from /data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!classes16.dex (domain=app, TargetSdkVersion=36) using linking: denied
+09-23 15:13:04.483 24850 24850 E com.ora.ora: hiddenapi: Accessing hidden method Landroid/window/BackEvent;->getProgress()F (runtime_flags=0, domain=platform, api=blocked) from /data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!classes16.dex (domain=app, TargetSdkVersion=36) using linking: denied
+09-23 15:13:04.483 24850 24850 E com.ora.ora: hiddenapi: Accessing hidden method Landroid/window/BackEvent;->getSwipeEdge()I (runtime_flags=0, domain=platform, api=blocked) from /data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!classes16.dex (domain=app, TargetSdkVersion=36) using linking: denied
+09-23 15:13:04.483 24850 24850 E com.ora.ora: hiddenapi: Accessing hidden method Landroid/window/BackEvent;->getProgress()F (runtime_flags=0, domain=platform, api=blocked) from /data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!classes16.dex (domain=app, TargetSdkVersion=36) using linking: denied
+09-23 15:13:04.483 24850 24850 E com.ora.ora: hiddenapi: Accessing hidden method Landroid/window/BackEvent;->getSwipeEdge()I (runtime_flags=0, domain=platform, api=blocked) from /data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!classes16.dex (domain=app, TargetSdkVersion=36) using linking: denied
+09-23 15:13:04.492   828   828 E audit   : type=1400 audit(1790158384.487:9745): avc:  denied  { read } for  pid=24850 comm="com.ora.ora" name="max_map_count" dev="proc" ino=1199921 scontext=u:r:untrusted_app:s0:c28,c257,c512,c768 tcontext=u:object_r:proc_max_map_count:s0 tclass=file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-23 15:13:04.492   828   828 E audit   : type=1300 audit(1790158384.487:9745): arch=c00000b7 syscall=56 success=no exit=-13 a0=ffffff9c a1=74e3439910 a2=0 a3=0 items=0 ppid=846 pid=24850 auid=4294967295 uid=10284 gid=10284 euid=10284 suid=10284 fsuid=10284 egid=10284 sgid=10284 fsgid=10284 tty=(none) ses=4294967295 comm="com.ora.ora" exe="/system/bin/app_process64" subj=u:r:untrusted_app:s0:c28,c257,c512,c768 key=(null)
+09-23 15:13:04.492   828   828 E audit   : type=1327 audit(1790158384.487:9745): proctitle="com.ora.ora"
+09-23 15:13:04.505 24850 24890 D vulkan  : searching for layers in '/data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/lib/arm64'
+09-23 15:13:04.506 24850 24890 D vulkan  : searching for layers in '/data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!/lib/arm64-v8a'
+09-23 15:13:04.513 24850 24890 D vulkan  : added global layer 'VK_LAYER_KHRONOS_validation' from library '/data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!/lib/arm64-v8a/libVkLayer_khronos_validation.so'
+09-23 15:13:04.515 24850 24890 W libc    : Access denied finding property "vendor.debug.forcibly_enable_mtk_ray_tracing"
+09-23 15:13:04.541 24850 24890 I flutter : [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+09-23 15:13:04.576  6195  6404 I Nearby  : (REDACTED) is blocked device type %s, isAuto=%s, isIot=%s, isLatchsky=%s, isChinaWearable=%s, isTv=%s, isWearable=%s (supportWearOs=%s), isChromeOsDevice=%s (supportChromeOs=%s)
+09-23 15:13:04.579  6195  6404 I NearbyDiscovery: (REDACTED) DiscoveryController, showNotification, itemSize=%s
+09-23 15:13:04.579  6195  6404 I NearbyDiscovery: (REDACTED) Show notifications: %d total, no changes since last shown, no-op.
+09-23 15:13:04.723 24850 24917 I flutter : The Dart VM service is listening on http://127.0.0.1:37793/yaF38y5b0wo=/
+09-23 15:13:04.760   870 24831 I HYPER-HAL: [RequestManager.cpp]releaseLocked(): Released ID : 7858643
+09-23 15:13:04.820 19755 19755 I wpa_supplicant: Heartbeat 928
+09-23 15:13:04.839  1451  4145 D SettingsProvider: isChangeAllowed() : name = accessibility_enabled
+09-23 15:13:04.840  1451  4145 I GenerationRegistry: mBackingStore.isClosed() : false
+09-23 15:13:04.840  1451  4145 I GenerationRegistry: mBackingStore.isClosed() : false
+09-23 15:13:04.840  1451  4145 D WindowMagnificationMgr: requestConnection :false mConnectionState : 3
+09-23 15:13:04.840  1451  4145 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-23 15:13:04.840  1451  4145 D SettingsProvider: isChangeAllowed() : name = accelerometer_rotation
+09-23 15:13:04.841  1451  4145 I GenerationRegistry: mBackingStore.isClosed() : false
+09-23 15:13:04.841  1451  4145 I GenerationRegistry: mBackingStore.isClosed() : false
+09-23 15:13:04.841  1451  4145 D SettingsProvider: isChangeAllowed() : name = user_rotation
+09-23 15:13:04.841  1451  4145 V WindowManager: rotationForOrientation(orient=SCREEN_ORIENTATION_UNSPECIFIED (-1), last=ROTATION_0 (0)); user=ROTATION_0 (0) 
+09-23 15:13:04.841  1451  4145 D WindowManager: rotationForOrientation, orientationSource=ActivityRecord{a73f139 u0 com.ora.ora/.MainActivity} t622}
+09-23 15:13:04.841  1451  4145 V WindowManager: Computed rotation=ROTATION_0 (0) for display id=0 based on lastOrientation=SCREEN_ORIENTATION_UNSPECIFIED (-1) and oldRotation=ROTATION_0 (0), caller=com.android.server.wm.DisplayContent.updateRotationUnchecked:2410 com.android.server.wm.WindowManagerService.updateRotationUnchecked:4778 com.android.server.wm.WindowManagerService.thawDisplayRotation:4719 com.android.server.wm.WindowManagerService.thawRotation:4683 android.view.IWindowManager$Stub.onTransact:2536 com.android.server.wm.WindowManagerService.onTransact:1608 
+09-23 15:13:04.843   904   904 I Layer   : id=3995 removeFromCurrentState WindowToken{f82f48f type=2032 android.os.Binder@ef867ee}#3995 (108)
+09-23 15:13:04.843   904   904 I SurfaceFlinger: id=3995 Removed WindowToken{f82f48f type=2032 android.os.Binder@ef867ee}#3995 (108)
+09-23 15:13:04.844   904   904 I Layer   : id=3995 Destroyed WindowToken{f82f48f type=2032 android.os.Binder@ef867ee}#3995
+09-23 15:13:04.844 24758 24758 D AndroidRuntime: Shutting down VM
+09-23 15:13:04.849  1451  1451 D BatterySaverPolicy: accessibility changed to false, updating policy.
+09-23 15:13:04.851   873   893 I mtkpower@impl: [setMode] type:1, enabled:1
+09-23 15:13:04.851   873   893 E mtkpower@impl: [setMode] unknown type
+09-23 15:13:04.851  1451  1497 D BatterySaverController: send ACTION_POWER_SAVE_MODE_CHANGED
+09-23 15:13:04.851  1451  1497 D BatterySaverController: send ACTION_POWER_SAVE_MODE_CHANGED_INTERNAL
+09-23 15:13:04.853  1451  1918 W WindowManager: Cannot find window which accessibility connection is added to
+09-23 15:13:04.855  3812  3812 I AiAiCaptions: onReceive(): Battery saver mode turned on.
+09-23 15:13:04.855  6195 23214 I SelfLocationFetcher: Starting self-location fetching naive strategy. [CONTEXT service_id=284 ]
+09-23 15:13:04.856  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: BATTERY_STATS: true
+09-23 15:13:04.856  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: ANIMATION: false
+09-23 15:13:04.856  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: VIBRATION: true
+09-23 15:13:04.856  1451  1497 D VibratorManagerService: Updating device state...
+09-23 15:13:04.856  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: UNKNOWN: false
+09-23 15:13:04.856  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: FORCE_ALL_APPS_STANDBY: true
+09-23 15:13:04.856  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-23 15:13:04.856  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-23 15:13:04.856  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: FORCE_BACKGROUND_CHECK: true
+09-23 15:13:04.856  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: NETWORK_FIREWALL: true
+09-23 15:13:04.857  1451  1497 D BatterySaverController: onLowPowerModeChanged: ServiceType: DATA_SAVER: false
+09-23 15:13:04.857  2341  2341 I RecentsOrientedState: current RecentsOrientedState: [this=RecentsOrientedState@93218305 mOrientationHandler=PortraitPagedViewHandler@108784806 mDisplayRotation=0 mTouchRotation=0 mRecentsActivityRotation=0 mRecentsRotation=0 isRecentsActivityRotationAllowed=false mSystemRotation=true mStateId=38272 mFlags=299]
+09-23 15:13:04.859  6569  6704 I SelfLocationFetcher: Device is opted-out of last known location reporting. [CONTEXT service_id=284 ]
+09-23 15:13:04.859  1950  1950 V Navbar.Store: handleEvent(0) OnRotationLockedChanged(rotationLocked=false) [Module] NavBarStoreImpl
+09-23 15:13:04.860  6195  6195 I PersonalSafety: (REDACTED) [Settings] power saver mode changed to %s
+09-23 15:13:04.863  1950  1950 D SettingsHelper: onChange() COMPLETED elapsed= 1
+09-23 15:13:04.863  1950  1950 V SettingsHelper: *** broadcastChange for content://settings/system/accelerometer_rotation
+09-23 15:13:04.863  1950  1950 D Tile.RotationLockTile:  OnChangedCallback : 
+09-23 15:13:04.866  1950  2057 D Tile.RotationLockTile:  handleUpdateState: true orientation = true
+09-23 15:13:04.866  1950  1950 V Navbar.Store: handleEvent(0) OnRotationLockedChanged(rotationLocked=false) [Module] NavBarStoreImpl
+09-23 15:13:04.868  1950  1950 W PowerUI : unknown intent: Intent { act=android.os.action.POWER_SAVE_MODE_CHANGED flg=0x40000010 }
+09-23 15:13:04.868  1950  1950 I AODTileStateController: onReceive: BR = [android.os.action.POWER_SAVE_MODE_CHANGED]
+09-23 15:13:04.868  1950  1950 I AODTileStateController: requestListeningState: 
+09-23 15:13:04.869  1451  1918 D StatusBarManagerService: isSecCustomTile : componentName =ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-23 15:13:04.869  6195 24607 I FusedLocation: (REDACTED) location delivery to %s blocked - too fast
+09-23 15:13:04.869  1950  1950 D TileServices: Couldn't find tile for ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-23 15:13:05.047  1451  1918 I ActivityManager: PendingStartActivityUids startActivity to updateOomAdj delay:1136ms, uid:10284
+09-23 15:13:05.048 24850 24850 D FlutterGeolocator: Attaching Geolocator to activity
+09-23 15:13:05.050 24850 24850 D nativeloader: Load /data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!/lib/arm64-v8a/libdartjni.so using class loader ns clns-4 (caller=/data/app/~~KiWx0CbgBfN2sKQ0UnE0RA==/com.ora.ora-yqZoP5ZxaHjaRA4GbpsRMQ==/base.apk!classes8.dex): ok
+09-23 15:13:05.055   904  1714 D SurfaceFlinger: [SF client] NEW(0xb40000744205dd40) for (24850:com.ora.ora)
+09-23 15:13:05.065  1451  1918 I GenerationRegistry: mBackingStore.isClosed() : false
+09-23 15:13:05.084 24850 24850 I com.ora.ora: hiddenapi: Accessing hidden method Landroid/view/accessibility/AccessibilityNodeInfo;->getSourceNodeId()J (runtime_flags=0, domain=platform, api=unsupported,test-api) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app, TargetSdkVersion=36) using reflection: allowed
+09-23 15:13:05.084 24850 24850 I com.ora.ora: hiddenapi: Accessing hidden method Landroid/view/accessibility/AccessibilityRecord;->getSourceNodeId()J (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app, TargetSdkVersion=36) using reflection: allowed
+09-23 15:13:05.084 24850 24850 I com.ora.ora: hiddenapi: Accessing hidden field Landroid/view/accessibility/AccessibilityNodeInfo;->mChildNodeIds:Landroid/util/LongArray; (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app, TargetSdkVersion=36) using reflection: allowed
+09-23 15:13:05.084 24850 24850 I com.ora.ora: hiddenapi: Accessing hidden method Landroid/util/LongArray;->get(I)J (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app, TargetSdkVersion=36) using reflection: allowed
+09-23 15:13:05.109 24850 24850 I DecorView: [INFO] isPopOver=false config=true
+09-23 15:13:05.109 24850 24850 I DecorView: updateCaptionType: isFloating=false isApplication=true hasWindowDecorCaption=false this=DecorView@991a0c2[]
+09-23 15:13:05.109 24850 24850 D DecorView: setCaptionType = 0, this = DecorView@991a0c2[]
+09-23 15:13:05.112 24850 24850 I DecorView: getCurrentDensityDpi: from real metrics. densityDpi=420 msg=resources_loaded
+09-23 15:13:05.112 24850 24850 I DecorView: setWindowBackground: isPopOver=false color=ff000000 d=android.graphics.drawable.ColorDrawable@a0fba10
+09-23 15:13:05.120 24850 24850 I MSHandlerLifeCycle: check: return. pkg=com.ora.ora parent=null callers=com.android.internal.policy.DecorView.setVisibility:4412 android.app.ActivityThread.handleResumeActivity:5476 android.app.servertransaction.ResumeActivityItem.execute:54 android.app.servertransaction.ActivityTransactionItem.execute:45 android.app.servertransaction.TransactionExecutor.executeLifecycleState:176 
+09-23 15:13:05.120 24850 24850 I MSHandlerLifeCycle: removeMultiSplitHandler: no exist. decor=DecorView@991a0c2[]
+09-23 15:13:05.123   904  1714 D SurfaceFlinger: [SF client] NEW(0xb40000744205de20) for (24850:com.ora.ora)
+09-23 15:13:05.126 24850 24869 D NativeCustomFrequencyManager: [NativeCFMS] BpCustomFrequencyManager::BpCustomFrequencyManager()
+09-23 15:13:05.131 24850 24850 I DecorView: notifyKeepScreenOnChanged: keepScreenOn=false
+09-23 15:13:05.132  1451  1918 D InputTransport: Input channel constructed: '1079431', fd=832
+09-23 15:13:05.132  1451  1918 D InputTransport: Input channel constructed: '1079431', fd=874
+09-23 15:13:05.133  1451  1918 D InputTransport: Input channel constructed: '1079431', fd=891
+09-23 15:13:05.133   904  1714 D SurfaceFlinger: [SF client] NEW(0xb40000744205df00) for (1451:system_server)
+09-23 15:13:05.134   904  2800 I SurfaceFlinger: id=4010 createSurf flag=80004, 1079431 com.ora.ora/com.ora.ora.MainActivity#4010
+09-23 15:13:05.135  1451  1918 D RestrictionPolicy: isScreenCaptureEnabled : ret=true userId=0
+09-23 15:13:05.136  1451  1918 D InputTransport: Input channel destroyed: '1079431', fd=891
+09-23 15:13:05.138 24850 24850 D InsetsController: onStateChanged: InsetsState: {mDisplayFrame=Rect(0, 0 - 1080, 2400), mDisplayCutout=DisplayCutout{insets=Rect(0, 80 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(468, 0 - 612, 80), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1080 displayHeight=2400 physicalDisplayWidth=1080 physicalDisplayHeight=2400 density={2.625} cutoutSpec={M 0,0 H -27.42857142857143 V 30.47619047619048 H 27.42857142857143 V 0 H 0 Z @dp} rotation={0} scale={1.0} physicalPixelDisplaySizeRatio={1.0}}}}, mRoundedCorners=RoundedCorners{[RoundedCorner{position=TopLeft, radius=84, center=Point(84, 84)}, RoundedCorner{position=TopRight, radius=84, center=Point(996, 84)}, RoundedCorner{position=BottomRight, radius=84, center=Point(996, 2316)}, RoundedCorner{position=BottomLeft, radius=84, center=Point(84, 2316)}]}  mRoundedCornerFrame=Rect(0, 0 - 1080, 2400), mPrivacyIndicatorBounds=PrivacyIndicatorBounds {static bounds=Rect(964, 0 - 1080, 80) rotation=0}, mSources= { InsetsSource: {mType=ITYPE_STATUS_BAR, mFrame=[0,0][1080,80], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_NAVIGATION_BAR, mFrame=[0,2274][1080,2400], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_LEFT_GESTURES, mFrame=[0,0][0,2400], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_RIGHT_GESTURES, mFrame=[1080,0][1080,2400], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_TOP_MANDATORY_GESTURES, mFrame=[0,0][1080,112], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_BOTTOM_MANDATORY_GESTURES, mFrame=[0,2274][1080,2400], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_LEFT_DISPLAY_CUTOUT, mFrame=[0,0][-100000,2400], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_TOP_DISPLAY_CUTOUT, mFrame=[0,0][1080,80], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_RIGHT_DISPLAY_CUTOUT, mFrame=[100000,0][1080,2400], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_BOTTOM_DISPLAY_CUTOUT, mFrame=[0,100000][1080,2400], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_TOP_TAPPABLE_ELEMENT, mFrame=[0,0][1080,80], mVisible=true, mInsetsRoundedCornerFrame=false}, InsetsSource: {mType=ITYPE_BOTTOM_TAPPABLE_ELEMENT, mFrame=[0,2274][1080,2400], mVisible=true, mInsetsRoundedCornerFrame=false} } host=com.ora.ora/com.ora.ora.MainActivity from=android.view.ViewRootImpl.setView:1732
+09-23 15:13:05.140  1451  1918 D CoreBackPreview: Window{1079431 u0 com.ora.ora/com.ora.ora.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@81f5897, mPriority=0}
+09-23 15:13:05.141 24850 24850 I ViewRootImpl@a96752f[MainActivity]: setView = com.android.internal.policy.DecorView@991a0c2 TM=true
+09-23 15:13:05.143 24850 24850 I MSHandlerLifeCycle: removeMultiSplitHandler: no exist. decor=DecorView@991a0c2[MainActivity]
+09-23 15:13:05.146   860   860 I hwcomposer: [HWCDisplay] [Display_0 (type:1)] fps:22.080521,dur:1222.80,max:521.04,min:13.49  
+09-23 15:13:05.282   870 24847 I HYPER-HAL: [RequestManager.cpp]releaseLocked(): Released ID : 7854678
+09-23 15:13:05.302   870 24848 I mtkpower_client: perf_lock_rel, hdl:2159, tid:24848
+09-23 15:13:05.302   870 24848 I mtkpower_client: perf_lock_acq, hdl:0, dur:0, num:2, tid:24848
+09-23 15:13:05.302   873   938 I libPowerHal: [perfLockRel] hdl:2159, idx:2
+09-23 15:13:05.303   873   938 I libPowerHal: [PD] vendor.samsung. update cmd:1c3c000, param:1
+09-23 15:13:05.303   873   938 I libPowerHal: [PD] (less) /proc/mcdi/state set +prefix:enable 1;
+09-23 15:13:05.303   870 24848 I mtkpower_client: ret_hdl:2161
+09-23 15:13:05.304   870 24848 I mtkpower_client: perf_lock_rel, hdl:2160, tid:24848
+09-23 15:13:05.304   873   938 I libPowerHal: [perfLockAcq] idx:1 hdl:2161 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:2161
+09-23 15:13:05.304   873   938 I libPowerHal: [PE] (less) /proc/mcdi/state set +prefix:enable 0;
+09-23 15:13:05.305   870 24848 I mtkpower_client: perf_lock_acq, hdl:0, dur:0, num:2, tid:24848
+09-23 15:13:05.305   873   938 I libPowerHal: [perfLockRel] hdl:2160, idx:0
+09-23 15:13:05.305   873   938 I libPowerHal: vendor.samsung.: cpu_ctrl set cpu freq: -1 -1 -1 -1
+09-23 15:13:05.306   870 24848 I mtkpower_client: ret_hdl:2162
+09-23 15:13:05.306   870 24848 I mtkpower_client: perf_lock_rel, hdl:2158, tid:24848
+09-23 15:13:05.306   873   938 I libPowerHal: [perfLockAcq] idx:0 hdl:2162 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:2162
+09-23 15:13:05.306   873   938 I libPowerHal: vendor.samsung.: cpu_ctrl set cpu freq: 1800000 -1 -1 -1
+09-23 15:13:05.307   870 24848 I mtkpower_client: perf_lock_acq, hdl:0, dur:0, num:2, tid:24848
+09-23 15:13:05.307   873   938 I libPowerHal: [perfLockRel] hdl:2158, idx:3
+09-23 15:13:05.307   873   938 I libPowerHal: [PD] vendor.samsung. update cmd:1000000, param:-1
+09-23 15:13:05.307   873   938 I libPowerHal: [PD] vendor.samsung. update cmd:1000000 param:-1
+09-23 15:13:05.308   870 24848 I mtkpower_client: ret_hdl:2163
+09-23 15:13:05.308   873   938 I libPowerHal: [perfLockAcq] idx:2 hdl:2163 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:2163
+09-23 15:13:05.308   870 24848 I HYPER-HAL: [RequestManager.cpp]releaseLocked(): Released ID : 1079733
+09-23 15:13:05.308   873   938 I libPowerHal: [PE] vendor.samsung. update cmd:1000000, param:0
+09-23 15:13:05.308   873   938 I libPowerHal: [PE] vendor.samsung. update cmd:1000000 param:0
+09-23 15:13:05.378 24850 24850 I Choreographer: Skipped 58 frames!  The application may be doing too much work on its main thread.
+09-23 15:13:05.415 24850 24850 I SurfaceView@afb7e3f: onWindowVisibilityChanged(0) true io.flutter.embedding.android.FlutterSurfaceView{afb7e3f V.E...... ......I. 0,0-0,0} of ViewRootImpl@a96752f[MainActivity]
+09-23 15:13:05.415 24850 24850 D SurfaceView@afb7e3f: updateSurface: has no frame
+09-23 15:13:05.423 24850 24850 I ViewRootImpl@a96752f[MainActivity]: performTraversals params={(0,0)(fillxfill) sim={adjust=resize forwardNavigation} ty=BASE_APPLICATION wanim=0x1030001
+09-23 15:13:05.423 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   fl=81810100
+09-23 15:13:05.423 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   pfl=12020040
+09-23 15:13:05.423 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   vsysui=500
+09-23 15:13:05.423 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   bhv=DEFAULT
+09-23 15:13:05.423 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   fitSides= naviIconColor=0}
+09-23 15:13:05.426 24850 24850 I ViewRootImpl@a96752f[MainActivity]: performTraversals mFirst=true windowShouldResize=true viewVisibilityChanged=false mForceNextWindowRelayout=false params={(0,0)(fillxfill) sim={adjust=resize forwardNavigation} ty=BASE_APPLICATION fmt=TRANSLUCENT wanim=0x1030001
+09-23 15:13:05.426 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   fl=81810100
+09-23 15:13:05.426 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   pfl=12020040
+09-23 15:13:05.426 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   vsysui=500
+09-23 15:13:05.426 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   bhv=DEFAULT
+09-23 15:13:05.426 24850 24850 I ViewRootImpl@a96752f[MainActivity]:   fitSides= naviIconColor=0}
+09-23 15:13:05.427  1451  1918 V WindowManager: Relayout Window{1079431 u0 com.ora.ora/com.ora.ora.MainActivity}: viewVisibility=0 req=1080x2400 d0
+09-23 15:13:05.427  1451  1918 D RestrictionPolicy: isScreenCaptureEnabled : ret=true userId=0
+09-23 15:13:05.428   904  2800 I BufferQueueDebug: [com.ora.ora/com.ora.ora.MainActivity$_24850#4011](this:0xb4000074182e7838,id:-1,api:0,p:-1,c:-1) BufferQueue core=(904:/system/bin/surfaceflinger)
+09-23 15:13:05.428   904  2800 I SurfaceFlinger: id=4011 createSurf flag=40004, com.ora.ora/com.ora.ora.MainActivity$_24850#4011
+09-23 15:13:05.429  1451  1918 D WindowManager: makeSurface duration=1 name=com.ora.ora/com.ora.ora.MainActivity$_24850
+09-23 15:13:05.432  1451  1918 V WindowManager: Changing focus from null to Window{1079431 u0 com.ora.ora/com.ora.ora.MainActivity} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:595 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6810 com.android.server.wm.WindowManagerService.relayoutWindow:2820 com.android.server.wm.Session.relayout:274 
+09-23 15:13:05.432  1451  1918 D MARsPolicyManager: onPackageResumedFG pkgName = com.ora.ora, userId = 0
+09-23 15:13:05.432  1451  1918 I WindowManager: Cancelling animation restarting=true, leash=Surface(name=Surface(name=23c174a StatusBar)/@0x2faf066 - animation-leash of insets_animation)/@0x34dbd6e
+09-23 15:13:05.432  1451  1918 I WindowManager: Reparenting to original parent: Surface(name=WindowToken{807c4b5 type=2000 android.os.BinderProxy@8a0af9f})/@0xefb9fa7, destroy=false, surface=Surface(name=23c174a StatusBar)/@0x2faf066
+09-23 15:13:05.433  1451  1918 I WindowManager: Reparenting to leash, surface=Surface(name=23c174a StatusBar)/@0x2faf066, leashParent=Surface(name=WindowToken{807c4b5 type=2000 android.os.BinderProxy@8a0af9f})/@0xefb9fa7
+09-23 15:13:05.433   904  2800 I SurfaceFlinger: id=4012 createSurf flag=24000, Surface(name=23c174a StatusBar)/@0x2faf066 - animation-leash of insets_animation#4012
+09-23 15:13:05.434  1451  1918 D WindowManager: makeSurface duration=1 leash=Surface(name=Surface(name=23c174a StatusBar)/@0x2faf066 - animation-leash of insets_animation)/@0xbf7aea2
+09-23 15:13:05.434  1451  1918 I WindowManager: Cancelling animation restarting=true, leash=Surface(name=Surface(name=462faf4 NavigationBar0)/@0xcb5acf2 - animation-leash of insets_animation)/@0xe4ef49c
+09-23 15:13:05.434  1451  1918 I WindowManager: Reparenting to original parent: Surface(name=WindowToken{636a4c7 type=2019 android.os.BinderProxy@65f18e1})/@0x9388f43, destroy=false, surface=Surface(name=462faf4 NavigationBar0)/@0xcb5acf2
+09-23 15:13:05.434  1451  1918 I WindowManager: Reparenting to leash, surface=Surface(name=462faf4 NavigationBar0)/@0xcb5acf2, leashParent=Surface(name=WindowToken{636a4c7 type=2019 android.os.BinderProxy@65f18e1})/@0x9388f43
+09-23 15:13:05.434   904  2800 I SurfaceFlinger: id=4013 createSurf flag=24000, Surface(name=462faf4 NavigationBar0)/@0xcb5acf2 - animation-leash of insets_animation#4013
+09-23 15:13:05.435  1451  1918 D WindowManager: makeSurface duration=1 leash=Surface(name=Surface(name=462faf4 NavigationBar0)/@0xcb5acf2 - animation-leash of insets_animation)/@0x2042af0
+09-23 15:13:05.436  1451  1918 D WindowManager: updateSystemBarAttributes: displayId=0, win=Window{1079431 u0 com.ora.ora/com.ora.ora.MainActivity}, navColorWin=Window{df39418 u0 Splash Screen com.ora.ora}, focusedCanBeNavColorWin=false, behavior=1, appearance=0, statusBarAppearanceRegions=[AppearanceRegion{ bounds=[0,0][1080,2400]}], requestedVisibilities=, from=com.android.server.wm.DisplayPolicy.focusChangedLw:3247 com.android.server.wm.DisplayContent.updateFocusedWindowLocked:4632 com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:595 
+09-23 15:13:05.436  1451  1918 D StatusBarManagerService: notifyRequestedSystemKey recent=false home=false
+09-23 15:13:05.436  2341  2372 I TouchInteractionService: onSystemUiStateChanged, stateFlags : 131072 |allow_gesture|
+09-23 15:13:05.436  2341  2341 I RecentsAnimationDeviceState: setSystemUiFlags, stateFlags : 131072
+09-23 15:13:05.436  2341  2341 I TouchInteractionService: onSystemUiFlagsChanged, lastSysUIFlags : 0
+09-23 15:13:05.437  1451  1918 V WindowManager: Relayout hash=1079431, pid=24850, syncId=-1: mAttrs={(0,0)(fillxfill) sim={adjust=resize forwardNavigation} ty=BASE_APPLICATION fmt=TRANSLUCENT wanim=0x1030001
+09-23 15:13:05.437  1451  1918 V WindowManager:   fl=81810100
+09-23 15:13:05.437  1451  1918 V WindowManager:   pfl=12020040
+09-23 15:13:05.437  1451  1918 V WindowManager:   vsysui=500
+09-23 15:13:05.437  1451  1918 V WindowManager:   bhv=DEFAULT
+09-23 15:13:05.437  1451  1918 V WindowManager:   fitSides= naviIconColor=0}
+09-23 15:13:05.439 24850 24850 I ViewRootImpl@a96752f[MainActivity]: updateBlastSurfaceIfNeeded mBlastBufferQueue=null isSameSurfaceControl=false
+09-23 15:13:05.439 24850 24850 D BufferQueueConsumer: [](id:611200000000,api:0,p:-1,c:24850) connect: controlledByApp=false
+09-23 15:13:05.441 24850 24850 I BLASTBufferQueue: new BLASTBufferQueue, mName= ViewRootImpl@a96752f[MainActivity] mNativeObject= 0xb400007553348980 sc.mNativeObject= 0xb4000074bb859500 caller= android.view.ViewRootImpl.updateBlastSurfaceIfNeeded:2909 android.view.ViewRootImpl.relayoutWindow:9847 android.view.ViewRootImpl.performTraversals:3884 android.view.ViewRootImpl.doTraversal:3116 android.view.ViewRootImpl$TraversalRunnable.run:10885 android.view.Choreographer$CallbackRecord.run:1301 android.view.Choreographer$CallbackRecord.run:1309 android.view.Choreographer.doCallbacks:923 android.view.Choreographer.doFrame:852 android.view.Choreographer$FrameDisplayEventReceiver.run:1283 
+09-23 15:13:05.441 24850 24850 I BLASTBufferQueue: update, w= 1080 h= 2400 mName = ViewRootImpl@a96752f[MainActivity] mNativeObject= 0xb400007553348980 sc.mNativeObject= 0xb4000074bb859500 format= -3 caller= android.graphics.BLASTBufferQueue.<init>:84 android.view.ViewRootImpl.updateBlastSurfaceIfNeeded:2909 android.view.ViewRootImpl.relayoutWindow:9847 android.view.ViewRootImpl.performTraversals:3884 android.view.ViewRootImpl.doTraversal:3116 android.view.ViewRootImpl$TraversalRunnable.run:10885 
+09-23 15:13:05.443 24850 24850 E FBI     : Can't load library: dlopen failed: library "libmagtsync.so" not found
+09-23 15:13:05.444 24850 24850 I ViewRootImpl@a96752f[MainActivity]: Relayout returned: old=(0,0,1080,2400) new=(0,0,1080,2400) req=(1080,2400)0 dur=13 res=0x3 s={true 0xb4000074ba4a0800} ch=true seqId=0
+09-23 15:13:05.445 24850 24850 I ViewRootImpl@a96752f[MainActivity]: mThreadedRenderer.initialize() mSurface={isValid=true 0xb4000074ba4a0800} hwInitialized=true
+09-23 15:13:05.446   904  2800 E HWComposer: getSupportedContentTypes: getSupportedContentTypes failed for display 0: Unsupported (8)
+09-23 15:13:05.447 24850 24869 D OpenGLRenderer: eglCreateWindowSurface
+09-23 15:13:05.452 24850 24850 D SurfaceView@afb7e3f: updateSurface: has no frame
+09-23 15:13:05.453 24850 24850 I SurfaceView@afb7e3f: windowStopped(false) true io.flutter.embedding.android.FlutterSurfaceView{afb7e3f V.E...... ......ID 0,0-1080,2274} of ViewRootImpl@a96752f[MainActivity]
+09-23 15:13:05.453 24850 24850 D SurfaceView@afb7e3f: updateSurface: has no frame
+09-23 15:13:05.454 24850 24850 I ViewRootImpl@a96752f[MainActivity]: reportNextDraw android.view.ViewRootImpl.performTraversals:4438 android.view.ViewRootImpl.doTraversal:3116 android.view.ViewRootImpl$TraversalRunnable.run:10885 android.view.Choreographer$CallbackRecord.run:1301 android.view.Choreographer$CallbackRecord.run:1309 
+09-23 15:13:05.454 24850 24850 I SurfaceView@afb7e3f: Changes: creating=true format=true size=true visible=true alpha=false hint=false mUseAlpha=false visible=true left=true top=true
+09-23 15:13:05.455   904  2800 I SurfaceFlinger: id=4014 createSurf flag=20004, Bounds for - com.ora.ora/com.ora.ora.MainActivity@0#4014
+09-23 15:13:05.455   904  2800 I SurfaceFlinger: id=4015 createSurf flag=80004, SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0#4015
+09-23 15:13:05.456   904  2800 I BufferQueueDebug: [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#4016](this:0xb4000074208d1838,id:-1,api:0,p:-1,c:-1) BufferQueue core=(904:/system/bin/surfaceflinger)
+09-23 15:13:05.456   904  2800 I SurfaceFlinger: id=4016 createSurf flag=40400, SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#4016
+09-23 15:13:05.457   904  2800 I SurfaceFlinger: id=4017 createSurf flag=20404, Background for SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0#4017
+09-23 15:13:05.457 24850 24850 D BufferQueueConsumer: [](id:611200000001,api:0,p:-1,c:24850) connect: controlledByApp=false
+09-23 15:13:05.458 24850 24850 I BLASTBufferQueue: update, w= 1080 h= 2274 mName = null mNativeObject= 0xb400007553348d00 sc.mNativeObject= 0xb4000074bb859b40 format= 4 caller= android.view.SurfaceView.createBlastSurfaceControls:1383 android.view.SurfaceView.updateSurface:1079 android.view.SurfaceView.lambda$new$0$android-view-SurfaceView:200 android.view.SurfaceView$$ExternalSyntheticLambda5.onPreDraw:2 android.view.ViewTreeObserver.dispatchOnPreDraw:1121 android.view.ViewRootImpl.performTraversals:4442 
+09-23 15:13:05.458 24850 24850 I SurfaceView@afb7e3f: 184254015 Cur surface: Surface(name=null)/@0x9352b
+09-23 15:13:05.458 24850 24850 I SurfaceView@afb7e3f: pST: sr = Rect(0, 0 - 1080, 2274) sw = 1080 sh = 2274
+09-23 15:13:05.458 24850 24850 D SurfaceView@afb7e3f: performSurfaceTransaction RenderWorker position = [0, 0, 1080, 2274] surfaceSize = 1080x2274
+09-23 15:13:05.459 24850 24850 I SurfaceView@afb7e3f: applyTransactionOnVriDraw: vri = ViewRootImpl@a96752f[MainActivity] fRS = false t = 0xb400007557b33800 android.view.SurfaceView.performSurfaceTransaction:959 android.view.SurfaceView.updateSurface:1105 android.view.SurfaceView.lambda$new$0$android-view-SurfaceView:200 
+09-23 15:13:05.459 24850 24850 I ViewRootImpl@a96752f[MainActivity]: applyTransactionOnDraw: mRemoved = false isHardwareEnabled = true t = 0xb400007557b33800android.view.SurfaceView.applyTransactionOnVriDraw:2048 android.view.SurfaceView.performSurfaceTransaction:959 android.view.SurfaceView.updateSurface:1105 android.view.SurfaceView.lambda$new$0$android-view-SurfaceView:200 android.view.SurfaceView$$ExternalSyntheticLambda5.onPreDraw:2 
+09-23 15:13:05.459 24850 24850 I SurfaceView@afb7e3f: updateSurface: mVisible = true mSurface.isValid() = true
+09-23 15:13:05.459 24850 24850 I SurfaceView@afb7e3f: updateSurface: mSurfaceCreated = false surfaceChanged = true visibleChanged = true
+09-23 15:13:05.459 24850 24850 I SurfaceView@afb7e3f: visibleChanged -- surfaceCreated
+09-23 15:13:05.459 24850 24850 I SurfaceView@afb7e3f: surfaceCreated 1 #8 io.flutter.embedding.android.FlutterSurfaceView{afb7e3f V.E...... ......ID 0,0-1080,2274}
+09-23 15:13:05.462   542  1510 I servicemanager: Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+09-23 15:13:05.463 24850 24890 E gralloc4: ERROR: Format allocation info not found for format: 38
+09-23 15:13:05.463 24850 24890 E gralloc4: ERROR: Format allocation info not found for format: 0
+09-23 15:13:05.463 24850 24890 E gralloc4: Invalid base format! req_base_format = 0x0, req_format = 0x38, type = 0x0
+09-23 15:13:05.463 24850 24890 E gralloc4: ERROR: Unrecognized and/or unsupported format 0x38 and usage 0xb00
+09-23 15:13:05.463 24850 24890 E gralloc4: Allocation for the given description will not succeed. error: -22
+09-23 15:13:05.463 24850 24890 E Gralloc4: isSupported(1, 1, 56, 1, ...) failed with 5
+09-23 15:13:05.464   859   907 E gralloc4: ERROR: Format allocation info not found for format: 38
+09-23 15:13:05.464   904   904 I SurfaceFlinger: [1079431 com.ora.ora/com.ora.ora.MainActivity#4010] FrameRatePriority: 1
+09-23 15:13:05.464   859   907 E gralloc4: ERROR: Format allocation info not found for format: 0
+09-23 15:13:05.464   859   907 E gralloc4: Invalid base format! req_base_format = 0x0, req_format = 0x38, type = 0x0
+09-23 15:13:05.464   859   907 E gralloc4: ERROR: Unrecognized and/or unsupported format 0x38 and usage 0xb00
+09-23 15:13:05.464   859   907 E gralloc4: allocate, buffer allocation failed with -22
+09-23 15:13:05.464 24850 24890 E GraphicBufferAllocator: Failed to allocate (4 x 4) layerCount 1 format 56 usage b00: 5
+09-23 15:13:05.464 24850 24890 E AHardwareBuffer: GraphicBuffer(w=4, h=4, lc=1) failed (Unknown error -5), handle=0x0
+09-23 15:13:05.464   904   904 I Layer   : id=3999 removeFromCurrentState Surface(name=23c174a StatusBar)/@0x2faf066 - animation-leash of insets_animation#3999 (115)
+09-23 15:13:05.464   904   904 I Layer   : id=4000 removeFromCurrentState Surface(name=462faf4 NavigationBar0)/@0xcb5acf2 - animation-leash of insets_animation#4000 (115)
+09-23 15:13:05.464   904   904 D SurfaceFlinger: [input] inputWindowCommands.focusRequests size is 1
+09-23 15:13:05.464   904   904 I SurfaceFlinger: id=3999 Removed Surface(name=23c174a StatusBar)/@0x2faf066 - animation-leash of insets_animation#3999 (115)
+09-23 15:13:05.464   904   904 I SurfaceFlinger: id=4000 Removed Surface(name=462faf4 NavigationBar0)/@0xcb5acf2 - animation-leash of insets_animation#4000 (115)
+09-23 15:13:05.465   904   904 I Layer   : id=3999 Destroyed Surface(name=23c174a StatusBar)/@0x2faf066 - animation-leash of insets_animation#3999
+09-23 15:13:05.465   904   904 I Layer   : id=4000 Destroyed Surface(name=462faf4 NavigationBar0)/@0xcb5acf2 - animation-leash of insets_animation#4000
+09-23 15:13:05.465 24850 24890 E gralloc4: ERROR: Format allocation info not found for format: 38
+09-23 15:13:05.465 24850 24890 E gralloc4: ERROR: Format allocation info not found for format: 0
+09-23 15:13:05.465 24850 24890 E gralloc4: Invalid base format! req_base_format = 0x0, req_format = 0x38, type = 0x0
+09-23 15:13:05.465 24850 24890 E gralloc4: ERROR: Unrecognized and/or unsupported format 0x38 and usage 0xb00
+09-23 15:13:05.465 24850 24890 E gralloc4: Allocation for the given description will not succeed. error: -22
+09-23 15:13:05.465 24850 24890 E Gralloc4: isSupported(1, 1, 56, 1, ...) failed with 5
+09-23 15:13:05.465   859   907 E gralloc4: ERROR: Format allocation info not found for format: 38
+09-23 15:13:05.465   859   907 E gralloc4: ERROR: Format allocation info not found for format: 0
+09-23 15:13:05.465   859   907 E gralloc4: Invalid base format! req_base_format = 0x0, req_format = 0x38, type = 0x0
+09-23 15:13:05.465   859   907 E gralloc4: ERROR: Unrecognized and/or unsupported format 0x38 and usage 0xb00
+09-23 15:13:05.465   859   907 E gralloc4: allocate, buffer allocation failed with -22
+09-23 15:13:05.465 24850 24890 E GraphicBufferAllocator: Failed to allocate (4 x 4) layerCount 1 format 56 usage b00: 5
+09-23 15:13:05.465 24850 24890 E AHardwareBuffer: GraphicBuffer(w=4, h=4, lc=1) failed (Unknown error -5), handle=0x0
+09-23 15:13:05.466   904  1148 D SurfaceFlinger: [input] setFocusedWindow: 1079431 com.ora.ora/com.ora.ora.MainActivity
+09-23 15:13:05.466  1451  4145 D InputDispatcher: Focus request (0): 1079431 com.ora.ora/com.ora.ora.MainActivity but waiting because NO_WINDOW
+09-23 15:13:05.468 24850 24890 E ion     : ioctl c0044901 failed with code -1: Invalid argument
+09-23 15:13:05.469 24850 24890 D hw-ProcessState: Binder ioctl to enable oneway spam detection failed: Invalid argument
+09-23 15:13:05.502   861   861 E android.hardware.health@2.1-service-samsung: Could not open /sys/class/power_supply/battery/lrp
+09-23 15:13:05.536 24850 24850 I SurfaceView@afb7e3f: surfaceChanged -- format=4 w=1080 h=2274
+09-23 15:13:05.537 24850 24850 I SurfaceView@afb7e3f: surfaceChanged (1080,2274) 1 #8 io.flutter.embedding.android.FlutterSurfaceView{afb7e3f V.E...... ......ID 0,0-1080,2274}
+09-23 15:13:05.537 24850 24850 I SurfaceView@afb7e3f: surfaceRedrawNeeded
+09-23 15:13:05.537 24850 24850 V SurfaceView@afb7e3f: Layout: x=0 y=0 w=1080 h=2274, frame=Rect(0, 0 - 1080, 2274)
+09-23 15:13:05.539 24850 24850 D FlutterGeolocator: Creating service.
+09-23 15:13:05.540 24850 24850 D FlutterGeolocator: Binding to location service.
+09-23 15:13:05.565 24850 24850 D FlutterGeolocator: Geolocator foreground service connected
+09-23 15:13:05.565 24850 24850 D FlutterGeolocator: Initializing Geolocator services
+09-23 15:13:05.565 24850 24850 D FlutterGeolocator: Flutter engine connected. Connected engine count 1
+09-23 15:13:05.657   617   617 W keymaster_tee: [WRN]begin req PARAMS: A32 B32 P1 
+09-23 15:13:05.659   616   616 I keystore2: keystore2::security_level: In create_operation. Success to create IKeystoreOperation. 10284, None
+09-23 15:13:05.667   617   617 W keymaster_tee: [WRN]begin req PARAMS: A32 B32 P1 
+09-23 15:13:05.670   616   616 I keystore2: keystore2::security_level: In create_operation. Success to create IKeystoreOperation. 10284, None
+09-23 15:13:05.686 24758 24758 W RefBase : RefBase: Explicit destruction, weak count = 0 (in 0x76eb7b2988). Use sp<> to manage this object.
+09-23 15:13:05.689   617   617 W keymaster_tee: [WRN]begin req PARAMS: A32 B32 P1 
+09-23 15:13:05.691   616   616 I keystore2: keystore2::security_level: In create_operation. Success to create IKeystoreOperation. 10284, None
+09-23 15:13:05.693 24758 24758 D RefBase : #00 pc 0000000000101358  /apex/com.android.runtime/lib64/bionic/libc.so (__cxa_finalize+280)
+09-23 15:13:05.693 24758 24758 D RefBase : #01 pc 00000000000f3078  /apex/com.android.runtime/lib64/bionic/libc.so (exit+24)
+09-23 15:13:05.693 24758 24758 D RefBase : #02 pc 0000000000085e14  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+100)
+09-23 15:13:05.721 24850 24924 D FirebaseAuth: Notifying id token listeners about user ( AQLQjCfBw3W17kfgzziM6po1Nh33 ).
+09-23 15:13:05.739 13845 13845 I adbd    : adbd service requested 'sync:'
+09-23 15:13:05.836 24850 24850 I flutter : ORA API BASE URL = http://127.0.0.1:8081/v1
+09-23 15:13:05.923 24850 24856 I com.ora.ora: Compiler allocated 6245KB to compile void android.view.ViewRootImpl.performTraversals()
+09-23 15:13:06.273   590   590 D io_stats: !@ 179,0 r 5051427 61231210 w 2875914 32870904 d 0 0 f 0 0 iot 2461628 0 th 0 0 0 pt 0 inp 0 0 34076.581
+09-23 15:13:06.327  1861  1861 I WifiHAL : Get link layer stats
+09-23 15:13:06.328  1861  1861 I WifiHAL : GetLinkStatsCommand::create
+09-23 15:13:06.328  1861  1861 D android.hardware.wifi@1.0-service-lazy: WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-23 15:13:06.328  1861  1861 I android.hardware.wifi@1.0-service-lazy: WifiCommand::requestResponse err=-95
+09-23 15:13:06.328  1861  1861 I WifiHAL : wifi_get_link_stats: result=-3
+09-23 15:13:06.328  1451  1737 E WifiVendorHal: $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-23 15:13:06.334  1451  3014 D SemWifiUsabilityStatsMonitor: onWifiUsabilityStats - seqNum 8268, isSameBssidAndFreq true
+09-23 15:13:06.335  1451  1811 I SemWifiLinkQualityMonitor: Link Qos query: inf. ms / 0 Mbps
+09-23 15:13:06.336  1950  1950 D NetworkController.WifiSignalController: notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-23 15:13:06.369   904   904 I BufferQueueProducer: [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.33 dur=3017.70 max=3017.70 min=3017.70
+09-23 15:13:06.370   860   860 I hwcomposer: [HWCDisplay] [Display_0 (type:1)] fps:4.083524,dur:1224.43,max:903.80,min:17.22  
+09-23 15:13:07.162  1163  1163 D connsyslogger: Open FIFO for close
+09-23 15:13:07.258  1451  4065 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+09-23 15:13:07.281  1451  2350 E libprocessgroup: Failed to find cgroup for tid 2350
+09-23 15:13:07.281  1451  2350 W libprocessgroup: Failed to apply DoNothingOlaf task profile: Success
+09-23 15:13:07.552   828   828 E audit   : type=1400 audit(1790158387.551:9746): avc:  denied  { write } for  pid=6569 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12885 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-23 15:13:07.552   828   828 E audit   : type=1300 audit(1790158387.551:9746): arch=c00000b7 syscall=203 success=no exit=-13 a0=5d a1=b4000075531abc20 a2=1e a3=ffffffff954cdeea items=0 ppid=846 pid=6569 auid=4294967295 uid=9510226 gid=9510226 euid=9510226 suid=9510226 fsuid=9510226 egid=9510226 sgid=9510226 fsgid=9510226 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+09-23 15:13:07.553   828   828 E audit   : type=1327 audit(1790158387.551:9746): proctitle="com.google.android.gms"
+09-23 15:13:07.791 13845 13845 I adbd    : adbd service requested 'shell,v2,TERM=dumb:export ANDROID_LOG_TAGS=''; exec logcat '-d' '-t' '400''
+09-23 15:13:07.810 24850 24890 W libc    : Access denied finding property "persist.vendor.debug.gpud.enable"
+09-23 15:13:07.810 24850 24890 I BLASTBufferQueue: [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0#1](f:0,a:0) onFrameAvailable the first frame is available
+09-23 15:13:07.810 24850 24890 I BLASTBufferQueue: [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0#1](f:0,a:1) acquireNextBufferLocked size=1080x2274 mFrameNumber=1 applyTransaction=true mTimestamp=34078117884182(auto) mPendingTransactions.size=0 graphicBufferId=106729937305610 transform=0

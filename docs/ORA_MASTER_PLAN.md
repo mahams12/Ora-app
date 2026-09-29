@@ -2,7 +2,55 @@
 
 **Version:** 0.1.0-architecture  
 **Date:** 2026-08-18  
-**Status:** Phase 0 Complete — DO NOT IMPLEMENT until Phase 1 is explicitly started
+**Original status line:** Phase 0 Complete — DO NOT IMPLEMENT until Phase 1 is explicitly started  
+
+> **STATUS UPDATE (2026-09-21):** Implementation has progressed far beyond Phase 0.  
+> **Live source of truth for what is built:** [`docs/ORA_CURRENT_STATE.md`](ORA_CURRENT_STATE.md)  
+> **Engineering rules:** [`docs/ENGINEERING_RULES.md`](ENGINEERING_RULES.md)  
+> The sections below the roadmap banner remain valuable **product/architecture intent**. They must **not** be read as “already shipped” unless CURRENT_STATE says so.
+
+---
+
+## Roadmap vs reality (2026-09-21)
+
+### COMPLETED (code evidence)
+
+- Auth 2A–2C (register / me / profile; Flutter phone OTP foundation)
+- Ride lifecycle 2E–2N (create→offers→assign→progress→close→expire/offer-expire/no-show→ratings)
+- M0 open-ride chronological discovery (`GET /v1/rides/open`)
+- N1 driver go-online/offline (Firestore availability)
+- N2A location accept + `locationStreams` cursor
+- N2C Redis GEO projection + offline cleanup (optional `REDIS_URL`)
+- N3 nearby candidates (`GET /v1/internal/drivers/nearby` + `GEORADIUS`)
+
+### IN PROGRESS / CURRENT FRONTIER
+
+- See **live** frontier: [`ORA_CURRENT_STATE.md`](ORA_CURRENT_STATE.md) (N4/D1 code status may be ahead of older bullets below)
+- **Phase 4–5 Location + Pricing** — architecture **FROZEN** (docs only); next impl slice **4A** — [`phase-4-5-location-pricing-decision.md`](implementation/phase-4-5-location-pricing-decision.md)
+- Ops **`homeCity` writer** — optional metadata / legacy dual-write (not matching prerequisite)
+
+### BLOCKED / DECISION REQUIRED
+
+- Flutter must send **`city`** on createRide (backend requires it — [`RIDE-CITY-SCHEMA.md`](implementation/n-series/RIDE-CITY-SCHEMA.md))
+- Ops `homeCity` seeding for GEO supply
+- Whether N2B (RTDB) is required before trip live-map UX
+- Post-N4 **delivery** slice (FCM / poll) — out of N4 MVP
+- **N4 waves** still not implemented (architecture frozen)
+
+### DEFERRED
+
+- **N2B** RTDB `tripLocations` / `driverPresence` / `rideSignals`
+- Outbox projector → Pub/Sub / FCM
+- Flutter GPS publisher for `/v1/location/update`
+- Production App Check enforcement (Console)
+
+### PLANNED (docs / stubs only)
+
+- N4 dispatch waves
+- Live Maps / geocoding / pricing engine
+- Payments / wallet / ledger (ADR-010)
+- Safety, support, admin moderation
+- Phase docs `phase-03` … `phase-15` under `docs/implementation/`
 
 ---
 
@@ -159,7 +207,8 @@ See `docs/database/firestore-schema.md` for full schema.
 - `rideRequests/{driverId}/pending/{rideId}` — per-driver pending offer/request projection
 
 **Redis keys:**
-- `geo:drivers:{city}` — GEOADD sorted set
+- `geo:drivers` — coordinate-primary GEOADD sorted set (**matching**)
+- `geo:drivers:{city}` — legacy dual-write only (not N3/N4 read path)
 - `lock:ride:{rideId}` — optional contention lock (SETNX, 30s TTL)
 - `dispatch:notified:{rideId}` — list of notified driver UIDs by wave
 - `offer:dedup:{rideId}:{driverId}` — prevent duplicate offers
@@ -277,8 +326,10 @@ See `docs/algorithms/matching-engine.md` for detail.
 ### Candidate Generation (Redis GEO + deterministic waves)
 
 ```
-GEORADIUS geo:drivers:{city} {pickupLng} {pickupLat} {radius} km ASC COUNT 100
+GEORADIUS geo:drivers {pickupLng} {pickupLat} {radius} km ASC COUNT 100
 ```
+
+> **Note (2026-09-21):** Matching uses coordinate-primary `geo:drivers` — see [`CITY-PARTITION-STRATEGY-DECISION.md`](implementation/n-series/CITY-PARTITION-STRATEGY-DECISION.md) and [`N4-dispatch-planning.md`](implementation/n-series/N4-dispatch-planning.md). Legacy `geo:drivers:{city}` is dual-write only.
 
 Filter candidates:
 1. Online (RTDB presence)

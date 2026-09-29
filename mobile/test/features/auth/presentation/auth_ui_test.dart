@@ -143,7 +143,7 @@ void main() {
   );
 
   const bootstrap = AppBootstrap(
-    appName: 'Ora',
+    appName: 'ORA',
     environmentName: 'Development',
     apiBaseUrl: 'https://example.invalid',
     clientVersion: '1.0.0',
@@ -159,7 +159,7 @@ void main() {
           ],
         ),
       );
-      expect(find.textContaining('Welcome to Ora'), findsOneWidget);
+      expect(find.textContaining('Welcome to ORA'), findsOneWidget);
       expect(find.text('Send code'), findsOneWidget);
       expect(find.text('Phone number'), findsOneWidget);
     });
@@ -412,7 +412,7 @@ void main() {
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 350));
-      expect(find.text('Ora'), findsWidgets);
+      expect(find.text('ORA'), findsWidgets);
       expect(find.textContaining('Signing you in'), findsOneWidget);
     });
   });

@@ -1,5 +1,10 @@
 # ORA — Realtime Database Schema
 
+> **STATUS: PLANNING / NOT IMPLEMENTED IN CODE**  
+> No Firebase Admin RTDB init, no `databaseURL`, no Flutter `firebase_database` dependency.  
+> N2B (tripLocations projection) is **deferred**.  
+> **Live status:** [`docs/ORA_CURRENT_STATE.md`](../ORA_CURRENT_STATE.md) · flow: [`docs/architecture/N_LOCATION_FLOW.md`](../architecture/N_LOCATION_FLOW.md)
+
 ## Design Principles
 
 - RTDB holds ONLY ephemeral, high-frequency, or real-time state

@@ -1,16 +1,22 @@
 # Ora Complete Architecture Audit
 
+> **STATUS: HISTORICAL / SUPERSEDED (as live implementation status)**  
+> Snapshot date: **2026-09-08** (pre–Phase 2E ride engine and pre–N1/N2A/N2C).  
+> Claims such as “Redis not implemented”, “rides not implemented”, and “auth-only product” are **false for the current repository**.  
+> **Read instead:** [`docs/ORA_CURRENT_STATE.md`](../ORA_CURRENT_STATE.md)  
+> **Decision index:** [`docs/architecture/DECISION_INDEX.md`](../architecture/DECISION_INDEX.md)  
+> This file is preserved as an audit artifact of that date — do not rewrite its body to look current.
+
 **Audit type:** Read-only snapshot (source, configuration, tests, documentation)  
 **Date:** 2026-09-08  
-**Status:** Historical snapshot from before Phase 2C. Current auth/onboarding closure is documented in `docs/implementation/phase-02c-auth-onboarding-closure.md`. Do not treat this file as live implementation status.  
-**Repository:** `/Users/jazimsaeed/Desktop/Ora App`  
+**Repository (historical path note):** `/Users/jazimsaeed/Desktop/Ora App`  
 **Firebase project (from env example / tests):** `ora-app-d8112`  
 **Android / iOS application id:** `com.ora.ora`  
 **Live E2E executed during this audit:** **NO**  
 **Firebase Console inspected during this audit:** **NO**  
 **Tests re-run during this audit:** **NO** (inventory from files only)
 
-Evidence rule: conclusions cite file path, class/function, or configuration. Architecture documents are treated as **reference**, not truth.
+Evidence rule (still valid): conclusions should cite file path, class/function, or configuration. Architecture documents are **reference**, not truth — and **this audit itself is no longer current truth**.
 
 ---
 

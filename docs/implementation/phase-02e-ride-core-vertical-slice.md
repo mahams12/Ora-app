@@ -2,6 +2,8 @@
 
 **Status:** Implemented in `backend/auth-service` (modular monolith) + Flutter domain/data foundation.
 
+> **Note:** “No Redis” was true **for Phase 2E scope**. Redis GEO arrived later as **N2C**. Live status: [`docs/ORA_CURRENT_STATE.md`](../ORA_CURRENT_STATE.md).
+
 ## Scope delivered
 
 - `POST/GET /v1/rides`, offers create/list/withdraw/select, passenger cancel (pre-assign)

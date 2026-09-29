@@ -1,4 +1,5 @@
 import '../../../../app/config/app_config.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class AppBootstrap {
   const AppBootstrap({
@@ -14,7 +15,7 @@ class AppBootstrap {
   final String clientVersion;
 
   factory AppBootstrap.fromConfig(AppConfig config) => AppBootstrap(
-        appName: 'Ora',
+        appName: AppConstants.appName,
         environmentName: config.environment.displayName,
         apiBaseUrl: config.apiBaseUrl,
         clientVersion: config.clientVersion,

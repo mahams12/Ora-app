@@ -26,6 +26,7 @@ export function memoryDb() {
     }>;
     set: (value: Record<string, unknown>) => Promise<void>;
     update: (value: Record<string, unknown>) => Promise<void>;
+    delete: () => Promise<void>;
   };
 
   function makeDoc(collection: string, id: string): DocRef {
@@ -50,6 +51,9 @@ export function memoryDb() {
         const existing = store.get(path);
         if (!existing) throw new Error('NOT_FOUND');
         store.set(path, { ...existing, ...value });
+      },
+      async delete() {
+        store.delete(path);
       },
     };
     return ref;

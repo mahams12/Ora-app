@@ -1,0 +1,54 @@
+OK
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=55ms (0ms mobile, 0ms wifi, 55ms not connected)
+/sdcard/og_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (5834 bytes in 0.008s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=37ms (0ms mobile, 0ms wifi, 37ms not connected)
+/sdcard/og_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9620 bytes in 0.004s)
+/sdcard/og_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (9620 bytes in 0.004s)
+{
+  "started": "2026-09-28T08:05:37.056559+00:00",
+  "previousRideExpired": true,
+  "rideId": "03f8825a-9f70-4a35-83fd-c57801dde969",
+  "pricing": {
+    "recommendedFareMinor": 31000,
+    "passengerOfferMinor": 31000,
+    "pricingSnapshotId": "ps_efb8dac5-4175-4db3-838c-2276cf808e23"
+  },
+  "driverDiscovered": false,
+  "respondCandidates": [],
+  "respondOpenedSheet": false,
+  "activity": [
+    "      [com.camerasideas.instashot] FullScreen",
+    "    DisplayCutoutController (u0)",
+    "      [com.camerasideas.instashot] OverlapWithTheCameraCutout",
+    "",
+    "  BoundsCompatAlignmentController:[ mLastBoundsCompatAlignment: Alignment=0x11 Vertical=CenterAlignment Horizontal=CenterAlignment], FeatureEnabled=false, mAnimationEnabled=false"
+  ]
+}

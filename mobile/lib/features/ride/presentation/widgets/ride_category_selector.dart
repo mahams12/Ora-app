@@ -8,16 +8,20 @@ import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../domain/models/ride_category_option.dart';
 
-/// Prototype-faithful category rows without fabricated fares or ETAs.
+/// Category rows. Selected row may show a backend estimate label; others stay TBD.
 class RideCategorySelector extends StatelessWidget {
   const RideCategorySelector({
     required this.selectedId,
     required this.onSelect,
+    this.selectedPriceLabel,
     super.key,
   });
 
   final String selectedId;
   final ValueChanged<String> onSelect;
+
+  /// Backend-derived label for the selected category only (never fabricated).
+  final String? selectedPriceLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +31,9 @@ class RideCategorySelector extends StatelessWidget {
           _CategoryRow(
             category: cat,
             selected: cat.id == selectedId,
+            priceLabel: cat.id == selectedId && selectedPriceLabel != null
+                ? selectedPriceLabel!
+                : cat.priceLabel,
             onTap: () => onSelect(cat.id),
           ),
           if (cat != kRideCategoryOptions.last)
@@ -41,11 +48,13 @@ class _CategoryRow extends StatelessWidget {
   const _CategoryRow({
     required this.category,
     required this.selected,
+    required this.priceLabel,
     required this.onTap,
   });
 
   final RideCategoryOption category;
   final bool selected;
+  final String priceLabel;
   final VoidCallback onTap;
 
   @override
@@ -53,7 +62,7 @@ class _CategoryRow extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
-      label: '${category.name}, ${category.blurb}, ${category.priceLabel}',
+      label: '${category.name}, ${category.blurb}, $priceLabel',
       child: AnimatedScale(
         scale: selected ? 1.01 : 1,
         duration: OraMotion.select,
@@ -98,7 +107,7 @@ class _CategoryRow extends StatelessWidget {
                 ),
               ),
               Text(
-                category.priceLabel,
+                priceLabel,
                 style: OraTypography.label(
                   selected ? OraColors.primary : OraColors.textSecondary,
                 ),

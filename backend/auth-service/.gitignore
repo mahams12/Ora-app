@@ -8,4 +8,5 @@ dist/
 service-account*.json
 *-firebase-adminsdk-*.json
 secrets/
+.local/
 .DS_Store

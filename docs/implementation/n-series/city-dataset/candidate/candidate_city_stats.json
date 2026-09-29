@@ -1,0 +1,62 @@
+{
+  "label": "CANDIDATE — NOT APPROVED — NOT SEEDED",
+  "generatedAtUtc": "2026-09-21T09:20:32.379011+00:00",
+  "source": {
+    "organization": "Pakistan Bureau of Statistics",
+    "dataset": "7th Population and Housing Census 2023 — Table 2",
+    "title": "Urban localities by population size and their population by sex, annual growth rate and household size",
+    "primaryPage": "https://www.pbs.gov.pk/result-excel/",
+    "primaryExcelUrl": "https://www.pbs.gov.pk/wp-content/uploads/2020/07/table_2_national.xlsx",
+    "primaryPdfUrl": "https://www.pbs.gov.pk/wp-content/uploads/census_tables/tables/table_2_national.pdf",
+    "localExcel": "source/table_2_national.xlsx",
+    "downloadDateUtc": "2026-09-21T09:16:41Z"
+  },
+  "rawPbsLocalityRows": 657,
+  "provinceTerritoryCountsRaw": {
+    "Punjab": 342,
+    "Khyber Pakhtunkhwa": 67,
+    "Sindh": 192,
+    "Islamabad Capital Territory": 1,
+    "Balochistan": 55
+  },
+  "candidateCatalogCities": 555,
+  "provenanceEntries": 622,
+  "decisionCounts": {
+    "COALESCED": 4,
+    "DIRECT": 551,
+    "REVIEW_REQUIRED": 67
+  },
+  "coalescedGroups": 4,
+  "directMappings": 551,
+  "reviewRequired": 67,
+  "cantonmentSourceRows": 55,
+  "metropolitanOrSplitSourceRows": 61,
+  "duplicateCanonicalIdsDemoted": [
+    "hyderabad",
+    "karampur",
+    "khangarh",
+    "khanpur",
+    "sahiwal"
+  ],
+  "duplicateCanonicalIdCount": 5,
+  "rawPopulationBandCounts": {
+    ">=500k": 46,
+    "100k-499k": 119,
+    "50k-99k": 134,
+    "25k-49k": 200,
+    "10k-24k": 128,
+    "5k-9k": 18,
+    "<5k": 12
+  },
+  "candidatePopulationBandCounts": {
+    ">=500k": 20,
+    "100k-499k": 97,
+    "50k-99k": 120,
+    "25k-49k": 184,
+    "10k-24k": 118,
+    "5k-9k": 13,
+    "<5k": 3
+  },
+  "licensing": "LICENSE_REVIEW_REQUIRED",
+  "firestore": "NOT_TOUCHED"
+}

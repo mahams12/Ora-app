@@ -40,7 +40,7 @@ void main() {
     testWidgets('dark theme uses Inter body family and Ora surfaces', (
       tester,
     ) async {
-      await tester.pumpWidget(_harness(const Text('Ora')));
+      await tester.pumpWidget(_harness(const Text('ORA')));
       final material = tester.widget<MaterialApp>(find.byType(MaterialApp));
       final dark = material.darkTheme!;
       expect(dark.textTheme.bodyMedium?.fontFamily, OraTypography.bodyFamily);

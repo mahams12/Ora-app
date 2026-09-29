@@ -82,6 +82,23 @@ export interface RideDoc {
   requestVersion: number;
   category: string;
   serviceType: string;
+  /**
+   * Optional city metadata (UX/ops). NOT a spatial matching gate for N3/N4.
+   * May be absent on historical rides (no backfill).
+   */
+  city?: string;
+  /**
+   * N4 — last completed dispatch wave (0 = none). Optional until first wave.
+   */
+  dispatchWave?: number;
+  /**
+   * N4 — ISO timestamp when the next wave is eligible; null when none / exhausted / stopped.
+   */
+  dispatchNextAt?: string | null;
+  /**
+   * N4 — dispatch cursor status.
+   */
+  dispatchStatus?: 'none' | 'active' | 'exhausted' | 'stopped';
   pickup: LatLng;
   destination: LatLng;
   routePolyline: string | null;
@@ -142,6 +159,12 @@ export interface IdempotencyRecordDoc {
   expiresAt: string;
 }
 
+export type OutboxPublishState =
+  | 'PENDING'
+  | 'CLAIMED'
+  | 'DELIVERED'
+  | 'DEAD_LETTER';
+
 export interface OutboxEventDoc {
   eventId: string;
   eventType: string;
@@ -153,9 +176,13 @@ export interface OutboxEventDoc {
   correlationId: string;
   causationId: string | null;
   payload: Record<string, unknown>;
-  publishState: 'PENDING';
+  /** Writers create PENDING; D1 projector may advance CLAIMED/DELIVERED/DEAD_LETTER. */
+  publishState: OutboxPublishState;
   attemptCount: number;
   nextAttemptAt: string;
+  leaseOwner?: string | null;
+  leaseExpiresAt?: string | null;
+  updatedAt?: string;
 }
 
 export class RideDomainError extends Error {

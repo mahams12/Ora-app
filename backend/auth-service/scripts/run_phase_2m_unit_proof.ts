@@ -96,6 +96,7 @@ function workerApp(db: ReturnType<typeof memoryDb>) {
 const createBody = {
   pickup: { lat: 24.86, lng: 67.0, address: 'A' },
   destination: { lat: 24.9, lng: 67.1, address: 'B' },
+  city: 'lahore',
   category: 'economy',
   serviceType: 'ride',
   passengerOfferMinor: 25000,

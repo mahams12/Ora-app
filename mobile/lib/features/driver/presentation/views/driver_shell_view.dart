@@ -5,52 +5,89 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/di/providers.dart';
 import '../../../../app/router/routes.dart';
 import '../../../../app/theme/ora_colors.dart';
-import '../../../../app/theme/ora_motion.dart';
-import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
-import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../auth/presentation/view_models/session_user_profile.dart';
 import 'driver_assigned_rides_view.dart';
 import 'driver_direct_offer_view.dart';
+import 'driver_home_view.dart';
 import 'driver_open_rides_view.dart';
 
-enum DriverShellTab { open, assigned, offer, account }
+enum DriverShellPage { home, open, assigned, offer }
 
-/// Driver shell — Open rides | Assigned | Direct offer | Account.
+/// Driver shell — prototype drawer navigation (no bottom bar).
 class DriverShellView extends ConsumerStatefulWidget {
-  const DriverShellView({super.key, this.initialTab = DriverShellTab.open});
+  const DriverShellView({super.key, this.initialTab = DriverShellPage.home});
 
-  final DriverShellTab initialTab;
+  /// Kept for route compatibility; maps legacy tab names to pages.
+  final DriverShellPage initialTab;
 
   @override
   ConsumerState<DriverShellView> createState() => _DriverShellViewState();
 }
 
 class _DriverShellViewState extends ConsumerState<DriverShellView> {
-  late DriverShellTab _tab;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  late DriverShellPage _page;
   bool _signingOut = false;
 
   @override
   void initState() {
     super.initState();
-    _tab = widget.initialTab;
+    _page = widget.initialTab;
   }
 
   @override
   void didUpdateWidget(DriverShellView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.initialTab != oldWidget.initialTab &&
-        widget.initialTab != _tab) {
-      setState(() => _tab = widget.initialTab);
+        widget.initialTab != _page) {
+      setState(() => _page = widget.initialTab);
     }
   }
 
-  void _selectTab(DriverShellTab tab) {
-    if (_tab == tab) return;
-    setState(() => _tab = tab);
+  void _openDrawer() => _scaffoldKey.currentState?.openDrawer();
+
+  void _closeDrawer() {
+    if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _selectPage(DriverShellPage page) {
+    _closeDrawer();
+    if (_page == page) return;
+    setState(() => _page = page);
+  }
+
+  Future<void> _showUnavailable(String feature) {
+    _closeDrawer();
+    return showOraBottomSheet<void>(
+      context: context,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          OraSectionHeader(
+            eyebrow: 'Coming later',
+            title: feature,
+            description:
+                '$feature is in the Ora driver prototype but is not wired to '
+                'the backend in this build. Nothing is faked.',
+          ),
+          const SizedBox(height: OraSpacing.lg),
+          OraButton(
+            label: 'Got it',
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _signOut() async {
+    _closeDrawer();
     if (_signingOut) return;
     setState(() => _signingOut = true);
     try {
@@ -60,83 +97,160 @@ class _DriverShellViewState extends ConsumerState<DriverShellView> {
     }
   }
 
+  String _initials(String? name) {
+    final parts = (name ?? '')
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) return 'DR';
+    if (parts.length == 1) {
+      return parts.first.substring(0, parts.first.length.clamp(0, 2)).toUpperCase();
+    }
+    return ('${parts.first[0]}${parts.last[0]}').toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final profile = ref.watch(sessionUserProfileProvider);
+    final displayName = (profile?.displayName?.trim().isNotEmpty == true)
+        ? profile!.displayName!.trim()
+        : 'ORA driver';
+    final initials = _initials(profile?.displayName);
+
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: OraColors.background,
-      appBar: AppBar(
-        backgroundColor: OraColors.background,
-        title: Text(
-          'Driver',
-          style: OraTypography.title(OraColors.textPrimary),
-        ),
-        leading: IconButton(
-          tooltip: 'Passenger home',
-          onPressed: () => context.go(AppRoutes.home),
-          icon: const Icon(Icons.arrow_back_rounded),
-        ),
+      drawer: OraDrawerShell(
+        avatarInitials: initials,
+        displayName: displayName,
+        subtitle: 'Driver profile',
+        onProfileTap: () => _showUnavailable('Driver profile'),
+        children: [
+          OraDrawerItem(
+            title: 'Driver home',
+            icon: Icons.speed_rounded,
+            iconBackground: OraColors.secondaryMuted,
+            iconColor: OraColors.tealBright,
+            onTap: () => _selectPage(DriverShellPage.home),
+          ),
+          OraDrawerItem(
+            title: 'Open ride requests',
+            icon: Icons.travel_explore_rounded,
+            iconBackground: OraColors.secondaryMuted,
+            iconColor: OraColors.tealBright,
+            onTap: () => _selectPage(DriverShellPage.open),
+          ),
+          OraDrawerItem(
+            title: 'My trips',
+            icon: Icons.route_rounded,
+            iconBackground: OraColors.infoMuted,
+            iconColor: OraColors.info,
+            onTap: () => _selectPage(DriverShellPage.assigned),
+          ),
+          OraDrawerItem(
+            title: 'Direct offer',
+            icon: Icons.local_offer_outlined,
+            iconBackground: OraColors.primaryMuted,
+            iconColor: OraColors.goldSoft,
+            subtitle: 'Lab / known rideId',
+            onTap: () => _selectPage(DriverShellPage.offer),
+          ),
+          OraDrawerItem(
+            title: 'Earnings',
+            icon: Icons.show_chart_rounded,
+            iconBackground: OraColors.secondaryMuted,
+            iconColor: OraColors.tealBright,
+            onTap: () => _showUnavailable('Earnings'),
+          ),
+          OraDrawerItem(
+            title: 'Payouts',
+            icon: Icons.account_balance_wallet_rounded,
+            iconBackground: OraColors.primaryMuted,
+            iconColor: OraColors.goldSoft,
+            onTap: () => _showUnavailable('Payouts'),
+          ),
+          OraDrawerItem(
+            title: 'Vehicle',
+            icon: Icons.directions_car_filled_rounded,
+            iconBackground: OraColors.navy,
+            iconColor: OraColors.textPrimary,
+            onTap: () => _showUnavailable('Vehicle'),
+          ),
+          OraDrawerItem(
+            title: 'Documents',
+            icon: Icons.description_outlined,
+            iconBackground: OraColors.infoMuted,
+            iconColor: OraColors.info,
+            onTap: () => _showUnavailable('Documents'),
+          ),
+          const OraDrawerSeparator(),
+          OraDrawerItem(
+            title: 'Switch to passenger mode',
+            subtitle: 'Book your own rides',
+            icon: Icons.person_rounded,
+            iconBackground: Colors.transparent,
+            iconColor: OraColors.goldSoft,
+            bareIcon: true,
+            showChevron: true,
+            onTap: () {
+              _closeDrawer();
+              context.go(AppRoutes.home);
+            },
+          ),
+          OraDrawerItem(
+            title: 'Driver settings',
+            icon: Icons.settings_rounded,
+            iconBackground: const Color(0x14FFFFFF),
+            iconColor: OraColors.textSecondary,
+            onTap: () => _showUnavailable('Driver settings'),
+          ),
+          OraDrawerItem(
+            title: 'Driver help',
+            icon: Icons.help_outline_rounded,
+            iconBackground: const Color(0x14FFFFFF),
+            iconColor: OraColors.textSecondary,
+            onTap: () => _showUnavailable('Driver help'),
+          ),
+          OraDrawerItem(
+            title: 'Log out',
+            icon: Icons.logout_rounded,
+            iconBackground: OraColors.dangerMuted,
+            iconColor: OraColors.danger,
+            danger: true,
+            onTap: _signingOut ? () {} : _signOut,
+          ),
+        ],
       ),
       body: IndexedStack(
-        index: _tab.index,
+        index: _page.index,
         children: [
-          DriverOpenRidesView(active: _tab == DriverShellTab.open),
-          DriverAssignedRidesView(active: _tab == DriverShellTab.assigned),
-          const DriverDirectOfferView(),
-          _DriverAccountTab(
-            signingOut: _signingOut,
-            onSignOut: _signingOut ? null : _signOut,
-            onBackPassenger: () => context.go(AppRoutes.home),
+          DriverHomeView(
+            displayName: displayName,
+            avatarInitials: initials,
+            onOpenDrawer: _openDrawer,
+            onOpenProfile: () => _showUnavailable('Driver profile'),
+            onOpenRideRequests: () => _selectPage(DriverShellPage.open),
+            onOpenAssignedTrips: () => _selectPage(DriverShellPage.assigned),
+            onOpenDirectOffer: () => _selectPage(DriverShellPage.offer),
+            onUnavailable: _showUnavailable,
           ),
-        ],
-      ),
-      bottomNavigationBar: _DriverBottomNav(
-        current: _tab,
-        onSelect: _selectTab,
-      ),
-    );
-  }
-}
-
-class _DriverAccountTab extends StatelessWidget {
-  const _DriverAccountTab({
-    required this.signingOut,
-    required this.onSignOut,
-    required this.onBackPassenger,
-  });
-
-  final bool signingOut;
-  final VoidCallback? onSignOut;
-  final VoidCallback onBackPassenger;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.all(OraSpacing.lg),
-        children: [
-          Text(
-            'Account',
-            style: OraTypography.headline(OraColors.textPrimary),
+          _DriverSubpage(
+            title: 'Open rides',
+            onOpenDrawer: _openDrawer,
+            child: DriverOpenRidesView(active: _page == DriverShellPage.open),
           ),
-          const SizedBox(height: OraSpacing.md),
-          Text(
-            'Driver tools use your approved-driver session from /me. '
-            'Open rides lists server-provided requests; assigned rides shows '
-            'your jobs. Offer by known rideId remains available as a direct tool.',
-            style: OraTypography.body(OraColors.textMuted),
+          _DriverSubpage(
+            title: 'My trips',
+            onOpenDrawer: _openDrawer,
+            child: DriverAssignedRidesView(
+              active: _page == DriverShellPage.assigned,
+            ),
           ),
-          const SizedBox(height: OraSpacing.xl),
-          OraButton(
-            label: 'Sign out',
-            variant: OraButtonVariant.outline,
-            isLoading: signingOut,
-            onPressed: onSignOut,
-          ),
-          const SizedBox(height: OraSpacing.sm),
-          OraButton(
-            label: 'Back to passenger Home',
-            variant: OraButtonVariant.ghost,
-            onPressed: onBackPassenger,
+          _DriverSubpage(
+            title: 'Direct offer',
+            onOpenDrawer: _openDrawer,
+            child: const DriverDirectOfferView(),
           ),
         ],
       ),
@@ -144,115 +258,62 @@ class _DriverAccountTab extends StatelessWidget {
   }
 }
 
-class _DriverBottomNav extends StatelessWidget {
-  const _DriverBottomNav({
-    required this.current,
-    required this.onSelect,
+class _DriverSubpage extends StatelessWidget {
+  const _DriverSubpage({
+    required this.title,
+    required this.onOpenDrawer,
+    required this.child,
   });
 
-  final DriverShellTab current;
-  final ValueChanged<DriverShellTab> onSelect;
+  final String title;
+  final VoidCallback onOpenDrawer;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    final bottom = MediaQuery.paddingOf(context).bottom;
-    return Material(
-      color: OraColors.surfaceElevated,
-      elevation: 0,
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: OraColors.border)),
-          color: OraColors.surfaceElevated,
-        ),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            OraSpacing.sm,
-            OraSpacing.xs,
-            OraSpacing.sm,
-            OraSpacing.xs + bottom,
-          ),
-          child: Row(
-            children: [
-              _NavItem(
-                label: 'Open',
-                icon: Icons.travel_explore_rounded,
-                selected: current == DriverShellTab.open,
-                onTap: () => onSelect(DriverShellTab.open),
-              ),
-              _NavItem(
-                label: 'Assigned',
-                icon: Icons.assignment_turned_in_rounded,
-                selected: current == DriverShellTab.assigned,
-                onTap: () => onSelect(DriverShellTab.assigned),
-              ),
-              _NavItem(
-                label: 'Offer',
-                icon: Icons.local_offer_outlined,
-                selected: current == DriverShellTab.offer,
-                onTap: () => onSelect(DriverShellTab.offer),
-              ),
-              _NavItem(
-                label: 'Account',
-                icon: Icons.person_rounded,
-                selected: current == DriverShellTab.account,
-                onTap: () => onSelect(DriverShellTab.account),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  const _NavItem({
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final IconData icon;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = selected ? OraColors.primary : OraColors.textMuted;
-    return Expanded(
-      child: Semantics(
-        button: true,
-        selected: selected,
-        label: label,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(OraRadius.md),
-          child: AnimatedContainer(
-            duration: OraMotion.select,
-            curve: OraMotion.standard,
-            padding: const EdgeInsets.symmetric(vertical: OraSpacing.xs),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+    return Column(
+      children: [
+        SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              OraSpacing.xs,
+              OraSpacing.xs,
+              OraSpacing.md,
+              0,
+            ),
+            child: Row(
               children: [
-                Icon(icon, color: color, size: 22),
-                const SizedBox(height: 2),
-                Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: OraTypography.caption(color).copyWith(
-                    fontFamily: OraTypography.displayFamily,
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                    fontSize: 11,
+                IconButton(
+                  tooltip: 'Menu',
+                  onPressed: onOpenDrawer,
+                  icon: const Icon(Icons.menu_rounded),
+                  color: OraColors.textPrimary,
+                ),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: OraColors.textPrimary,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Sora',
+                        ),
                   ),
+                ),
+                Text(
+                  AppConstants.appName,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: OraColors.primary,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: 'Sora',
+                      ),
                 ),
               ],
             ),
           ),
         ),
-      ),
+        Expanded(child: child),
+      ],
     );
   }
 }

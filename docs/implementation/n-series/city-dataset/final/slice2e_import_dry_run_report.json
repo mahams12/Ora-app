@@ -1,0 +1,100 @@
+{
+  "slice": "2E",
+  "generatedAtUtc": "2026-09-21T10:11:23.872Z",
+  "FIRESTORE_WRITE_STATUS": "BLOCKED",
+  "REASON": "LICENSING_GATE",
+  "licensingStatus": "BLOCKED_PENDING_LICENSING_REVIEW",
+  "productionImportAllowed": false,
+  "sourcePath": "/Users/jazimsaeed/Ora-app/docs/implementation/n-series/city-dataset/final/approved_city_catalog.json",
+  "catalogCount": 565,
+  "expectedCount": 565,
+  "validationErrors": [],
+  "validationOk": true,
+  "representativeIdsPresent": {
+    "lahore": true,
+    "karachi": true,
+    "hyderabad": true,
+    "quetta": true,
+    "sukkur": true,
+    "peshawar": true
+  },
+  "duplicateQualifiedSamplesPresent": {
+    "sahiwal": true,
+    "sahiwal-sargodha": true,
+    "khanpur": true,
+    "khanpur-shikarpur": true,
+    "hyderabad-bhakkar": true
+  },
+  "unresolvedCantonmentStandaloneAbsent": true,
+  "provenanceLinkageOk": true,
+  "manifestSample": [
+    {
+      "collection": "cities",
+      "docId": "18-hazari",
+      "fields": {
+        "id": "18-hazari",
+        "displayName": "18-Hazari",
+        "countryCode": "PK",
+        "active": true,
+        "createdAt": "2026-09-21T10:03:20.140Z",
+        "updatedAt": "2026-09-21T10:03:20.140Z"
+      }
+    },
+    {
+      "collection": "cities",
+      "docId": "46-adda",
+      "fields": {
+        "id": "46-adda",
+        "displayName": "46-Adda",
+        "countryCode": "PK",
+        "active": true,
+        "createdAt": "2026-09-21T10:03:20.140Z",
+        "updatedAt": "2026-09-21T10:03:20.140Z"
+      }
+    },
+    {
+      "collection": "cities",
+      "docId": "abbottabad",
+      "fields": {
+        "id": "abbottabad",
+        "displayName": "Abbottabad",
+        "countryCode": "PK",
+        "active": true,
+        "createdAt": "2026-09-21T10:03:20.140Z",
+        "updatedAt": "2026-09-21T10:03:20.140Z"
+      }
+    },
+    {
+      "collection": "cities",
+      "docId": "abdul-hakim",
+      "fields": {
+        "id": "abdul-hakim",
+        "displayName": "Abdul Hakim",
+        "countryCode": "PK",
+        "active": true,
+        "createdAt": "2026-09-21T10:03:20.140Z",
+        "updatedAt": "2026-09-21T10:03:20.140Z"
+      }
+    },
+    {
+      "collection": "cities",
+      "docId": "adilpur",
+      "fields": {
+        "id": "adilpur",
+        "displayName": "Adilpur",
+        "countryCode": "PK",
+        "active": true,
+        "createdAt": "2026-09-21T10:03:20.140Z",
+        "updatedAt": "2026-09-21T10:03:20.140Z"
+      }
+    }
+  ],
+  "manifestEntryCount": 565,
+  "policy": {
+    "idempotentUpsert": true,
+    "neverDeleteMissingCities": true,
+    "adminSdkOnly": true,
+    "noHttpSurface": true,
+    "collection": "cities"
+  }
+}

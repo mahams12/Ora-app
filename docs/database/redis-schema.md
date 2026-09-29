@@ -1,21 +1,32 @@
 # ORA — Redis (Memorystore) Schema
 
+> **STATUS: PARTIALLY SUPERSEDED / MIXED**  
+> **Implemented today (N2C/N3 coordinate-primary):** `geo:drivers` (matching), optional dual-write `geo:drivers:{city}`, `driver:online:{driverId}` (TTL 30s).  
+> Other keys below (locks, demand, rate, offer dedup, dispatch lists, idempotency cache) are **PLANNING** unless code appears under `backend/auth-service/src/redis/`.  
+> **Live status:** [`docs/ORA_CURRENT_STATE.md`](../ORA_CURRENT_STATE.md) · N2C: [`docs/implementation/n-series/N2C-redis-geo.md`](../implementation/n-series/N2C-redis-geo.md) · Partition: [`CITY-PARTITION-STRATEGY-DECISION.md`](../implementation/n-series/CITY-PARTITION-STRATEGY-DECISION.md)
+
 ## Key Namespacing
 
 All keys follow: `{service}:{entity}:{identifier}`
 
 ## Key Reference
 
-### GEO Index
+### GEO Index (coordinate-primary)
 
 ```redis
-# Driver location sorted set per city
+# Matching index — live driver positions (N2C write / N3 read)
+KEY:    geo:drivers
+TYPE:   Sorted Set (GEO)
+CMD:    GEOADD geo:drivers {lng} {lat} {driverId}
+TTL:    None (membership managed on offline / overwrite)
+SIZE:   ~50 bytes per driver
+NOTES:  homeCity NOT required; city labels do not gate matching
+
+# Legacy dual-write only (migration / rollback) — NOT read by N3
 KEY:    geo:drivers:{city}
 TYPE:   Sorted Set (GEO)
 CMD:    GEOADD geo:drivers:lahore {lng} {lat} {driverId}
-TTL:    None (managed by sweeper)
-SIZE:   ~50 bytes per driver
-NOTES:  Removed by sweeper when driver goes stale; removed on go-offline
+NOTES:  Written when homeCity present; cleanup on offline
 ```
 
 ### Assignment Lock

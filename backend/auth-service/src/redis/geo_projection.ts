@@ -1,8 +1,9 @@
 import { logSafe } from '../http/errors';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
+  GEO_DRIVERS_KEY,
   driverOnlineKey,
-  geoDriversKey,
+  geoDriversCityKey,
   normalizeCitySlug,
   type DriverOnlineMarker,
   type RedisGeoClient,
@@ -18,14 +19,20 @@ export interface ProjectLocationInput {
   /** Client packet timestamp ms (already N2A-validated). */
   lastLocationTs: number;
   acceptedAt: string;
-  /** Raw drivers.homeCity from Firestore. */
+  /**
+   * Raw drivers.homeCity from Firestore.
+   * Optional metadata + legacy dual-write only — NOT required for GEO membership.
+   */
   homeCity: unknown;
   requestId?: string;
 }
 
 /**
- * N2C — Redis GEO + driver:online projection.
+ * N2C — Redis GEO + driver:online projection (coordinate-primary).
  * Never throws to callers for Redis failures (non-authoritative).
+ *
+ * Matching index: `geo:drivers`
+ * Legacy dual-write: `geo:drivers:{city}` when homeCity present (rollback/compat).
  */
 export class RedisGeoProjectionService {
   constructor(private readonly redis: RedisGeoClient | null) {}
@@ -63,50 +70,34 @@ export class RedisGeoProjectionService {
             });
             return;
           }
-          // City change: remove from previous GEO set.
-          if (
-            prev.city &&
-            city &&
-            prev.city !== city
-          ) {
-            await this.redis.zrem(geoDriversKey(prev.city), input.driverId);
+          // Legacy city-shard: remove from previous city key on homeCity change.
+          if (prev.city && city && prev.city !== city) {
+            await this.redis.zrem(geoDriversCityKey(prev.city), input.driverId);
           } else if (prev.city && !city) {
-            await this.redis.zrem(geoDriversKey(prev.city), input.driverId);
+            await this.redis.zrem(geoDriversCityKey(prev.city), input.driverId);
           }
         } catch {
           // Corrupt marker — overwrite.
         }
       }
 
-      if (!city) {
-        logSafe('REDIS_GEO_SKIP', {
-          reason: 'missing_home_city',
-          driverId: input.driverId,
-          requestId: input.requestId ?? null,
-        });
-        const marker: DriverOnlineMarker = {
-          driverId: input.driverId,
-          lastLocationTs: input.lastLocationTs,
-          accuracy: input.accuracy,
-          city: null,
-          locationStreamId: input.locationStreamId,
-          locationSeq: input.locationSeq,
-          acceptedAt: input.acceptedAt,
-        };
-        await this.redis.set(
-          onlineKey,
-          JSON.stringify(marker),
-          DRIVER_ONLINE_TTL_SECONDS,
-        );
-        return;
-      }
-
+      // Coordinate-primary: always project live coords (homeCity not required).
       await this.redis.geoadd(
-        geoDriversKey(city),
+        GEO_DRIVERS_KEY,
         input.lng,
         input.lat,
         input.driverId,
       );
+
+      // Dual-write legacy city shard when homeCity present (migration / rollback).
+      if (city) {
+        await this.redis.geoadd(
+          geoDriversCityKey(city),
+          input.lng,
+          input.lat,
+          input.driverId,
+        );
+      }
 
       const marker: DriverOnlineMarker = {
         driverId: input.driverId,
@@ -125,6 +116,7 @@ export class RedisGeoProjectionService {
 
       logSafe('REDIS_GEO_PROJECTED', {
         driverId: input.driverId,
+        geoKey: GEO_DRIVERS_KEY,
         city,
         locationSeq: input.locationSeq,
         requestId: input.requestId ?? null,
@@ -141,6 +133,7 @@ export class RedisGeoProjectionService {
 
   /**
    * Remove driver from GEO candidacy after durable go-offline.
+   * Always removes from coordinate-primary key; also cleans known legacy city keys.
    * Idempotent. Failures are logged and swallowed.
    */
   async removeDriverOnOffline(input: {
@@ -172,14 +165,16 @@ export class RedisGeoProjectionService {
         }
       }
 
+      await this.redis.zrem(GEO_DRIVERS_KEY, input.driverId);
       for (const city of cities) {
-        await this.redis.zrem(geoDriversKey(city), input.driverId);
+        await this.redis.zrem(geoDriversCityKey(city), input.driverId);
       }
       await this.redis.del(onlineKey);
 
       logSafe('REDIS_GEO_OFFLINE_REMOVED', {
         driverId: input.driverId,
-        cities: [...cities],
+        geoKey: GEO_DRIVERS_KEY,
+        legacyCities: [...cities],
         requestId: input.requestId ?? null,
       });
     } catch (err) {

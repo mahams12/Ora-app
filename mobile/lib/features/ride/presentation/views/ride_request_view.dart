@@ -4,18 +4,22 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/routes.dart';
 import '../../../../app/theme/ora_colors.dart';
+import '../../../../app/theme/ora_motion.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
+import '../../domain/models/passenger_city.dart';
 import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/models/ride_category_option.dart';
+import '../../domain/ports/pricing_estimate_port.dart';
+import '../offers/offer_display.dart';
 import '../view_models/ride_request_view_model.dart';
 import '../widgets/ride_category_selector.dart';
 import '../widgets/ride_location_placeholder.dart';
 
-/// Passenger ride compose + review. Create gated without pricing (Phase 5).
+/// Passenger ride compose + review. Pricing from backend estimate (Phase 5C).
 class RideRequestView extends ConsumerStatefulWidget {
   const RideRequestView({super.key, this.initialCategoryId});
 
@@ -28,6 +32,8 @@ class RideRequestView extends ConsumerStatefulWidget {
 class _RideRequestViewState extends ConsumerState<RideRequestView> {
   late final TextEditingController _pickupController;
   late final TextEditingController _destinationController;
+  final ScrollController _composeScrollController = ScrollController();
+  final GlobalKey _destinationProposalKey = GlobalKey();
 
   @override
   void initState() {
@@ -45,9 +51,25 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
 
   @override
   void dispose() {
+    _composeScrollController.dispose();
     _pickupController.dispose();
     _destinationController.dispose();
     super.dispose();
+  }
+
+  void _scrollDestinationProposalIntoView() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final target = _destinationProposalKey.currentContext;
+      if (target == null) return;
+      Scrollable.ensureVisible(
+        target,
+        alignment: 0,
+        duration: OraMotion.fade,
+        curve: OraMotion.standard,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+      );
+    });
   }
 
   Future<void> _showGateSheet(String title, String message) {
@@ -94,6 +116,15 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
           selection:
               TextSelection.collapsed(offset: next.destinationText.length),
         );
+      }
+
+      final destinationProposalReady = next.phase == RideRequestPhase.compose &&
+          next.proposedDestination != null &&
+          !next.hasConfirmedDestination &&
+          (prev?.proposedDestination == null ||
+              prev!.proposedDestination != next.proposedDestination);
+      if (destinationProposalReady) {
+        _scrollDestinationProposalIntoView();
       }
 
       if (next.phase == RideRequestPhase.created && next.createdRide != null) {
@@ -167,6 +198,8 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                   onSelectCategory: vm.selectCategory,
                                   onEditLocations: vm.goToCompose,
                                   onSubmit: vm.submit,
+                                  onRetryPricing: vm.retryPricing,
+                                  onSelectCity: vm.setCitySlug,
                                   onPaymentChange: () => _showGateSheet(
                                     'Payments',
                                     'Wallet and online payment are not '
@@ -177,6 +210,8 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                               : _ComposePane(
                                   state: state,
                                   padding: padding,
+                                  scrollController: _composeScrollController,
+                                  destinationProposalKey: _destinationProposalKey,
                                   pickupController: _pickupController,
                                   destinationController:
                                       _destinationController,
@@ -212,6 +247,8 @@ class _ComposePane extends StatelessWidget {
   const _ComposePane({
     required this.state,
     required this.padding,
+    required this.scrollController,
+    required this.destinationProposalKey,
     required this.pickupController,
     required this.destinationController,
     required this.onPickupChanged,
@@ -226,6 +263,8 @@ class _ComposePane extends StatelessWidget {
 
   final RideRequestUiState state;
   final double padding;
+  final ScrollController scrollController;
+  final GlobalKey destinationProposalKey;
   final TextEditingController pickupController;
   final TextEditingController destinationController;
   final ValueChanged<String> onPickupChanged;
@@ -245,6 +284,7 @@ class _ComposePane extends StatelessWidget {
       children: [
         Expanded(
           child: ListView(
+            controller: scrollController,
             padding: EdgeInsets.fromLTRB(
               padding,
               OraSpacing.lg,
@@ -402,10 +442,13 @@ class _ComposePane extends StatelessWidget {
                         ),
                         if (state.proposedDestination != null &&
                             !state.hasConfirmedDestination)
-                          _ProposalCard(
-                            title: 'Confirm destination',
-                            location: state.proposedDestination!,
-                            onConfirm: onConfirmDestination,
+                          KeyedSubtree(
+                            key: destinationProposalKey,
+                            child: _ProposalCard(
+                              title: 'Confirm destination',
+                              location: state.proposedDestination!,
+                              onConfirm: onConfirmDestination,
+                            ),
                           ),
                       ],
                     ),
@@ -503,6 +546,8 @@ class _ReviewPane extends StatelessWidget {
     required this.onSelectCategory,
     required this.onEditLocations,
     required this.onSubmit,
+    required this.onRetryPricing,
+    required this.onSelectCity,
     required this.onPaymentChange,
   });
 
@@ -511,13 +556,28 @@ class _ReviewPane extends StatelessWidget {
   final ValueChanged<String> onSelectCategory;
   final VoidCallback onEditLocations;
   final VoidCallback onSubmit;
+  final VoidCallback onRetryPricing;
+  final ValueChanged<String> onSelectCity;
   final VoidCallback onPaymentChange;
+
+  String? get _selectedPriceLabel {
+    final estimate = state.pricingEstimate;
+    if (!state.hasUsablePricing || estimate == null) return null;
+    return formatOfferAmountMinor(
+      estimate.recommendedFareMinor,
+      estimate.currency,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final cat = state.selectedCategory;
     final pickup = state.confirmedPickup;
     final destination = state.confirmedDestination;
+    final canSubmit = state.hasUsablePricing &&
+        state.citySlug != null &&
+        state.citySlug!.isNotEmpty &&
+        state.pricingStatus != PricingStatus.loading;
 
     return Column(
       children: [
@@ -579,9 +639,20 @@ class _ReviewPane extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: OraSpacing.md),
+              _PricingCard(
+                state: state,
+                onRetry: onRetryPricing,
+              ),
+              const SizedBox(height: OraSpacing.md),
+              _CityRow(
+                citySlug: state.citySlug,
+                onSelectCity: onSelectCity,
+              ),
+              const SizedBox(height: OraSpacing.md),
               RideCategorySelector(
                 selectedId: state.categoryId,
                 onSelect: onSelectCategory,
+                selectedPriceLabel: _selectedPriceLabel,
               ),
               const SizedBox(height: OraSpacing.md),
               Row(
@@ -618,12 +689,180 @@ class _ReviewPane extends StatelessWidget {
           ),
           child: OraButton(
             label: 'Request ${cat.name}',
-            onPressed: onSubmit,
+            onPressed: canSubmit ? onSubmit : null,
           ),
         ),
       ],
     );
   }
+}
+
+class _CityRow extends StatelessWidget {
+  const _CityRow({
+    required this.citySlug,
+    required this.onSelectCity,
+  });
+
+  final String? citySlug;
+  final ValueChanged<String> onSelectCity;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = passengerCityLabel(citySlug) ?? 'Select city';
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'City',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          Text(
+            label,
+            style: OraTypography.bodyEmphasis(OraColors.textPrimary),
+          ),
+          if (citySlug == null) ...[
+            const SizedBox(height: OraSpacing.xxs),
+            Text(
+              'Needed for pricing. Choose the city for this trip.',
+              style: OraTypography.caption(OraColors.goldSoft),
+            ),
+          ],
+          const SizedBox(height: OraSpacing.sm),
+          Wrap(
+            spacing: OraSpacing.xs,
+            runSpacing: OraSpacing.xs,
+            children: [
+              for (final city in kPassengerCityOptions)
+                OraChip(
+                  label: city.label,
+                  selected: citySlug == city.id,
+                  onTap: () => onSelectCity(city.id),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PricingCard extends StatelessWidget {
+  const _PricingCard({
+    required this.state,
+    required this.onRetry,
+  });
+
+  final RideRequestUiState state;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    if (state.pricingStatus == PricingStatus.loading) {
+      return OraCard(
+        padding: const EdgeInsets.all(OraSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Estimated fare',
+              style: OraTypography.label(OraColors.textSecondary),
+            ),
+            const SizedBox(height: OraSpacing.sm),
+            const LinearProgressIndicator(minHeight: 2),
+            const SizedBox(height: OraSpacing.xs),
+            Text(
+              'Getting a price for this trip…',
+              style: OraTypography.caption(OraColors.textMuted),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (state.hasUsablePricing && state.pricingEstimate != null) {
+      final estimate = state.pricingEstimate!;
+      final fare = formatOfferAmountMinor(
+        estimate.recommendedFareMinor,
+        estimate.currency,
+      );
+      final minFare = formatOfferAmountMinor(
+        estimate.offerBoundMinMinor,
+        estimate.currency,
+      );
+      final maxFare = formatOfferAmountMinor(
+        estimate.offerBoundMaxMinor,
+        estimate.currency,
+      );
+      final distance = _formatDistanceKm(estimate.distanceKm);
+      final duration = _formatDurationMin(estimate.durationMin);
+
+      return OraCard(
+        padding: const EdgeInsets.all(OraSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Estimated fare',
+              style: OraTypography.label(OraColors.textSecondary),
+            ),
+            const SizedBox(height: OraSpacing.xxs),
+            Text(
+              fare,
+              style: OraTypography.headline(OraColors.textPrimary),
+            ),
+            const SizedBox(height: OraSpacing.xs),
+            Text(
+              'Offer range $minFare – $maxFare',
+              style: OraTypography.body(OraColors.textSecondary),
+            ),
+            const SizedBox(height: OraSpacing.xs),
+            Text(
+              '$distance · $duration',
+              style: OraTypography.caption(OraColors.textMuted),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final message = state.pricingDisplayError ??
+        'Pricing isn\'t available right now. Please try again later.';
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Estimated fare',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          Text(
+            message,
+            style: OraTypography.body(OraColors.danger),
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          OraButton(
+            label: 'Retry pricing',
+            onPressed: onRetry,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String _formatDistanceKm(double km) {
+  final rounded = km >= 10 ? km.toStringAsFixed(0) : km.toStringAsFixed(1);
+  return '$rounded km';
+}
+
+String _formatDurationMin(double minutes) {
+  final whole = minutes.round();
+  return '~$whole min';
 }
 
 class _StatusChip extends StatelessWidget {

@@ -1,0 +1,55 @@
+{
+  "device": "RF8R40ZQ1JH",
+  "test": "AUTH-001 cold launch",
+  "homeDetectedMs": 34040,
+  "tryAgainTapped": false,
+  "tryAgainAtMs": null,
+  "finalScreen": {
+    "signing_in": false,
+    "try_again": false,
+    "home": true,
+    "phone": false,
+    "bootstrap_error": false
+  },
+  "logcatMarkers": {
+    "AUTH_BOOT_START": 0,
+    "AUTH_BOOT_COMPLETE": 0,
+    "AUTH_BOOT_TIMEOUT": 0,
+    "AUTH_BOOT_ERROR": 0,
+    "AUTH_RETRY_START": 0,
+    "AUTH_RETRY_COMPLETE": 0
+  },
+  "lastMarkerSeen": null,
+  "backendRegisterOkDelta": 1,
+  "backendMeDelta": 0,
+  "timelineTail": [
+    {
+      "poll": 0,
+      "elapsedMs": 24772,
+      "signing_in": true,
+      "try_again": false,
+      "home": false,
+      "phone": false,
+      "bootstrap_error": false
+    },
+    {
+      "poll": 1,
+      "elapsedMs": 29369,
+      "signing_in": true,
+      "try_again": false,
+      "home": false,
+      "phone": false,
+      "bootstrap_error": false
+    },
+    {
+      "poll": 2,
+      "elapsedMs": 34040,
+      "signing_in": false,
+      "try_again": false,
+      "home": true,
+      "phone": false,
+      "bootstrap_error": false
+    }
+  ],
+  "auth001Green": true
+}

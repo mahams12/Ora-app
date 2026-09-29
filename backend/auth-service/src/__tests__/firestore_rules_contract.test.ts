@@ -30,6 +30,10 @@ describe('firestore.rules fail-closed contract', () => {
       'locationStreams',
       'adminAuditLogs',
       'otpSessions',
+      'cities',
+      'rideDispatchWaves',
+      'driverDeviceTokens',
+      'outboxDeliveries',
     ]) {
       expect(rules).toContain(`match /${collection}/{`);
       // Each of these blocks should contain allow read, write: if false

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show SemanticsFlag;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -105,6 +106,33 @@ RideOffer _offer({
     expiresAt: '2099-01-01T00:00:00.000Z',
     createdAt: '2026-01-01T00:00:00.000Z',
   );
+}
+
+Future<void> _pumpDriverOpenRidesView(
+  WidgetTester tester, {
+  required MockListOpenRidesUseCase listOpen,
+  MockCreateOfferUseCase? createOffer,
+}) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        listOpenRidesUseCaseProvider.overrideWithValue(listOpen),
+        createOfferUseCaseProvider.overrideWithValue(
+          createOffer ?? MockCreateOfferUseCase(),
+        ),
+        idempotencyNonceStoreProvider.overrideWithValue(
+          InMemoryIdempotencyNonceStore(),
+        ),
+        failureMapperProvider.overrideWithValue(
+          const _PassthroughFailureMapper(),
+        ),
+      ],
+      child: const MaterialApp(
+        home: Scaffold(body: DriverOpenRidesView(active: true)),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
 }
 
 Ride _assignedRide({String id = 'assigned-1'}) {
@@ -915,6 +943,114 @@ void main() {
       expect(find.textContaining('ETA'), findsNothing);
       expect(find.textContaining('Pickup A'), findsOneWidget);
       expect(find.textContaining('Respond'), findsOneWidget);
+    });
+
+    testWidgets('Respond opens offer sheet; card body does not', (tester) async {
+      final listOpen = MockListOpenRidesUseCase();
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+        ),
+      ).thenAnswer(
+        (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
+      );
+
+      await _pumpDriverOpenRidesView(tester, listOpen: listOpen);
+
+      await tester.tap(find.text('Ride request'));
+      await tester.pumpAndSettle();
+      expect(find.text('Submit offer'), findsNothing);
+
+      await tester.tap(find.text('Respond'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Accept passenger price'), findsOneWidget);
+      expect(find.text('Amount (minor units)'), findsOneWidget);
+      expect(find.text('Submit offer'), findsNWidgets(2));
+    });
+
+    testWidgets('Respond semantics bounds match button not full card',
+        (tester) async {
+      final listOpen = MockListOpenRidesUseCase();
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+        ),
+      ).thenAnswer(
+        (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
+      );
+
+      await _pumpDriverOpenRidesView(tester, listOpen: listOpen);
+      final semanticsHandle = tester.ensureSemantics();
+      await tester.pump();
+
+      final respondSemantics = tester.getSemantics(find.text('Respond'));
+      final cardSpan =
+          tester.getBottomLeft(find.text('Respond')).dy -
+          tester.getTopLeft(find.text('Ride request')).dy;
+      expect(respondSemantics.hasFlag(SemanticsFlag.isButton), isTrue);
+      expect(cardSpan, greaterThan(120));
+      expect(respondSemantics.rect.height, lessThan(cardSpan * 0.45));
+      semanticsHandle.dispose();
+    });
+
+    testWidgets('Respond disabled while offer submit in flight', (tester) async {
+      final listOpen = MockListOpenRidesUseCase();
+      final createOffer = MockCreateOfferUseCase();
+      final gate = Completer<RideOffer>();
+
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+        ),
+      ).thenAnswer(
+        (_) async => OpenRideListPage(
+          rides: [
+            _openRide(id: 'open-a'),
+            _openRide(id: 'open-b', pickupAddress: 'Pickup B'),
+          ],
+          nextCursor: null,
+        ),
+      );
+      when(
+        () => createOffer(
+          rideId: any(named: 'rideId'),
+          body: any(named: 'body'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).thenAnswer((_) => gate.future);
+
+      await _pumpDriverOpenRidesView(
+        tester,
+        listOpen: listOpen,
+        createOffer: createOffer,
+      );
+
+      await tester.tap(find.text('Respond').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Submit offer').last);
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Accept passenger price'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsWidgets);
+
+      final semanticsHandle = tester.ensureSemantics();
+      await tester.pump();
+      final secondRespond = tester.getSemantics(find.text('Respond'));
+      expect(secondRespond.hasFlag(SemanticsFlag.isEnabled), isFalse);
+
+      final sheetCount = find.text('Submit offer').evaluate().length;
+      await tester.tap(find.text('Respond'), warnIfMissed: false);
+      await tester.pump();
+      expect(find.text('Submit offer'), findsNWidgets(sheetCount));
+
+      gate.complete(_offer());
+      await tester.pump();
+      semanticsHandle.dispose();
     });
   });
 }

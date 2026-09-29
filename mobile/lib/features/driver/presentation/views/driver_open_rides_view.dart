@@ -231,77 +231,93 @@ class _OpenRideCard extends StatelessWidget {
     final duration = formatOpenRideDurationMin(ride.estimatedDurationMin);
 
     return OraCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Ride request',
-                  style: OraTypography.bodyEmphasis(OraColors.textPrimary),
-                ),
+      child: Semantics(
+        // Prevent Android from merging the lone Respond button into a
+        // full-card clickable target; keep hit bounds on the InkWell only.
+        container: true,
+        explicitChildNodes: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Keep Respond as its own a11y target (UiAutomator / TalkBack).
+            ExcludeSemantics(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Ride request',
+                          style:
+                              OraTypography.bodyEmphasis(OraColors.textPrimary),
+                        ),
+                      ),
+                      OraChip(
+                        label: openRideStateLabel(ride.state),
+                        selected: true,
+                        variant: OraChipVariant.status,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: OraSpacing.xs),
+                  Text(
+                    '$pickup → $drop',
+                    style: OraTypography.body(OraColors.textSecondary),
+                  ),
+                  const SizedBox(height: OraSpacing.xs),
+                  Text(
+                    [
+                      openRideServiceLine(ride),
+                      '·',
+                      '${ride.passengerCount} passenger'
+                          '${ride.passengerCount == 1 ? '' : 's'}',
+                      '·',
+                      ride.paymentMethod,
+                    ].join(' '),
+                    style: OraTypography.caption(OraColors.textMuted),
+                  ),
+                  const SizedBox(height: OraSpacing.xs),
+                  Text(
+                    'Passenger offer ${formatOpenRideFareMinor(ride.passengerOfferMinor)}',
+                    style: OraTypography.caption(OraColors.textPrimary),
+                  ),
+                  Text(
+                    'Recommended ${formatOpenRideFareMinor(ride.recommendedFareMinor)}',
+                    style: OraTypography.caption(OraColors.textMuted),
+                  ),
+                  if (distance != null || duration != null) ...[
+                    const SizedBox(height: OraSpacing.xxs),
+                    Text(
+                      [
+                        if (distance != null) distance,
+                        if (duration != null) duration,
+                      ].join(' · '),
+                      style: OraTypography.caption(OraColors.textMuted),
+                    ),
+                  ],
+                  if (created != null || expires != null) ...[
+                    const SizedBox(height: OraSpacing.xxs),
+                    Text(
+                      [
+                        if (created != null) 'Requested $created',
+                        if (expires != null) expires,
+                      ].join(' · '),
+                      style: OraTypography.caption(OraColors.textMuted),
+                    ),
+                  ],
+                ],
               ),
-              OraChip(
-                label: openRideStateLabel(ride.state),
-                selected: true,
-                variant: OraChipVariant.status,
-              ),
-            ],
-          ),
-          const SizedBox(height: OraSpacing.xs),
-          Text(
-            '$pickup → $drop',
-            style: OraTypography.body(OraColors.textSecondary),
-          ),
-          const SizedBox(height: OraSpacing.xs),
-          Text(
-            [
-              openRideServiceLine(ride),
-              '·',
-              '${ride.passengerCount} passenger'
-                  '${ride.passengerCount == 1 ? '' : 's'}',
-              '·',
-              ride.paymentMethod,
-            ].join(' '),
-            style: OraTypography.caption(OraColors.textMuted),
-          ),
-          const SizedBox(height: OraSpacing.xs),
-          Text(
-            'Passenger offer ${formatOpenRideFareMinor(ride.passengerOfferMinor)}',
-            style: OraTypography.caption(OraColors.textPrimary),
-          ),
-          Text(
-            'Recommended ${formatOpenRideFareMinor(ride.recommendedFareMinor)}',
-            style: OraTypography.caption(OraColors.textMuted),
-          ),
-          if (distance != null || duration != null) ...[
-            const SizedBox(height: OraSpacing.xxs),
-            Text(
-              [
-                if (distance != null) distance,
-                if (duration != null) duration,
-              ].join(' · '),
-              style: OraTypography.caption(OraColors.textMuted),
+            ),
+            const SizedBox(height: OraSpacing.sm),
+            OraButton(
+              label: offering ? 'Submitting…' : 'Respond',
+              semanticLabel: 'Respond to ride request',
+              isLoading: offering,
+              onPressed: offerDisabled ? null : onOffer,
             ),
           ],
-          if (created != null || expires != null) ...[
-            const SizedBox(height: OraSpacing.xxs),
-            Text(
-              [
-                if (created != null) 'Requested $created',
-                if (expires != null) expires,
-              ].join(' · '),
-              style: OraTypography.caption(OraColors.textMuted),
-            ),
-          ],
-          const SizedBox(height: OraSpacing.sm),
-          OraButton(
-            label: offering ? 'Submitting…' : 'Respond',
-            isLoading: offering,
-            onPressed: offerDisabled ? null : onOffer,
-          ),
-        ],
+        ),
       ),
     );
   }

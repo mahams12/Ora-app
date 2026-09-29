@@ -110,6 +110,7 @@ const SNAP = 'snap-noshow-live-1';
 const createBody = {
   pickup: { lat: 24.86, lng: 67.0, address: 'Pickup' },
   destination: { lat: 24.9, lng: 67.1, address: 'Destination' },
+  city: 'lahore',
   category: 'economy',
   serviceType: 'ride',
   passengerOfferMinor: 25000,

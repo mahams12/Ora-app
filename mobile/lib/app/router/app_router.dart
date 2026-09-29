@@ -116,14 +116,14 @@ GoRouter createAppRouter({
         path: AppRoutes.driverHome,
         name: 'driver-home',
         builder: (context, state) => const DriverShellView(
-          initialTab: DriverShellTab.assigned,
+          initialTab: DriverShellPage.home,
         ),
       ),
       GoRoute(
         path: AppRoutes.driverRides,
         name: 'driver-rides',
         builder: (context, state) => const DriverShellView(
-          initialTab: DriverShellTab.assigned,
+          initialTab: DriverShellPage.assigned,
         ),
       ),
       GoRoute(
@@ -138,7 +138,7 @@ GoRouter createAppRouter({
         path: AppRoutes.driverDirectOffer,
         name: 'driver-direct-offer',
         builder: (context, state) => const DriverShellView(
-          initialTab: DriverShellTab.offer,
+          initialTab: DriverShellPage.offer,
         ),
       ),
     ],

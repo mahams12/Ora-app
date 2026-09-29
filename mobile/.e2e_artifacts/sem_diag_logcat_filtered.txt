@@ -1,0 +1,24 @@
+09-28 15:30:45.819  6314  6314 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-28 15:30:45.828  6314  6314 I AndroidRuntime: Using default boot image
+09-28 15:30:45.828  6314  6314 I AndroidRuntime: Leaving lock profiling enabled
+09-28 15:30:46.221  6314  6314 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+09-28 15:30:46.223  6314  6314 I AconfigPackage: com.android.settings.accessibility is mapped to system_ext
+09-28 15:30:46.224  6314  6314 I AconfigPackage: com.android.systemui.accessibility.accessibilitymenu is mapped to system_ext
+09-28 15:30:46.226  6314  6314 I AconfigPackage: com.android.server.accessibility is mapped to system
+09-28 15:30:46.227  6314  6314 I AconfigPackage: android.view.accessibility is mapped to system
+09-28 15:30:46.242   674  1444 D AccessibilityManagerService: changeCurrentUserForTestAutomationIfNeededLocked(0): ignoring because device doesn't support visible background users
+09-28 15:30:46.242   674  1444 I UiAutomationManager: Registering UiTestAutomationService (id=com.android.server.accessibility/UiAutomation, flags=0x0) when called by user 0
+09-28 15:30:46.246   674  1444 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+09-28 15:30:46.251  1569  2415 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+09-28 15:30:46.260   674   674 D BatterySaverPolicy: accessibility changed to true, updating policy.
+09-28 15:30:46.298   674  2029 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+09-28 15:30:46.327  1569  2405 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+09-28 15:30:46.332  1308  1335 D AccessibilitySourceService: enabled a11y services count 0
+09-28 15:30:46.333  1308  1335 D AccessibilitySourceService: a11y source sending 0 issue to sc
+09-28 15:30:46.347   930   989 W Looper  : Slow dispatch took 36ms wmshell.main app=com.android.systemui main=false group=TOP_APP h=android.view.ViewRootImpl$ViewRootHandler c=android.view.accessibility.AccessibilityManager$$ExternalSyntheticLambda0@123b87e m=0
+09-28 15:30:47.380  6314  6314 W AccessibilityNodeInfoDumper: Fetch time: 64ms
+09-28 15:30:47.383   674  1444 V AccessibilityManagerService: onUserStateChangedLocked for userId: 0, forceUpdate: false
+09-28 15:30:47.385   674  1444 D AccessibilityManagerService: restoreCurrentUserForTestAutomationIfNeededLocked(): ignoring because device doesn't support visible background users
+09-28 15:30:47.386  1569  2405 I AiAiEcho: Settings changed for uri: content://settings/secure/accessibility_enabled
+09-28 15:30:47.399   674   674 D BatterySaverPolicy: accessibility changed to false, updating policy.
+09-28 15:30:47.404  6314  6314 D AndroidRuntime: Shutting down VM

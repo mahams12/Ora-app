@@ -32,6 +32,37 @@ export async function createRedisGeoClientFromEnv(
       if (!row || row[0] == null || row[1] == null) return null;
       return [row[0], row[1]];
     },
+    async georadius(input) {
+      // GEORADIUS key lng lat radius km ASC WITHCOORD WITHDIST COUNT n
+      const rows = (await client.georadius(
+        input.key,
+        input.longitude,
+        input.latitude,
+        input.radiusKm,
+        'km',
+        'ASC',
+        'WITHCOORD',
+        'WITHDIST',
+        'COUNT',
+        input.count,
+      )) as Array<[string, string, [string, string]]>;
+      const out: import('./types').GeoRadiusHit[] = [];
+      for (const row of rows ?? []) {
+        if (!Array.isArray(row) || row.length < 3) continue;
+        const member = row[0];
+        const distRaw = row[1];
+        const coord = row[2];
+        if (typeof member !== 'string' || !Array.isArray(coord)) continue;
+        const lng = Number(coord[0]);
+        const lat = Number(coord[1]);
+        const distanceKm = Number(distRaw);
+        if (!Number.isFinite(lng) || !Number.isFinite(lat) || !Number.isFinite(distanceKm)) {
+          continue;
+        }
+        out.push({ member, distanceKm, longitude: lng, latitude: lat });
+      }
+      return out;
+    },
     async get(key) {
       return client.get(key);
     },

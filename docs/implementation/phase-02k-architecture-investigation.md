@@ -1,5 +1,9 @@
 # Phase 2K — Architecture / Next-Slice Investigation
 
+> **STATUS: HISTORICAL investigation**  
+> Pre–N1/N2C notes about go-online/Redis being missing/out of scope are **stale as global status**.  
+> Closure: `phase-02k-ride-offer-expiry.md`. Live: [`docs/ORA_CURRENT_STATE.md`](../ORA_CURRENT_STATE.md).
+
 **Date:** 2026-09-10  
 **Status:** INVESTIGATION ONLY — no production code modified  
 **Verdict:** see §27

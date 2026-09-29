@@ -11,6 +11,8 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../domain/entities/app_bootstrap.dart';
 import '../view_models/auth_view_state.dart';
+import '../view_models/profile_bootstrap_ui_notifier.dart';
+import '../view_models/profile_bootstrap_ui_state.dart';
 import '../widgets/ora_auth_chrome.dart';
 
 class SplashView extends ConsumerStatefulWidget {
@@ -48,6 +50,7 @@ class _SplashViewState extends ConsumerState<SplashView>
   Widget build(BuildContext context) {
     final state = ref.watch(splashViewModelProvider);
     final authStatus = ref.watch(authStateNotifierProvider);
+    final bootstrapUi = ref.watch(profileBootstrapUiProvider);
 
     return OraAuthScaffold(
       child: LayoutBuilder(
@@ -73,6 +76,7 @@ class _SplashViewState extends ConsumerState<SplashView>
                       child: _SplashContent(
                         bootstrap: bootstrap,
                         authStatus: authStatus,
+                        bootstrapUi: bootstrapUi,
                         onRetryBootstrap: () => ref
                             .read(authStateNotifierProvider.notifier)
                             .retryProfileBootstrap(),
@@ -105,7 +109,7 @@ class _SplashBrandBlock extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const OraBrandMark(size: 88),
+        const OraBrandMark(size: 88, alignment: Alignment.center),
         const SizedBox(height: OraSpacing.lg),
         Text(
           AppConstants.appName,
@@ -124,23 +128,37 @@ class _SplashContent extends StatelessWidget {
   const _SplashContent({
     required this.bootstrap,
     required this.authStatus,
+    required this.bootstrapUi,
     required this.onRetryBootstrap,
   });
 
   final AppBootstrap bootstrap;
   final AuthStatus authStatus;
+  final ProfileBootstrapUiState bootstrapUi;
   final VoidCallback onRetryBootstrap;
 
   @override
   Widget build(BuildContext context) {
-    final waitingOnSession =
-        authStatus == AuthStatus.unknown ||
-        authStatus == AuthStatus.authenticated;
+    final waitingOnSession = authStatus == AuthStatus.unknown ||
+        (authStatus == AuthStatus.authenticated && bootstrapUi.inProgress);
+
+    final sessionMessage = switch (authStatus) {
+      AuthStatus.unknown => 'Signing you in…',
+      AuthStatus.authenticated when bootstrapUi.autoRetrying =>
+        'Reconnecting…',
+      AuthStatus.authenticated when bootstrapUi.inProgress =>
+        'Signing you in…',
+      _ => null,
+    };
+
+    final showBootstrapError = authStatus == AuthStatus.authenticated &&
+        !bootstrapUi.inProgress &&
+        bootstrapUi.failureMessage != null;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const OraBrandMark(size: 88),
+        const OraBrandMark(size: 88, alignment: Alignment.center),
         const SizedBox(height: OraSpacing.lg),
         Text(
           AppConstants.appName,
@@ -189,11 +207,17 @@ class _SplashContent extends StatelessWidget {
           bootstrap.environmentName,
           style: OraTypography.caption(OraColors.textMuted),
         ),
-        if (waitingOnSession) ...[
+        if (waitingOnSession && sessionMessage != null) ...[
           const SizedBox(height: OraSpacing.lg),
-          const OraLoadingIndicator(message: 'Signing you in…', expand: false),
+          OraLoadingIndicator(message: sessionMessage, expand: false),
         ],
-        if (authStatus == AuthStatus.authenticated) ...[
+        if (showBootstrapError) ...[
+          const SizedBox(height: OraSpacing.lg),
+          Text(
+            bootstrapUi.failureMessage!,
+            textAlign: TextAlign.center,
+            style: OraTypography.body(OraColors.textSecondary),
+          ),
           const SizedBox(height: OraSpacing.md),
           OraButton(
             label: 'Try again',

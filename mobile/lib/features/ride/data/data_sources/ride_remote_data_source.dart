@@ -301,7 +301,7 @@ class RideRemoteDataSource {
       distanceKm: json['distanceKm'] == null
           ? null
           : (json['distanceKm'] as num).toDouble(),
-      estimatedDurationMin: json['estimatedDurationMin'] as int?,
+      estimatedDurationMin: _optionalRoundedInt(json['estimatedDurationMin']),
       expiresAt: json['expiresAt'] as String,
       createdAt: json['createdAt'] as String,
     );
@@ -381,4 +381,11 @@ class RideRemoteDataSource {
       address: raw['address'] as String?,
     );
   }
+}
+
+int? _optionalRoundedInt(Object? value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is num) return value.round();
+  return null;
 }

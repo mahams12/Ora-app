@@ -15,7 +15,7 @@ class OraApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Ora',
+      title: 'ORA',
       debugShowCheckedModeBanner: !config.environment.isProduction,
       theme: OraTheme.light(),
       darkTheme: OraTheme.dark(),

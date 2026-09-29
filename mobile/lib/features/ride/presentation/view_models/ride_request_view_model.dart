@@ -6,14 +6,17 @@ import 'package:uuid/uuid.dart';
 import '../../../../app/di/providers.dart';
 import '../../../../core/errors/failure_mapper.dart';
 import '../../domain/entities/ride.dart';
+import '../../domain/models/passenger_city.dart';
 import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/models/ride_category_option.dart';
 import '../../domain/ports/device_location_port.dart';
 import '../../domain/ports/place_search_port.dart';
+import '../../domain/ports/pricing_estimate_port.dart';
 import '../../domain/use_cases/ride_use_cases.dart';
 
-/// Pricing fields remain externally injected (Phase 5). Coordinates come from
-/// passenger-confirmed locations in [RideRequestUiState] (Phase 4A).
+/// Pricing fields come from POST /v1/pricing/estimate (Phase 5C).
+/// Coordinates come from passenger-confirmed locations (Phase 4A).
+/// Tests may inject capabilities via [rideRequestCapabilitiesProvider].
 class RideRequestCapabilities {
   const RideRequestCapabilities({
     this.pricingSnapshotId,
@@ -51,7 +54,7 @@ class RideRequestCapabilities {
   }
 }
 
-/// Pricing-only defaults for production. Empty until Phase 5.
+/// Empty until a live estimate succeeds (or a test override injects pricing).
 final rideRequestCapabilitiesProvider = Provider<RideRequestCapabilities>(
   (ref) => const RideRequestCapabilities(),
 );
@@ -93,6 +96,12 @@ class RideRequestUiState {
     this.destinationBusy = false,
     this.pickupLookupError,
     this.destinationLookupError,
+    this.citySlug,
+    this.pricingStatus = PricingStatus.idle,
+    this.pricingEstimate,
+    this.pricingFailureKind,
+    this.pricingFailureMessage,
+    this.passengerOfferMinor,
   });
 
   final RideRequestPhase phase;
@@ -115,6 +124,13 @@ class RideRequestUiState {
   final String? pickupLookupError;
   final String? destinationLookupError;
 
+  final String? citySlug;
+  final PricingStatus pricingStatus;
+  final PricingEstimate? pricingEstimate;
+  final PricingFailureKind? pricingFailureKind;
+  final String? pricingFailureMessage;
+  final int? passengerOfferMinor;
+
   bool get hasPickupText => pickupText.trim().isNotEmpty;
   bool get hasDestinationText => destinationText.trim().isNotEmpty;
 
@@ -124,6 +140,25 @@ class RideRequestUiState {
   /// Review requires passenger-confirmed coordinates (not free text alone).
   bool get canAdvanceToReview =>
       hasConfirmedPickup && hasConfirmedDestination;
+
+  bool get hasUsablePricing {
+    final estimate = pricingEstimate;
+    if (pricingStatus != PricingStatus.success || estimate == null) {
+      return false;
+    }
+    if (estimate.pricingSnapshotId.trim().isEmpty) return false;
+    return !estimate.isExpiredAt(DateTime.now().toUtc());
+  }
+
+  String? get pricingDisplayError {
+    if (pricingStatus == PricingStatus.success ||
+        pricingStatus == PricingStatus.idle ||
+        pricingStatus == PricingStatus.loading) {
+      return null;
+    }
+    return pricingFailureMessage ??
+        'Pricing isn\'t available right now. Please try again later.';
+  }
 
   RideCategoryOption get selectedCategory =>
       rideCategoryById(categoryId) ?? kRideCategoryOptions[2];
@@ -147,6 +182,12 @@ class RideRequestUiState {
     bool? destinationBusy,
     String? pickupLookupError,
     String? destinationLookupError,
+    String? citySlug,
+    PricingStatus? pricingStatus,
+    PricingEstimate? pricingEstimate,
+    PricingFailureKind? pricingFailureKind,
+    String? pricingFailureMessage,
+    int? passengerOfferMinor,
     bool clearBlock = false,
     bool clearError = false,
     bool clearCreated = false,
@@ -158,6 +199,9 @@ class RideRequestUiState {
     bool clearDestinationSuggestions = false,
     bool clearPickupLookupError = false,
     bool clearDestinationLookupError = false,
+    bool clearCitySlug = false,
+    bool clearPricing = false,
+    bool clearPassengerOffer = false,
   }) {
     return RideRequestUiState(
       phase: phase ?? this.phase,
@@ -194,18 +238,34 @@ class RideRequestUiState {
       destinationLookupError: clearDestinationLookupError
           ? null
           : (destinationLookupError ?? this.destinationLookupError),
+      citySlug: clearCitySlug ? null : (citySlug ?? this.citySlug),
+      pricingStatus: clearPricing
+          ? PricingStatus.idle
+          : (pricingStatus ?? this.pricingStatus),
+      pricingEstimate:
+          clearPricing ? null : (pricingEstimate ?? this.pricingEstimate),
+      pricingFailureKind: clearPricing
+          ? null
+          : (pricingFailureKind ?? this.pricingFailureKind),
+      pricingFailureMessage: clearPricing
+          ? null
+          : (pricingFailureMessage ?? this.pricingFailureMessage),
+      passengerOfferMinor: clearPassengerOffer
+          ? null
+          : (passengerOfferMinor ?? this.passengerOfferMinor),
     );
   }
 }
 
-/// Compose → confirm coords → review → create (when capabilities allow).
-/// Never invents pricing or coordinates.
+/// Compose → confirm coords → estimate → review → create (when capabilities allow).
+/// Never invents pricing, distance, or snapshot IDs.
 class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   late final CreateRideUseCase _createRide;
   late final FailureMapper _failures;
   late final RideRequestCapabilities _pricingCapabilities;
   late final DeviceLocationPort _deviceLocation;
   late final PlaceSearchPort _placeSearch;
+  late final PricingEstimatePort _pricing;
 
   String? _createOperationKey;
   String _pickupSessionToken = const Uuid().v4();
@@ -214,6 +274,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   int _destinationSearchGen = 0;
   int _pickupResolveGen = 0;
   int _destinationResolveGen = 0;
+  int _pricingGen = 0;
   Timer? _pickupDebounce;
   Timer? _destinationDebounce;
 
@@ -226,6 +287,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     _pricingCapabilities = ref.read(rideRequestCapabilitiesProvider);
     _deviceLocation = ref.read(deviceLocationPortProvider);
     _placeSearch = ref.read(placeSearchPortProvider);
+    _pricing = ref.read(pricingEstimatePortProvider);
     ref.onDispose(() {
       _pickupDebounce?.cancel();
       _destinationDebounce?.cancel();
@@ -233,12 +295,33 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     return const RideRequestUiState();
   }
 
-  /// Effective create capabilities: pricing from provider + confirmed coords.
-  RideRequestCapabilities get capabilities =>
-      _pricingCapabilities.withResolvedLocations(
-        pickup: state.confirmedPickup?.toLatLngPoint(),
-        destination: state.confirmedDestination?.toLatLngPoint(),
+  bool get _usesInjectedPricing => _pricingCapabilities.hasPricing;
+
+  /// Effective create capabilities: injected test pricing OR live estimate.
+  RideRequestCapabilities get capabilities {
+    final pickup = state.confirmedPickup?.toLatLngPoint();
+    final destination = state.confirmedDestination?.toLatLngPoint();
+    if (_usesInjectedPricing) {
+      return _pricingCapabilities.withResolvedLocations(
+        pickup: pickup,
+        destination: destination,
       );
+    }
+    if (!state.hasUsablePricing) {
+      return RideRequestCapabilities(
+        resolvedPickup: pickup,
+        resolvedDestination: destination,
+      );
+    }
+    final estimate = state.pricingEstimate!;
+    return RideRequestCapabilities(
+      pricingSnapshotId: estimate.pricingSnapshotId,
+      passengerOfferMinor:
+          state.passengerOfferMinor ?? estimate.recommendedFareMinor,
+      resolvedPickup: pickup,
+      resolvedDestination: destination,
+    );
+  }
 
   void seedCategory(String? categoryId) {
     if (categoryId == null || categoryId.isEmpty) return;
@@ -246,10 +329,23 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     state = state.copyWith(categoryId: categoryId);
   }
 
+  void setCitySlug(String slug) {
+    final normalized = normalizePassengerCitySlug(slug);
+    if (normalized == null) return;
+    _invalidatePricing();
+    state = state.copyWith(
+      citySlug: normalized,
+      clearBlock: true,
+      clearError: true,
+    );
+    unawaited(requestPricingEstimate());
+  }
+
   void setPickupText(String value) {
     _pickupDebounce?.cancel();
     _pickupSearchGen++;
     _pickupResolveGen++;
+    _invalidatePricing();
     state = state.copyWith(
       pickupText: value,
       clearBlock: true,
@@ -259,6 +355,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       clearPickupSuggestions: true,
       clearPickupLookupError: true,
       pickupBusy: false,
+      clearCitySlug: true,
     );
     final trimmed = value.trim();
     if (trimmed.length < 2) return;
@@ -272,6 +369,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     _destinationDebounce?.cancel();
     _destinationSearchGen++;
     _destinationResolveGen++;
+    _invalidatePricing();
     state = state.copyWith(
       destinationText: value,
       clearBlock: true,
@@ -281,6 +379,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       clearDestinationSuggestions: true,
       clearDestinationLookupError: true,
       destinationBusy: false,
+      clearCitySlug: true,
     );
     final trimmed = value.trim();
     if (trimmed.length < 2) return;
@@ -370,6 +469,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     if (isPickup) {
       _pickupDebounce?.cancel();
       _pickupSearchGen++;
+      _invalidatePricing();
       state = state.copyWith(
         pickupText: suggestion.displayText,
         pickupBusy: true,
@@ -383,6 +483,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     } else {
       _destinationDebounce?.cancel();
       _destinationSearchGen++;
+      _invalidatePricing();
       state = state.copyWith(
         destinationText: suggestion.displayText,
         destinationBusy: true,
@@ -446,6 +547,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     final generation = ++_pickupResolveGen;
     _pickupDebounce?.cancel();
     _pickupSearchGen++;
+    _invalidatePricing();
     state = state.copyWith(
       pickupBusy: true,
       clearPickupSuggestions: true,
@@ -454,6 +556,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       clearPickupLookupError: true,
       clearBlock: true,
       clearError: true,
+      clearCitySlug: true,
     );
 
     try {
@@ -479,6 +582,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   void confirmPickup() {
     final proposed = state.proposedPickup;
     if (proposed == null || !proposed.hasValidCoordinates) return;
+    _invalidatePricing();
     state = state.copyWith(
       confirmedPickup: proposed,
       pickupText: proposed.displayLabel,
@@ -488,11 +592,16 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       clearBlock: true,
       clearError: true,
     );
+    _refreshCitySuggestion();
+    if (state.canAdvanceToReview) {
+      unawaited(requestPricingEstimate());
+    }
   }
 
   void confirmDestination() {
     final proposed = state.proposedDestination;
     if (proposed == null || !proposed.hasValidCoordinates) return;
+    _invalidatePricing();
     state = state.copyWith(
       confirmedDestination: proposed,
       destinationText: proposed.displayLabel,
@@ -502,15 +611,22 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       clearBlock: true,
       clearError: true,
     );
+    _refreshCitySuggestion();
+    if (state.canAdvanceToReview) {
+      unawaited(requestPricingEstimate());
+    }
   }
 
   void selectCategory(String categoryId) {
     if (rideCategoryById(categoryId) == null) return;
+    if (categoryId == state.categoryId) return;
+    _invalidatePricing();
     state = state.copyWith(
       categoryId: categoryId,
       clearBlock: true,
       clearError: true,
     );
+    unawaited(requestPricingEstimate());
   }
 
   void goToCompose() {
@@ -535,14 +651,157 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       clearBlock: true,
       clearError: true,
     );
+    unawaited(requestPricingEstimate());
   }
 
-  bool get canSubmitRideRequest =>
-      state.canAdvanceToReview && capabilities.canCreateRide;
+  void _refreshCitySuggestion() {
+    final suggested = suggestCitySlugFromTrip(
+      pickupAddress: state.confirmedPickup?.address,
+      destinationAddress: state.confirmedDestination?.address,
+    );
+    if (suggested == null) return;
+    if (state.citySlug == suggested) return;
+    state = state.copyWith(citySlug: suggested);
+  }
+
+  void _invalidatePricing() {
+    _pricingGen++;
+    state = state.copyWith(
+      clearPricing: true,
+      clearPassengerOffer: true,
+    );
+  }
+
+  RideRequestUiState _withPricingSurface({
+    required PricingStatus pricingStatus,
+    PricingEstimate? pricingEstimate,
+    PricingFailureKind? pricingFailureKind,
+    String? pricingFailureMessage,
+    int? passengerOfferMinor,
+  }) {
+    return RideRequestUiState(
+      phase: state.phase,
+      pickupText: state.pickupText,
+      destinationText: state.destinationText,
+      categoryId: state.categoryId,
+      paymentMethod: state.paymentMethod,
+      blockReason: state.blockReason,
+      errorMessage: state.errorMessage,
+      createdRide: state.createdRide,
+      pickupSuggestions: state.pickupSuggestions,
+      destinationSuggestions: state.destinationSuggestions,
+      proposedPickup: state.proposedPickup,
+      proposedDestination: state.proposedDestination,
+      confirmedPickup: state.confirmedPickup,
+      confirmedDestination: state.confirmedDestination,
+      pickupBusy: state.pickupBusy,
+      destinationBusy: state.destinationBusy,
+      pickupLookupError: state.pickupLookupError,
+      destinationLookupError: state.destinationLookupError,
+      citySlug: state.citySlug,
+      pricingStatus: pricingStatus,
+      pricingEstimate: pricingEstimate,
+      pricingFailureKind: pricingFailureKind,
+      pricingFailureMessage: pricingFailureMessage,
+      passengerOfferMinor: passengerOfferMinor,
+    );
+  }
+
+  /// Calls POST /v1/pricing/estimate when both coords + city are ready.
+  Future<void> requestPricingEstimate({bool force = false}) async {
+    if (_usesInjectedPricing) return;
+    if (!state.canAdvanceToReview) return;
+
+    final city = state.citySlug;
+    if (city == null || city.isEmpty) {
+      state = _withPricingSurface(
+        pricingStatus: PricingStatus.pricingUnavailable,
+        pricingFailureKind: PricingFailureKind.validation,
+        pricingFailureMessage:
+            'Select your city so we can load pricing for this trip.',
+      );
+      return;
+    }
+
+    final pickup = state.confirmedPickup!;
+    final destination = state.confirmedDestination!;
+
+    if (!force &&
+        state.hasUsablePricing &&
+        state.pricingEstimate?.category == state.categoryId) {
+      return;
+    }
+
+    final generation = ++_pricingGen;
+    state = _withPricingSurface(pricingStatus: PricingStatus.loading);
+
+    try {
+      final estimate = await _pricing.estimate(
+        PricingEstimateRequest(
+          pickupLat: pickup.lat,
+          pickupLng: pickup.lng,
+          pickupAddress: pickup.address,
+          destinationLat: destination.lat,
+          destinationLng: destination.lng,
+          destinationAddress: destination.address,
+          category: state.categoryId,
+          city: city,
+        ),
+      );
+      if (generation != _pricingGen) return;
+      state = _withPricingSurface(
+        pricingStatus: PricingStatus.success,
+        pricingEstimate: estimate,
+        passengerOfferMinor: estimate.recommendedFareMinor,
+      );
+    } on PricingClientException catch (error) {
+      if (generation != _pricingGen) return;
+      final status = switch (error.kind) {
+        PricingFailureKind.routeUnavailable => PricingStatus.routeUnavailable,
+        PricingFailureKind.pricingUnavailable =>
+          PricingStatus.pricingUnavailable,
+        PricingFailureKind.network => PricingStatus.error,
+        PricingFailureKind.validation => PricingStatus.pricingUnavailable,
+        PricingFailureKind.unknown => PricingStatus.error,
+      };
+      state = _withPricingSurface(
+        pricingStatus: status,
+        pricingFailureKind: error.kind,
+        pricingFailureMessage: error.message ??
+            'Pricing isn\'t available right now. Please try again later.',
+      );
+    } catch (_) {
+      if (generation != _pricingGen) return;
+      state = _withPricingSurface(
+        pricingStatus: PricingStatus.error,
+        pricingFailureKind: PricingFailureKind.unknown,
+        pricingFailureMessage:
+            'Pricing isn\'t available right now. Please try again later.',
+      );
+    }
+  }
+
+  Future<void> retryPricing() => requestPricingEstimate(force: true);
+
+  bool get canSubmitRideRequest {
+    if (!state.canAdvanceToReview) return false;
+    if (state.citySlug == null || state.citySlug!.isEmpty) return false;
+    if (state.pricingStatus == PricingStatus.loading) return false;
+    return capabilities.canCreateRide;
+  }
 
   RideRequestBlockReason? get submitBlockReason {
     if (!state.canAdvanceToReview) {
       return RideRequestBlockReason.incomplete;
+    }
+    if (state.citySlug == null || state.citySlug!.isEmpty) {
+      return RideRequestBlockReason.pricingUnavailable;
+    }
+    if (state.pricingStatus == PricingStatus.loading) {
+      return RideRequestBlockReason.pricingUnavailable;
+    }
+    if (!_usesInjectedPricing && !state.hasUsablePricing) {
+      return RideRequestBlockReason.pricingUnavailable;
     }
     final caps = capabilities;
     if (!caps.hasPricing) {
@@ -559,7 +818,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       RideRequestBlockReason.incomplete =>
         'Confirm both a pickup and a destination to continue.',
       RideRequestBlockReason.pricingUnavailable =>
-        'Pricing isn\'t available right now. Please try again later.',
+        state.pricingDisplayError ??
+            'Pricing isn\'t available right now. Please try again later.',
       RideRequestBlockReason.locationUnavailable =>
         'Location isn\'t available yet. Ora will not invent pickup or '
             'destination coordinates.',
@@ -597,9 +857,26 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     return 'Location lookup isn\'t available right now. Try again.';
   }
 
-  /// Attempts create only when pricing + confirmed coordinates exist.
+  /// Attempts create only when pricing + confirmed coordinates + city exist.
   Future<void> submit() async {
     if (state.phase == RideRequestPhase.submitting) return;
+
+    // Re-check expiry at submit time.
+    if (!_usesInjectedPricing &&
+        state.pricingEstimate != null &&
+        state.pricingEstimate!.isExpiredAt(DateTime.now().toUtc())) {
+      _invalidatePricing();
+      state = state.copyWith(
+        phase: RideRequestPhase.blocked,
+        blockReason: RideRequestBlockReason.pricingUnavailable,
+        pricingStatus: PricingStatus.pricingUnavailable,
+        pricingFailureKind: PricingFailureKind.pricingUnavailable,
+        pricingFailureMessage:
+            'This price expired. Tap retry for a fresh estimate.',
+      );
+      unawaited(requestPricingEstimate(force: true));
+      return;
+    }
 
     final block = submitBlockReason;
     if (block != null) {
@@ -616,6 +893,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     final destination = caps.resolvedDestination!;
     final snapshotId = caps.pricingSnapshotId!;
     final offerMinor = caps.passengerOfferMinor!;
+    final city = state.citySlug!;
 
     _createOperationKey ??= 'ride:create:${const Uuid().v4()}';
 
@@ -640,6 +918,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
           },
           'category': state.categoryId,
           'serviceType': 'ride',
+          'city': city,
           'passengerOfferMinor': offerMinor,
           'pricingSnapshotId': snapshotId,
           'paymentMethod': state.paymentMethod,
@@ -655,9 +934,26 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       );
     } catch (error, stack) {
       final failure = _failures.fromException(error, stack);
+      final message = failure.userMessage;
+      final expired = message.toLowerCase().contains('expir') ||
+          message.toUpperCase().contains('PRICING_SNAPSHOT_EXPIRED');
+      if (expired && !_usesInjectedPricing) {
+        _invalidatePricing();
+        state = state.copyWith(
+          phase: RideRequestPhase.review,
+          errorMessage: null,
+          pricingStatus: PricingStatus.pricingUnavailable,
+          pricingFailureKind: PricingFailureKind.pricingUnavailable,
+          pricingFailureMessage:
+              'This price expired. Tap retry for a fresh estimate.',
+          clearBlock: true,
+        );
+        unawaited(requestPricingEstimate(force: true));
+        return;
+      }
       state = state.copyWith(
         phase: RideRequestPhase.error,
-        errorMessage: failure.userMessage,
+        errorMessage: message,
       );
     }
   }

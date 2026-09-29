@@ -94,6 +94,7 @@ function appFor(db: Db, uid: string) {
 const createBody = {
   pickup: { lat: 24.86, lng: 67.0 },
   destination: { lat: 24.9, lng: 67.1 },
+  city: 'lahore',
   category: 'economy',
   serviceType: 'ride',
   passengerOfferMinor: 25000,

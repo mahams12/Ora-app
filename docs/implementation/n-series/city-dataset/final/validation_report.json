@@ -1,0 +1,98 @@
+{
+  "generatedAtUtc": "2026-09-21T10:03:20.140Z",
+  "slice": "2D",
+  "overall": "GREEN",
+  "note": "GREEN for dataset determinism under frozen product decisions; PRODUCTION IMPORT still blocked by licensing",
+  "productionImportAllowed": false,
+  "licensing": "BLOCKED_PENDING_LICENSING_REVIEW",
+  "productDecisionsApplied": true,
+  "counts": {
+    "pbsSourceRows": 657,
+    "finalCatalogCities": 565,
+    "unresolvedReviewRequired": 9,
+    "excludedCovered": 1,
+    "unaccountedSourceRows": 0,
+    "duplicateIdsInCatalog": 0
+  },
+  "dispositionCounts": {
+    "merged_metro_or_coalesce": 41,
+    "merged_cantonment": 46,
+    "retained_direct": 551,
+    "excluded_covered": 1,
+    "retained_duplicate_resolved": 9,
+    "unresolved_review_required": 9
+  },
+  "checks": {
+    "idsUnique": true,
+    "idsNormalizeStable": true,
+    "idsSlugShaped": true,
+    "countryCodeAllPK": true,
+    "displayNamesNonEmpty": true,
+    "everyCatalogCityHasProvenance": true,
+    "approvedMetrosPresentOnce": true,
+    "peshawarUniversityNotStandalone": true,
+    "noPopulationFloorApplied": true,
+    "noSilentDropReviewRows": true,
+    "noUnaccountedSourceRows": true,
+    "licensingBlocked": true
+  },
+  "errors": [],
+  "warnings": [],
+  "unresolvedSample": [
+    {
+      "sourceNames": [
+        "WAH CANTONMENT"
+      ],
+      "reason": "Slice2D: ambiguous cantonment listed in product freeze / Slice2C REQUIRE_PRODUCT_DECISION — not guessed"
+    },
+    {
+      "sourceNames": [
+        "MALIR CANTONMENT (Part of Airport Sub-Division)"
+      ],
+      "reason": "Slice2D: ambiguous cantonment listed in product freeze / Slice2C REQUIRE_PRODUCT_DECISION — not guessed"
+    },
+    {
+      "sourceNames": [
+        "MALIR CANTONMENT (Part of Gulzar-e-Hijri Sub-Division)"
+      ],
+      "reason": "Slice2D: ambiguous cantonment listed in product freeze / Slice2C REQUIRE_PRODUCT_DECISION — not guessed"
+    },
+    {
+      "sourceNames": [
+        "KORANGI CREEK CANTONMENT (Part of Korangi Sub-Division)"
+      ],
+      "reason": "Slice2D: ambiguous cantonment listed in product freeze / Slice2C REQUIRE_PRODUCT_DECISION — not guessed"
+    },
+    {
+      "sourceNames": [
+        "MALIR CANTONMENT (Part of Murad Memon Sub-Division)"
+      ],
+      "reason": "Slice2D: ambiguous cantonment listed in product freeze / Slice2C REQUIRE_PRODUCT_DECISION — not guessed"
+    },
+    {
+      "sourceNames": [
+        "KORANGI CREEK CANTONMENT (Part of Ibrahim Hydri Sub-Division)"
+      ],
+      "reason": "Slice2D: ambiguous cantonment listed in product freeze / Slice2C REQUIRE_PRODUCT_DECISION — not guessed"
+    },
+    {
+      "sourceNames": [
+        "ORMARA CANTONMENT"
+      ],
+      "reason": "Slice2D: ambiguous cantonment listed in product freeze / Slice2C REQUIRE_PRODUCT_DECISION — not guessed"
+    },
+    {
+      "sourceNames": [
+        "CHERAT CANTONMENT"
+      ],
+      "reason": "Slice2D: ambiguous cantonment listed in product freeze / Slice2C REQUIRE_PRODUCT_DECISION — not guessed"
+    },
+    {
+      "sourceNames": [
+        "MURREE GALLIES CANTONMENT"
+      ],
+      "reason": "Slice2D: ambiguous cantonment listed in product freeze / Slice2C REQUIRE_PRODUCT_DECISION — not guessed"
+    }
+  ],
+  "remainingReviewRequiredAllowedByPolicy": true
+}

@@ -1,9 +1,11 @@
 # Phase 2M — NO_SHOW Ride Handling
 
-**Status:** CLOSED  
+**Status:** CLOSED (Phase 2M scope)  
 **Date:** 2026-09-11  
 **Decision freeze:** `docs/implementation/phase-02m-decision-freeze.md`  
 **Architecture:** `docs/implementation/phase-02m-architecture-investigation.md`
+
+> **Note:** Non-goals below correctly exclude Redis/go-online **from Phase 2M**. Those capabilities were added later as **N1/N2C** — see [`docs/ORA_CURRENT_STATE.md`](../ORA_CURRENT_STATE.md). Do not read 2M non-goals as “Redis absent from the whole repo.”
 
 ---
 

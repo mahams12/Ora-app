@@ -180,12 +180,36 @@ Document ID: auto-generated UUID
 | createdAt | timestamp | [S] | Immutable |
 | updatedAt | timestamp | [S] | |
 | expiresAt | timestamp | [S] | Server-set TTL for SEARCHING state |
+| dispatchWave | number | [S] | N4 — last completed wave (0/absent = none) |
+| dispatchNextAt | timestamp \| null | [S] | N4 — next wave eligibility; null when none/exhausted/stopped |
+| dispatchStatus | string | [S] | N4 — `none` \| `active` \| `exhausted` \| `stopped` |
 
 **Indexes:**
 - `passengerId` + `createdAt` DESC (My Rides query)
 - `assignedDriverId` + `state` (driver's active ride)
 - `state` + `expiresAt` (expiry sweeper)
 - `state` + `arrivedAt` (Phase 2M NO_SHOW sweeper)
+
+---
+
+## Collection: `rideDispatchWaves` **[S]** — N4
+
+Document ID: `{rideId}_w{waveNumber}` (create-once).
+
+| Field | Type | Notes |
+|---|---|---|
+| waveId | string | Same as document ID |
+| rideId | string | Parent ride |
+| waveNumber | number | 1 \| 2 \| 3 |
+| requestVersion | number | Bound from ride at commit; never bumped by N4 |
+| driverIds | string[] | Ordered invite ledger for this wave |
+| radiusKm | number | Fixed 10 |
+| status | string | `COMPLETED` |
+| correlationId | string | Worker request id |
+| createdAt | timestamp | |
+| completedAt | timestamp | |
+
+Server-only. Invitation ledger only — does **not** create `rideOffers` or assign drivers.
 
 ---
 
@@ -465,31 +489,53 @@ Parent: `users/{uid}/savedPlaces/{placeId}`
 
 Document ID: `{city}_{category}` e.g., `lahore_easy`
 
-Admin-managed. Client reads (cached).
+Admin/backend-managed (**Phase 5A**). Firestore rules: **client read/write deny**. Not a client config feed.
 
 | Field | Type | Notes |
 |---|---|---|
-| city | string | |
-| category | string | |
-| baseFare | number | |
-| ratePerKm | number | |
-| ratePerMin | number | |
-| categoryMultiplier | number | |
-| minFare | number | |
-| maxFare | number | |
-| nightAdjustment | number | Applied 11 PM – 5 AM |
-| demandMultiplierMin | number | 1.0 |
-| demandMultiplierMax | number | 1.8 |
-| offerMinRatio | number | Configurable OfferBoundPolicy; example 0.70 — **not** the pricing model |
-| offerMaxRatio | number | Configurable OfferBoundPolicy; example 2.50 — **not** the pricing model |
-| airportFee | number | Recommendation input |
-| version | string | e.g., "2026-08-18:v1" |
+| city | string | Lookup key half (slug) |
+| category | string | Lookup key half (slug) |
+| active | boolean | **5A:** inactive → fail closed |
+| baseFare | number | B — PKR **rupees** (major) |
+| ratePerKm | number | rKm — PKR rupees |
+| ratePerMin | number | rMin — PKR rupees |
+| categoryMultiplier | number | catMult |
+| minFare | number | Recommendation floor (rupees) |
+| maxFare | number | Recommendation ceiling (rupees) |
+| offerMinRatio | number | OfferBoundPolicy; example 0.70 — **not** the pricing model |
+| offerMaxRatio | number | OfferBoundPolicy; example 2.50 — **not** the pricing model |
+| version | string | Stamped as `pricingRulesVersion` on calculations / future snapshots |
+| nightAdjustment | number | Stored for later; **5A MVP applies nightAdj=1.0** |
+| demandMultiplierMin | number | Formula clamp floor 1.0 (live demand deferred) |
+| demandMultiplierMax | number | Formula clamp ceiling 1.8 |
+| airportFee | number | Deferred; **5A uses 0** |
 | updatedAt | timestamp | |
 | updatedBy | string | Admin UID |
 
 ---
 
-## Collection: `serviceAreas`
+## Collection: `cities` **[S]** — IMPLEMENTED (Slice 1)
+
+Document ID: `{cityId}` — canonical slug (e.g. `lahore`). Same string as `rides.city`, `drivers.homeCity`, and Redis `geo:drivers:{cityId}`.
+
+| Field | Type | Access | Notes |
+|---|---|---|---|
+| id | string | [S] | Equals document id; written via `normalizeCitySlug` then slug-shape check |
+| displayName | string | [S] | UI label only |
+| countryCode | string | [S] | Exact `"PK"` (Pakistan-wide product) |
+| active | boolean | [S] | `true` → future catalog API may expose for selection; `false` → not selectable. Does **not** mutate existing rides |
+| createdAt | string (ISO) | [S] | Set on first write |
+| updatedAt | string (ISO) | [S] | Set on every upsert |
+
+**Authority:** Admin SDK only (`CityCatalogService`). Client read/write denied in `firestore.rules`. No public HTTP catalog API in Slice 1.
+
+**NOT in this collection (future / other concerns):** polygon, zones, lat/lng, Redis data, pricing, fees, driver counts, dispatch config.
+
+**Indexes:** none required for Slice 1 (lookup by document id only).
+
+---
+
+## Collection: `serviceAreas` (planned — geometry / zones; **not** Slice 1 catalog)
 
 Document ID: `{city}` e.g., `lahore`
 
@@ -501,6 +547,8 @@ Document ID: `{city}` e.g., `lahore`
 | active | boolean | |
 | zones | Zone[] | Sub-zones for demand calculation |
 | launchDate | date | |
+
+> Slice 1 chose dedicated `cities/{cityId}` for the catalog SoT so cities are not pretended to be polygons. `serviceAreas` remains the planned home for future geometry / zones.
 
 ---
 

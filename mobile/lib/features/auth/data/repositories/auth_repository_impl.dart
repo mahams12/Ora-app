@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart' show User;
 
 import '../../../../core/errors/app_failure.dart';
 import '../../../../core/logging/app_logger.dart';
 import '../../../../core/network/api_client.dart';
+import '../../../../core/network/auth_token_provider.dart';
 import '../../../../core/storage/secure_storage.dart';
 import '../../../../core/storage/storage_keys.dart';
 import '../../domain/entities/auth_user.dart';
@@ -110,7 +113,9 @@ class AuthRepositoryImpl implements AuthRepository {
     }
 
     try {
-      await user.getIdToken(true);
+      await user
+          .getIdToken(true)
+          .timeout(kFirebaseIdTokenTimeout);
       _logger.info('Session restored', metadata: {'op': 'restore_session'});
       return _toAuthUser(user);
     } catch (e) {
