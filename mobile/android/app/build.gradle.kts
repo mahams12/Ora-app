@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -9,12 +12,20 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+// Production release identity — credentials live in android/key.properties (gitignored).
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.ora.ora"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -34,10 +45,35 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                    ?: error("key.properties missing keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                    ?: error("key.properties missing keyPassword")
+                storeFile = file(
+                    keystoreProperties.getProperty("storeFile")
+                        ?: error("key.properties missing storeFile"),
+                )
+                storePassword = keystoreProperties.getProperty("storePassword")
+                    ?: error("key.properties missing storePassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            if (!keystorePropertiesFile.exists()) {
+                throw GradleException(
+                    "Release build requires android/key.properties with a production keystore. " +
+                        "Copy key.properties.example and provision an authorized upload keystore. " +
+                        "Debug signing is not permitted for release artifacts.",
+                )
+            }
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -45,4 +81,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

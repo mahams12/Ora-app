@@ -20,6 +20,8 @@ dependencies:
   firebase_core: ^4.13.0
   firebase_auth: ^6.5.7
   firebase_app_check: ^0.4.1+4
+  firebase_messaging: ^16.0.0
+  flutter_local_notifications: ^19.0.0
   flutter_secure_storage: ^10.3.1
   geolocator: ^14.0.2
 

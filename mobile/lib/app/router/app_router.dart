@@ -120,6 +120,13 @@ GoRouter createAppRouter({
         ),
       ),
       GoRoute(
+        path: AppRoutes.driverOpen,
+        name: 'driver-open',
+        builder: (context, state) => const DriverShellView(
+          initialTab: DriverShellPage.open,
+        ),
+      ),
+      GoRoute(
         path: AppRoutes.driverRides,
         name: 'driver-rides',
         builder: (context, state) => const DriverShellView(

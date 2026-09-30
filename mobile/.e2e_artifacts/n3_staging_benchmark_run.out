@@ -1,0 +1,22 @@
+== N3 staging benchmark prefix=n3bench_20260929T095016Z ==
+== deploy Cloud Run (current source) ==
+== gcloud project: ora-app-d8112 region: us-central1 service: ora-auth-service-staging ==
+Updated property [core/project].
+== enabling APIs (requires project Owner once) ==
+Operation "operations/acat.p2-498169438285-2f1abe70-80de-44f5-87dc-cef63e5d8162" finished successfully.
+== deploy Cloud Run from source (Dockerfile) ==
+Building using Dockerfile and deploying container to Cloud Run service [ora-auth-service-staging] in project [ora-app-d8112] region [us-central1]
+Building and deploying...
+Validating configuration...................done
+Uploading sources......................................done
+Building Container............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................done
+Setting IAM Policy...............................done
+Creating Revision....................................................done
+Routing traffic.....done
+Done.
+Service [ora-auth-service-staging] revision [ora-auth-service-staging-00003-vhn] has been deployed and is serving 100 percent of traffic.
+Service URL: https://ora-auth-service-staging-498169438285.us-central1.run.app
+STAGING_API_BASE_URL=https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1
+HEALTHZ=https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/healthz/
+{"ok":true,"service":"ora-auth-service"}
+BLOCKED: REDIS_URL not set in .env (required for seed + staging N3)

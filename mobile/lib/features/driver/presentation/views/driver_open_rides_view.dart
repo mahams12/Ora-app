@@ -234,6 +234,7 @@ class _OpenRideCard extends StatelessWidget {
       child: Semantics(
         // Prevent Android from merging the lone Respond button into a
         // full-card clickable target; keep hit bounds on the InkWell only.
+        label: 'Ride id ${ride.rideId}',
         container: true,
         explicitChildNodes: true,
         child: Column(
@@ -342,7 +343,7 @@ class _OpenRideOfferSheetState extends ConsumerState<_OpenRideOfferSheet> {
     super.initState();
     _type = 'PASSENGER_PRICE_ACCEPTED';
     _amountController = TextEditingController(
-      text: '${widget.ride.passengerOfferMinor}',
+      text: openRideOfferRupeesFieldText(widget.ride.passengerOfferMinor),
     );
   }
 
@@ -353,13 +354,14 @@ class _OpenRideOfferSheetState extends ConsumerState<_OpenRideOfferSheet> {
   }
 
   Future<void> _submit() async {
-    final amount = int.tryParse(_amountController.text.trim());
-    if (amount == null || amount <= 0) return;
+    final amountMinor =
+        parseOpenRideOfferRupeesToMinor(_amountController.text);
+    if (amountMinor == null) return;
     final vm = ref.read(driverOpenRidesViewModelProvider.notifier);
     await vm.submitOffer(
       ride: widget.ride,
       type: _type,
-      amountMinor: amount,
+      amountMinor: amountMinor,
     );
     if (!mounted) return;
     final after = ref.read(driverOpenRidesViewModelProvider);
@@ -388,12 +390,6 @@ class _OpenRideOfferSheetState extends ConsumerState<_OpenRideOfferSheet> {
               'Submit offer',
               style: OraTypography.headline(OraColors.textPrimary),
             ),
-            const SizedBox(height: OraSpacing.xs),
-            Text(
-              'Uses POST /v1/rides/:rideId/offers with this request\'s '
-              'server requestVersion (${ride.requestVersion}).',
-              style: OraTypography.caption(OraColors.textMuted),
-            ),
             const SizedBox(height: OraSpacing.md),
             Wrap(
               spacing: OraSpacing.xs,
@@ -412,7 +408,9 @@ class _OpenRideOfferSheetState extends ConsumerState<_OpenRideOfferSheet> {
                               _type = type;
                               if (type == 'PASSENGER_PRICE_ACCEPTED') {
                                 _amountController.text =
-                                    '${ride.passengerOfferMinor}';
+                                    openRideOfferRupeesFieldText(
+                                  ride.passengerOfferMinor,
+                                );
                               }
                             });
                           },
@@ -422,16 +420,14 @@ class _OpenRideOfferSheetState extends ConsumerState<_OpenRideOfferSheet> {
             const SizedBox(height: OraSpacing.md),
             OraTextField(
               controller: _amountController,
-              label: 'Amount (minor units)',
-              hint: 'Server minor units — enter explicitly',
+              label: 'Your offer',
+              hint: 'Amount in PKR',
               keyboardType: TextInputType.number,
               enabled: !offering,
             ),
             const SizedBox(height: OraSpacing.sm),
             Text(
-              'Passenger offer on request: '
-              '${formatOpenRideFareMinor(ride.passengerOfferMinor)}. '
-              'Ora ride money is PKR (paisas). Offer response also returns currency.',
+              'Passenger offer: ${formatOpenRideFareMinor(ride.passengerOfferMinor)}',
               style: OraTypography.caption(OraColors.textMuted),
             ),
             if (state.offerErrorMessage != null) ...[

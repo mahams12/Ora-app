@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
 import 'app/config/app_config.dart';
 import 'app/config/environment.dart';
+import 'core/notifications/dispatch_fcm_background.dart';
 import 'core/security/firebase_app_check_bootstrap.dart';
 
 void _startupMark(String name) {
@@ -43,6 +45,7 @@ void main() async {
   try {
     _startupMark('firebase_init_begin');
     await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     _startupMark('firebase_init_done');
     // Debug/emulator only: skip Play Integrity / reCAPTCHA so Firebase
     // Console test phone numbers work without Chrome. Never in release.

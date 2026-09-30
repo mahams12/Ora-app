@@ -20,7 +20,7 @@ async function main() {
   }
   const db = getFirestore();
   const ride = await db.collection('rides').doc(rideId).get();
-  const offers = await db.collection('rides').doc(rideId).collection('offers').get();
+  const offers = await db.collection('rideOffers').where('rideId', '==', rideId).get();
   console.log(
     JSON.stringify(
       {

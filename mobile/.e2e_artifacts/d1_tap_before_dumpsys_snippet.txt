@@ -1,0 +1,358 @@
+
+      numWithText=0
+      numWithSubText=8
+      numWithInfoText=0
+      numRateViolations=0
+      numAlertViolations=0
+      numQuotaViolations=0
+      numImagesRemoved=0
+      note_imp_noisy_: [0, 0, 0, 8, 0, 0]
+      note_imp_quiet_: [0, 0, 0, 0, 0, 0]
+      note_importance_: [0, 0, 8, 0, 0, 0]
+      numUndecorateRVs=0
+    }
+    AggregatedStats{
+      key='com.ora.ora',
+      numEnqueuedByApp=4,
+      numPostedByApp=4,
+      numUpdatedByApp=0,
+      numRemovedByApp=0,
+      numPeopleCacheHit=6,
+      numWithStaredPeople=0,
+      numWithValidPeople=0,
+      numPeopleCacheMiss=0,
+      numBlocked=0,
+      numSuspendedByAdmin=0,
+      numWithActions=0,
+      numPrivate=4,
+      numSecret=0,
+      numInterrupt=0,
+      numWithBigText=0,
+      numWithBigPicture=0
+      numForegroundService=0
+      numOngoing=0
+      numAutoCancel=4
+      numWithLargeIcon=4
+      numWithInbox=0
+      numWithMediaSession=0
+      numWithTitle=4
+      numWithText=4
+      numWithSubText=0
+      numWithInfoText=0
+      numRateViolations=0
+      numAlertViolations=0
+      numQuotaViolations=0
+      numImagesRemoved=0
+      note_imp_noisy_: [0, 0, 0, 0, 4, 0]
+      note_imp_quiet_: [0, 0, 0, 0, 0, 0]
+      note_importance_: [0, 0, 0, 0, 4, 0]
+      numUndecorateRVs=0
+    }
+    AggregatedStats{
+      key='pk.com.telenor.phoenix',
+      numEnqueuedByApp=1,
+      numPostedByApp=1,
+      numUpdatedByApp=0,
+      numRemovedByApp=0,
+      numPeopleCacheHit=39,
+      numWithStaredPeople=0,
+      numWithValidPeople=0,
+      numPeopleCacheMiss=0,
+      numBlocked=0,
+      numSuspendedByAdmin=0,
+      numWithActions=0,
+      numPrivate=1,
+      numSecret=0,
+      numInterrupt=0,
+      numWithBigText=1,
+      numWithBigPicture=0
+      numForegroundService=0
+      numOngoing=0
+      numAutoCancel=1
+      numWithLargeIcon=1
+      numWithInbox=0
+      numWithMediaSession=0
+      numWithTitle=1
+      numWithText=1
+      numWithSubText=0
+      numWithInfoText=0
+      numRateViolations=0
+      numAlertViolations=0
+      numQuotaViolations=0
+      numImagesRemoved=0
+      note_imp_noisy_: [0, 0, 0, 1, 0, 0]
+      note_imp_quiet_: [0, 0, 0, 0, 0, 0]
+      note_importance_: [0, 0, 0, 1, 0, 0]
+      numUndecorateRVs=0
+    }
+    AggregatedStats{
+      key='com.google.android.packageinstaller',
+      numEnqueuedByApp=2,
+      numPostedByApp=2,
+      numUpdatedByApp=0,
+      numRemovedByApp=2,
+      numPeopleCacheHit=4,
+      numWithStaredPeople=0,
+      numWithValidPeople=0,
+      numPeopleCacheMiss=0,
+      numBlocked=0,
+      numSuspendedByAdmin=0,
+      numWithActions=0,
+      numPrivate=2,
+      numSecret=0,
+      numInterrupt=0,
+      numWithBigText=0,
+      numWithBigPicture=0
+      numForegroundService=0
+      numOngoing=2
+      numAutoCancel=0
+      numWithLargeIcon=0
+      numWithInbox=0
+      numWithMediaSession=0
+      numWithTitle=2
+      numWithText=0
+      numWithSubText=0
+      numWithInfoText=0
+      numRateViolations=0
+      numAlertViolations=0
+      numQuotaViolations=0
+      numImagesRemoved=0
+      note_imp_noisy_: [0, 0, 0, 2, 0, 0]
+      note_imp_quiet_: [0, 0, 0, 0, 0, 0]
+      note_importance_: [0, 2, 0, 0, 0, 0]
+      numUndecorateRVs=0
+    }
+    AggregatedStats{
+      key='com.osp.app.signin',
+      numEnqueuedByApp=1,
+      numPostedByApp=1,
+      numUpdatedByApp=0,
+      numRemovedByApp=0,
+      numPeopleCacheHit=152,
+      numWithStaredPeople=0,
+      numWithValidPeople=0,
+      numPeopleCacheMiss=0,
+      numBlocked=0,
+      numSuspendedByAdmin=0,
+      numWithActions=0,
+      numPrivate=1,
+      numSecret=0,
+      numInterrupt=0,
+      numWithBigText=1,
+      numWithBigPicture=0
+      numForegroundService=0
+      numOngoing=0
+      numAutoCancel=1
+      numWithLargeIcon=0
+      numWithInbox=0
+      numWithMediaSession=0
+      numWithTitle=1
+      numWithText=1
+      numWithSubText=0
+      numWithInfoText=0
+      numRateViolations=0
+      numAlertViolations=0
+      numQuotaViolations=0
+      numImagesRemoved=0
+      note_imp_noisy_: [0, 0, 0, 1, 0, 0]
+      note_imp_quiet_: [0, 0, 0, 0, 0, 0]
+      note_importance_: [0, 0, 0, 0, 1, 0]
+      numUndecorateRVs=0
+    }
+    AggregatedStats{
+      key='com.google.android.gm',
+      numEnqueuedByApp=50,
+      numPostedByApp=41,
+      numUpdatedByApp=9,
+      numRemovedByApp=3,
+      numPeopleCacheHit=1983,
+      numWithStaredPeople=0,
+      numWithValidPeople=0,
+      numPeopleCacheMiss=951,
+      numBlocked=0,
+      numSuspendedByAdmin=0,
+      numWithActions=40,
+      numPrivate=49,
+      numSecret=0,
+      numInterrupt=0,
+      numWithBigText=40,
+      numWithBigPicture=0
+      numForegroundService=0
+      numOngoing=0
+      numAutoCancel=49
+      numWithLargeIcon=50
+      numWithInbox=9
+      numWithMediaSession=0
+      numWithTitle=50
+      numWithText=40
+      numWithSubText=50
+      numWithInfoText=0
+      numRateViolations=0
+      numAlertViolations=5
+      numQuotaViolations=0
+      numImagesRemoved=0
+      note_imp_noisy_: [0, 0, 0, 50, 0, 0]
+      note_imp_quiet_: [0, 0, 0, 0, 0, 0]
+      note_importance_: [0, 0, 0, 50, 0, 0]
+      numUndecorateRVs=0
+    }
+    AggregatedStats{
+      key='com.android.systemui',
+      numEnqueuedByApp=19,
+      numPostedByApp=3,
+      numUpdatedByApp=16,
+      numRemovedByApp=3,
+      numPeopleCacheHit=0,
+      numWithStaredPeople=0,
+      numWithValidPeople=0,
+      numPeopleCacheMiss=0,
+      numBlocked=0,
+      numSuspendedByAdmin=0,
+      numWithActions=1,
+      numPrivate=0,
+      numSecret=0,
+      numInterrupt=0,
+      numWithBigText=15,
+      numWithBigPicture=0
+      numForegroundService=0
+      numOngoing=19
+      numAutoCancel=0
+      numWithLargeIcon=0
+      numWithInbox=0
+      numWithMediaSession=0
+      numWithTitle=19
+      numWithText=18
+      numWithSubText=0
+      numWithInfoText=0
+      numRateViolations=0
+      numAlertViolations=0
+      numQuotaViolations=0
+      numImagesRemoved=0
+      note_imp_noisy_: [0, 0, 0, 1, 0, 0]
+      note_imp_quiet_: [0, 18, 0, 0, 0, 0]
+      note_importance_: [0, 18, 1, 0, 0, 0]
+      numUndecorateRVs=0
+    }
+    AggregatedStats{
+      key='com.jrzheng.supervpnfree',
+      numEnqueuedByApp=1,
+      numPostedByApp=0,
+      numUpdatedByApp=0,
+      numRemovedByApp=0,
+      numPeopleCacheHit=0,
+      numWithStaredPeople=0,
+      numWithValidPeople=0,
+      numPeopleCacheMiss=0,
+      numBlocked=1,
+      numSuspendedByAdmin=0,
+      numWithActions=0,
+      numPrivate=0,
+      numSecret=0,
+      numInterrupt=0,
+      numWithBigText=0,
+      numWithBigPicture=0
+      numForegroundService=0
+      numOngoing=0
+      numAutoCancel=0
+      numWithLargeIcon=0
+      numWithInbox=0
+      numWithMediaSession=0
+      numWithTitle=0
+      numWithText=0
+      numWithSubText=0
+      numWithInfoText=0
+      numRateViolations=0
+      numAlertViolations=0
+      numQuotaViolations=0
+      numImagesRemoved=0
+      note_imp_noisy_: [0, 0, 0, 0, 0, 0]
+      note_imp_quiet_: [0, 0, 0, 0, 0, 0]
+      note_importance_: [0, 0, 0, 0, 0, 0]
+      numUndecorateRVs=0
+    }
+    mStatsArrays.size(): 1
+    mStats.size(): 14
+[EdgeLightingManager]
+-ClientManager start
+
+-EdgeLightingList : []
+
+mCondition=3
+-ListenerManager start
+
+-EdgeLightingPolicy start : type = 12, version = 1
+
+
+
+-EdgeLightingPolicyInfo(white) start
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.incallui, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.app.music.chn, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.dialer, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.app.reminder, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.messaging, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.sec.android.app.music, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.skt.prod.dialer, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.calendar, category= 1, range= 0}
+  EdgeLightingPolicyInfo{packageName= com.google.android.googlequicksearchbox, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.contacts, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.spay, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.sec.android.app.clockpackage, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.edgelightingtestapp, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.kakao.talk, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.samsung.android.app.notes, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.facebook.orca, category= 1, range= 7}
+  EdgeLightingPolicyInfo{packageName= com.sds.mysinglesquare, category= 1, range= 7}
+
+-EdgeLightingPolicyInfo(black) start
+  EdgeLightingPolicyInfo{packageName= com.orange.phone, category= 2, range= 7}
+
+mSuppressed=0
+
+-EdgeLightingHistory
+  [Host History] :
+
+  [Listener History] :
+
+  [EL History] :
+   [09-29 16:52:23.763] stop : android,1
+
+  [Event History] :
+   [09-30 10:56:27.059] disable: < alerts >
+   [09-30 10:56:29.550] disable: < alerts >
+   [09-30 10:56:29.551] disable: < alerts >
+   [09-30 10:56:33.967] disable: < alerts >
+   [09-30 10:56:36.369] disable: < alerts >
+   [09-30 10:56:36.369] disable: < alerts >
+   [09-30 11:01:11.201] disable: < alerts >
+   [09-30 11:01:36.436] disable: < alerts >
+   [09-30 11:41:36.224] disable: < alerts >
+   [09-30 11:41:37.431] disable: < alerts >
+   [09-30 11:41:37.431] disable: < alerts >
+   [09-30 11:41:40.339] disable: < alerts >
+   [09-30 11:41:41.481] disable: < alerts >
+   [09-30 11:41:41.482] disable: < alerts >
+   [09-30 11:41:44.132] disable: < alerts >
+   [09-30 11:41:45.222] disable: < alerts >
+   [09-30 11:41:45.222] disable: < alerts >
+   [09-30 11:41:50.808] disable: < alerts >
+   [09-30 11:41:51.845] disable: < alerts >
+   [09-30 11:41:51.845] disable: < alerts >
+
+  [Reject History] :
+   [09-28 14:12:48.299] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : com.samsung.android.messaging
+   [09-28 14:56:21.428] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : android
+   [09-28 15:06:31.278] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : android
+   [09-28 15:07:08.275] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : android
+   [09-28 15:14:39.041] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : android
+   [09-29 11:14:18.413] showForNotificationScreenOff : return false by isAvailableEdgeLighting. | Package : com.osp.app.signin
+   [09-29 13:17:48.214] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : android
+   [09-29 13:18:34.219] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : com.samsung.android.messaging
+   [09-29 13:32:09.386] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : android
+   [09-29 13:36:50.344] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : android
+   [09-29 13:54:29.278] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : android
+   [09-29 14:28:51.164] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : android
+   [09-29 14:57:49.128] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : com.samsung.android.messaging
+   [09-30 11:40:57.444] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : com.ora.ora
+   [09-30 11:43:48.715] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : com.ora.ora
+   [09-30 11:56:53.525] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : com.ora.ora
+   [09-30 11:59:20.657] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : com.ora.ora

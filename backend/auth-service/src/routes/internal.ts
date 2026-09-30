@@ -8,12 +8,16 @@ import { RideDomainError } from '../rides/types';
 import {
   NearbyDomainError,
   NearbyDriversService,
+  compactN3RejectionCounts,
+  createEmptyN3RejectionCounts,
+  type N3NearbyDiagnostics,
 } from '../drivers/nearby_service';
 import { DispatchWaveService } from '../rides/dispatch_wave_service';
 import { DispatchFcmProjector } from '../delivery/dispatch_fcm_projector';
 import type { FcmSender } from '../delivery/fcm_sender';
 import { createNullFcmSender } from '../delivery/fcm_sender';
 import type { RedisGeoClient } from '../redis/types';
+import { ExpiresAtCleanupService } from '../maintenance/expires_at_cleanup_service';
 
 export function createInternalRouter(
   db: Firestore,
@@ -26,6 +30,7 @@ export function createInternalRouter(
   const dispatch = new DispatchWaveService(db, nearby);
   const fcmSender = fcm ?? createNullFcmSender();
   const dispatchFcm = new DispatchFcmProjector(db, fcmSender);
+  const expiresAtCleanup = new ExpiresAtCleanupService(db);
 
   router.post('/rides/expire-sweep', async (req, res) => {
     const started = Date.now();
@@ -260,9 +265,13 @@ export function createInternalRouter(
     const started = Date.now();
     const requestId = getRequestId(req);
     try {
+      let diagnostics: N3NearbyDiagnostics | undefined;
       const result = await nearby.findNearby({
         query: req.query as Record<string, unknown>,
         requestId,
+        collectDiagnostics: (d) => {
+          diagnostics = d;
+        },
       });
       logSafe('N3_NEARBY', {
         operation: 'N3_NEARBY',
@@ -270,6 +279,18 @@ export function createInternalRouter(
         city: result.city ?? null,
         radiusKm: result.radiusKm,
         resultCount: result.candidates.length,
+        geoHits: diagnostics?.geoHits ?? 0,
+        redisGetCount: diagnostics?.redisGetCount ?? 0,
+        firestoreUsersReads: diagnostics?.firestoreUsersReads ?? 0,
+        firestoreDriversReads: diagnostics?.firestoreDriversReads ?? 0,
+        firestoreUsersBatchRpcs: diagnostics?.firestoreUsersBatchRpcs ?? 0,
+        firestoreDriversBatchRpcs: diagnostics?.firestoreDriversBatchRpcs ?? 0,
+        firestoreBusyRideQueries: diagnostics?.firestoreBusyRideQueries ?? 0,
+        firestoreRpcTotal: diagnostics?.firestoreRpcTotal ?? 0,
+        eligibleCount: diagnostics?.eligibleCount ?? result.candidates.length,
+        rejected: compactN3RejectionCounts(
+          diagnostics?.rejected ?? createEmptyN3RejectionCounts(),
+        ),
         durationMs: Date.now() - started,
       });
       sendRideData(req, res, 200, result);
@@ -333,6 +354,48 @@ export function createInternalRouter(
     } catch (err) {
       logSafe('RIDE_NO_SHOW_SWEEP', {
         operation: 'RIDE_NO_SHOW_SWEEP',
+        requestId: getRequestId(req),
+        durationMs: Date.now() - started,
+        errorCode: err instanceof RideDomainError ? err.code : 'INTERNAL',
+      });
+      sendRideDomainError(req, res, err);
+    }
+  });
+
+  /** Phase 2 storage — worker-only TTL cleanup (idempotency, pricing snapshots, location stream cursors). */
+  router.post('/storage/expires-at-cleanup', async (req, res) => {
+    const started = Date.now();
+    const limitRaw = req.query.limit;
+    let limit: number | undefined;
+    if (limitRaw != null) {
+      const parsed = Number(String(limitRaw));
+      if (!Number.isInteger(parsed) || parsed < 1) {
+        sendApiError(
+          req,
+          res,
+          400,
+          'VALIDATION_ERROR',
+          'limit must be a positive integer.',
+        );
+        return;
+      }
+      limit = parsed;
+    }
+
+    try {
+      const result = await expiresAtCleanup.runCleanup({ limit });
+      logSafe('EXPIRES_AT_CLEANUP', {
+        operation: 'EXPIRES_AT_CLEANUP',
+        requestId: getRequestId(req),
+        idempotencyDeleted: result.idempotencyRecords.deleted,
+        pricingSnapshotsDeleted: result.pricingSnapshots.deleted,
+        locationStreamsDeleted: result.locationStreams.deleted,
+        durationMs: Date.now() - started,
+      });
+      sendRideData(req, res, 200, result);
+    } catch (err) {
+      logSafe('EXPIRES_AT_CLEANUP', {
+        operation: 'EXPIRES_AT_CLEANUP',
         requestId: getRequestId(req),
         durationMs: Date.now() - started,
         errorCode: err instanceof RideDomainError ? err.code : 'INTERNAL',

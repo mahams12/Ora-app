@@ -34,6 +34,9 @@ class AppRoutes {
   /// Driver shell (Slice L) — approved drivers only.
   static const driverHome = '/driver';
 
+  /// Driver open ride requests (GET /v1/rides/open).
+  static const driverOpen = '/driver/open';
+
   /// Driver assigned rides list (GET /v1/rides as approved driver).
   static const driverRides = '/driver/rides';
 

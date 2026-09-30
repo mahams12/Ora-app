@@ -48,6 +48,24 @@ String openRideLocationLabel(LatLngPoint point, {required String fallback}) {
 String formatOpenRideFareMinor(int minor) =>
     formatOfferAmountMinor(minor, oraRideMoneyCurrencyCode);
 
+/// Driver offer sheet entry — whole PKR rupees when exact, else 2 decimals.
+String openRideOfferRupeesFieldText(int amountMinor) {
+  final major = amountMinor / 100.0;
+  if (major == major.roundToDouble()) {
+    return major.toStringAsFixed(0);
+  }
+  return major.toStringAsFixed(2);
+}
+
+/// Parses driver-entered PKR rupees to server minor units (paisas).
+int? parseOpenRideOfferRupeesToMinor(String text) {
+  final trimmed = text.trim();
+  if (trimmed.isEmpty) return null;
+  final major = int.tryParse(trimmed);
+  if (major == null || major <= 0) return null;
+  return major * 100;
+}
+
 String? formatOpenRideDistanceKm(double? km) {
   if (km == null) return null;
   final whole = km == km.roundToDouble()

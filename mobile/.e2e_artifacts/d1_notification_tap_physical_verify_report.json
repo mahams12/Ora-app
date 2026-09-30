@@ -1,0 +1,53 @@
+{
+  "targetRideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+  "device": "RF8R40ZQ1JH",
+  "startedAt": "2026-09-30T06:59:31.211653+00:00",
+  "gates": {
+    "notification_exists": "PASS",
+    "navigation_driver_open_rides": "PASS",
+    "target_ride_api_visible": "PASS",
+    "target_ride_ui_visible": "PASS",
+    "duplicate_safety": "PASS",
+    "notification_tap": "PASS"
+  },
+  "artifacts": [
+    "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/d1_tap_before_dumpsys_snippet.txt",
+    "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/d1_tap_after_dumpsys_snippet.txt"
+  ],
+  "ora_dispatch_notification_count_before": 1,
+  "ora_notification_rows": 1,
+  "top_package_after_tap": "com.ora.ora",
+  "open_rides_api": {
+    "httpStatus": 200,
+    "rideCount": 2,
+    "targetRideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+    "targetPresent": true,
+    "rideIds": [
+      "212d0068-9ad2-4658-bc68-da13b0784515",
+      "9381083c-b8ba-4f77-bdb2-2efc11ffe3cd"
+    ]
+  },
+  "target_ride_ui_ride_id": true,
+  "target_ride_ui_route_markers": true,
+  "target_ride_api": true,
+  "ora_dispatch_notification_count_after_tap": 0,
+  "duplicate_offer_sheet_count": 0,
+  "duplicate_safety_note": "notification_cleared_after_first_tap",
+  "finishedAt": "2026-09-30T07:00:02.268788+00:00",
+  "freshFinalRun": true,
+  "gatesFull": {
+    "ADB": "PASS",
+    "Driver auth": "PASS",
+    "FCM token": "PASS",
+    "Fresh ride": "PASS",
+    "Ride unexpired": "PASS",
+    "N4 dispatch": "PASS",
+    "FCM delivery": "PASS",
+    "Notification exists": "PASS",
+    "Physical notification tap": "PASS",
+    "Open Rides navigation": "PASS",
+    "Duplicate/safety": "PASS",
+    "Target ride API visible": "PASS",
+    "Target ride UI visible": "PASS"
+  }
+}

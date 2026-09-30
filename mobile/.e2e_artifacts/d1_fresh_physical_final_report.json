@@ -1,0 +1,217 @@
+{
+  "startedAt": "2026-09-30T06:58:35.977490+00:00",
+  "device": "RF8R40ZQ1JH",
+  "fcmTokenCheck": {
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "tokenDocCount": 1,
+    "docs": [
+      {
+        "tokenId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2_430d8246490d63f37b1ad06f344bf76ab048fe36",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "hasToken": true
+      }
+    ]
+  },
+  "stagingPrep": {
+    "ok": true,
+    "rideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+    "steps": {
+      "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+      "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+      "goOnline": {
+        "status": 200,
+        "data": {
+          "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+          "availabilityState": "online"
+        }
+      },
+      "locationUpdate1": {
+        "status": 200,
+        "data": {
+          "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+          "mode": "idle",
+          "rideId": null,
+          "locationStreamId": "d1-proof-1790751548106",
+          "locationSeq": 1,
+          "acceptedAt": "2026-09-30T06:59:09.138Z"
+        }
+      },
+      "pricingEstimate": {
+        "status": 200,
+        "data": {
+          "pricingSnapshotId": "ps_1ec8136a-61c8-4371-87f7-8f36bb96121f",
+          "recommendedFareMinor": 114000,
+          "offerBoundMinMinor": 79800,
+          "offerBoundMaxMinor": 205200,
+          "currency": "PKR",
+          "pricingRulesVersion": "2026-09-22:v5c-device",
+          "computedAt": "2026-09-30T06:59:11.080Z",
+          "expiresAt": "2026-09-30T07:09:11.080Z",
+          "distanceKm": 23.973,
+          "durationMin": 38.61666666666667,
+          "category": "easy"
+        }
+      },
+      "createRide": {
+        "status": 201,
+        "data": {
+          "rideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+          "passengerId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+          "assignedDriverId": null,
+          "state": "SEARCHING",
+          "version": 1,
+          "requestVersion": 1,
+          "category": "easy",
+          "serviceType": "ride",
+          "city": "lahore",
+          "pickup": {
+            "lat": 31.4127578,
+            "lng": 74.1725224,
+            "address": "Liberty Market Lahore"
+          },
+          "destination": {
+            "lat": 31.51058,
+            "lng": 74.34445,
+            "address": "Gulberg Lahore"
+          },
+          "pricingSnapshotId": "ps_1ec8136a-61c8-4371-87f7-8f36bb96121f",
+          "recommendedFareMinor": 114000,
+          "passengerOfferMinor": 114000,
+          "agreedFareMinor": null,
+          "agreedOfferId": null,
+          "agreedFareCurrency": null,
+          "paymentMethod": "CASH",
+          "passengerCount": 1,
+          "expiresAt": "2026-09-30T07:04:12.337Z",
+          "assignedAt": null,
+          "arrivedAt": null,
+          "startedAt": null,
+          "completedAt": null,
+          "closedAt": null,
+          "cancelledBy": null,
+          "cancellationReason": null,
+          "createdAt": "2026-09-30T06:59:12.337Z",
+          "updatedAt": "2026-09-30T06:59:12.337Z"
+        }
+      },
+      "rideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+      "dispatchTick": {
+        "status": 200,
+        "data": {
+          "outcome": "wave_completed",
+          "rideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+          "waveNumber": 1,
+          "invitedCount": 1,
+          "driverIds": [
+            "SRjL7BJgCKTduhtpjtYMRZMq5fD2"
+          ]
+        }
+      },
+      "fcmSweep": {
+        "status": 200,
+        "data": {
+          "scanned": 8,
+          "processed": 2,
+          "delivered": 2,
+          "retryable": 0,
+          "deadLetter": 0,
+          "skipped": 6,
+          "failed": 0
+        }
+      },
+      "dispatchSweep": {
+        "status": 200,
+        "data": {
+          "scanned": 9,
+          "completed": 2,
+          "alreadyCompleted": 0,
+          "notDue": 0,
+          "skipped": 7,
+          "stopped": 0,
+          "exhausted": 0,
+          "failed": 0
+        }
+      }
+    }
+  },
+  "ride": {
+    "rideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+    "createdAt": "2026-09-30T06:59:12.337Z",
+    "expiresAt": "2026-09-30T07:04:12.337Z",
+    "state": "SEARCHING",
+    "requestVersion": 1,
+    "passengerOfferMinor": 114000,
+    "pricingSnapshotId": "ps_1ec8136a-61c8-4371-87f7-8f36bb96121f"
+  },
+  "verifiedAtUtc": "2026-09-30T06:59:27.091101+00:00",
+  "tapScriptStdout": "UI hierchary dumped to: /sdcard/d1_tap_ui.xml\nUI hierchary dumped to: /sdcard/d1_tap_ui.xml\nUI hierchary dumped to: /sdcard/d1_tap_ui.xml\nUI hierchary dumped to: /sdcard/d1_tap_ui.xml\nWROTE /Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/d1_notification_tap_physical_verify_report.json /Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/D1_NOTIFICATION_TAP_PHYSICAL_PROOF.md\n{\n  \"notification_exists\": \"PASS\",\n  \"navigation_driver_open_rides\": \"PASS\",\n  \"target_ride_api_visible\": \"PASS\",\n  \"target_ride_ui_visible\": \"PASS\",\n  \"duplicate_safety\": \"PASS\",\n  \"notification_tap\": \"PASS\"\n}\n",
+  "tapScriptStderr": "",
+  "tapReport": {
+    "targetRideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+    "device": "RF8R40ZQ1JH",
+    "startedAt": "2026-09-30T06:59:31.211653+00:00",
+    "gates": {
+      "notification_exists": "PASS",
+      "navigation_driver_open_rides": "PASS",
+      "target_ride_api_visible": "PASS",
+      "target_ride_ui_visible": "PASS",
+      "duplicate_safety": "PASS",
+      "notification_tap": "PASS"
+    },
+    "artifacts": [
+      "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/d1_tap_before_dumpsys_snippet.txt",
+      "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/d1_tap_after_dumpsys_snippet.txt"
+    ],
+    "ora_dispatch_notification_count_before": 1,
+    "ora_notification_rows": 1,
+    "top_package_after_tap": "com.ora.ora",
+    "open_rides_api": {
+      "httpStatus": 200,
+      "rideCount": 2,
+      "targetRideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+      "targetPresent": true,
+      "rideIds": [
+        "212d0068-9ad2-4658-bc68-da13b0784515",
+        "9381083c-b8ba-4f77-bdb2-2efc11ffe3cd"
+      ]
+    },
+    "target_ride_ui_ride_id": true,
+    "target_ride_ui_route_markers": true,
+    "target_ride_api": true,
+    "ora_dispatch_notification_count_after_tap": 0,
+    "duplicate_offer_sheet_count": 0,
+    "duplicate_safety_note": "notification_cleared_after_first_tap",
+    "finishedAt": "2026-09-30T07:00:02.268788+00:00"
+  },
+  "openRidesApiFinal": {
+    "httpStatus": 200,
+    "rideCount": 2,
+    "targetRideId": "212d0068-9ad2-4658-bc68-da13b0784515",
+    "targetPresent": true,
+    "rideIds": [
+      "212d0068-9ad2-4658-bc68-da13b0784515",
+      "9381083c-b8ba-4f77-bdb2-2efc11ffe3cd"
+    ]
+  },
+  "targetRideUi": {
+    "rideIdInXml": true,
+    "routeMarkers": false
+  },
+  "finishedAt": "2026-09-30T07:00:05.662877+00:00",
+  "gates": {
+    "ADB": "PASS",
+    "Driver auth": "PASS",
+    "FCM token": "PASS",
+    "Fresh ride": "PASS",
+    "Ride unexpired": "PASS",
+    "N4 dispatch": "PASS",
+    "FCM delivery": "PASS",
+    "Notification exists": "PASS",
+    "Physical notification tap": "PASS",
+    "Open Rides navigation": "PASS",
+    "Duplicate/safety": "PASS",
+    "Target ride API visible": "PASS",
+    "Target ride UI visible": "PASS"
+  }
+}

@@ -96,6 +96,9 @@ export function createMemoryRedis(): RedisGeoClient & {
     async get(key) {
       return alive(key);
     },
+    async mget(keys) {
+      return keys.map((key) => alive(key));
+    },
     async set(key, value, ttlSeconds) {
       strings.set(key, {
         value,

@@ -34,6 +34,8 @@ export interface RedisGeoClient {
     count: number;
   }): Promise<GeoRadiusHit[]>;
   get(key: string): Promise<string | null>;
+  /** Batch string GET (MGET); values align 1:1 with keys. */
+  mget(keys: string[]): Promise<(string | null)[]>;
   set(key: string, value: string, ttlSeconds?: number): Promise<'OK'>;
   del(...keys: string[]): Promise<number>;
   /** Optional — used by live proofs / tests. */

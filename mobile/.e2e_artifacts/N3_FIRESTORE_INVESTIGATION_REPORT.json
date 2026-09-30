@@ -1,0 +1,577 @@
+{
+  "ok": true,
+  "mode": "real_firestore_local_redis",
+  "note": "Firestore latency is production staging; Redis is in-process (staging Redis ~2% per MGET benchmark).",
+  "benchPrefix": "n3bench_fs_invest_20260930T070256Z",
+  "benchDriverCount": 100,
+  "pickup": {
+    "lat": 31.4127578,
+    "lng": 74.1725224,
+    "radiusKm": 10
+  },
+  "callGraph": {
+    "steps": [
+      "1× redis.georadius (≤100 members)",
+      "1× redis.mget",
+      "sequential per geo hit until limit: users.get → drivers.get → rides busy query"
+    ],
+    "sequentialFirestore": true
+  },
+  "scenarios": {
+    "candidates_10": {
+      "limit": 10,
+      "runs": [
+        {
+          "run": 1,
+          "totalMs": 26664,
+          "latencyBreakdownMs": {
+            "redis": 1,
+            "firestoreUsers": 6064,
+            "firestoreDrivers": 12506,
+            "firestoreBusyChecks": 8084,
+            "firestoreTotal": 26655,
+            "applicationProcessing": 8
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 10,
+            "firestoreDriversReads": 10,
+            "firestoreBusyRideQueries": 10,
+            "eligibleCount": 10,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 2,
+          "totalMs": 33540,
+          "latencyBreakdownMs": {
+            "redis": 1,
+            "firestoreUsers": 12967,
+            "firestoreDrivers": 10981,
+            "firestoreBusyChecks": 9587,
+            "firestoreTotal": 33534,
+            "applicationProcessing": 5
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 10,
+            "firestoreDriversReads": 10,
+            "firestoreBusyRideQueries": 10,
+            "eligibleCount": 10,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 3,
+          "totalMs": 16516,
+          "latencyBreakdownMs": {
+            "redis": 0,
+            "firestoreUsers": 5595,
+            "firestoreDrivers": 5404,
+            "firestoreBusyChecks": 5513,
+            "firestoreTotal": 16512,
+            "applicationProcessing": 4
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 10,
+            "firestoreDriversReads": 10,
+            "firestoreBusyRideQueries": 10,
+            "eligibleCount": 10,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 4,
+          "totalMs": 16192,
+          "latencyBreakdownMs": {
+            "redis": 0,
+            "firestoreUsers": 5451,
+            "firestoreDrivers": 5350,
+            "firestoreBusyChecks": 5386,
+            "firestoreTotal": 16187,
+            "applicationProcessing": 4
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 10,
+            "firestoreDriversReads": 10,
+            "firestoreBusyRideQueries": 10,
+            "eligibleCount": 10,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 5,
+          "totalMs": 16160,
+          "latencyBreakdownMs": {
+            "redis": 1,
+            "firestoreUsers": 5416,
+            "firestoreDrivers": 5345,
+            "firestoreBusyChecks": 5393,
+            "firestoreTotal": 16154,
+            "applicationProcessing": 5
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 10,
+            "firestoreDriversReads": 10,
+            "firestoreBusyRideQueries": 10,
+            "eligibleCount": 10,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        }
+      ],
+      "summary": {
+        "totalMs": {
+          "p50": 16516,
+          "p95": 33540
+        },
+        "firestoreTotalMs": {
+          "p50": 16512,
+          "p95": 33534
+        },
+        "firestoreBusyMs": {
+          "p50": 5513,
+          "p95": 9587
+        },
+        "firestoreShareP50Pct": 100
+      }
+    },
+    "candidates_30": {
+      "limit": 30,
+      "runs": [
+        {
+          "run": 1,
+          "totalMs": 48576,
+          "latencyBreakdownMs": {
+            "redis": 0,
+            "firestoreUsers": 16249,
+            "firestoreDrivers": 16116,
+            "firestoreBusyChecks": 16197,
+            "firestoreTotal": 48562,
+            "applicationProcessing": 13
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 30,
+            "firestoreDriversReads": 30,
+            "firestoreBusyRideQueries": 30,
+            "eligibleCount": 30,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 2,
+          "totalMs": 48364,
+          "latencyBreakdownMs": {
+            "redis": 0,
+            "firestoreUsers": 16156,
+            "firestoreDrivers": 16235,
+            "firestoreBusyChecks": 15961,
+            "firestoreTotal": 48352,
+            "applicationProcessing": 12
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 30,
+            "firestoreDriversReads": 30,
+            "firestoreBusyRideQueries": 30,
+            "eligibleCount": 30,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 3,
+          "totalMs": 49099,
+          "latencyBreakdownMs": {
+            "redis": 0,
+            "firestoreUsers": 16351,
+            "firestoreDrivers": 16416,
+            "firestoreBusyChecks": 16319,
+            "firestoreTotal": 49086,
+            "applicationProcessing": 13
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 30,
+            "firestoreDriversReads": 30,
+            "firestoreBusyRideQueries": 30,
+            "eligibleCount": 30,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 4,
+          "totalMs": 47731,
+          "latencyBreakdownMs": {
+            "redis": 0,
+            "firestoreUsers": 15997,
+            "firestoreDrivers": 15872,
+            "firestoreBusyChecks": 15848,
+            "firestoreTotal": 47718,
+            "applicationProcessing": 13
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 30,
+            "firestoreDriversReads": 30,
+            "firestoreBusyRideQueries": 30,
+            "eligibleCount": 30,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 5,
+          "totalMs": 47880,
+          "latencyBreakdownMs": {
+            "redis": 0,
+            "firestoreUsers": 16159,
+            "firestoreDrivers": 15851,
+            "firestoreBusyChecks": 15858,
+            "firestoreTotal": 47869,
+            "applicationProcessing": 11
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 30,
+            "firestoreDriversReads": 30,
+            "firestoreBusyRideQueries": 30,
+            "eligibleCount": 30,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        }
+      ],
+      "summary": {
+        "totalMs": {
+          "p50": 48364,
+          "p95": 49099
+        },
+        "firestoreTotalMs": {
+          "p50": 48352,
+          "p95": 49086
+        },
+        "firestoreBusyMs": {
+          "p50": 15961,
+          "p95": 16319
+        },
+        "firestoreShareP50Pct": 100
+      }
+    },
+    "candidates_100": {
+      "limit": 100,
+      "runs": [
+        {
+          "run": 1,
+          "totalMs": 161943,
+          "latencyBreakdownMs": {
+            "redis": 0,
+            "firestoreUsers": 53731,
+            "firestoreDrivers": 53645,
+            "firestoreBusyChecks": 54525,
+            "firestoreTotal": 161901,
+            "applicationProcessing": 42
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 100,
+            "firestoreDriversReads": 100,
+            "firestoreBusyRideQueries": 100,
+            "eligibleCount": 100,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 2,
+          "totalMs": 161475,
+          "latencyBreakdownMs": {
+            "redis": 1,
+            "firestoreUsers": 54436,
+            "firestoreDrivers": 53497,
+            "firestoreBusyChecks": 53507,
+            "firestoreTotal": 161440,
+            "applicationProcessing": 34
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 100,
+            "firestoreDriversReads": 100,
+            "firestoreBusyRideQueries": 100,
+            "eligibleCount": 100,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 3,
+          "totalMs": 161079,
+          "latencyBreakdownMs": {
+            "redis": 1,
+            "firestoreUsers": 53539,
+            "firestoreDrivers": 53765,
+            "firestoreBusyChecks": 53736,
+            "firestoreTotal": 161039,
+            "applicationProcessing": 39
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 100,
+            "firestoreDriversReads": 100,
+            "firestoreBusyRideQueries": 100,
+            "eligibleCount": 100,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 4,
+          "totalMs": 164856,
+          "latencyBreakdownMs": {
+            "redis": 3,
+            "firestoreUsers": 53731,
+            "firestoreDrivers": 54470,
+            "firestoreBusyChecks": 56609,
+            "firestoreTotal": 164809,
+            "applicationProcessing": 44
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 100,
+            "firestoreDriversReads": 100,
+            "firestoreBusyRideQueries": 100,
+            "eligibleCount": 100,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        },
+        {
+          "run": 5,
+          "totalMs": 162735,
+          "latencyBreakdownMs": {
+            "redis": 1,
+            "firestoreUsers": 53829,
+            "firestoreDrivers": 54876,
+            "firestoreBusyChecks": 54002,
+            "firestoreTotal": 162707,
+            "applicationProcessing": 27
+          },
+          "diagnostics": {
+            "geoHits": 100,
+            "redisGetCount": 1,
+            "firestoreUsersReads": 100,
+            "firestoreDriversReads": 100,
+            "firestoreBusyRideQueries": 100,
+            "eligibleCount": 100,
+            "rejected": {
+              "marker_missing": 0,
+              "marker_malformed": 0,
+              "marker_not_fresh": 0,
+              "marker_accuracy": 0,
+              "user_missing": 0,
+              "user_banned": 0,
+              "user_inactive": 0,
+              "user_not_approved": 0,
+              "driver_missing": 0,
+              "driver_offline": 0,
+              "driver_busy": 0
+            }
+          }
+        }
+      ],
+      "summary": {
+        "totalMs": {
+          "p50": 161943,
+          "p95": 164856
+        },
+        "firestoreTotalMs": {
+          "p50": 161901,
+          "p95": 164809
+        },
+        "firestoreBusyMs": {
+          "p50": 54002,
+          "p95": 56609
+        },
+        "firestoreShareP50Pct": 100
+      }
+    }
+  }
+}

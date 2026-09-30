@@ -36,6 +36,15 @@ class _DriverShellViewState extends ConsumerState<DriverShellView> {
   void initState() {
     super.initState();
     _page = widget.initialTab;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _syncDispatchFcmToken());
+  }
+
+  Future<void> _syncDispatchFcmToken() async {
+    final profile = ref.read(sessionUserProfileProvider);
+    if (profile?.isApprovedDriver != true) {
+      return;
+    }
+    await ref.read(dispatchFcmServiceProvider).syncDriverTokenRegistration();
   }
 
   @override
@@ -91,6 +100,7 @@ class _DriverShellViewState extends ConsumerState<DriverShellView> {
     if (_signingOut) return;
     setState(() => _signingOut = true);
     try {
+      await ref.read(dispatchFcmServiceProvider).clearRegisteredToken();
       await ref.read(logoutUseCaseProvider)();
     } finally {
       if (mounted) setState(() => _signingOut = false);

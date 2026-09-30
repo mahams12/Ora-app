@@ -193,6 +193,16 @@ void main() {
       expect(label, contains('24.8600'));
       expect(label.toLowerCase(), isNot(contains('karachi')));
     });
+
+    test('offer sheet rupees field text and parse round-trip PKR', () {
+      expect(openRideOfferRupeesFieldText(31000), '310');
+      expect(formatOpenRideFareMinor(31000), 'Rs 310');
+      expect(parseOpenRideOfferRupeesToMinor('310'), 31000);
+      expect(parseOpenRideOfferRupeesToMinor('350'), 35000);
+      expect(parseOpenRideOfferRupeesToMinor(''), isNull);
+      expect(parseOpenRideOfferRupeesToMinor('0'), isNull);
+      expect(parseOpenRideOfferRupeesToMinor('abc'), isNull);
+    });
   });
 
   group('approved-driver discovery gate', () {
@@ -966,8 +976,59 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Accept passenger price'), findsOneWidget);
-      expect(find.text('Amount (minor units)'), findsOneWidget);
+      expect(find.text('Your offer'), findsOneWidget);
+      expect(find.textContaining('minor units'), findsNothing);
+      expect(find.textContaining('Passenger offer: Rs 250'), findsOneWidget);
       expect(find.text('Submit offer'), findsNWidgets(2));
+    });
+
+    testWidgets('offer sheet shows PKR rupees and submits minor units',
+        (tester) async {
+      final listOpen = MockListOpenRidesUseCase();
+      final createOffer = MockCreateOfferUseCase();
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+        ),
+      ).thenAnswer(
+        (_) async => OpenRideListPage(
+          rides: [_openRide(passengerOfferMinor: 31000)],
+          nextCursor: null,
+        ),
+      );
+      when(
+        () => createOffer(
+          rideId: any(named: 'rideId'),
+          body: any(named: 'body'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).thenAnswer((_) async => _offer(amountMinor: 35000));
+
+      await _pumpDriverOpenRidesView(
+        tester,
+        listOpen: listOpen,
+        createOffer: createOffer,
+      );
+      await tester.tap(find.text('Respond'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Passenger offer: Rs 310'), findsOneWidget);
+      expect(find.text('310'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), '350');
+      await tester.tap(find.text('Submit offer').last);
+      await tester.pumpAndSettle();
+
+      final body = verify(
+        () => createOffer(
+          rideId: 'open-1',
+          body: captureAny(named: 'body'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).captured.single as Map<String, Object?>;
+      expect(body['amountMinor'], 35000);
+      expect(body['type'], 'PASSENGER_PRICE_ACCEPTED');
     });
 
     testWidgets('Respond semantics bounds match button not full card',

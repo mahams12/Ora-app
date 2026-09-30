@@ -216,6 +216,9 @@ export function memoryDb() {
 
   return {
     store,
+    async getAll(...refs: DocRef[]) {
+      return Promise.all(refs.map((ref) => ref.get()));
+    },
     seed(collection: string, id: string, value: Record<string, unknown>) {
       store.set(`${collection}/${id}`, { ...value });
     },

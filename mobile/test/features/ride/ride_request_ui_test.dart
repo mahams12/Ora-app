@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ora/app/di/providers.dart';
 import 'package:ora/app/router/routes.dart';
-import 'package:ora/app/theme/ora_motion.dart';
 import 'package:ora/app/theme/theme.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';
 import 'package:ora/features/ride/domain/models/resolved_passenger_location.dart';

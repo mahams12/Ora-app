@@ -1,0 +1,102 @@
+{
+  "gates": {
+    "auth_samsung": "PASS",
+    "auth_emulator": "PASS",
+    "passenger_pricing": "PASS",
+    "ride_creation": "PASS",
+    "driver_discovery": "PASS",
+    "respond": "PASS",
+    "driver_offer": "PASS",
+    "respond_ux": "PASS",
+    "passenger_offer_selection": "PASS",
+    "assignment": "PASS",
+    "EN_ROUTE": "FAIL",
+    "ARRIVED": "FAIL",
+    "STARTED": "FAIL",
+    "COMPLETED": "FAIL",
+    "RIDE_CLOSED": "FAIL"
+  },
+  "rideId": "1820535b-e702-4740-bca0-4f939730874d",
+  "final": {
+    "rideId": "1820535b-e702-4740-bca0-4f939730874d",
+    "ride": {
+      "rideId": "1820535b-e702-4740-bca0-4f939730874d",
+      "passengerId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+      "requestVersion": 1,
+      "category": "easy",
+      "serviceType": "ride",
+      "city": "lahore",
+      "pickup": {
+        "lat": 31.4127721,
+        "lng": 74.1725207,
+        "address": "Current location"
+      },
+      "destination": {
+        "lat": 31.510582899999996,
+        "lng": 74.34445079999999,
+        "address": "Liberty Market Gulberg III, Lahore, Pakistan"
+      },
+      "routePolyline": null,
+      "distanceKm": 23.973,
+      "estimatedDurationMin": 38.61666666666667,
+      "pricingSnapshotId": "ps_eb8944e5-eae4-4e36-9aa3-d83616d7ebf1",
+      "recommendedFareMinor": 114000,
+      "passengerOfferMinor": 114000,
+      "paymentMethod": "CASH",
+      "paymentIntentId": null,
+      "passengerCount": 1,
+      "expiresAt": "2026-09-29T09:42:56.826Z",
+      "arrivedAt": null,
+      "startedAt": null,
+      "completedAt": null,
+      "closedAt": null,
+      "cancelledBy": null,
+      "cancellationReason": null,
+      "cancellationFeeMinor": null,
+      "createdAt": "2026-09-29T09:37:56.826Z",
+      "agreedFareMinor": 114000,
+      "agreedOfferId": "1820535b-e702-4740-bca0-4f939730874d_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+      "feePolicySnapshot": {
+        "platformFeeType": "NONE",
+        "currency": "PKR",
+        "capturedAt": "2026-09-29T09:40:09.579Z"
+      },
+      "assignedAt": "2026-09-29T09:40:09.579Z",
+      "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "state": "DRIVER_ASSIGNED",
+      "version": 3,
+      "agreedFareCurrency": "PKR",
+      "updatedAt": "2026-09-29T09:40:09.579Z"
+    },
+    "offers": [
+      {
+        "offerId": "1820535b-e702-4740-bca0-4f939730874d_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "1820535b-e702-4740-bca0-4f939730874d",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "amountMinor": 114000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "requestVersion": 1,
+        "expiresAt": "2026-09-29T09:42:01.242Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-09-29T09:39:01.242Z",
+        "withdrawnAt": null,
+        "selectedAt": "2026-09-29T09:40:09.579Z",
+        "status": "SELECTED"
+      }
+    ]
+  },
+  "backend_proof": {
+    "rideId": "1820535b-e702-4740-bca0-4f939730874d",
+    "state": "DRIVER_ASSIGNED",
+    "pricingSnapshotId": "ps_eb8944e5-eae4-4e36-9aa3-d83616d7ebf1",
+    "passengerOfferMinor": 114000,
+    "driverOfferMinor": 114000,
+    "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "requestVersion": 1
+  },
+  "verdict": "NOT GREEN"
+}

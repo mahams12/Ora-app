@@ -38,6 +38,7 @@ GoogleService-Info.plist
 .env
 .env.*
 !.env.example
+.staging_api_url
 *.pem
 *.p12
 *service-account*.json

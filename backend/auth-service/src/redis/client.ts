@@ -66,6 +66,11 @@ export async function createRedisGeoClientFromEnv(
     async get(key) {
       return client.get(key);
     },
+    async mget(keys) {
+      if (keys.length === 0) return [];
+      const values = await client.mget(...keys);
+      return values.map((v) => (v == null ? null : v));
+    },
     async set(key, value, ttlSeconds) {
       if (ttlSeconds != null) {
         await client.set(key, value, 'EX', ttlSeconds);

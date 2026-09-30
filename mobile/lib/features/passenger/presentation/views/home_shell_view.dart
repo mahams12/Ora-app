@@ -7,7 +7,6 @@ import '../../../../app/router/routes.dart';
 import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/widgets/widgets.dart';
-import '../../../../core/logging/app_logger.dart';
 import '../../../auth/presentation/view_models/session_user_profile.dart';
 import 'passenger_home_view.dart';
 import '../../../../features/ride/presentation/views/ride_history_view.dart';

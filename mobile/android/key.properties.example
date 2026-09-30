@@ -1,0 +1,6 @@
+# Copy to android/key.properties (gitignored). Never commit.
+# storeFile path is relative to android/ unless absolute.
+storePassword=REPLACE_ME
+keyPassword=REPLACE_ME
+keyAlias=upload
+storeFile=app/upload-keystore.jks

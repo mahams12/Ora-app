@@ -1,0 +1,135 @@
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=141ms (0ms mobile, 0ms wifi, 141ms not connected)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 0.1 MB/s (4978 bytes in 0.049s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.6 MB/s (12485 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (12485 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (12485 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 0.2 MB/s (4004 bytes in 0.021s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (4004 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (4004 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (4004 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.4 MB/s (4004 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.4 MB/s (4004 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (4004 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (4004 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (4004 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.2 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (4004 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.8 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.8 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (4004 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.5 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.6 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (4004 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (4004 bytes in 0.002s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=61ms (0ms mobile, 0ms wifi, 61ms not connected)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5283 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 3.5 MB/s (11597 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11597 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 0.1 MB/s (11597 bytes in 0.076s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (9941 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.4 MB/s (9941 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (10375 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (9943 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (7828 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6822 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 3.7 MB/s (7981 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 1.4 MB/s (7981 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (10410 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (4715 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.1 MB/s (3949 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/rs_ui.xml
+/sdcard/rs_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6087 bytes in 0.003s)
+{
+  "gates": {
+    "auth_driver": "GREEN",
+    "driver_ready": "PASS",
+    "auth_passenger": "GREEN",
+    "passenger_pricing": "FAIL"
+  },
+  "timings": {
+    "pricing_s": 2.55
+  },
+  "rideId": null,
+  "offerId": null,
+  "started": "2026-09-29T08:18:22.199494+00:00",
+  "passenger_device": "RF8R40ZQ1JH",
+  "driver_device": "emulator-5554",
+  "remote_api": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+  "error": "no server fare on review",
+  "finished": "2026-09-29T08:22:09.803607+00:00"
+}

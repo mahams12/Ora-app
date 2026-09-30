@@ -1,4 +1,4 @@
-import type { UserProfile } from './types';
+import type { UserProfile } from '../types';
 
 /**
  * Server-owned completeness rule for Phase 2A.

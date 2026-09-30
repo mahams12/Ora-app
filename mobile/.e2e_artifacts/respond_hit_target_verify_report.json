@@ -1,0 +1,28 @@
+{
+  "marker": "=== RESPOND_HIT_TARGET_VERIFY 2026-09-29 physical ===",
+  "device": "RF8R40ZQ1JH",
+  "apk": "/Users/jazimsaeed/Ora-app/mobile/build/app/outputs/flutter-apk/app-debug.apk",
+  "apk_built": "2026-09-29T10:58 local",
+  "install": "Success",
+  "adb_reverse": "tcp:8081 -> tcp:8080",
+  "ride_id_for_list": "b4354067-2aa5-46cb-8d6d-d598e412f234",
+  "respond_class": "android.widget.Button",
+  "respond_bounds": [
+    97,
+    1344,
+    983,
+    1470
+  ],
+  "respond_bounds_height": 126,
+  "old_bounds": [
+    53,
+    622,
+    1028,
+    1546
+  ],
+  "old_bounds_height": 924,
+  "clickable": true,
+  "enabled": true,
+  "one_tap_sheet": true,
+  "verdict": "PASS"
+}

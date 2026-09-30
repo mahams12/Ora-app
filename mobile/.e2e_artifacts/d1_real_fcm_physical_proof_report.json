@@ -1,0 +1,150 @@
+{
+  "gates": {
+    "samsung_adb": "PASS",
+    "driver_auth": "PASS",
+    "driver_open_tab": "FAIL",
+    "fcm_token_registration": "PASS",
+    "ride_creation": "PASS",
+    "dispatch_tick": "PASS",
+    "dispatch_sweep": "PASS",
+    "physical_notification": "PASS"
+  },
+  "startedAt": "2026-09-30T06:41:07.569043+00:00",
+  "driver_open_error": "driver open rides tab not reached",
+  "token_check": {
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "tokenDocCount": 1,
+    "docs": [
+      {
+        "tokenId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2_430d8246490d63f37b1ad06f344bf76ab048fe36",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "hasToken": true
+      }
+    ]
+  },
+  "staging_prep": {
+    "ok": true,
+    "rideId": "762867a3-e4ac-42e1-890a-284740b5b2ce",
+    "steps": {
+      "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+      "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+      "goOnline": {
+        "status": 200,
+        "data": {
+          "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+          "availabilityState": "online"
+        }
+      },
+      "locationUpdate1": {
+        "status": 200,
+        "data": {
+          "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+          "mode": "idle",
+          "rideId": null,
+          "locationStreamId": "d1-proof-1790750616135",
+          "locationSeq": 1,
+          "acceptedAt": "2026-09-30T06:43:37.132Z"
+        }
+      },
+      "pricingEstimate": {
+        "status": 200,
+        "data": {
+          "pricingSnapshotId": "ps_3e510b21-b391-464b-a10c-254c4588b582",
+          "recommendedFareMinor": 114000,
+          "offerBoundMinMinor": 79800,
+          "offerBoundMaxMinor": 205200,
+          "currency": "PKR",
+          "pricingRulesVersion": "2026-09-22:v5c-device",
+          "computedAt": "2026-09-30T06:43:39.114Z",
+          "expiresAt": "2026-09-30T06:53:39.114Z",
+          "distanceKm": 23.973,
+          "durationMin": 38.61666666666667,
+          "category": "easy"
+        }
+      },
+      "createRide": {
+        "status": 201,
+        "data": {
+          "rideId": "762867a3-e4ac-42e1-890a-284740b5b2ce",
+          "passengerId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+          "assignedDriverId": null,
+          "state": "SEARCHING",
+          "version": 1,
+          "requestVersion": 1,
+          "category": "easy",
+          "serviceType": "ride",
+          "city": "lahore",
+          "pickup": {
+            "lat": 31.4127578,
+            "lng": 74.1725224,
+            "address": "Liberty Market Lahore"
+          },
+          "destination": {
+            "lat": 31.51058,
+            "lng": 74.34445,
+            "address": "Gulberg Lahore"
+          },
+          "pricingSnapshotId": "ps_3e510b21-b391-464b-a10c-254c4588b582",
+          "recommendedFareMinor": 114000,
+          "passengerOfferMinor": 114000,
+          "agreedFareMinor": null,
+          "agreedOfferId": null,
+          "agreedFareCurrency": null,
+          "paymentMethod": "CASH",
+          "passengerCount": 1,
+          "expiresAt": "2026-09-30T06:48:40.438Z",
+          "assignedAt": null,
+          "arrivedAt": null,
+          "startedAt": null,
+          "completedAt": null,
+          "closedAt": null,
+          "cancelledBy": null,
+          "cancellationReason": null,
+          "createdAt": "2026-09-30T06:43:40.438Z",
+          "updatedAt": "2026-09-30T06:43:40.438Z"
+        }
+      },
+      "rideId": "762867a3-e4ac-42e1-890a-284740b5b2ce",
+      "dispatchTick": {
+        "status": 200,
+        "data": {
+          "outcome": "wave_completed",
+          "rideId": "762867a3-e4ac-42e1-890a-284740b5b2ce",
+          "waveNumber": 1,
+          "invitedCount": 1,
+          "driverIds": [
+            "SRjL7BJgCKTduhtpjtYMRZMq5fD2"
+          ]
+        }
+      },
+      "fcmSweep": {
+        "status": 200,
+        "data": {
+          "scanned": 3,
+          "processed": 2,
+          "delivered": 2,
+          "retryable": 0,
+          "deadLetter": 0,
+          "skipped": 1,
+          "failed": 0
+        }
+      },
+      "dispatchSweep": {
+        "status": 200,
+        "data": {
+          "scanned": 7,
+          "completed": 2,
+          "alreadyCompleted": 0,
+          "notDue": 0,
+          "skipped": 5,
+          "stopped": 0,
+          "exhausted": 0,
+          "failed": 0
+        }
+      }
+    }
+  },
+  "rideId": "762867a3-e4ac-42e1-890a-284740b5b2ce",
+  "notification_dump_snippet": ".ora.ora|removeAutomaticZenRules\n    09-28 16:40:10.460 config: com.ora.ora|removeAutomaticZenRules no changes\n    09-28 16:40:10.481 set_zen_mode: off,com.ora.ora|removeAutomaticZenRules\n    09-29 16:15:27.530 config: com.ora.ora|removeAutomaticZenRules no changes\n    09-29 16:15:27.558 set_zen_mode: off,com.ora.ora|removeAutomaticZenRules\n    09-29 16:15:52.265 config: com.ora.ora|removeAutomaticZenRules no changes\n    09-29 16:15:52.311 set_zen_mode: off,com.ora.ora|removeAutomaticZenRules\n      userId=0 value={com.skype.raider, com.google.android.ext.services, com.camerasideas.instashot, sinet.startup.inDriver, com.playspare.watersort3d, com.rikudogames.maze, com.phone.contact.call.phonecontact, com.giraffegames.carmechanic, com.easybrain.nonogram, com.samsung.android.smartmirroring, com.ptcl_app.main, pk.com.dominos, com.whatsapp, com.mcdonalds.mobileapp, com.global.foodpanda.android, com.techlogix.mobilinkcustomer, jp.co.canon.ic.cameraconnect, com.bykea.pk, com.fingersoft.hcr2, com.free.vpn.super.hotspot.open, com.phonegap.uolgpacalculator, com.microsoft.office.excel, com.jrzheng.supervpnfree, com.outfit7.mytalkingtomfree, pk.gov.nadra.pakid, com.amazingapps.hec_cgpa_caculator, com.base.bankalfalah, com.michael.business_tycoon_money_rush, com.kautharinformatics.balagha, com.pak.armyapp, com.amanotes.beathopper, com.tripledot.woodoku, com.st.safeapp, com.fakeconversations, com.matteljv.uno, com.instagram.android, com.zc.cc2016, com.sticksports.stickcricketlive, com.wetransfer.app.live, com.microsoft.office.outlook, com.daraz.android, com.unu.friends.card.games, com.rubygames.footballlife, com.yourcompany.business_whatsapp, com.google.android.apps.wellbeing, com.miniclip.basketballstars, com.lenovo.anyshare.gps, com.apple.movetoios, com.twitter.android, com.company.planet, com.frontrow.vlog, com.ora.ora, com.example.ai_based_content_recommendation_system, com.markaz.app, com.v4u.recovercontacts.restorecontacts.deletedcontacts, in.dreamgamestudios.games.sports.dreamcricket3d, com.google.android.gms, com.media.music.mp3.musicplayer, com.example.business_whatsapp, com.ibm.jazzcashmerchant, steptracker.healthandfitness.walkingtracker.pedometer, com.nautilus.realcricket, com.sec.android.app.launcher, com.madboxgames.drifter, com.sticksports.spl2, com.gameloft.android.ANMP.GloftGGHM, com.ubercab, com.sec.android.app.sbrowser, com.microsoft.office.officehubrow, com.sadapay.app, com.fast.free.unblock.secure.vpn, net.familo.android, com.ofss.digx.mobile.android.allied, com.wordpz.word.blocken, com.wondershare.filmorago, com.unicostudio.braintest2new, com.red.business, com.nextwave.wcc3, com.avanza.ambitwiz, com.bankislami.touchlessbiometric, com.facebook.orca, com.samsung.android.oneconnect, com.easyway.ticket.app, com.samsung.android.voc, com.sec.android.app.shealth, com.makabaka.hellrider3, com.roadmaster.roadmasterapp, com.adobe.reader, com.olx.pk, com.linkedin.android, com.yandex.yango, com.sec.android.emergencylauncher, com.google.android.projection.gearhead, com.sec.android.easyMover, com.platinumplayer.word.addict, video.downloader.videodownloader, com.superking.ludo.star, instadownloader.videoreeldownloader.hddownloader, pk.com.telenor.phoenix, anywheresoftware.b4a.SIAToolKit, video.downloader.hdvideodownloader.storysaver, com.king.candycrushsaga, com.mastercomlimited.cardriving_t, com.sec.android.app.launcher/com.android.launcher3.notification.NotificationListener, com.example.untitled, com.google.android.apps.youtube.music, com.cutestudio.pdf.camera.scanner, com.officetool.pdfreader2018.pdfviewer, controllers.marham.marhammed, com.namazandduas, project.bitlogix.nexuspro, com.gameberry.ludo.star2, com.fugo.wow, com.samsung.android.videolist, com.snapchat.android}\n      key='com.ora.ora',\n   [09-30 11:40:57.444] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : com.ora.ora\n   [09-30 11:43:48.715] showForNotificationScreenOn : return false by isAvailableEdgeLighting. | Package : com.ora.ora\n"
+}

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,13 +8,29 @@ import 'di/providers.dart';
 import 'router/app_router.dart';
 import 'theme/ora_theme.dart';
 
-class OraApp extends ConsumerWidget {
+class OraApp extends ConsumerStatefulWidget {
   const OraApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<OraApp> createState() => _OraAppState();
+}
+
+class _OraAppState extends ConsumerState<OraApp> {
+  var _dispatchFcmStarted = false;
+
+  @override
+  Widget build(BuildContext context) {
     final config = ref.watch(appConfigProvider);
     final router = ref.watch(appRouterProvider);
+
+    if (!_dispatchFcmStarted) {
+      _dispatchFcmStarted = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(
+          ref.read(dispatchFcmServiceProvider).init(router: router, ref: ref),
+        );
+      });
+    }
 
     return MaterialApp.router(
       title: 'ORA',

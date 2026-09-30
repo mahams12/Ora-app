@@ -49,6 +49,8 @@ import '../../features/ride/domain/ports/place_search_port.dart';
 import '../../features/ride/domain/ports/pricing_estimate_port.dart';
 import '../../features/ride/domain/repositories/ride_repository.dart';
 import '../../features/ride/domain/use_cases/ride_use_cases.dart';
+import '../../core/notifications/dispatch_fcm_service.dart';
+import '../../features/driver/data/driver_device_token_remote_data_source.dart';
 
 // ── Environment / Config ──────────────────────────────────────────────────────
 
@@ -97,6 +99,18 @@ final idempotencyNonceStoreProvider = Provider<IdempotencyNonceStore>((ref) {
 
 final rideRemoteDataSourceProvider = Provider<RideRemoteDataSource>(
   (ref) => RideRemoteDataSource(ref.watch(apiClientProvider)),
+);
+
+final driverDeviceTokenRemoteDataSourceProvider =
+    Provider<DriverDeviceTokenRemoteDataSource>(
+  (ref) => DriverDeviceTokenRemoteDataSource(ref.watch(apiClientProvider)),
+);
+
+final dispatchFcmServiceProvider = Provider<DispatchFcmService>(
+  (ref) => DispatchFcmService(
+    tokenApi: ref.watch(driverDeviceTokenRemoteDataSourceProvider),
+    apiClient: ref.watch(apiClientProvider),
+  ),
 );
 
 final rideRepositoryProvider = Provider<RideRepository>(
