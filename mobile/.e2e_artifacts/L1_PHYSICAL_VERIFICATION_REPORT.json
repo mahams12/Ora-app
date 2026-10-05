@@ -1,75 +1,144 @@
 {
-  "startedAt": "2026-10-05T08:54:43.144577+00:00",
-  "finishedAt": "2026-10-05T10:25:00+00:00",
+  "startedAt": "2026-10-05T11:46:54.620984+00:00",
   "device": "RF8R40ZQ1JH",
   "deviceModel": "SM-A325F",
   "androidVersion": "13",
   "package": "com.ora.ora",
-  "method": "l1_gap_closure_cumulative",
-  "loggerSink": "ConsoleAppLogger → dart:developer name=ora; debug assert print mirror for adb logcat (release keeps developer.log only)",
-  "verdict": "YELLOW",
-  "summary": {
-    "gapA": "PARTIAL — system dialog appears; Don't allow tap + permission remains revoked; assigned ride stays open/no crash/no publish; friendly denied status NOT captured (stuck on Getting your location… in surgical run)",
-    "gapG": "PARTIAL/STRONG — real UI cancel reached Ride cancelled on assigned-ride detail; watchStoppedOnCancel true; activeWatchBeforeCancel false in that run (watch already stopped from background). Home/open-rides no new GPS starts observed.",
-    "gapC": "GREEN — location_watch_started/stopped and location_fix_classified visible in adb logcat via debug print mirror; accuracyMeters logged; no lat/lng at info"
-  },
+  "rideId": "8974b962-e593-4133-9326-88e6e66c8090",
+  "method": "l1_ux_correction_physical",
+  "loggerSink": "ConsoleAppLogger \u2192 dart:developer name=ora; debug assert print mirror",
   "A_permissionDenied": {
     "dialogSeen": true,
     "dialogDenied": true,
-    "permissionGrantedAfterDeny": false,
     "assignedRideVisible": true,
-    "status": "Getting your location…",
-    "visibleUiStatusText": "Getting your location…",
-    "expectedFriendlyStatus": "Location is temporarily unavailable",
-    "friendlyStatusCaptured": false,
-    "endlessLoading": true,
+    "status": "Location permission is needed",
+    "visibleUiStatusText": "Location permission is needed",
+    "hasAllowLocationCta": true,
+    "seconds": 31.3,
+    "endlessLoading": false,
     "crash": false,
-    "hasMapPreview": false,
-    "hasRedis": false,
-    "noNetworkPublishDuringA": true,
-    "notes": "Harness improved (apostrophe normalize, exact Don't allow, largest-target taps, focus-based dismiss). Force-stopping permissioncontroller after deny can leave Flutter requestPermission hanging — avoided in later attempts; ADB disconnect interrupted final A-only retest."
+    "noNetworkPublish": true,
+    "technicalLeak": false
   },
-  "B_permissionGranted": {
-    "provenAcrossRuns": true,
-    "bestReadyAfterSeconds": 15.1,
-    "alternateReadyAfterSeconds": 17.0,
+  "B_permissionRecovery": {
+    "assignedRideVisible": true,
     "statusAfterWait": "Location is ready",
-    "assignedRideVisible": true
+    "readyAfterSeconds": 8.8,
+    "firstAcceptedElapsedMs": 1324,
+    "watchStarts": 1,
+    "fixClassifications": 2,
+    "firstWatchLine": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
+    "firstAcceptedLine": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}"
   },
-  "C_stationary": {
-    "seconds": 90.0,
-    "ACCEPTED_fixes_observed": 21,
-    "sampleAccuracyMeters": 15.63
+  "C_logcat": {
+    "watch_starts": 1,
+    "watch_stops": 0,
+    "fix_classifications": 3,
+    "classification_counts": {
+      "ACCEPTED": 3
+    },
+    "first_watch_line": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
+    "first_stop_line": null,
+    "first_fix_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+    "first_accepted_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+    "start_lines": [
+      "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}"
+    ],
+    "stop_lines": [],
+    "geolocator_starts": 1,
+    "geolocator_stops": 0
   },
   "D_uiInteraction": {
     "scrolled": true,
-    "statusStillVisible": true
+    "statusStillVisible": true,
+    "noTechnicalLeak": true
   },
-  "E_leaveReturn": {
-    "leaveStopsWatch": true,
-    "returnReadyProven": true,
-    "status": "Location is ready"
+  "E_leave": {
+    "leftAssignedRide": true,
+    "watchStopsAfterLeave": 0,
+    "watchStartsBeforeLeave": 1
+  },
+  "E_return": {
+    "assignedRideVisible": true,
+    "status": null,
+    "watchStartsAfterReturn": 1
   },
   "F_backgroundForeground": {
-    "watchStopsIncreasedOnBackground": true,
-    "returnReadyProven": true,
-    "status": "Location is ready"
+    "assignedRideVisible": true,
+    "status": null,
+    "watchStopsIncreasedOnBackground": false
   },
   "G_terminal": {
-    "uiTextHasCancelled": true,
+    "activeWatchBeforeCancel": true,
+    "acceptedFixesBeforeCancel": 68,
+    "uiTextHasCancelled": false,
     "onAssignedRideDetail": true,
-    "visibleTerminalText": "Ride cancelled",
-    "watchStoppedOnCancel": true,
-    "activeWatchBeforeCancel": false,
-    "homeNoGps": true,
-    "openRidesNoGps": true,
-    "notes": "False-positive filter-chip Cancelled detection fixed. Real cancel confirmed on detail with Ride cancelled."
+    "visibleTerminalText": null,
+    "watchStoppedOnCancel": false,
+    "metricsBefore": {
+      "watch_starts": 1,
+      "watch_stops": 0,
+      "fix_classifications": 69,
+      "classification_counts": {
+        "ACCEPTED": 68,
+        "POOR_ACCURACY": 1
+      },
+      "first_watch_line": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
+      "first_stop_line": null,
+      "first_fix_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+      "first_accepted_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+      "start_lines": [
+        "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}"
+      ],
+      "stop_lines": [],
+      "geolocator_starts": 1,
+      "geolocator_stops": 0
+    },
+    "metrics": {
+      "watch_starts": 1,
+      "watch_stops": 0,
+      "fix_classifications": 86,
+      "classification_counts": {
+        "ACCEPTED": 85,
+        "POOR_ACCURACY": 1
+      },
+      "first_watch_line": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
+      "first_stop_line": null,
+      "first_fix_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+      "first_accepted_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+      "start_lines": [
+        "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}"
+      ],
+      "stop_lines": [],
+      "geolocator_starts": 1,
+      "geolocator_stops": 0
+    },
+    "noBackgroundBetweenReadyAndCancel": true
   },
-  "structuredLogger": {
-    "observableInLogcat": true,
-    "sampleWatchStarted": "I/flutter: [INFO] location_watch_started {rideId: …}",
-    "sampleFixClassified": "I/flutter: [INFO] location_fix_classified {rideId: …, classification: ACCEPTED, accuracyMeters: …}",
-    "coordinatesAtInfo": false
+  "G_homeNoGps": {
+    "onDriverHome": true,
+    "locationStatusOnHome": null,
+    "watchStartsUnchangedFromTerminal": true,
+    "watchStarts": 1
+  },
+  "logcatMetrics": {
+    "watch_starts": 1,
+    "watch_stops": 0,
+    "fix_classifications": 88,
+    "classification_counts": {
+      "ACCEPTED": 87,
+      "POOR_ACCURACY": 1
+    },
+    "first_watch_line": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
+    "first_stop_line": null,
+    "first_fix_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+    "first_accepted_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+    "start_lines": [
+      "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}"
+    ],
+    "stop_lines": [],
+    "geolocator_starts": 1,
+    "geolocator_stops": 0
   },
   "networkProof": {
     "postLocationUpdateInLogcat": false
@@ -78,21 +147,56 @@
     "knownTestLatInLogcat": false,
     "latitudeKeyInOraLogs": false
   },
+  "structuredLoggerObservable": true,
+  "checks": {
+    "A_deniedFriendlyStatus": true,
+    "B_ready": true,
+    "D_noTechnicalLeak": true,
+    "E_returnReady": false,
+    "F_returnReady": false,
+    "G_activeThenCancel": false,
+    "G_homeNoRestart": true,
+    "noNetworkPublish": true,
+    "noLatLeak": true,
+    "structuredLogger": true
+  },
+  "failedChecks": [
+    "E_returnReady",
+    "F_returnReady",
+    "G_activeThenCancel"
+  ],
+  "verdict": "YELLOW",
+  "finishedAt": "2026-10-05T11:56:01.331381+00:00",
+  "summary": {
+    "A_denyUx": "GREEN \u2014 dialog denied; status Location permission is needed; Allow location CTA; no endless Getting your location\u2026",
+    "B_recovery": "GREEN \u2014 Location is ready in 8.8s after grant; firstAcceptedElapsedMs=1324",
+    "C_logger": "GREEN \u2014 structured location_* logs in logcat; no lat leak; no network publish",
+    "E_leaveReturn": "YELLOW \u2014 return ready not captured this run",
+    "F_bgFg": "YELLOW \u2014 return ready not captured this run",
+    "G_cancelWhileActive": "YELLOW \u2014 activeWatchBeforeCancel true (68 ACCEPTED) but cancel UI confirmation / watchStoppedOnCancel not captured"
+  },
   "regression": {
-    "l1LocationUnitTests": "PASS (35)",
-    "driverSlice": "PASS",
+    "l1LocationUnitTests": "PASS (43)",
+    "driverSlice": "PASS (89)",
     "passengerGpsTests": "PASS (ride_request_view_model + ride_request_ui)",
     "flutterAnalyze": "PASS (0 errors; 3 info deprecated_member_use + 1 warning strict_raw_type in unrelated tests)",
     "flutterBuildApkDebug": "PASS",
-    "fullFlutterTest": "488 passed, 2 failed (unrelated)",
+    "fullFlutterTest": "495 passed, 2 failed (unrelated)",
     "unrelatedFailures": [
-      "home_shell_driver_gate_test: Earn on ORA… — Firebase.initializeApp missing (FCM)",
+      "home_shell_driver_gate_test: Earn on ORA\u2026 \u2014 Firebase.initializeApp missing (FCM)",
       "mvvm_layer_test: HomeShellView logout does not force a route"
     ]
   },
   "failedChecksForGreen": [
-    "A_friendlyDeniedStatusText",
-    "G_activeWatchImmediatelyBeforeCancel"
+    "E_returnReady",
+    "F_returnReady",
+    "G_activeThenCancel"
   ],
-  "doNotStartL2": true
+  "doNotStartL2": true,
+  "uxFixes": [
+    "permission request timeout 15s + re-check after hang",
+    "acquisition watchdog 20s",
+    "holdRestart survives ride-state flicker and permission-sheet lifecycle",
+    "friendly denied copy + Allow location / Open settings CTAs"
+  ]
 }

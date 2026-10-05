@@ -66,17 +66,20 @@ class DriverLocationLifecycleController {
     required void Function(DriverLocationStatusKind kind) onStatus,
     DriverLocationClassifier classifier = const DriverLocationClassifier(),
     DateTime Function()? now,
+    Duration acquisitionTimeout = const Duration(seconds: 20),
   }) : _source = source,
        _logger = logger,
        _onStatus = onStatus,
        _classifier = classifier,
-       _now = now ?? DateTime.now;
+       _now = now ?? DateTime.now,
+       _acquisitionTimeout = acquisitionTimeout;
 
   final DriverLocationSource _source;
   final AppLogger _logger;
   final void Function(DriverLocationStatusKind kind) _onStatus;
   final DriverLocationClassifier _classifier;
   final DateTime Function() _now;
+  final Duration _acquisitionTimeout;
 
   DriverLocationSurface _surface = DriverLocationSurface.assignedRide;
   bool _offline = false;
@@ -91,6 +94,7 @@ class DriverLocationLifecycleController {
   DriverLocationFix? _lastAccepted;
   DriverLocationStatusKind _status = DriverLocationStatusKind.hidden;
   StreamSubscription<DriverLocationReading>? _subscription;
+  Timer? _acquisitionWatchdog;
   int _generation = 0;
   DateTime? _watchStartedAt;
   bool _loggedFirstCallback = false;
@@ -115,23 +119,34 @@ class DriverLocationLifecycleController {
   }
 
   void onRide({required String? rideId, required String? rideState}) {
-    final changed = _rideId != rideId || _rideState != rideState;
+    final rideChanged = _rideId != rideId;
     _rideId = rideId;
     _rideState = rideState;
-    if (changed) _holdRestart = false;
+    // Only a different ride clears the hold. Ride-state flicker during poll
+    // must not restart after a permanent permission denial.
+    if (rideChanged) _holdRestart = false;
     _reconcile();
   }
 
   void onBackground() {
     _foreground = false;
-    _holdRestart = false;
+    // Do not clear [_holdRestart]: system permission sheets flip lifecycle and
+    // must not restart acquisition after a deny.
     _stop('background');
   }
 
   void onForeground() {
     _foreground = true;
-    // Returning from system settings: allow one reconcile attempt.
-    _holdRestart = false;
+    if (_holdRestart) {
+      // Soft deny / unavailable: wait for the in-app recovery CTA.
+      // Permanent deny / services-off: allow one retry after Settings return.
+      if (_status == DriverLocationStatusKind.permissionBlocked ||
+          _status == DriverLocationStatusKind.servicesDisabled) {
+        _holdRestart = false;
+        _reconcile();
+      }
+      return;
+    }
     _reconcile();
   }
 
@@ -182,8 +197,12 @@ class DriverLocationLifecycleController {
   void _reconcile() {
     if (_disposed) return;
     if (!_wantsWatch) {
-      _holdRestart = false;
       _stop('inactive');
+      // Keep holdRestart while we remain on the same assigned ride so a
+      // transient null/non-watchable state cannot restart acquisition.
+      if (_rideId == null || _surface != DriverLocationSurface.assignedRide) {
+        _holdRestart = false;
+      }
       return;
     }
     if (_subscription != null || _holdRestart) return;
@@ -232,10 +251,32 @@ class DriverLocationLifecycleController {
     );
     _subscription = subscription;
     _emit(DriverLocationStatusKind.acquiring);
+    // Safety net: if the platform permission sheet hangs, never leave the
+    // driver on "Getting your location…" indefinitely.
+    _armAcquisitionWatchdog(generation, rideId);
+  }
+
+  void _armAcquisitionWatchdog(int generation, String? rideId) {
+    _acquisitionWatchdog?.cancel();
+    _acquisitionWatchdog = null;
+    if (_acquisitionTimeout <= Duration.zero) return;
+    _acquisitionWatchdog = Timer(_acquisitionTimeout, () {
+      if (_disposed || generation != _generation) return;
+      if (_status != DriverLocationStatusKind.acquiring) return;
+      _log('location_acquisition_failed', {
+        'rideId': rideId,
+        'failure': 'acquisitionTimeout',
+      });
+      _holdRestart = true;
+      _emit(DriverLocationStatusKind.unavailable);
+      _stop('acquisition_timeout');
+    });
   }
 
   void _stop(String reason) {
     _generation++;
+    _acquisitionWatchdog?.cancel();
+    _acquisitionWatchdog = null;
     _lastAccepted = null;
     _watchStartedAt = null;
     _loggedFirstCallback = false;
@@ -246,9 +287,9 @@ class DriverLocationLifecycleController {
       unawaited(subscription.cancel());
       _log('location_watch_stopped', {'rideId': _rideId, 'reason': reason});
     }
-    // Keep visible recovery statuses if the ride still wants a watch and we
-    // are holding for user action; otherwise clear.
-    if (!_wantsWatch || !_holdRestart) {
+    // Preserve recovery statuses (permission / services) across transient
+    // inactive windows so permanent deny cannot tight-loop.
+    if (!_holdRestart) {
       _emit(DriverLocationStatusKind.hidden);
     }
   }

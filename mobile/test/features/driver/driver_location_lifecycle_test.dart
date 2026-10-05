@@ -22,6 +22,9 @@ void main() {
       logger: logger,
       now: () => now,
       onStatus: (_) {},
+      // Existing tests drive terminal statuses explicitly; keep the watchdog off
+      // so delayed emits cannot race a 20s timer.
+      acquisitionTimeout: Duration.zero,
     );
   });
 
@@ -245,6 +248,27 @@ void main() {
     );
   });
 
+  test('acquisition timeout leaves acquiring for a terminal status', () async {
+    controller.dispose();
+    controller = DriverLocationLifecycleController(
+      source: source,
+      logger: logger,
+      now: () => now,
+      onStatus: (_) {},
+      acquisitionTimeout: const Duration(milliseconds: 40),
+    );
+    controller.onRide(rideId: 'ride-1', rideState: 'DRIVER_ASSIGNED');
+    expect(controller.status, DriverLocationStatusKind.acquiring);
+    await Future<void>.delayed(const Duration(milliseconds: 80));
+    expect(controller.status, isNot(DriverLocationStatusKind.acquiring));
+    expect(controller.status, DriverLocationStatusKind.unavailable);
+    expect(controller.isWatching, isFalse);
+    expect(
+      logger.records.any((r) => r.message == 'location_acquisition_failed'),
+      isTrue,
+    );
+  });
+
   test('permission denial does not auto-restart the watch', () {
     controller.onRide(rideId: 'ride-1', rideState: 'DRIVER_ASSIGNED');
     expect(source.watchCount, 1);
@@ -254,6 +278,18 @@ void main() {
       ),
     );
     source.closeActive();
+    expect(source.watchCount, 1);
+    expect(controller.status, DriverLocationStatusKind.permissionNeeded);
+
+    // Same ride, state flicker must not restart.
+    controller.onRide(rideId: 'ride-1', rideState: null);
+    controller.onRide(rideId: 'ride-1', rideState: 'DRIVER_ASSIGNED');
+    expect(source.watchCount, 1);
+    expect(controller.status, DriverLocationStatusKind.permissionNeeded);
+
+    // System permission-sheet lifecycle must not restart after soft deny.
+    controller.onBackground();
+    controller.onForeground();
     expect(source.watchCount, 1);
     expect(controller.status, DriverLocationStatusKind.permissionNeeded);
 

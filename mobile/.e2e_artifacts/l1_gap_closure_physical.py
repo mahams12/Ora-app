@@ -42,13 +42,45 @@ def fg() -> str:
 
 
 def dump(tag: str) -> str:
+    """Pull a fresh UIAutomator hierarchy; avoid stale /sdcard dumps."""
     path = ART / f"l1_{tag}.xml"
-    for _ in range(10):
+    remote = "/sdcard/l1_ui.xml"
+    for attempt in range(10):
         try:
             path.unlink(missing_ok=True)
-            sh("uiautomator", "dump", "/sdcard/l1_ui.xml")
+            # Remove stale remote dump so a failed dump cannot look "successful".
+            subprocess.call(
+                ["adb", "-s", DEV, "shell", "rm", "-f", remote],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            # Prefer compressed dump — more reliable when the UI is busy.
+            dumped = False
+            for args in (
+                ["uiautomator", "dump", "--compressed", remote],
+                ["uiautomator", "dump", remote],
+            ):
+                try:
+                    sh(*args)
+                    dumped = True
+                    break
+                except subprocess.CalledProcessError:
+                    continue
+            if not dumped:
+                # Last resort: stream to stdout (works even when file dump stalls).
+                raw = subprocess.check_output(
+                    ["adb", "-s", DEV, "exec-out", "uiautomator", "dump", "/dev/tty"],
+                    stderr=subprocess.DEVNULL,
+                    text=True,
+                    timeout=20,
+                )
+                if "hierarchy" in raw and len(raw) > 400:
+                    path.write_text(raw)
+                    return raw
+                time.sleep(1)
+                continue
             subprocess.check_call(
-                ["adb", "-s", DEV, "pull", "/sdcard/l1_ui.xml", str(path)],
+                ["adb", "-s", DEV, "pull", remote, str(path)],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
@@ -178,13 +210,15 @@ def ensure() -> str:
 
 
 def loc_status(t: str) -> str | None:
-    if "Assigned ride" not in t and "Mark en route" not in t and "CANCELLED" not in t:
+    if "Assigned ride" not in t and "Mark en route" not in t and "CANCELLED" not in t and "Ride cancelled" not in t:
         return None
     for s in (
         "Getting your location…",
         "Getting your location",
         "Location is ready",
         "Location accuracy is low",
+        "Location permission is needed",
+        "Location is turned off",
         "Turn on location services",
         "Location is temporarily unavailable",
     ):
@@ -233,23 +267,25 @@ def deny_permission() -> bool:
     """Deny the system location dialog once; trust focus change over stale dumps."""
     for attempt in range(8):
         pkg = fg()
-        t = dump(f"deny_{attempt}")
+        # Prefer an immediate coord tap while the sheet owns focus — UIAutomator
+        # dump often hangs ("could not get idle state") on Samsung permission UI.
+        if "permissioncontroller" in pkg:
+            sh("input", "tap", "540", "2121")
+            print("DENY_TAP coord 540,2121 (fg=permissioncontroller)")
+            for _ in range(12):
+                time.sleep(0.35)
+                if "permissioncontroller" not in fg():
+                    print("DENY_OK fg=", fg())
+                    return True
+        try:
+            t = dump(f"deny_{attempt}")
+        except Exception:
+            t = ""
         dialog_visible = "permissioncontroller" in pkg or "While using the app" in t
         if not dialog_visible and "Don't allow" not in _norm(t) and "Dont allow" not in _norm(t):
             return True
 
         deny_node = None
-        for n in nodes(t):
-            # Prefer the real permission-controller deny button (incl. don't-ask-again).
-            rid = ""
-            # nodes() currently lacks resource-id — match by exact label.
-            labels = _labels(n) if "_labels" in globals() else []
-            text_n = _norm(n["text"])
-            if text_n in ("Don't allow", "Dont allow", "Deny"):
-                deny_node = n
-                # Prefer larger / lower on screen (actual button).
-                break
-        # Re-scan for lowest Don't allow button (Samsung places it at bottom).
         cands = []
         for n in nodes(t):
             text_n = _norm(n["text"])
@@ -274,17 +310,14 @@ def deny_permission() -> bool:
                 deny_node["bounds"],
             )
         else:
-            # SM-A325F known Don't allow band.
             sh("input", "tap", "540", "2121")
             print("DENY_TAP coord 540,2121")
 
-        # Wait for permissioncontroller to leave focus (dump text can lag/stale).
         for _ in range(10):
             time.sleep(0.4)
             if "permissioncontroller" not in fg():
                 print("DENY_OK fg=", fg())
                 return True
-        # One more coord attempt if still up
         try:
             sh("input", "tap", "540", "2121")
         except subprocess.CalledProcessError:
@@ -807,12 +840,15 @@ def main() -> None:
     checks = {
         "A_deniedStatusCaptured": report["A_permissionDenied"].get("status")
         in (
+            "Location permission is needed",
             "Location is temporarily unavailable",
+            "Location is turned off",
             "Turn on location services",
             "Location accuracy is low",
         )
         and report["A_permissionDenied"].get("dialogDenied")
-        and report["A_permissionDenied"].get("assignedRideVisible"),
+        and report["A_permissionDenied"].get("assignedRideVisible")
+        and not report["A_permissionDenied"].get("endlessLoading"),
         "B_ready": report["B_permissionGranted"].get("statusAfterWait")
         == "Location is ready",
         "C_stationary": report.get("C_stationarySeconds", 0) >= 90,

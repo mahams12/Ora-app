@@ -15,6 +15,9 @@ class DriverLocationSession
   @override
   DriverLocationStatusKind build(String arg) {
     _alive = true;
+    // Survive brief listener gaps when only the status line rebuilds after a
+    // deny; close when the provider is truly disposed with the screen.
+    final keepAliveLink = ref.keepAlive();
     _controller = DriverLocationLifecycleController(
       source: ref.read(driverLocationSourceProvider),
       logger: ref.read(appLoggerProvider),
@@ -26,6 +29,7 @@ class DriverLocationSession
 
     ref.onDispose(() {
       _alive = false;
+      keepAliveLink.close();
       _controller.dispose();
     });
 

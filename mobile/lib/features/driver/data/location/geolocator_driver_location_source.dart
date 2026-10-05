@@ -110,6 +110,11 @@ class GeolocatorDriverLocationSource extends DriverLocationSource {
     }
   }
 
+  /// Samsung/Android can leave [Geolocator.requestPermission] hanging after the
+  /// user denies (or when a zero-height GrantPermissionsActivity is shown for
+  /// USER_FIXED). Bound the wait so L1 never sticks on "Getting your location…".
+  static const Duration _permissionRequestTimeout = Duration(seconds: 15);
+
   Future<DriverLocationAcquisitionFailure?> _acquisitionFailure() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -119,7 +124,14 @@ class GeolocatorDriverLocationSource extends DriverLocationSource {
     var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       // Single system prompt per watch start — never loop automatically.
-      permission = await Geolocator.requestPermission();
+      try {
+        permission = await Geolocator.requestPermission().timeout(
+          _permissionRequestTimeout,
+        );
+      } on TimeoutException {
+        // Re-read after a hung system sheet; prefer permanent-deny when set.
+        permission = await Geolocator.checkPermission();
+      }
     }
     if (permission == LocationPermission.denied) {
       return DriverLocationAcquisitionFailure.permissionDenied;
