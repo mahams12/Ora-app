@@ -64,17 +64,33 @@ android {
 
     buildTypes {
         release {
-            if (!keystorePropertiesFile.exists()) {
-                throw GradleException(
-                    "Release build requires android/key.properties with a production keystore. " +
-                        "Copy key.properties.example and provision an authorized upload keystore. " +
-                        "Debug signing is not permitted for release artifacts.",
-                )
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
             }
-            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+}
+
+// Fail closed for release artifacts only — not during debug configuration.
+afterEvaluate {
+    val releaseKeystoreMessage =
+        "Release build requires android/key.properties with a production keystore. " +
+            "Copy key.properties.example and provision an authorized upload keystore. " +
+            "Debug signing is not permitted for release artifacts."
+    tasks.matching { task ->
+        val name = task.name
+        name.endsWith("Release") &&
+            (name.startsWith("assemble") ||
+                name.startsWith("bundle") ||
+                name.startsWith("install"))
+    }.configureEach {
+        doFirst {
+            if (!keystorePropertiesFile.exists()) {
+                throw GradleException(releaseKeystoreMessage)
+            }
         }
     }
 }

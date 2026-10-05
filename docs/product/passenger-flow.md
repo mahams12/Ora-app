@@ -140,3 +140,27 @@ Rs 990   — Premium (luxury)
 ```
 
 These numbers are **recommended fares**. The trip price is the later **agreedFare** from the selected offer.
+
+## Passenger fare editing (REQUIRED — not yet implemented)
+
+**Status:** Roadmap only. Do **not** implement in the L1 location foundation.
+
+Passengers must be able to edit their offer around the recommended fare:
+
+```
+Recommended fare: Rs 310
+
+Your offer:
+Rs 350
+
+[ Edit fare ]
+
+Fare limits:
+Rs 220 – Rs 480
+```
+
+Rules:
+
+- Server enforces min/max bounds from the pricing snapshot.
+- The client must **never** be trusted as the sole enforcer of fare limits.
+- Implement as a separate passenger fare-editing slice after location foundation is closed.

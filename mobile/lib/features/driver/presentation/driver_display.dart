@@ -20,32 +20,22 @@ String driverJobTitle(String state) {
 String driverJobMessage(String state) {
   return switch (state.toUpperCase()) {
     'DRIVER_ASSIGNED' =>
-      'You are assigned on Ora\'s servers. Mark en route when you leave. '
-          'Live maps and ETA are not in this build.',
+      'You are assigned to this trip. Mark en route when you leave for pickup.',
     'DRIVER_EN_ROUTE' =>
-      'Server shows you en route. Mark arrived when you reach pickup — Ora '
-          'does not invent GPS or ETA here.',
+      'You are heading to the passenger. Mark arrived when you reach pickup.',
     'DRIVER_ARRIVED' =>
-      'Server recorded your arrival. Start the ride when the passenger is '
-          'onboard. Wait clocks use real arrivedAt when present.',
+      'You are at pickup. Start the ride when the passenger is onboard.',
     'RIDE_STARTED' =>
-      'Trip is in progress on the server. Complete the ride when you finish. '
-          'Route tracking is not in this build.',
+      'Trip in progress. Complete the ride when you arrive at the destination.',
     'RIDE_COMPLETED' =>
-      'Trip completed on the server. Closing the ride is the next step. '
-          'You can rate after completion or close.',
-    'RIDE_CLOSED' =>
-      'This ride aggregate is closed. You can submit a stars-only rating '
-          'from the rate screen.',
-    'CANCELLED' => 'This ride was cancelled on Ora\'s servers.',
-    'EXPIRED' => 'This request expired on the server.',
-    'NO_SHOW' =>
-      'The server recorded a no-show. No fees or penalties are invented here.',
+      'Trip finished. Close the ride when you are ready, then you can rate it.',
+    'RIDE_CLOSED' => 'This ride is closed. You can leave a rating if you like.',
+    'CANCELLED' => 'This ride was cancelled.',
+    'EXPIRED' => 'This request expired before it was assigned.',
+    'NO_SHOW' => 'A no-show was recorded for this ride.',
     'SEARCHING' || 'OFFERS_AVAILABLE' =>
-      'This ride is still in the offers marketplace — not an assigned job. '
-          'Use Direct offer only with a known rideId.',
-    _ =>
-      'Ora received an unrecognized ride state. Showing server data safely.',
+      'This request is still waiting for a driver — it is not your assigned job.',
+    _ => 'This ride status could not be shown clearly. Pull to refresh.',
   };
 }
 

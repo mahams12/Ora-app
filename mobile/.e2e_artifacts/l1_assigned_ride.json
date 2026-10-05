@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "rideId": "74f968bf-f0a6-4bb1-89db-0a93f46bb937",
+  "state": "DRIVER_ASSIGNED",
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "74f968bf-f0a6-4bb1-89db-0a93f46bb937",
+    "createOffer": {
+      "status": 201,
+      "body": {
+        "offerId": "74f968bf-f0a6-4bb1-89db-0a93f46bb937_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "74f968bf-f0a6-4bb1-89db-0a93f46bb937",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "amountMinor": 114000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "status": "PENDING",
+        "requestVersion": 1,
+        "expiresAt": "2026-10-05T10:22:18.748Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-10-05T10:19:18.748Z",
+        "selectedAt": null,
+        "withdrawnAt": null,
+        "rideState": "OFFERS_AVAILABLE",
+        "rideVersion": 2
+      }
+    },
+    "selectOffer": {
+      "status": 200,
+      "body": {
+        "rideId": "74f968bf-f0a6-4bb1-89db-0a93f46bb937",
+        "state": "DRIVER_ASSIGNED",
+        "version": 3,
+        "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "agreedFareMinor": 114000,
+        "agreedOfferId": "74f968bf-f0a6-4bb1-89db-0a93f46bb937_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "currency": "PKR"
+      }
+    }
+  }
+}

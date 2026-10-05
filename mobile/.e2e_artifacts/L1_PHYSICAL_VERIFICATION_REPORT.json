@@ -1,0 +1,98 @@
+{
+  "startedAt": "2026-10-05T08:54:43.144577+00:00",
+  "finishedAt": "2026-10-05T10:25:00+00:00",
+  "device": "RF8R40ZQ1JH",
+  "deviceModel": "SM-A325F",
+  "androidVersion": "13",
+  "package": "com.ora.ora",
+  "method": "l1_gap_closure_cumulative",
+  "loggerSink": "ConsoleAppLogger → dart:developer name=ora; debug assert print mirror for adb logcat (release keeps developer.log only)",
+  "verdict": "YELLOW",
+  "summary": {
+    "gapA": "PARTIAL — system dialog appears; Don't allow tap + permission remains revoked; assigned ride stays open/no crash/no publish; friendly denied status NOT captured (stuck on Getting your location… in surgical run)",
+    "gapG": "PARTIAL/STRONG — real UI cancel reached Ride cancelled on assigned-ride detail; watchStoppedOnCancel true; activeWatchBeforeCancel false in that run (watch already stopped from background). Home/open-rides no new GPS starts observed.",
+    "gapC": "GREEN — location_watch_started/stopped and location_fix_classified visible in adb logcat via debug print mirror; accuracyMeters logged; no lat/lng at info"
+  },
+  "A_permissionDenied": {
+    "dialogSeen": true,
+    "dialogDenied": true,
+    "permissionGrantedAfterDeny": false,
+    "assignedRideVisible": true,
+    "status": "Getting your location…",
+    "visibleUiStatusText": "Getting your location…",
+    "expectedFriendlyStatus": "Location is temporarily unavailable",
+    "friendlyStatusCaptured": false,
+    "endlessLoading": true,
+    "crash": false,
+    "hasMapPreview": false,
+    "hasRedis": false,
+    "noNetworkPublishDuringA": true,
+    "notes": "Harness improved (apostrophe normalize, exact Don't allow, largest-target taps, focus-based dismiss). Force-stopping permissioncontroller after deny can leave Flutter requestPermission hanging — avoided in later attempts; ADB disconnect interrupted final A-only retest."
+  },
+  "B_permissionGranted": {
+    "provenAcrossRuns": true,
+    "bestReadyAfterSeconds": 15.1,
+    "alternateReadyAfterSeconds": 17.0,
+    "statusAfterWait": "Location is ready",
+    "assignedRideVisible": true
+  },
+  "C_stationary": {
+    "seconds": 90.0,
+    "ACCEPTED_fixes_observed": 21,
+    "sampleAccuracyMeters": 15.63
+  },
+  "D_uiInteraction": {
+    "scrolled": true,
+    "statusStillVisible": true
+  },
+  "E_leaveReturn": {
+    "leaveStopsWatch": true,
+    "returnReadyProven": true,
+    "status": "Location is ready"
+  },
+  "F_backgroundForeground": {
+    "watchStopsIncreasedOnBackground": true,
+    "returnReadyProven": true,
+    "status": "Location is ready"
+  },
+  "G_terminal": {
+    "uiTextHasCancelled": true,
+    "onAssignedRideDetail": true,
+    "visibleTerminalText": "Ride cancelled",
+    "watchStoppedOnCancel": true,
+    "activeWatchBeforeCancel": false,
+    "homeNoGps": true,
+    "openRidesNoGps": true,
+    "notes": "False-positive filter-chip Cancelled detection fixed. Real cancel confirmed on detail with Ride cancelled."
+  },
+  "structuredLogger": {
+    "observableInLogcat": true,
+    "sampleWatchStarted": "I/flutter: [INFO] location_watch_started {rideId: …}",
+    "sampleFixClassified": "I/flutter: [INFO] location_fix_classified {rideId: …, classification: ACCEPTED, accuracyMeters: …}",
+    "coordinatesAtInfo": false
+  },
+  "networkProof": {
+    "postLocationUpdateInLogcat": false
+  },
+  "privacyProof": {
+    "knownTestLatInLogcat": false,
+    "latitudeKeyInOraLogs": false
+  },
+  "regression": {
+    "l1LocationUnitTests": "PASS (35)",
+    "driverSlice": "PASS",
+    "passengerGpsTests": "PASS (ride_request_view_model + ride_request_ui)",
+    "flutterAnalyze": "PASS (0 errors; 3 info deprecated_member_use + 1 warning strict_raw_type in unrelated tests)",
+    "flutterBuildApkDebug": "PASS",
+    "fullFlutterTest": "488 passed, 2 failed (unrelated)",
+    "unrelatedFailures": [
+      "home_shell_driver_gate_test: Earn on ORA… — Firebase.initializeApp missing (FCM)",
+      "mvvm_layer_test: HomeShellView logout does not force a route"
+    ]
+  },
+  "failedChecksForGreen": [
+    "A_friendlyDeniedStatusText",
+    "G_activeWatchImmediatelyBeforeCancel"
+  ],
+  "doNotStartL2": true
+}

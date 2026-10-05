@@ -1,0 +1,1250 @@
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=55ms (0ms mobile, 0ms wifi, 55ms not connected)
+LOGIN
+=== boot fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+=== home0 fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+TAP exact Menu  Menu
+=== drawer0 fg= com.ora.ora ===
+- O
+- ORA passenger
+- View profile
+- Home
+- My rides
+- Saved places
+- Wallet
+- Refer & earn | Get Rs 200 per friend
+- Safety centre
+- Switch to driver mode | Earn with the same account
+- Settings
+- Help centre
+- Log out
+TAP  Switch to driver mode  Switch to driver mode|Earn with the same account
+=== driver0 fg= com.ora.ora ===
+- Menu
+- Driver
+- HE
+- Today's earnings | — | Live payouts connect in a later slice · not invented
+- Map zones · coming later
+- Available for trips | Go online connects in a later slice
+- Open ride requests | Server open-ride list for approved drivers
+- Quick actions
+- Earnings
+- My trips
+- Payouts
+- Vehicle
+- Bonuses
+- Hot zones
+TEST A deny
+TAP exact My trips  My trips
+=== trips fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+TAP  Assigned — head to pickup  Assigned — head to pickup|DRIVER_ASSIGNED|Liberty Market Lahore → Gulberg Lahor
+=== ride_perm_0 fg= com.google.android.permissioncontroller ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+=== a_dlg_0 fg= com.google.android.permissioncontroller ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= 
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= com.ora.ora
+=== a_status_1 fg= com.ora.ora ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= com.ora.ora
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= 
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= com.google.android.permissioncontroller
+=== a_status_5 fg= com.google.android.permissioncontroller ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+=== a_status_6 fg= com.google.android.permissioncontroller ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= com.google.android.permissioncontroller
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= 
+=== a_status_9 fg= com.google.android.permissioncontroller ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= com.google.android.permissioncontroller
+=== a_status_11 fg= com.ora.ora ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= com.ora.ora
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= com.ora.ora
+=== a_status_14 fg= com.google.android.permissioncontroller ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= com.google.android.permissioncontroller
+=== a_status_16 fg=  ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+=== a_status_17 fg= com.google.android.permissioncontroller ===
+- Allow ORA to access this device’s location?
+- Precise
+- Approximate
+- While using the app
+- Only this time
+- Don't allow
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= com.google.android.permissioncontroller
+DENY_TAP Don't allow (64, 2074, 1016, 2169)
+DENY_OK fg= 
+A {'dialogSeen': True, 'dialogDenied': True, 'assignedRideVisible': False, 'status': None, 'visibleUiStatusText': None, 'seconds': 292.2, 'hasMapPreview': False, 'hasRedis': False, 'endlessLoading': False, 'crash': False, 'foregroundPkg': '', 'noNetworkPublishDuringA': True}
+TEST B grant
+=== b_wait0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned on Ora's servers. Mark en route when you leave. Live maps and ETA are not in this build.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Checking for server updates…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+status Location is ready
+B {'assignedRideVisible': True, 'statusAfterWait': 'Location is ready', 'readyAfterSeconds': 15.1, 'foregroundPkg': 'com.ora.ora'} {'watch_starts': 0, 'watch_stops': 0, 'fix_classifications': 3, 'classification_counts': {'ACCEPTED': 3}, 'first_watch_line': None, 'first_stop_line': None, 'first_fix_line': '10-05 14:59:43.825 I/flutter (22935): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 20.0}', 'first_accepted_line': '10-05 14:59:43.825 I/flutter (22935): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 20.0}', 'start_lines': [], 'stop_lines': [], 'geolocator_starts': 1, 'geolocator_stops': 0}
+TEST C stationary 90s
+TEST D scroll
+=== d_scroll fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned on Ora's servers. Mark en route when you leave. Live maps and ETA are not in this build.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Checking for server updates…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+TEST E leave/return
+=== e_left fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret0 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret2 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret3 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret4 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret5 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret6 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret7 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret8 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret9 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret10 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret11 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret12 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret13 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret14 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret15 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret16 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret17 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret18 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_ret19 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+E {'leftAssignedRide': True, 'onMyTripsOrHome': True, 'watchStopsAfterLeave': 1, 'watchStartsBeforeLeave': 0, 'geolocatorStops': 1} {'assignedRideVisible': False, 'status': None, 'watchStartsAfterReturn': 0}
+TEST F bg/fg
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=70ms (0ms mobile, 0ms wifi, 70ms not connected)
+=== f_fg fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait0 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait2 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait3 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait4 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait5 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait6 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait7 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait8 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait9 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait10 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait11 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait12 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait13 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait14 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait15 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait16 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait17 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait18 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_wait19 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+F {'assignedRideVisible': False, 'status': None, 'watchStopsIncreasedOnBackground': False, 'metrics': {'watch_starts': 0, 'watch_stops': 1, 'fix_classifications': 22, 'classification_counts': {'ACCEPTED': 22}, 'first_watch_line': None, 'first_stop_line': '10-05 15:01:34.421 I/flutter (22935): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}', 'first_fix_line': '10-05 14:59:43.825 I/flutter (22935): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 20.0}', 'first_accepted_line': '10-05 14:59:43.825 I/flutter (22935): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 20.0}', 'start_lines': [], 'stop_lines': ['10-05 15:01:34.421 I/flutter (22935): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 1}}
+TEST G cancel
+=== g_ready0 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== g_ready1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== g_ready2 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== g_ready3 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== g_ready4 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== g_ready5 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== g_ready6 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== g_ready7 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== g_ready8 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+Traceback (most recent call last):
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l1_gap_ag_focused.py", line 436, in <module>
+    main()
+    ~~~~^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l1_gap_ag_focused.py", line 310, in main
+    t = H.show(f"g_ready{i}")
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l1_gap_closure_physical.py", line 125, in show
+    print("===", tag, "fg=", fg(), "===")
+                             ~~^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l1_gap_closure_physical.py", line 31, in fg
+    m = re.search(r"mCurrentFocus=Window\{[^ ]+ u0 ([^/}]+)", sh("dumpsys", "window"))
+                                                              ~~^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l1_gap_closure_physical.py", line 21, in sh
+    return subprocess.check_output(
+           ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["adb", "-s", DEV, "shell", *a], stderr=subprocess.STDOUT
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ).decode("utf-8", "replace")
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['adb', '-s', 'RF8R40ZQ1JH', 'shell', 'dumpsys', 'window']' returned non-zero exit status 1.

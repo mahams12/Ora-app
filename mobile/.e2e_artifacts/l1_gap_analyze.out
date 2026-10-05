@@ -1,0 +1,5 @@
+Analyzing 6 items...                                            
+
+   info • Don't invoke 'print' in production code • lib/core/logging/app_logger.dart:122:7 • avoid_print
+
+1 issue found. (ran in 2.7s)

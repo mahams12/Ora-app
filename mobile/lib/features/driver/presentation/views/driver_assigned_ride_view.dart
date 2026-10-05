@@ -12,9 +12,13 @@ import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../ride/presentation/active_ride/active_ride_display.dart';
 import '../driver_display.dart';
+import '../location/driver_location_session.dart';
 import '../view_models/driver_assigned_ride_view_model.dart';
+import '../widgets/driver_location_status_line.dart';
 
-/// Driver assigned-job detail — progression + cancel/close, no maps/GPS.
+/// Driver assigned-job detail — progression + cancel/close.
+///
+/// Local GPS status only. No map and no location publishing.
 class DriverAssignedRideView extends ConsumerStatefulWidget {
   const DriverAssignedRideView({required this.rideId, super.key});
 
@@ -45,9 +49,16 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
         ref.read(driverAssignedRideViewModelProvider(widget.rideId).notifier);
     if (state == AppLifecycleState.resumed) {
       unawaited(vm.resumePolling());
-      return;
+    } else {
+      vm.pausePolling();
     }
-    vm.pausePolling();
+    _notifyLocationLifecycle(state);
+  }
+
+  void _notifyLocationLifecycle(AppLifecycleState state) {
+    final provider = driverLocationSessionProvider(widget.rideId);
+    if (!ref.exists(provider)) return;
+    ref.read(provider.notifier).onAppLifecycle(state);
   }
 
   Future<void> _confirmCancel(DriverAssignedRideViewModel vm) async {
@@ -61,8 +72,7 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
             style: OraTypography.title(OraColors.textPrimary),
           ),
           content: Text(
-            'This asks Ora\'s servers to cancel the ride. The state will update '
-            'only after the server confirms.',
+            'This will cancel the ride for you and the passenger.',
             style: OraTypography.body(OraColors.textSecondary),
           ),
           actions: [
@@ -275,6 +285,7 @@ class _JobBody extends ConsumerWidget {
                     driverJobMessage(status),
                     style: OraTypography.body(OraColors.textSecondary),
                   ),
+                  DriverLocationStatusLine(rideId: rideId),
                 ],
               ),
             ),
@@ -333,7 +344,7 @@ class _JobBody extends ConsumerWidget {
             const SizedBox(height: OraSpacing.lg),
             if (isPolling)
               Text(
-                'Checking for server updates…',
+                'Updating ride…',
                 textAlign: TextAlign.center,
                 style: OraTypography.caption(OraColors.textMuted),
               ),
@@ -363,7 +374,7 @@ class _JobBody extends ConsumerWidget {
               ),
               const SizedBox(height: OraSpacing.xs),
               Text(
-                'After the ride is closed on the server, you can rate it.',
+                'After you close this ride, you can leave a rating.',
                 textAlign: TextAlign.center,
                 style: OraTypography.caption(OraColors.textMuted),
               ),

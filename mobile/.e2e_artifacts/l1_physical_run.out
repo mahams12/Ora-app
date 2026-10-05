@@ -1,0 +1,177 @@
+[main] login_driver
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=45ms (0ms mobile, 0ms wifi,   bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=82ms (0ms mobile, 0ms wifi, 82ms not connected)
+{
+  "startedAt": "2026-10-05T08:11:54.088435+00:00",
+  "device": "RF8R40ZQ1JH",
+  "deviceModel": "SM-A325F",
+  "androidVersion": "13",
+  "package": "com.ora.ora",
+  "rideId": "017a7e72-531c-4019-82d0-52a9bf9f3321",
+  "apkPath": "/Users/jazimsaeed/Ora-app/mobile/build/app/outputs/flutter-apk/app-debug.apk",
+  "A_permissionDenied": {
+    "assignedRideVisible": false,
+    "status": null,
+    "seconds": 110.9,
+    "hasMapPreview": false,
+    "hasRedis": false,
+    "crash": false
+  },
+  "B_permissionGranted": {
+    "assignedRideVisible": false,
+    "initialStatus": null,
+    "openedAtEpoch": 179118[main] A {'assignedRideVisible': False, 'status': None, 'seconds': 135.1, 'hasMapPreview': True, 'hasRedis': False, 'crash': False, 'foregroundPkg': 'com.ora.ora'}
+[main] TEST B permission granted
+[open_assigned_ride] FAIL
+[main] B initial {'assignedRideVisible': False, 'initialStatus': None, 'openedAtEpoch': 1791188732.458734, 'foregroundPkg': 'com.ora.ora'}
+[main] B SKIP wait — not on live assigned ride
+[main] B metrics {'watch_starts': 0, 'watch_stops': 0, 'first_watch_line': None, 'first_fix_line': None, 'first_accepted_line': None, 'classification_counts': {}, 'start_lines': [], 'stop_lines': []}
+[main] TEST C SKIP — no watch_starts
+[main] TEST D UI
+[main] TEST E leave/return
+[open_assigned_ride] FAIL
+[main] TEST F bg/fg
+[open_assigned_ride] already on detail
+[main] TEST G cancel
+{
+  "startedAt": "2026-10-05T08:19:54.442738+00:00",
+  "device": "RF8R40ZQ1JH",
+  "deviceModel": "SM-A325F",
+  "androidVersion": "13",
+  "package": "com.ora.ora",
+  "rideId": "017a7e72-531c-4019-82d0-52a9bf9f3321",
+  "apkPath": "/Users/jazimsaeed/Ora-app/mobile/build/app/outputs/flutter-apk/app-debug.apk",
+  "A_permissionDenied": {
+    "assignedRideVisible": false,
+    "status": null,
+    "seconds": 135.1,
+    "hasMapPreview": true,
+    "hasRedis": false,
+    "crash": false,
+    "foregroundPkg": "com.ora.ora"
+  },
+  "B_permissionGranted": {
+    "assignedRideVisible": false,
+    "initialStatus": null,
+    "openedAtEpoch": 1791188732.458734,
+    "foregroundPkg": "com.ora.ora",
+    "statusAfterWait": null,
+    "readyAfterSeconds": null
+  },
+  "B_logcatAfterFirstWait": {
+    "watch_starts": 0,
+    "watch_stops": 0,
+    "first_watch_line": null,
+    "first_fix_line": null,
+    "first_accepted_line": null,
+    "classification_counts": {},
+    "start_lines": [],
+    "stop_lines": []
+  },
+  "C_stationarySeconds": 0,
+  "C_logcat": {
+    "watch_starts": 0,
+    "watch_stops": 0,
+    "first_watch_line": null,
+    "first_fix_line": null,
+    "first_accepted_line": null,
+    "classification_counts": {},
+    "start_lines": [],
+    "stop_lines": []
+  },
+  "C_skipped": true,
+  "D_uiInteraction": {
+    "scrolled": true,
+    "statusStillVisible": false
+  },
+  "E_leave": {
+    "leftAssignedRide": true,
+    "onMyTripsOrHome": false,
+    "watchStopsAfterLeave": 0,
+    "watchStartsBeforeLeave": 0
+  },
+  "E_return": {
+    "assignedRideVisible": false,
+    "status": null,
+    "watchStartsAfterReturn": 0
+  },
+  "F_backgroundForeground": {
+    "assignedRideVisible": true,
+    "status": null,
+    "watchStopsIncreasedOnBackground": false,
+    "metrics": {
+      "watch_starts": 0,
+      "watch_stops": 0,
+      "first_watch_line": null,
+      "first_fix_line": null,
+      "first_accepted_line": null,
+      "classification_counts": {},
+      "start_lines": [],
+      "stop_lines": []
+    }
+  },
+  "G_terminal": {
+    "statusChip": false,
+    "locationStatus": null,
+    "uiTextHasCancelled": false,
+    "metrics": {
+      "watch_starts": 0,
+      "watch_stops": 0,
+      "first_watch_line": null,
+      "first_fix_line": null,
+      "first_accepted_line": null,
+      "classification_counts": {},
+      "start_lines": [],
+      "stop_lines": []
+    }
+  },
+  "G_homeNoGps": {
+    "onDriverHome": false,
+    "locationStatusOnHome": "Location is ready"
+  },
+  "logcatMetrics": {
+    "watch_starts": 0,
+    "watch_stops": 0,
+    "first_watch_line": null,
+    "first_fix_line": null,
+    "first_accepted_line": null,
+    "classification_counts": {},
+    "start_lines": [],
+    "stop_lines": []
+  },
+  "networkProof": {
+    "postLocationUpdateInLogcat": false
+  },
+  "privacyProof": {
+    "knownTestLatInLogcat": false,
+    "latitudeKeyInOraLogs": false
+  },
+  "finishedAt": "2026-10-05T08:30:37.241321+00:00"
+}

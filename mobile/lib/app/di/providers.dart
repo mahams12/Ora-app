@@ -41,6 +41,8 @@ import '../../features/onboarding/presentation/view_models/onboarding_view_state
 import '../../features/passenger/presentation/view_models/home_view_model.dart';
 import '../../features/ride/data/data_sources/pricing_remote_data_source.dart';
 import '../../features/ride/data/data_sources/ride_remote_data_source.dart';
+import '../../features/driver/data/location/geolocator_driver_location_source.dart';
+import '../../features/driver/domain/location/driver_location_source.dart';
 import '../../features/ride/data/location/geolocator_device_location.dart';
 import '../../features/ride/data/location/google_places_http_search.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
@@ -128,6 +130,11 @@ final createRideUseCaseProvider = Provider<CreateRideUseCase>(
 /// One-shot passenger GPS (Phase 4A). No background tracking.
 final deviceLocationPortProvider = Provider<DeviceLocationPort>(
   (ref) => const GeolocatorDeviceLocation(),
+);
+
+/// Foreground driver GPS watch (L1). Local only — does not publish.
+final driverLocationSourceProvider = Provider<DriverLocationSource>(
+  (ref) => const GeolocatorDriverLocationSource(),
 );
 
 /// Google Places autocomplete + details (Phase 4A). Not Routes.

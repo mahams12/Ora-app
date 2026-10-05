@@ -1,0 +1,89 @@
+8081
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=115ms (0ms mobile, 0ms wifi, 115ms not connected)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (6107 bytes in 0.005s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6000 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (5998 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (5964 bytes in 0.007s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.8 MB/s (11596 bytes in 0.003s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=100ms (0ms mobile, 0ms wifi, 100ms not connected)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 0.4 MB/s (11596 bytes in 0.031s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (11597 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.7 MB/s (11597 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11597 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 4.5 MB/s (11597 bytes in 0.002s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 4.0 MB/s (11597 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 4.7 MB/s (11597 bytes in 0.002s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.7 MB/s (13729 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.9 MB/s (12448 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 4.0 MB/s (12448 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.8 MB/s (12448 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.3 MB/s (12448 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.3 MB/s (12448 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.9 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (9941 bytes in 0.005s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9941 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9941 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.4 MB/s (9941 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9941 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 4.1 MB/s (9941 bytes in 0.002s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9941 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9941 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.1 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9941 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 4.0 MB/s (9941 bytes in 0.002s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (9941 bytes in 0.013s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.5 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.3 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.4 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (9941 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (9941 bytes in 0.004s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (9941 bytes in 0.003s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (9941 bytes in 0.005s)
+/sdcard/seq_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (9941 bytes in 0.004s)
+Traceback (most recent call last):
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/single_phone_sequential_e2e.py", line 373, in <module>
+    main()
+    ~~~~^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/single_phone_sequential_e2e.py", line 353, in main
+    rid = passenger_create()
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/single_phone_sequential_e2e.py", line 262, in passenger_create
+    raise RuntimeError("pricing not loaded")
+RuntimeError: pricing not loaded

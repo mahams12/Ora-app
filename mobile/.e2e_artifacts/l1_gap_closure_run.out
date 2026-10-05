@@ -1,0 +1,883 @@
+LOGIN
+relaunch com.sec.android.app.launcher
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=58ms (0ms mobile, 0ms wifi, 58ms not connected)
+=== boot fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+=== home0 fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+TAP exact Menu  Menu
+=== drawer0 fg= com.ora.ora ===
+- O
+- ORA passenger
+- View profile
+- Home
+- My rides
+- Saved places
+- Wallet
+- Refer & earn | Get Rs 200 per friend
+- Safety centre
+- Switch to driver mode | Earn with the same account
+- Settings
+- Help centre
+- Log out
+TAP  Switch to driver mode  Switch to driver mode|Earn with the same account
+=== driver0 fg= com.ora.ora ===
+- Menu
+- Driver
+- HE
+- Today's earnings | — | Live payouts connect in a later slice · not invented
+- Map zones · coming later
+- Available for trips | Go online connects in a later slice
+- Open ride requests | Server open-ride list for approved drivers
+- Quick actions
+- Earnings
+- My trips
+- Payouts
+- Vehicle
+- Bonuses
+- Hot zones
+TEST A deny
+TAP exact My trips  My trips
+=== trips fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+TAP  Assigned — head to pickup  Assigned — head to pickup|DRIVER_ASSIGNED|Liberty Market Lahore → Gulberg Lahor
+=== ride fg= com.google.android.permissioncontroller ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait0 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait2 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait3 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait4 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait5 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait6 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait7 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait8 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== a_wait9 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+A {'dialogDenied': True, 'assignedRideVisible': False, 'status': None, 'visibleUiStatusText': None, 'seconds': 86.2, 'hasMapPreview': False, 'hasRedis': False, 'endlessLoading': False, 'crash': False, 'foregroundPkg': 'com.ora.ora'}
+TEST B grant
+relaunch com.sec.android.app.launcher
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=61ms (0ms mobile, 0ms wifi, 61ms not connected)
+=== boot fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+=== home0 fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+TAP exact Menu  Menu
+=== drawer0 fg= com.ora.ora ===
+- O
+- ORA passenger
+- View profile
+- Home
+- My rides
+- Saved places
+- Wallet
+- Refer & earn | Get Rs 200 per friend
+- Safety centre
+- Switch to driver mode | Earn with the same account
+- Settings
+- Help centre
+- Log out
+TAP  Switch to driver mode  Switch to driver mode|Earn with the same account
+=== driver0 fg= com.ora.ora ===
+- Menu
+- Driver
+- HE
+- Today's earnings | — | Live payouts connect in a later slice · not invented
+- Map zones · coming later
+- Available for trips | Go online connects in a later slice
+- Open ride requests | Server open-ride list for approved drivers
+- Quick actions
+- Earnings
+- My trips
+- Payouts
+- Vehicle
+- Bonuses
+- Hot zones
+TAP exact My trips  My trips
+=== trips fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+TAP  Assigned — head to pickup  Assigned — head to pickup|DRIVER_ASSIGNED|Liberty Market Lahore → Gulberg Lahor
+=== ride fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned on Ora's servers. Mark en route when you leave. Live maps and ETA are not in this build.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Checking for server updates…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== b_after_allow fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned on Ora's servers. Mark en route when you leave. Live maps and ETA are not in this build.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Checking for server updates…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== b_wait0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned on Ora's servers. Mark en route when you leave. Live maps and ETA are not in this build.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Checking for server updates…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+status Location is ready
+B {'assignedRideVisible': True, 'statusAfterWait': 'Location is ready', 'readyAfterSeconds': 79.3, 'foregroundPkg': 'com.ora.ora'} {'watch_starts': 1, 'watch_stops': 0, 'fix_classifications': 3, 'classification_counts': {'ACCEPTED': 3}, 'first_watch_line': '10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}', 'first_stop_line': None, 'first_fix_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'first_accepted_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'start_lines': ['10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}'], 'stop_lines': [], 'geolocator_starts': 1, 'geolocator_stops': 1}
+TEST C stationary
+C {'watch_starts': 1, 'watch_stops': 0, 'fix_classifications': 21, 'classification_counts': {'ACCEPTED': 21}, 'first_watch_line': '10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}', 'first_stop_line': None, 'first_fix_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'first_accepted_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'start_lines': ['10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}'], 'stop_lines': [], 'geolocator_starts': 1, 'geolocator_stops': 1}
+TEST D scroll
+=== d_scroll fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned on Ora's servers. Mark en route when you leave. Live maps and ETA are not in this build.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Checking for server updates…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+TEST E leave/return
+=== e_left fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== e_return fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+E {'leftAssignedRide': True, 'onMyTripsOrHome': True, 'watchStopsAfterLeave': 1, 'watchStartsBeforeLeave': 1, 'geolocatorStops': 2} {'assignedRideVisible': False, 'status': None, 'watchStartsAfterReturn': 1}
+TEST F bg/fg
+relaunch com.sec.android.app.launcher
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=52ms (0ms mobile, 0ms wifi, 52ms not connected)
+=== f_fg fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+=== f_ride fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+F {'assignedRideVisible': False, 'status': None, 'watchStopsIncreasedOnBackground': False, 'metrics': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 23, 'classification_counts': {'ACCEPTED': 23}, 'first_watch_line': '10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}', 'first_stop_line': '10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}', 'first_fix_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'first_accepted_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'start_lines': ['10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}'], 'stop_lines': ['10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 2}}
+TEST G cancel
+=== g1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+NO_CANCEL_BUTTON
+=== g_term fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+G {'statusChip': True, 'uiTextHasCancelled': True, 'locationStatus': None, 'watchStoppedOnCancel': False, 'metricsBefore': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 23, 'classification_counts': {'ACCEPTED': 23}, 'first_watch_line': '10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}', 'first_stop_line': '10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}', 'first_fix_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'first_accepted_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'start_lines': ['10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}'], 'stop_lines': ['10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 2}, 'metrics': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 23, 'classification_counts': {'ACCEPTED': 23}, 'first_watch_line': '10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}', 'first_stop_line': '10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}', 'first_fix_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'first_accepted_line': '10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}', 'start_lines': ['10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}'], 'stop_lines': ['10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 2}}
+relaunch com.sec.android.app.launcher
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=71ms (0ms mobile, 0ms wifi, 71ms not connected)
+=== g_home fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+TAP exact Menu  Menu
+TAP  Switch to driver mode  Switch to driver mode|Earn with the same account
+=== g_drv fg= com.ora.ora ===
+- Menu
+- Driver
+- HE
+- Today's earnings | — | Live payouts connect in a later slice · not invented
+- Map zones · coming later
+- Available for trips | Go online connects in a later slice
+- Open ride requests | Server open-ride list for approved drivers
+- Quick actions
+- Earnings
+- My trips
+- Payouts
+- Vehicle
+- Bonuses
+- Hot zones
+TAP exact Open ride requests  Open ride requests|Server open-ride list for approved drivers
+=== g_open fg= com.ora.ora ===
+- Menu
+- Open rides
+- ORA
+- Available ride requests from Ora's servers for approved drivers. Not a GPS or map-radius feed.
+- No open ride requests | There are currently no open ride requests available. Pull to refresh when you want to check again.
+G open {'locationStatus': None, 'watchStartsUnchanged': True, 'watchStarts': 1}
+{
+  "startedAt": "2026-10-05T09:19:03.213623+00:00",
+  "device": "RF8R40ZQ1JH",
+  "deviceModel": "SM-A325F",
+  "androidVersion": "13",
+  "package": "com.ora.ora",
+  "rideId": "017a7e72-531c-4019-82d0-52a9bf9f3321",
+  "method": "l1_gap_closure_physical",
+  "loggerSink": "ConsoleAppLogger \u2192 dart:developer name=ora; debug assert print mirror for adb logcat",
+  "A_permissionDenied": {
+    "dialogDenied": true,
+    "assignedRideVisible": false,
+    "status": null,
+    "visibleUiStatusText": null,
+    "seconds": 86.2,
+    "hasMapPreview": false,
+    "hasRedis": false,
+    "endlessLoading": false,
+    "crash": false,
+    "foregroundPkg": "com.ora.ora"
+  },
+  "B_permissionGranted": {
+    "assignedRideVisible": true,
+    "statusAfterWait": "Location is ready",
+    "readyAfterSeconds": 79.3,
+    "foregroundPkg": "com.ora.ora"
+  },
+  "B_logcatAfterFirstWait": {
+    "watch_starts": 1,
+    "watch_stops": 0,
+    "fix_classifications": 3,
+    "classification_counts": {
+      "ACCEPTED": 3
+    },
+    "first_watch_line": "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}",
+    "first_stop_line": null,
+    "first_fix_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+    "first_accepted_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+    "start_lines": [
+      "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}"
+    ],
+    "stop_lines": [],
+    "geolocator_starts": 1,
+    "geolocator_stops": 1
+  },
+  "C_stationarySeconds": 90.0,
+  "C_logcat": {
+    "watch_starts": 1,
+    "watch_stops": 0,
+    "fix_classifications": 21,
+    "classification_counts": {
+      "ACCEPTED": 21
+    },
+    "first_watch_line": "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}",
+    "first_stop_line": null,
+    "first_fix_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+    "first_accepted_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+    "start_lines": [
+      "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}"
+    ],
+    "stop_lines": [],
+    "geolocator_starts": 1,
+    "geolocator_stops": 1
+  },
+  "D_uiInteraction": {
+    "scrolled": true,
+    "statusStillVisible": true
+  },
+  "E_leave": {
+    "leftAssignedRide": true,
+    "onMyTripsOrHome": true,
+    "watchStopsAfterLeave": 1,
+    "watchStartsBeforeLeave": 1,
+    "geolocatorStops": 2
+  },
+  "E_return": {
+    "assignedRideVisible": false,
+    "status": null,
+    "watchStartsAfterReturn": 1
+  },
+  "F_backgroundForeground": {
+    "assignedRideVisible": false,
+    "status": null,
+    "watchStopsIncreasedOnBackground": false,
+    "metrics": {
+      "watch_starts": 1,
+      "watch_stops": 1,
+      "fix_classifications": 23,
+      "classification_counts": {
+        "ACCEPTED": 23
+      },
+      "first_watch_line": "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}",
+      "first_stop_line": "10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}",
+      "first_fix_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+      "first_accepted_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+      "start_lines": [
+        "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}"
+      ],
+      "stop_lines": [
+        "10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}"
+      ],
+      "geolocator_starts": 1,
+      "geolocator_stops": 2
+    }
+  },
+  "G_terminal": {
+    "statusChip": true,
+    "uiTextHasCancelled": true,
+    "locationStatus": null,
+    "watchStoppedOnCancel": false,
+    "metricsBefore": {
+      "watch_starts": 1,
+      "watch_stops": 1,
+      "fix_classifications": 23,
+      "classification_counts": {
+        "ACCEPTED": 23
+      },
+      "first_watch_line": "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}",
+      "first_stop_line": "10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}",
+      "first_fix_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+      "first_accepted_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+      "start_lines": [
+        "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}"
+      ],
+      "stop_lines": [
+        "10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}"
+      ],
+      "geolocator_starts": 1,
+      "geolocator_stops": 2
+    },
+    "metrics": {
+      "watch_starts": 1,
+      "watch_stops": 1,
+      "fix_classifications": 23,
+      "classification_counts": {
+        "ACCEPTED": 23
+      },
+      "first_watch_line": "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}",
+      "first_stop_line": "10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}",
+      "first_fix_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+      "first_accepted_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+      "start_lines": [
+        "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}"
+      ],
+      "stop_lines": [
+        "10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}"
+      ],
+      "geolocator_starts": 1,
+      "geolocator_stops": 2
+    }
+  },
+  "G_homeNoGps": {
+    "onDriverHome": true,
+    "locationStatusOnHome": null,
+    "watchStarts": 1,
+    "watchStartsUnchangedFromTerminal": true
+  },
+  "G_openRidesNoGps": {
+    "locationStatus": null,
+    "watchStartsUnchanged": true,
+    "watchStarts": 1
+  },
+  "logcatMetrics": {
+    "watch_starts": 1,
+    "watch_stops": 1,
+    "fix_classifications": 23,
+    "classification_counts": {
+      "ACCEPTED": 23
+    },
+    "first_watch_line": "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}",
+    "first_stop_line": "10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}",
+    "first_fix_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+    "first_accepted_line": "10-05 14:22:19.081 I/flutter (26024): [INFO] location_fix_classified {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, classification: ACCEPTED, accuracyMeters: 15.633999824523926}",
+    "start_lines": [
+      "10-05 14:22:17.740 I/flutter (26024): [INFO] location_watch_started {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321}"
+    ],
+    "stop_lines": [
+      "10-05 14:24:10.479 I/flutter (26024): [INFO] location_watch_stopped {rideId: 017a7e72-531c-4019-82d0-52a9bf9f3321, reason: dispose}"
+    ],
+    "geolocator_starts": 1,
+    "geolocator_stops": 3
+  },
+  "networkProof": {
+    "postLocationUpdateInLogcat": false
+  },
+  "privacyProof": {
+    "knownTestLatInLogcat": false,
+    "latitudeKeyInOraLogs": false
+  },
+  "structuredLoggerObservable": true,
+  "checks": {
+    "A_deniedStatusCaptured": false,
+    "B_ready": true,
+    "C_stationary": true,
+    "D_scroll": true,
+    "E_returnReady": false,
+    "F_returnReady": false,
+    "G_cancelled": true,
+    "G_gpsStopped": true,
+    "noNetworkPublish": true,
+    "noLatLeak": true,
+    "structuredLogger": true
+  },
+  "failedChecks": [
+    "A_deniedStatusCaptured",
+    "E_returnReady",
+    "F_returnReady"
+  ],
+  "verdict": "YELLOW",
+  "finishedAt": "2026-10-05T09:26:10.733719+00:00"
+}

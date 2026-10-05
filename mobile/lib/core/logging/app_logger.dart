@@ -76,7 +76,12 @@ abstract class AppLogger {
   }
 }
 
-/// Default development logger. Routes to dart:developer in debug builds.
+/// Default development logger.
+///
+/// Sink: [developer.log] with name `ora` (DevTools / VM service).
+/// Debug-only: also [print]s the same line so `adb logcat` / `flutter logs`
+/// can observe diagnostics (e.g. `location_watch_*`) on a physical device.
+/// Release/profile builds keep developer.log only — no extra stdout mirror.
 class ConsoleAppLogger extends AppLogger {
   ConsoleAppLogger({this.minimumLevel = LogLevel.debug});
 
@@ -103,12 +108,20 @@ class ConsoleAppLogger extends AppLogger {
       buffer.write(record.metadata);
     }
 
+    final line = buffer.toString();
     developer.log(
-      buffer.toString(),
+      line,
       time: record.timestamp,
       error: record.error,
       stackTrace: record.stackTrace,
       name: 'ora',
     );
+
+    // Debug-only adb/flutter logs mirror for device QA (assert strips in release).
+    assert(() {
+      // ignore: avoid_print
+      print(line);
+      return true;
+    }());
   }
 }
