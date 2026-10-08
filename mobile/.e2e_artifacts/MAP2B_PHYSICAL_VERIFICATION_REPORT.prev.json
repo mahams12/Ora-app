@@ -1,0 +1,115 @@
+{
+  "artifact": "MAP2B_PHYSICAL_VERIFICATION_REPORT",
+  "slice": "MAP-2B \u2014 Phase-aware tick-stable active-ride camera",
+  "retryOf": "MAP2B_PHYSICAL_VERIFICATION_REPORT.prev.json",
+  "startedAt": "2026-10-08T08:25:12.226803+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "sessionArrangement": {
+    "mode": "single_device_passenger_fg_then_http_publish",
+    "passengerDevice": "RF8R40ZQ1JH / SM-A325F",
+    "driverPublish": "POST /v1/location/update as assigned driver (L2 contract) while passenger Active Ride stays foregrounded \u2014 no passenger logout between open and first publish",
+    "productCodeModified": false
+  },
+  "build": {
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "productCodeModifiedDuringProof": false,
+    "stagingCloudRunRevision": "ora-auth-service-staging-00026-4tz"
+  },
+  "map2cImplemented": false,
+  "checks": {
+    "freshAssignedRide": true,
+    "beforeActiveRide": true,
+    "beforeGoogleMap": true,
+    "beforePickup": true,
+    "beforeDestination": true,
+    "beforeWaitingOrNoMarker": true,
+    "firstPublishAccepted": true,
+    "rtdbFirstFix": true,
+    "rtdbDriverIdMatch": true,
+    "passengerRemainedOnActiveRide": false,
+    "driverMarkerAfterFirstFix": false,
+    "firstFixIntentionalReframe": false
+  },
+  "proofs": {
+    "beforeFirstPublish": {
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": true,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true
+    },
+    "timing": {
+      "passengerActiveRideOpenedAt": "2026-10-08T08:26:48.873851+00:00",
+      "order": "passenger_active_ride_open_BEFORE_first_publish"
+    },
+    "firstPublish": {
+      "publishedAt": "2026-10-08T08:26:51.601157+00:00",
+      "http": {
+        "status": 200,
+        "accepted": true,
+        "locationSeq": 1,
+        "hasLatLng": true
+      },
+      "rtdbLatestExists": true,
+      "locationSeq": 1,
+      "driverIdMatch": true,
+      "hasLat": true,
+      "hasLng": true,
+      "streamIdSuffix": "cae95808"
+    },
+    "afterFirstPublish": {
+      "activeRide": false,
+      "googleMap": false,
+      "pickup": false,
+      "destination": false,
+      "waiting": false,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": false,
+      "status": null,
+      "cancel": false
+    },
+    "markerAppearedAfterSeconds": null,
+    "cameraReframeEvidence": {
+      "before": {
+        "waiting": true,
+        "driverMarker": false,
+        "pickup": true,
+        "destination": true
+      },
+      "after": {
+        "waiting": false,
+        "driverMarker": false,
+        "pickup": false,
+        "destination": false,
+        "locationUpdating": false
+      },
+      "method": "a11y before/after composition + marker appearance; widget tests remain authoritative for animateCamera call counts"
+    }
+  },
+  "failedChecks": [],
+  "limitations": [],
+  "evidenceFiles": [],
+  "priorRunSummary": {
+    "verdict": "MAP-2B PHYSICAL PROOF BLOCKED",
+    "rideId": "81c730fb-960f-4cbf-ab41-aea057c20a42",
+    "blocker": "passenger Active Ride not ready before publish: {\"activeRide\": false, \"googleMap\": false, \"pickup\": false, \"destination\": false, \"waiting\": false, \"locationUpdating\": false, \"driverMarker\": false, \"recenter\": false, \"status\": null, \"cancel\": false}",
+    "endedAt": "2026-10-08T08:23:54.412954+00:00"
+  },
+  "rideId": "d389e505-c702-4414-bc15-1552b115c22d",
+  "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "verdict": "MAP-2B PHYSICAL PROOF BLOCKED",
+  "blocker": "TEST2: passenger Active Ride was open before publish, publish accepted, but driver marker did not appear within poll window",
+  "endedAt": "2026-10-08T08:27:34.929393+00:00"
+}

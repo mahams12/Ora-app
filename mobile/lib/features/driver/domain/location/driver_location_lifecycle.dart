@@ -59,17 +59,24 @@ Map<String, Object?> _safeLocationMetadata(Map<String, Object?> metadata) {
 /// Starts and stops one foreground GPS watch from ride and app lifecycle.
 ///
 /// Local only. This class does not write to the network, Redis, or RTDB.
+/// Optional [onAcceptedFix] / watch callbacks let L2 publish without owning GPS.
 class DriverLocationLifecycleController {
   DriverLocationLifecycleController({
     required DriverLocationSource source,
     required AppLogger logger,
     required void Function(DriverLocationStatusKind kind) onStatus,
+    void Function(DriverLocationFix fix)? onAcceptedFix,
+    void Function()? onWatchStarted,
+    void Function(String reason)? onWatchStopped,
     DriverLocationClassifier classifier = const DriverLocationClassifier(),
     DateTime Function()? now,
     Duration acquisitionTimeout = const Duration(seconds: 20),
   }) : _source = source,
        _logger = logger,
        _onStatus = onStatus,
+       _onAcceptedFix = onAcceptedFix,
+       _onWatchStarted = onWatchStarted,
+       _onWatchStopped = onWatchStopped,
        _classifier = classifier,
        _now = now ?? DateTime.now,
        _acquisitionTimeout = acquisitionTimeout;
@@ -77,6 +84,9 @@ class DriverLocationLifecycleController {
   final DriverLocationSource _source;
   final AppLogger _logger;
   final void Function(DriverLocationStatusKind kind) _onStatus;
+  final void Function(DriverLocationFix fix)? _onAcceptedFix;
+  final void Function()? _onWatchStarted;
+  final void Function(String reason)? _onWatchStopped;
   final DriverLocationClassifier _classifier;
   final DateTime Function() _now;
   final Duration _acquisitionTimeout;
@@ -246,11 +256,13 @@ class DriverLocationLifecycleController {
           'rideId': rideId,
           'reason': 'stream_ended',
         });
+        _onWatchStopped?.call('stream_ended');
       },
       cancelOnError: false,
     );
     _subscription = subscription;
     _emit(DriverLocationStatusKind.acquiring);
+    _onWatchStarted?.call();
     // Safety net: if the platform permission sheet hangs, never leave the
     // driver on "Getting your location…" indefinitely.
     _armAcquisitionWatchdog(generation, rideId);
@@ -286,6 +298,7 @@ class DriverLocationLifecycleController {
     if (subscription != null) {
       unawaited(subscription.cancel());
       _log('location_watch_stopped', {'rideId': _rideId, 'reason': reason});
+      _onWatchStopped?.call(reason);
     }
     // Preserve recovery statuses (permission / services) across transient
     // inactive windows so permanent deny cannot tight-loop.
@@ -337,6 +350,7 @@ class DriverLocationLifecycleController {
               });
             }
             _emit(DriverLocationStatusKind.ready);
+            _onAcceptedFix?.call(fix);
           case DriverLocationClass.poorAccuracy:
             _emit(DriverLocationStatusKind.poorAccuracy);
           case DriverLocationClass.duplicate:

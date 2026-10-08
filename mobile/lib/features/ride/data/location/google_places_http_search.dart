@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/ports/place_search_port.dart';
+import 'places_locality_label.dart';
 
 /// Google Places API (New) over HTTP — client Places key only (not Routes).
 ///
@@ -121,6 +122,104 @@ class GooglePlacesHttpSearch implements PlaceSearchPort {
         e.message,
       );
     } catch (_) {
+      throw const PlaceSearchException(
+        PlaceSearchFailureKind.unavailable,
+        'Location lookup isn\'t available right now.',
+      );
+    }
+  }
+
+  @override
+  Future<ResolvedPassengerLocation> reverseGeocode({
+    required double lat,
+    required double lng,
+  }) async {
+    _ensureConfigured();
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      throw const PlaceSearchException(
+        PlaceSearchFailureKind.invalid,
+        'Invalid coordinates.',
+      );
+    }
+
+    try {
+      // Places API (New) searchNearby — same key as autocomplete/details.
+      // Do NOT use maps.googleapis.com Geocoding API here: that product is a
+      // separate enablement and returns REQUEST_DENIED on Places-only keys.
+      final response = await _dio.post<Map<String, dynamic>>(
+        'v1/places:searchNearby',
+        data: <String, Object?>{
+          'maxResultCount': 5,
+          'rankPreference': 'DISTANCE',
+          'languageCode': 'en',
+          'locationRestriction': <String, Object?>{
+            'circle': <String, Object?>{
+              'center': <String, Object?>{
+                'latitude': lat,
+                'longitude': lng,
+              },
+              // Wide enough for sparse areas; still distance-ranked.
+              'radius': 500.0,
+            },
+          },
+        },
+        options: Options(
+          headers: <String, String>{
+            'X-Goog-Api-Key': _apiKey,
+            'X-Goog-FieldMask':
+                'places.displayName,'
+                'places.formattedAddress,'
+                'places.addressComponents',
+          },
+        ),
+      );
+
+      final data = response.data;
+      if (data == null) {
+        throw const PlaceSearchException(
+          PlaceSearchFailureKind.empty,
+          'Empty reverse-geocode response.',
+        );
+      }
+
+      final places = data['places'];
+      if (places is! List || places.isEmpty) {
+        throw const PlaceSearchException(
+          PlaceSearchFailureKind.empty,
+          'No place found for coordinates.',
+        );
+      }
+
+      final address = localityLabelFromPlacesNearby(places);
+      if (address == null || address.isEmpty) {
+        throw const PlaceSearchException(
+          PlaceSearchFailureKind.empty,
+          'No locality available.',
+        );
+      }
+
+      final resolved = ResolvedPassengerLocation(
+        lat: lat,
+        lng: lng,
+        address: address,
+        source: PassengerLocationSource.gps,
+      );
+      if (!resolved.hasValidCoordinates) {
+        throw const PlaceSearchException(
+          PlaceSearchFailureKind.invalid,
+          'Invalid coordinates.',
+        );
+      }
+      return resolved;
+    } on PlaceSearchException {
+      rethrow;
+    } on DioException catch (e) {
+      throw PlaceSearchException(
+        PlaceSearchFailureKind.network,
+        e.message,
+      );
+    } catch (e) {
+      if (e is PlaceSearchException) rethrow;
       throw const PlaceSearchException(
         PlaceSearchFailureKind.unavailable,
         'Location lookup isn\'t available right now.',

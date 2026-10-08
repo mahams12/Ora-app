@@ -16,13 +16,17 @@ import 'package:ora/features/ride/presentation/view_models/ride_request_view_mod
 class MockCreateRideUseCase extends Mock implements CreateRideUseCase {}
 
 class FakeDeviceLocation extends Fake implements DeviceLocationPort {
-  FakeDeviceLocation({this.result, this.error});
+  FakeDeviceLocation({this.result, this.error, this.onGet});
 
   ResolvedPassengerLocation? result;
   Object? error;
+  Future<ResolvedPassengerLocation> Function()? onGet;
+  int getCalls = 0;
 
   @override
   Future<ResolvedPassengerLocation> getCurrentLocation() async {
+    getCalls++;
+    if (onGet != null) return onGet!();
     if (error != null) throw error!;
     return result!;
   }
@@ -32,16 +36,24 @@ class FakePlaceSearch extends Fake implements PlaceSearchPort {
   FakePlaceSearch({
     this.suggestions = const [],
     this.resolved,
+    this.reverseResolved,
     this.autocompleteError,
     this.resolveError,
+    this.reverseError,
+    this.onReverseGeocode,
   });
 
   List<PlaceSuggestion> suggestions;
   ResolvedPassengerLocation? resolved;
+  ResolvedPassengerLocation? reverseResolved;
   Object? autocompleteError;
   Object? resolveError;
+  Object? reverseError;
+  Future<ResolvedPassengerLocation> Function(double lat, double lng)?
+      onReverseGeocode;
   int autocompleteCalls = 0;
   int resolveCalls = 0;
+  int reverseCalls = 0;
 
   @override
   Future<List<PlaceSuggestion>> autocomplete({
@@ -61,6 +73,23 @@ class FakePlaceSearch extends Fake implements PlaceSearchPort {
     resolveCalls++;
     if (resolveError != null) throw resolveError!;
     return resolved!;
+  }
+
+  @override
+  Future<ResolvedPassengerLocation> reverseGeocode({
+    required double lat,
+    required double lng,
+  }) async {
+    reverseCalls++;
+    if (reverseError != null) throw reverseError!;
+    if (onReverseGeocode != null) return onReverseGeocode!(lat, lng);
+    return reverseResolved ??
+        ResolvedPassengerLocation(
+          lat: lat,
+          lng: lng,
+          address: 'Bahria Town, Lahore',
+          source: PassengerLocationSource.gps,
+        );
   }
 }
 
@@ -151,7 +180,6 @@ const _destResolved = ResolvedPassengerLocation(
 const _gpsResolved = ResolvedPassengerLocation(
   lat: 31.46,
   lng: 74.26,
-  address: 'Current location',
   source: PassengerLocationSource.gps,
 );
 
@@ -257,7 +285,11 @@ void main() {
   });
 
   test('C/D — GPS resolution creates coordinates with gps source', () async {
-    final c = container(device: FakeDeviceLocation(result: _gpsResolved));
+    final places = FakePlaceSearch();
+    final c = container(
+      device: FakeDeviceLocation(result: _gpsResolved),
+      places: places,
+    );
     addTearDown(c.dispose);
     final vm = c.read(rideRequestViewModelProvider.notifier);
     await vm.useCurrentLocationForPickup();
@@ -265,6 +297,148 @@ void main() {
     expect(proposed?.source, PassengerLocationSource.gps);
     expect(proposed?.lat, 31.46);
     expect(proposed?.lng, 74.26);
+    expect(proposed?.address, 'Bahria Town, Lahore');
+    expect(proposed?.displayLabel, 'Bahria Town, Lahore');
+    expect(places.reverseCalls, 1);
+  });
+
+  test('C/D — GPS reverse-geocode failure keeps coords, graceful label', () async {
+    final places = FakePlaceSearch(
+      reverseError: const PlaceSearchException(
+        PlaceSearchFailureKind.network,
+      ),
+    );
+    final c = container(
+      device: FakeDeviceLocation(result: _gpsResolved),
+      places: places,
+    );
+    addTearDown(c.dispose);
+    final vm = c.read(rideRequestViewModelProvider.notifier);
+    await vm.useCurrentLocationForPickup();
+    final proposed = c.read(rideRequestViewModelProvider).proposedPickup;
+    expect(proposed?.lat, 31.46);
+    expect(proposed?.lng, 74.26);
+    expect(proposed?.address, 'Location selected');
+    expect(proposed?.displayLabel, 'Location selected');
+    expect(proposed?.displayLabel.toLowerCase(), isNot(contains('current')));
+    expect(proposed?.displayLabel, isNot(contains('31.46')));
+  });
+
+  test('F — stale reverse-geocode must not overwrite newer GPS selection',
+      () async {
+    final firstReverse = Completer<ResolvedPassengerLocation>();
+    final secondReverse = Completer<ResolvedPassengerLocation>();
+    final reverseGate = <Completer<ResolvedPassengerLocation>>[
+      firstReverse,
+      secondReverse,
+    ];
+    var reverseCalls = 0;
+    var gpsCalls = 0;
+
+    final device = FakeDeviceLocation(
+      onGet: () async {
+        gpsCalls++;
+        if (gpsCalls == 1) {
+          return const ResolvedPassengerLocation(
+            lat: 31.46,
+            lng: 74.26,
+            source: PassengerLocationSource.gps,
+          );
+        }
+        return const ResolvedPassengerLocation(
+          lat: 31.52,
+          lng: 74.35,
+          source: PassengerLocationSource.gps,
+        );
+      },
+    );
+    final places = FakePlaceSearch(
+      onReverseGeocode: (lat, lng) async {
+        final idx = reverseCalls;
+        reverseCalls++;
+        final named = await reverseGate[idx].future;
+        return ResolvedPassengerLocation(
+          lat: lat,
+          lng: lng,
+          address: named.address,
+          source: PassengerLocationSource.gps,
+        );
+      },
+    );
+    final c = container(device: device, places: places);
+    addTearDown(c.dispose);
+    // Keep autoDispose provider alive across overlapping async GPS resolves.
+    final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+    addTearDown(sub.close);
+    final vm = c.read(rideRequestViewModelProvider.notifier);
+
+    final first = vm.useCurrentLocationForPickup();
+    await Future<void>.delayed(Duration.zero);
+    for (var i = 0; i < 50 && reverseCalls < 1; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 1));
+    }
+    expect(reverseCalls, 1);
+
+    final second = vm.useCurrentLocationForPickup();
+    for (var i = 0; i < 50 && reverseCalls < 2; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 1));
+    }
+    expect(reverseCalls, 2);
+
+    // Newer reverse completes first.
+    secondReverse.complete(
+      const ResolvedPassengerLocation(
+        lat: 0,
+        lng: 0,
+        address: 'Gulberg III, Lahore',
+        source: PassengerLocationSource.gps,
+      ),
+    );
+    await second;
+    expect(
+      c.read(rideRequestViewModelProvider).proposedPickup?.displayLabel,
+      'Gulberg III, Lahore',
+    );
+    expect(c.read(rideRequestViewModelProvider).proposedPickup?.lat, 31.52);
+
+    // Stale reverse completes later — must not overwrite.
+    firstReverse.complete(
+      const ResolvedPassengerLocation(
+        lat: 0,
+        lng: 0,
+        address: 'Bahria Town, Lahore',
+        source: PassengerLocationSource.gps,
+      ),
+    );
+    await first;
+
+    final proposed = c.read(rideRequestViewModelProvider).proposedPickup;
+    expect(proposed?.lat, 31.52);
+    expect(proposed?.lng, 74.35);
+    expect(proposed?.displayLabel, 'Gulberg III, Lahore');
+    expect(proposed?.displayLabel, isNot(contains('31.52')));
+  });
+
+  test('G — GPS success never shows raw coordinates in displayLabel', () async {
+    final places = FakePlaceSearch(
+      reverseResolved: const ResolvedPassengerLocation(
+        lat: 31.46,
+        lng: 74.26,
+        address: 'Johar Town, Lahore',
+        source: PassengerLocationSource.gps,
+      ),
+    );
+    final c = container(
+      device: FakeDeviceLocation(result: _gpsResolved),
+      places: places,
+    );
+    addTearDown(c.dispose);
+    final vm = c.read(rideRequestViewModelProvider.notifier);
+    await vm.useCurrentLocationForPickup();
+    final label =
+        c.read(rideRequestViewModelProvider).proposedPickup!.displayLabel;
+    expect(label, 'Johar Town, Lahore');
+    expect(label.contains(RegExp(r'\d+\.\d+')), isFalse);
   });
 
   test('E — place source is marked correctly', () async {
@@ -831,6 +1005,18 @@ class _ResolveRacePlaceSearch implements PlaceSearchPort {
     required String sessionToken,
   }) =>
       onResolve();
+
+  @override
+  Future<ResolvedPassengerLocation> reverseGeocode({
+    required double lat,
+    required double lng,
+  }) async =>
+      ResolvedPassengerLocation(
+        lat: lat,
+        lng: lng,
+        address: 'Location selected',
+        source: PassengerLocationSource.gps,
+      );
 }
 
 class _RacePricingPort implements PricingEstimatePort {

@@ -1,5 +1,6 @@
 import java.io.FileInputStream
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
@@ -12,26 +13,43 @@ plugins {
     id("com.google.gms.google-services")
 }
 
-// Production release identity — credentials live in android/key.properties (gitignored).
-val keystorePropertiesFile = rootProject.file("key.properties")
+// Production release identity — android/key.properties (gitignored) or ORA_ANDROID_KEY_PROPERTIES_FILE.
+val keystorePropertiesFile = System.getenv("ORA_ANDROID_KEY_PROPERTIES_FILE")
+    ?.trim()
+    ?.takeIf { it.isNotEmpty() }
+    ?.let { file(it) }
+    ?: rootProject.file("key.properties")
 val keystoreProperties = Properties()
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
+// Maps SDK Android key — NEVER commit the raw key.
+// Preference: env ORA_GOOGLE_MAPS_ANDROID_API_KEY, else local.properties.
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties = Properties()
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+val mapsAndroidApiKey: String =
+    System.getenv("ORA_GOOGLE_MAPS_ANDROID_API_KEY")
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+        ?: localProperties.getProperty("ORA_GOOGLE_MAPS_ANDROID_API_KEY")
+            ?.trim()
+            ?.takeIf { it.isNotEmpty() }
+        ?: ""
+
 android {
     namespace = "com.ora.ora"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // maplibre_gl 0.27.x pins NDK 28.2; keep highest for plugin compatibility (PoC dep).
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     defaultConfig {
@@ -43,6 +61,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["ORA_GOOGLE_MAPS_ANDROID_API_KEY"] = mapsAndroidApiKey
     }
 
     signingConfigs {
@@ -71,6 +90,12 @@ android {
         debug {
             signingConfig = signingConfigs.getByName("debug")
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
     }
 }
 

@@ -8,6 +8,7 @@ import '../../features/auth/presentation/views/splash_view.dart';
 import '../../features/driver/presentation/views/driver_assigned_ride_view.dart';
 import '../../features/driver/presentation/views/driver_shell_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
+import '../../features/maps/poc/maplibre_poc_view.dart';
 import '../../features/passenger/presentation/views/home_shell_view.dart';
 import '../../features/ride/presentation/views/active_ride_view.dart';
 import '../../features/ride/presentation/views/offers_inbox_view.dart';
@@ -60,6 +61,11 @@ GoRouter createAppRouter({
         path: AppRoutes.home,
         name: 'home',
         builder: (context, state) => const HomeShellView(),
+      ),
+      GoRoute(
+        path: AppRoutes.mapLibrePoc,
+        name: 'maplibre-poc',
+        builder: (context, state) => const MapLibrePoCView(),
       ),
       GoRoute(
         path: AppRoutes.rideRequest,

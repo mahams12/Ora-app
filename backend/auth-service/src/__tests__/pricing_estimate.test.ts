@@ -31,7 +31,10 @@ function seedEasy(db: ReturnType<typeof memoryDb>) {
 }
 
 function mockRouting(
-  result: { distanceKm: number; durationMin: number } | 'fail' | 'noroute',
+  result:
+    | { distanceKm: number; durationMin: number; encodedPolyline?: string }
+    | 'fail'
+    | 'noroute',
 ): RoutingProvider {
   return {
     async computeDriveRoute() {
@@ -53,6 +56,9 @@ function mockRouting(
         distanceKm: result.distanceKm,
         durationMin: result.durationMin,
         provider: 'google_routes',
+        ...(result.encodedPolyline != null
+          ? { encodedPolyline: result.encodedPolyline }
+          : {}),
       };
     },
   };
@@ -283,5 +289,69 @@ describe('POST /v1/pricing/estimate', () => {
       .send(validBody);
     expect(res.status).toBe(503);
     expect(res.body.error.code).toBe('PRICING_UNAVAILABLE');
+  });
+
+  it('MAP-1: returns optional encodedPolyline when routing provides it', async () => {
+    const db = memoryDb();
+    const rules = seedEasy(db);
+    const app = appWith(
+      db,
+      mockRouting({
+        distanceKm: 5.8,
+        durationMin: 14,
+        encodedPolyline: '_p~iF~ps|U_ulLnnqC_mqNvxq`@',
+      }),
+    );
+    const res = await request(app)
+      .post('/v1/pricing/estimate')
+      .set('Authorization', 'Bearer t')
+      .send(validBody);
+    expect(res.status).toBe(200);
+    expect(res.body.data.encodedPolyline).toBe('_p~iF~ps|U_ulLnnqC_mqNvxq`@');
+    expect(res.body.data.distanceKm).toBe(5.8);
+    expect(res.body.data.durationMin).toBe(14);
+    const expected = calculateFare({
+      distanceKm: 5.8,
+      durationMin: 14,
+      category: 'easy',
+      city: 'lahore',
+      rules,
+    });
+    expect(res.body.data.recommendedFareMinor).toBe(
+      expected.recommendedFareMinor,
+    );
+    const stored = db.getDoc(
+      PRICING_SNAPSHOTS_COLLECTION,
+      res.body.data.pricingSnapshotId,
+    );
+    expect(stored).toBeTruthy();
+    expect(
+      (stored as { encodedPolyline?: unknown }).encodedPolyline,
+    ).toBeUndefined();
+    expect(
+      (stored?.inputs as { encodedPolyline?: unknown }).encodedPolyline,
+    ).toBeUndefined();
+  });
+
+  it('MAP-1: missing polyline still prices normally', async () => {
+    const db = memoryDb();
+    const rules = seedEasy(db);
+    const app = appWith(db, mockRouting({ distanceKm: 5.8, durationMin: 14 }));
+    const res = await request(app)
+      .post('/v1/pricing/estimate')
+      .set('Authorization', 'Bearer t')
+      .send(validBody);
+    expect(res.status).toBe(200);
+    expect(res.body.data.encodedPolyline).toBeUndefined();
+    const expected = calculateFare({
+      distanceKm: 5.8,
+      durationMin: 14,
+      category: 'easy',
+      city: 'lahore',
+      rules,
+    });
+    expect(res.body.data.recommendedFareMinor).toBe(
+      expected.recommendedFareMinor,
+    );
   });
 });

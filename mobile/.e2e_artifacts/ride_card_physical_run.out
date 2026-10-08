@@ -1,0 +1,161 @@
+=== DRIVER LOGIN ===
+  login as driver (03012345677)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=68ms (0ms mobile, 0ms wifi, 68ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (5283 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.2 MB/s (11597 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (11597 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.7 MB/s (11597 bytes in 0.003s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (8443 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (8450 bytes in 0.003s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (5998 bytes in 0.004s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6003 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (5282 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.2 MB/s (11596 bytes in 0.003s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (11596 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (8447 bytes in 0.002s)
+  TAP 'Switch to driver mode\nEarn with the same account'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (10490 bytes in 0.003s)
+/sdcard/ride_card_01_driver_home.png: 1 file pulled, 0 skipped. 20.9 MB/s (519195 bytes in 0.024s)
+=== A DRIVER OPEN RIDES ===
+  MISS ('Open rides',)
+  MISS ('Open rides',)
+  MISS ('Open rides',)
+  MISS ('Open rides',)
+  TAP 'Open ride requests\nServer open-ride list for approved drivers'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.1 MB/s (12455 bytes in 0.010s)
+/sdcard/ride_card_02_driver_open_rides.png: 1 file pulled, 0 skipped. 19.4 MB/s (863729 bytes in 0.042s)
+=== B SCROLL ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.3 MB/s (12155 bytes in 0.003s)
+/sdcard/ride_card_03_driver_open_scrolled.png: 1 file pulled, 0 skipped. 19.8 MB/s (699324 bytes in 0.034s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (12455 bytes in 0.005s)
+=== C RESPOND ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (12455 bytes in 0.004s)
+  MISS ('Respond',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 5.5 MB/s (12456 bytes in 0.002s)
+/sdcard/ride_card_04_driver_respond_sheet.png: 1 file pulled, 0 skipped. 5.8 MB/s (94615 bytes in 0.016s)
+=== D DRIVER MY RIDES ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (12156 bytes in 0.005s)
+  MISS ('My trips',)
+  MISS ('My trips',)
+  MISS ('My trips',)
+  MISS ('My trips',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.1 MB/s (12156 bytes in 0.003s)
+  MISS ('Assigned',)
+  MISS ('Assigned',)
+  MISS ('Assigned',)
+  MISS ('Assigned',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (12156 bytes in 0.004s)
+/sdcard/ride_card_05_driver_my_rides.png: 1 file pulled, 0 skipped. 21.6 MB/s (699726 bytes in 0.031s)
+=== PASSENGER LOGIN ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=51ms (0ms mobile, 0ms wifi, 51ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (5283 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11597 bytes in 0.003s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (8448 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (8455 bytes in 0.003s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5998 bytes in 0.004s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6003 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (5282 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (11596 bytes in 0.004s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 5.7 MB/s (11596 bytes in 0.002s)
+/sdcard/ride_card_06_passenger_home.png: 1 file pulled, 0 skipped. 22.4 MB/s (1396257 bytes in 0.059s)
+=== E PASSENGER MY RIDES ===
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.9 MB/s (10036 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (10036 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (3004 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11597 bytes in 0.003s)
+  MISS ('My rides',)
+  MISS ('My trips',)
+  TAP 'City rides\nZip to Premium'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (8266 bytes in 0.003s)
+/sdcard/ride_card_07_passenger_my_rides.png: 1 file pulled, 0 skipped. 19.9 MB/s (804874 bytes in 0.039s)
+=== F OFFERS INBOX ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (14409 bytes in 0.005s)
+  MISS ('Offers available',)
+  MISS ('OFFERS_AVAILABLE',)
+  MISS ('Searching',)
+  MISS ('View offers',)
+/sdcard/ride_card_08_offers_inbox.png: 1 file pulled, 0 skipped. 21.3 MB/s (804874 bytes in 0.036s)
+=== G CURRENT LOCATION ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (14409 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (8443 bytes in 0.004s)
+  MISS ('Switch to passenger',)
+  MISS ('passenger mode',)
+  TAP 'Home'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11597 bytes in 0.004s)
+  TAP 'Where are you headed?\nSet pickup & destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (9545 bytes in 0.004s)
+/sdcard/ride_card_09_request_before_gps.png: 1 file pulled, 0 skipped. 19.0 MB/s (326672 bytes in 0.016s)
+  TAP 'Use current location'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.8 MB/s (12171 bytes in 0.003s)
+/sdcard/ride_card_10_gps_resolved.png: 1 file pulled, 0 skipped. 20.0 MB/s (396645 bytes in 0.019s)
+  TAP 'Confirm pickup\nConfirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.2 MB/s (11772 bytes in 0.004s)
+/sdcard/ride_card_11_pickup_confirmed.png: 1 file pulled, 0 skipped. 18.3 MB/s (331573 bytes in 0.017s)
+=== I NO FAKE DATA ===
+=== J PERFORMANCE / MAP ENGINE ===
+=== K REGRESSION SMOKE ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.7 MB/s (11772 bytes in 0.003s)
+/sdcard/ride_card_12_regression_request.png: 1 file pulled, 0 skipped. 20.1 MB/s (331523 bytes in 0.016s)
+WROTE /Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/RIDE_CARD_PHYSICAL_VERIFICATION_REPORT.json
+VERDICT RIDE CARD SYSTEM — PHYSICAL PROOF RED
+  A_driverOpenRides: PASS
+  B_openRideScroll: PASS
+  C_driverRespondFlow: FAIL
+  D_driverMyRides: PASS
+  E_passengerMyRides: PASS
+  F_offersInbox: NOT_TESTED
+  G_currentLocationResolution: PASS
+  H_geocodeFailureFallback: NOT_TESTED
+  I_noFakeData: PASS
+  J_cardPerformance: PASS
+  K_regression: PASS

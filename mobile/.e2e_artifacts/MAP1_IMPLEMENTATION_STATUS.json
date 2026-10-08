@@ -1,0 +1,28 @@
+{
+  "artifact": "MAP1_IMPLEMENTATION_STATUS",
+  "slice": "MAP-1 \u2014 Passenger Map Preview",
+  "status": "PHYSICAL_PROOF_GREEN",
+  "createdAt": "2026-10-06",
+  "map2Implemented": false,
+  "physicalProof": {
+    "status": "GREEN",
+    "report": "MAP1_PHYSICAL_VERIFICATION_REPORT.json",
+    "device": "SM-A325F Android 13",
+    "serial": "RF8R40ZQ1JH",
+    "screenshots": [
+      "map1c_review.png",
+      "map1c_review2.png",
+      "map1y_review.png"
+    ]
+  },
+  "automatedResults": {
+    "backendFocused": "google_routes_provider + pricing_estimate PASS",
+    "backendFullNpmTest": "432 passed",
+    "backendTsc": "PASS",
+    "flutterMapPreviewTests": "PASS",
+    "flutterRideRequestVmAndUi": "PASS",
+    "flutterAnalyzeRide": "No issues found",
+    "debugApkBuild": "PASS"
+  },
+  "limitations": []
+}

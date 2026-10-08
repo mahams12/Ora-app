@@ -3,10 +3,17 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "database": {
+    "rules": "database.rules.json"
+  },
   "emulators": {
     "firestore": {
       "host": "127.0.0.1",
       "port": 8181
+    },
+    "database": {
+      "host": "127.0.0.1",
+      "port": 9000
     },
     "ui": {
       "enabled": false

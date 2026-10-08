@@ -1,0 +1,71 @@
+{
+  "artifact": "MAP1_PHYSICAL_VERIFICATION_REPORT",
+  "startedAt": "2026-10-08T06:15:38.239643+00:00",
+  "endedAt": "2026-10-08T06:15:38.239836+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "build": {
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "placesKeyInBuild": true,
+    "mapsKeyInBuild": true,
+    "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "stagingRevision": "ora-auth-service-staging-00026-4tz"
+  },
+  "checks": {
+    "appLaunched": true,
+    "rideRequestScreen": true,
+    "pickupConfirmed": true,
+    "pickupAttempted": true,
+    "placesSuggestionsVisible": true,
+    "bothLocationsConfirmed": true,
+    "reviewReached": true,
+    "mapPreviewChrome": true,
+    "pricingVisible": true,
+    "noRideCreatedByMapAlone": true,
+    "googleMapInLog": true,
+    "estimateInLog": true,
+    "destinationChangeAttempted": true,
+    "destinationChangeUpdatedPreview": true,
+    "survivedBackNavigation": true,
+    "survivedBackgroundForeground": true,
+    "mapTilesVisible": true,
+    "pickupMarkerVisible": true,
+    "destinationMarkerVisible": true,
+    "routePolylineVisible": true,
+    "dualMarkersOnReview": true
+  },
+  "map2Implemented": false,
+  "backendPolylineProof": {
+    "stagingRevision": "ora-auth-service-staging-00026-4tz",
+    "estimateHasEncodedPolyline": true,
+    "note": "Staging estimate returns encodedPolyline (display-only)"
+  },
+  "visualInspection": {
+    "primaryScreenshot": "map1c_review.png",
+    "destChangeScreenshot": "map1c_review2.png",
+    "priorProvenScreenshot": "map1y_review.png",
+    "mapTiles": "Google Maps tiles visible (Lahore)",
+    "markers": "Pickup + Destination markers present",
+    "polyline": "Route polyline connecting pickup + destination markers on review",
+    "reviewChrome": "Pickup & destination confirmed + estimated fare",
+    "destinationChange": "Liberty Market (Rs 1140 / 24km) \u2192 Packages Mall area Walton Rd (Rs 1320 / 28km); preview refreshed"
+  },
+  "evidenceFiles": [
+    "map1c_review.png",
+    "map1c_review.xml",
+    "map1c_review2.png",
+    "map1c_review2.xml",
+    "map1c_places_lib.png",
+    "map1c_places_pkg.png",
+    "map1c_pickup.png",
+    "map1y_review.png",
+    "map1_physical_logcat.txt",
+    "map1_close_green.py"
+  ],
+  "failedChecks": [],
+  "verdict": "MAP-1 PHYSICAL PROOF GREEN"
+}

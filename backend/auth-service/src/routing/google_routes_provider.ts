@@ -2,7 +2,7 @@
  * Google Routes API (computeRoutes) — Phase 4B production RoutingProvider.
  *
  * Credential: GOOGLE_MAPS_SERVER_KEY (server only; never log or return).
- * Field mask (minimum authoritative): routes.distanceMeters,routes.duration
+ * Field mask: authoritative D/T + optional display polyline (MAP-1).
  */
 
 import {
@@ -15,9 +15,12 @@ import {
 export const GOOGLE_ROUTES_COMPUTE_URL =
   'https://routes.googleapis.com/directions/v2:computeRoutes';
 
-/** Minimum field mask for authoritative D/T. Polyline intentionally omitted. */
+/**
+ * Field mask: authoritative distance/duration + optional encoded polyline for
+ * map preview. Polyline is display-only and must never affect fare math.
+ */
 export const GOOGLE_ROUTES_FIELD_MASK =
-  'routes.distanceMeters,routes.duration';
+  'routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline';
 
 const DEFAULT_TIMEOUT_MS = 12_000;
 
@@ -250,10 +253,25 @@ export class GoogleRoutesProvider implements RoutingProvider {
     const distanceKm = metersToKm(distanceMeters);
     const durationMin = parseGoogleDurationToMinutes(duration);
 
+    const encodedPolyline = extractOptionalEncodedPolyline(first);
+
     return {
       distanceKm,
       durationMin,
+      ...(encodedPolyline != null ? { encodedPolyline } : {}),
       provider: 'google_routes',
     };
   }
+}
+
+/** Display-only. Missing/invalid polyline never fails the route result. */
+export function extractOptionalEncodedPolyline(route: object): string | undefined {
+  const polyline = (route as { polyline?: unknown }).polyline;
+  if (polyline == null || typeof polyline !== 'object' || Array.isArray(polyline)) {
+    return undefined;
+  }
+  const encoded = (polyline as { encodedPolyline?: unknown }).encodedPolyline;
+  if (typeof encoded !== 'string') return undefined;
+  const trimmed = encoded.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
 }

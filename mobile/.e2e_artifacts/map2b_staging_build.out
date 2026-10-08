@@ -1,0 +1,5 @@
+WARN: ORA_GOOGLE_MAPS_ANDROID_API_KEY unset — map tiles may fail until configured
+Running Gradle task 'assembleDebug'...                             10.5s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk
+APK=/Users/jazimsaeed/Ora-app/mobile/build/app/outputs/flutter-apk/app-debug.apk
+ORA_API_BASE_URL=https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1

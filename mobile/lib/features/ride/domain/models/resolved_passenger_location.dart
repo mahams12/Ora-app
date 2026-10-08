@@ -36,10 +36,16 @@ class ResolvedPassengerLocation {
         address: address,
       );
 
+  /// Human-readable label for UI. Never exposes raw coordinates.
   String get displayLabel {
     final trimmed = address?.trim();
-    if (trimmed != null && trimmed.isNotEmpty) return trimmed;
-    return '${lat.toStringAsFixed(5)}, ${lng.toStringAsFixed(5)}';
+    if (trimmed != null && trimmed.isNotEmpty) {
+      if (trimmed.toLowerCase() == 'current location') {
+        return 'Location selected';
+      }
+      return trimmed;
+    }
+    return 'Location selected';
   }
 
   @override

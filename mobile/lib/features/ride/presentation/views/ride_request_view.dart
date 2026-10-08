@@ -15,9 +15,10 @@ import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/models/ride_category_option.dart';
 import '../../domain/ports/pricing_estimate_port.dart';
 import '../offers/offer_display.dart';
+import '../models/ride_map_preview_model.dart';
 import '../view_models/ride_request_view_model.dart';
 import '../widgets/ride_category_selector.dart';
-import '../widgets/ride_location_placeholder.dart';
+import '../widgets/ride_map_preview.dart';
 
 /// Passenger ride compose + review. Pricing from backend estimate (Phase 5C).
 class RideRequestView extends ConsumerStatefulWidget {
@@ -153,9 +154,16 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
         top: false,
         child: Column(
           children: [
-            RideLocationPlaceholder(
-              pickupConfirmed: state.hasConfirmedPickup,
-              destinationConfirmed: state.hasConfirmedDestination,
+            RideMapPreview(
+              model: RideMapPreviewModel.fromRideRequest(
+                confirmedPickup: state.confirmedPickup,
+                confirmedDestination: state.confirmedDestination,
+                proposedPickup: state.proposedPickup,
+                proposedDestination: state.proposedDestination,
+                pricingStatus: state.pricingStatus,
+                pricingEstimate: state.pricingEstimate,
+                hasUsablePricing: state.hasUsablePricing,
+              ),
               onBack: () {
                 if (state.phase == RideRequestPhase.review) {
                   vm.goToCompose();
@@ -526,8 +534,7 @@ class _ProposalCard extends StatelessWidget {
             ),
             const SizedBox(height: OraSpacing.xxs),
             Text(
-              '$sourceLabel · ${location.lat.toStringAsFixed(5)}, '
-              '${location.lng.toStringAsFixed(5)}',
+              sourceLabel,
               style: OraTypography.caption(OraColors.textMuted),
             ),
             const SizedBox(height: OraSpacing.sm),

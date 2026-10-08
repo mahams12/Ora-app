@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,6 +8,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:ora/app/di/providers.dart';
 import 'package:ora/core/errors/app_failure.dart';
 import 'package:ora/core/errors/failure_mapper.dart';
+import 'package:ora/core/network/request_context.dart';
+import 'package:ora/features/driver/data/location/driver_location_remote_data_source.dart';
 import 'package:ora/features/driver/domain/location/driver_location_fix.dart';
 import 'package:ora/features/driver/domain/location/driver_location_source.dart';
 import 'package:ora/features/driver/presentation/location/driver_location_session.dart';
@@ -78,6 +81,9 @@ void main() {
             ),
           ),
           driverLocationSourceProvider.overrideWithValue(source),
+          driverLocationRemoteDataSourceProvider.overrideWithValue(
+            const _NoopLocationRemote(),
+          ),
         ],
         child: const MaterialApp(
           home: DriverAssignedRideView(rideId: 'ride-1'),
@@ -85,6 +91,10 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+    });
   }
 
   testWidgets('assigned ride displays location status', (tester) async {
@@ -225,6 +235,26 @@ DriverLocationFix _fix({double accuracyMeters = 8}) {
     speedKmh: 12,
     timestamp: DateTime.now(),
   );
+}
+
+class _NoopLocationRemote implements DriverLocationRemoteDataSource {
+  const _NoopLocationRemote();
+
+  @override
+  Future<LocationPublishResult> publishTripLocation({
+    required String rideId,
+    required int locationSeq,
+    required String locationStreamId,
+    required DriverLocationFix fix,
+    required CancelToken cancelToken,
+    RequestContext? context,
+  }) async {
+    return LocationPublishAccepted(
+      locationSeq: locationSeq,
+      locationStreamId: locationStreamId,
+      acceptedAt: DateTime.now().toUtc().toIso8601String(),
+    );
+  }
 }
 
 class _ScriptedSource extends DriverLocationSource {

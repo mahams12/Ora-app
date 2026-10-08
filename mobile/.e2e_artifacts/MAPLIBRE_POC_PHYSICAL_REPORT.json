@@ -1,0 +1,170 @@
+{
+  "artifact": "MAPLIBRE_POC_PHYSICAL_REPORT",
+  "generatedAtUtc": "2026-10-08T12:06:00Z",
+  "finalStatus": "MAPLIBRE PoC COMPLETE — PERFORMANCE INCONCLUSIVE",
+  "finalStatusDetail": "MAPLIBRE_TILE_KEY configured locally (gitignored local.properties → dart-define). SM-A325F rebuild/install succeeded. MapTiler Cloud returns HTTP 403 'Key usage restricted' for this key, so Lahore vector tiles cannot load. PoC now fail-closes with clear MapTiler dashboard remediation. Earlier keyed run (before preflight gate) showed MapLibre surface + display-only route/markers on blank navy basemap. No production migration. Keep Google production.",
+  "device": {
+    "model": "SM-A325F",
+    "serial": "RF8R40ZQ1JH",
+    "androidVersion": "13",
+    "buildId": "TP1A.220624.014.A325FXXSCDYB2",
+    "physicalProofExecuted": true
+  },
+  "build": {
+    "flutter": "3.35.6",
+    "dart": "3.9.2",
+    "jdkUsedForBuild": "Temurin 21",
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "mapLibreTileKeyInBuild": "PRESENT (value not logged)",
+    "keyStorage": "android/local.properties (gitignored) → scripts/build_staging_apk.sh → --dart-define=MAPLIBRE_TILE_KEY",
+    "keyHardcodedInSource": false,
+    "keyPrintedInLogsOrReport": false
+  },
+  "package": {
+    "name": "maplibre_gl",
+    "version": "0.27.1",
+    "androidNative": "android-sdk-opengl 13.5.0",
+    "iosNative": "MapLibre 6.28.0"
+  },
+  "maplibre": {
+    "preflight": "GET api.maptiler.com/tiles/v3/tiles.json — HTTP 403 Key usage restricted",
+    "styleAsset": "assets/maps/poc/ora_maplibre_poc_style.json",
+    "attribution": "MapLibre logo + i button enabled; MapTiler/OSM attribution in style source when tiles work"
+  },
+  "tileProvider": {
+    "candidate": "MapTiler Cloud",
+    "keyConfiguredLocally": true,
+    "keyAcceptedByMapTiler": false,
+    "httpStatus": 403,
+    "error": "Key usage restricted",
+    "remediation": "MapTiler Cloud → API Keys → EDIT 'Ora MapLibre PoC' → clear Allowed HTTP origins (unrestricted for disposable PoC) or enable mobile/native usage → rebuild not required if only MapTiler-side change, but re-open PoC / reinstall if dart-define unchanged",
+    "publicOsmRasterUsed": false
+  },
+  "style": {
+    "result": "CODE_READY_TILES_BLOCKED_403",
+    "physicallyVerifiedOraBasemap": false,
+    "note": "Style chips / Ora JSON ready; basemap tiles rejected by MapTiler"
+  },
+  "3d": {
+    "result": "NOT_VERIFIED_NO_TILES",
+    "passFailLimited": "BLOCKED_MAPTILER_403"
+  },
+  "gestures": {
+    "result": "PARTIAL",
+    "note": "adb pan/zoom/rotate/tilt gestures exercised on MapLibre surface in matrix run; meaningful tile-backed observation blocked by 403"
+  },
+  "markers": {
+    "result": "PARTIAL_PASS",
+    "evidence": "maplibre_poc_K_orbit.png showed custom gold destination pin + blue driver vehicle on MapLibre surface (display-only) before preflight gate",
+    "connectedToRtdb": false
+  },
+  "route": {
+    "result": "PARTIAL_PASS",
+    "evidence": "maplibre_poc_K_orbit.png showed blue DISPLAY-ONLY route polyline",
+    "googleRoutesCalled": false,
+    "authority": "DISPLAY-ONLY PoC geometry"
+  },
+  "performance": {
+    "fpsMapLibreGl": "NOT_MEASURED",
+    "fpsNote": "MapLibre GL SurfaceView does not appear in Android UI toolkit gfxinfo frame counts during map gestures (0 frames). Do not invent MapLibre FPS.",
+    "flutterUiGfxinfoSample": {
+      "totalFrames": 89,
+      "jankyFrames": 14,
+      "jankyPercent": 15.73,
+      "p50Ms": 11,
+      "p90Ms": 73,
+      "p95Ms": 113,
+      "note": "Flutter chrome/UI only — not MapLibre tile/render FPS"
+    },
+    "memory": {
+      "pssMbBeforeGestures": 485.2,
+      "pssMbAfterGestures": 488.3,
+      "pssMbWarm": 483.7,
+      "dumpsysTotalPssKbLater": 445941,
+      "graphicsMbApprox": 22.1,
+      "measured": true
+    },
+    "startupTimings": {
+      "withWorkingTiles": "NOT_RUN",
+      "preflight403Path": "fail-closed after MapTiler HTTP 403",
+      "earlierKeyedSessionLogcat": "MAPLIBRE_POC_METRIC events observed; cold metrics incomplete due to logcat rotation"
+    },
+    "gestureResponsiveness": "INCONCLUSIVE_NO_TILES",
+    "building3dPerformance": "NOT_MEASURED",
+    "markerRouteRendering": "Overlays visible in K_orbit screenshot; basemap absent",
+    "repeatedOpenClose": "PASS (leave/reopen navigation)",
+    "vsGoogle": "INCONCLUSIVE — cannot compare tile-backed MapLibre to Google without MapTiler accepting the key",
+    "obviouslySlowerThanGoogle": null,
+    "obviouslyFasterThanGoogle": null
+  },
+  "physicalTestMatrix": {
+    "A_coldPocOpen": "PASS",
+    "B_warmPocOpen": "PASS",
+    "C_lahoreMapVisible": "FAIL — MapTiler HTTP 403; no Lahore streets/buildings",
+    "D_pan": "PARTIAL — gestures sent; no tile content to judge",
+    "E_pinchZoom": "PARTIAL — adb approx",
+    "F_rotation": "PARTIAL — adb approx",
+    "G_pitchTilt": "PARTIAL — adb approx",
+    "H_3dBuildings": "FAIL — no building tiles",
+    "I_customMarkers": "PASS_PARTIAL — visible in orbit screenshot",
+    "J_blueRoute": "PASS_PARTIAL — visible in orbit screenshot",
+    "K_cameraAnimation": "PASS_TRIGGERED — orbit button",
+    "L_repeatedPanZoom": "PASS_OBSERVED — gestures completed",
+    "M_leaveScreen": "PASS",
+    "N_reopenScreen": "PASS"
+  },
+  "googleBaseline": {
+    "altered": false,
+    "productionMapsModified": false,
+    "surface": "Existing ride Map preview compose opened on device",
+    "comparison": "No fair tile-backed performance winner declared"
+  },
+  "ios": {
+    "physicalProof": "IOS PHYSICAL PROOF PENDING"
+  },
+  "filesChanged": [
+    "mobile/lib/features/maps/poc/maplibre_poc_config.dart",
+    "mobile/lib/features/maps/poc/maplibre_poc_view.dart",
+    "mobile/.e2e_artifacts/MAPLIBRE_POC_PHYSICAL_REPORT.json",
+    "mobile/.e2e_artifacts/MAPLIBRE_POC_PHYSICAL_MATRIX_RUN.json",
+    "mobile/.e2e_artifacts/maplibre_poc_physical_matrix.py"
+  ],
+  "filesAdded": [],
+  "localOnlyNotCommitted": [
+    "mobile/android/local.properties MAPLIBRE_TILE_KEY=… (gitignored; value not in report)"
+  ],
+  "limitations": [
+    "MapTiler key present but restricted (403) — basemap/3D/Lahore coverage not verifiable",
+    "MapLibre GL FPS not measurable via dumpsys gfxinfo on this device/path",
+    "adb cannot reliably perform true two-finger pinch/rotate/tilt",
+    "iOS physical proof pending"
+  ],
+  "failedChecks": [
+    "C Lahore vector basemap",
+    "H 3D buildings",
+    "MapTiler tile preflight HTTP 403"
+  ],
+  "recommendation": {
+    "1_oraVisualStyleAchievable": "PROMISING but unproven on-device until MapTiler accepts key",
+    "2_3dPitchRotation": "UNPROVEN_ON_DEVICE (blocked 403)",
+    "3_customMarkers": "YES — overlays rendered",
+    "4_customRoute": "YES — blue display-only route rendered",
+    "5_lahoreCoverageUsable": "UNKNOWN — tiles blocked",
+    "6_performAcceptablyOnSmA325F": "INCONCLUSIVE",
+    "7_obviouslySlowerThanGoogle": false,
+    "8_obviouslyFasterThanGoogle": false,
+    "9_performanceInconclusive": true,
+    "10_tileProviderStatus": "MapTiler key configured locally; Cloud rejects with 403 restricted — edit Allowed HTTP origins",
+    "11_licensingAttribution": "Unchanged — MapTiler+OSM+MapLibre when tiles work",
+    "12_unknowns": [
+      "Lahore tile quality once unrestricted",
+      "SM-A325F MapLibre GL FPS/jank with real tiles",
+      "3D extrusion cost on A32"
+    ],
+    "13_proceedControlledProductionMigrationPoc": false,
+    "14_keepGoogleProductionUntilNextGate": true,
+    "nextGate": "Fix MapTiler key restrictions in dashboard → reopen PoC on SM-A325F → complete C/H and measure tile-backed FPS/memory → then reconsider migration gate"
+  },
+  "productionMigration": false,
+  "frozenArchitectureUntouched": true
+}

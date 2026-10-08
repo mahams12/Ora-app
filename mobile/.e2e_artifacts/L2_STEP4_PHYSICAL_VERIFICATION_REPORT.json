@@ -1,0 +1,163 @@
+{
+  "step": "L2_STEP_4_PHYSICAL",
+  "startedAt": "2026-10-06T10:59:06.799339+00:00",
+  "device": "RF8R40ZQ1JH",
+  "deviceModel": "SM-A325F",
+  "androidVersion": "13",
+  "package": "com.ora.ora",
+  "appVersionName": "1.0.0",
+  "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+  "stagingCloudRunRevision": "ora-auth-service-staging-00025-mrl",
+  "rtdbHostname": "ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app",
+  "firebaseProjectId": "ora-app-d8112",
+  "oraEnv": "staging",
+  "productCodeModified": false,
+  "proofs": {
+    "gpsReady": true,
+    "assignedDetailVisible": true,
+    "publishMetricsAfterDwell": {
+      "publish_attempts": 1,
+      "publish_accepted": 1,
+      "publish_failed": 0,
+      "stream_starts": 1,
+      "observed_seqs": [
+        1
+      ],
+      "seq_monotonic": true,
+      "stream_id_suffixes": [
+        "416f2f17"
+      ]
+    },
+    "gpsAcceptedCount": 6,
+    "rtdbAfterPublish": {
+      "latestExists": true,
+      "latestKeys": [
+        "acceptedAt",
+        "accuracy",
+        "driverId",
+        "heading",
+        "lat",
+        "lng",
+        "locationSeq",
+        "locationStreamId",
+        "speed",
+        "ts"
+      ],
+      "locationSeq": 1,
+      "locationStreamIdPresent": true,
+      "locationStreamIdSuffix": "416f2f17",
+      "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "hasLat": true,
+      "hasLng": true,
+      "hasAccuracy": true,
+      "hasHeading": true,
+      "hasSpeed": true,
+      "hasTs": true,
+      "hasAcceptedAt": true,
+      "accessExists": true,
+      "accessUidCount": 2
+    },
+    "rtdbProjectionVerified": true,
+    "cadence": {
+      "gpsAccepted": 6,
+      "publishAccepted": 1,
+      "notEveryGpsFixPublished": true,
+      "seqMonotonic": true,
+      "singleStreamDuringDwell": true,
+      "within15PerMin": true
+    },
+    "rtdbAfterMoreDwell": {
+      "locationSeq": 2,
+      "seqIncreased": true,
+      "sameDriver": true,
+      "latestExists": true
+    },
+    "backgroundForeground": {
+      "readyAfterForeground": "Location is ready",
+      "watchStartsBefore": 1,
+      "watchStopsBefore": 0,
+      "watchStartsAfterBg": 1,
+      "watchStopsAfterBg": 1,
+      "watchStartsAfterFg": 2,
+      "watchStopsAfterFg": 1,
+      "streamStartsBefore": 1,
+      "streamStartsAfter": 2,
+      "streamSuffixesAfter": [
+        "416f2f17",
+        "58808fbe"
+      ],
+      "bgIncreasedStops": true,
+      "fgIncreasedStarts": true,
+      "noDuplicateWatchStack": true
+    },
+    "publishAfterForeground": {
+      "stream_starts": 2,
+      "publish_accepted": 3,
+      "stream_id_suffixes": [
+        "416f2f17",
+        "58808fbe"
+      ],
+      "newStreamAfterFg": true
+    },
+    "rtdbAfterForeground": {
+      "latestExists": true,
+      "locationSeq": 1,
+      "streamIdSuffix": "58808fbe"
+    },
+    "cancellation": {
+      "uiShowsCancelled": true,
+      "publishStoppedIncreased": true,
+      "watchStoppedIncreased": true,
+      "noNewPublishAfterCancel": true
+    },
+    "terminalCleanup": {
+      "rideAccessRemoved": true,
+      "tripLocationsRemoved": true,
+      "noRtdbGrowthAfterCancel": true,
+      "snapshot": {
+        "latestExists": false,
+        "accessExists": false,
+        "accessUidCount": 0
+      }
+    },
+    "cleanupIdempotent": true
+  },
+  "limitations": [
+    "Network interruption intentionally NOT_PHYSICALLY_TESTED (safe staging constraint).",
+    "Initial dwell saw 1 accepted publish vs 6 GPS ACCEPTED (throttle proven); after bg/fg total accepted publishes reached 3 with new stream suffix 58808fbe and RTDB seq reset to 1."
+  ],
+  "proofRideIdPrimary": "e8afdcb8-6152-40c4-b9ac-41e9f6785d7b",
+  "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+  "preflight": {
+    "stagingApiHost": "ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app",
+    "revision": "ora-auth-service-staging-00025-mrl",
+    "hasFirebaseDatabaseUrl": true,
+    "driverOnlineApi": true,
+    "rideState": "DRIVER_ASSIGNED",
+    "assignedDriverMatchesAuthDriver": true
+  },
+  "checks": {
+    "gpsReady": true,
+    "publishAccepted": true,
+    "rtdbProjection": true,
+    "cadenceNotFlooding": true,
+    "seqMonotonic": true,
+    "bgStopsWatch": true,
+    "fgRestartsOneWatch": true,
+    "cancelStops": true,
+    "cleanup": true
+  },
+  "failedChecks": [],
+  "verdict": "GREEN",
+  "networkInterruption": "NOT_PHYSICALLY_TESTED",
+  "finishedAt": "2026-10-06T11:03:41.840706+00:00",
+  "regression": {
+    "flutterLocationFocused": "68/68 pass",
+    "flutterAnalyzeDriver": "clean",
+    "backendL2Focused": "38/38 pass",
+    "backendFullNpmTest": "429/429 pass (single attempt)",
+    "backendBuild": "tsc pass"
+  },
+  "harness": "mobile/.e2e_artifacts/l2_step4_physical.py"
+}

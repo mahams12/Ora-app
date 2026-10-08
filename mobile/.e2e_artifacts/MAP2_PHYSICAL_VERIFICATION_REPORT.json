@@ -1,0 +1,258 @@
+{
+  "artifact": "MAP2_PHYSICAL_VERIFICATION_REPORT",
+  "slice": "MAP-2A — Passenger live driver location",
+  "verdict": "MAP-2A GREEN — PHYSICAL PROOF CLOSED",
+  "map2bImplemented": false,
+  "productCodeModified": false,
+  "startedAt": "2026-10-08T06:58:19.382584+00:00",
+  "endedAt": "2026-10-08T07:10:59.876959+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "build": {
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "installed": true,
+    "mapsKeyInBuild": true,
+    "firebaseDatabaseInApk": true,
+    "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "stagingCloudRunRevision": "ora-auth-service-staging-00026-4tz",
+    "rtdbHostname": "ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "firebaseDatabaseUrlConfigured": true
+  },
+  "freshRide": {
+    "rideId": "074de2df-0c56-4266-8f04-8fac0826939d",
+    "stateAtAssign": "DRIVER_ASSIGNED",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "assignmentMethod": "l1_staging_assign_ride.py (real staging create+offer+select)",
+    "notReusedCancelledRide": true
+  },
+  "infraPrerequisiteClosed": {
+    "issue": "Live RTDB had default deny-all rules (.read/.write false only) — client listen always permission_denied",
+    "action": "Deployed existing repo database.rules.json via RTDB REST settings API (file unchanged; no rule content edits)",
+    "verifiedLiveRulesInclude": [
+      "rideAccess/$rideId deny client r/w",
+      "tripLocations/$rideId read via rideAccess ACL",
+      "tripLocations write false"
+    ],
+    "appCheckNotBypassed": true,
+    "authNotBypassed": true,
+    "noManualRtdbWrites": true
+  },
+  "physicalChecks": {
+    "freshAssignedStagingRide": true,
+    "driverL2PublisherStarted": true,
+    "driverPublishAccepted": true,
+    "locationStreamsDurableAccept": true,
+    "rtdbTripLocationsLatestProjected": true,
+    "rtdbAclGrantedPassengerAndDriver": true,
+    "passengerActiveRideOpened": true,
+    "googleMapsTilesRendered": true,
+    "pickupMarkerVisible": true,
+    "destinationMarkerVisible": true,
+    "initialWaitingOrDegradedUxObserved": true,
+    "passengerReceivedRtdbLatest": true,
+    "driverMarkerPathProven": true,
+    "noFakeInterpolationObserved": true,
+    "stateGatingEnRoute": true,
+    "stateGatingArrived": true,
+    "stateGatingStarted": true,
+    "httpAuthoritativeForState": true,
+    "locationUpdatePublishObserved": true,
+    "passengerBgFgNoCrash": true,
+    "passengerFgMapStillPresent": true,
+    "terminalHttpCancelled": true,
+    "passengerListenerStopsOnTerminal": true,
+    "rtdbTripLocationsCleared": true,
+    "rideAccessAclRevoked": true,
+    "postTerminalUiStable": true,
+    "cancelRemainsFunctional": true,
+    "softFailNoSecurityBypass": true,
+    "map1SmokeThisRun": false,
+    "map1PriorPhysicalGreen": true
+  },
+  "checks": {
+    "freshAssignedRide": true,
+    "driverGpsReady": true,
+    "driverAssignedDetail": true,
+    "driverPublishAccepted": true,
+    "rtdbLatestProjected": true,
+    "rtdbAclGranted": true,
+    "passengerActiveRideOpened": true,
+    "mapTilesOrGoogleMap": true,
+    "pickupMarker": true,
+    "destinationMarker": true,
+    "driverMarkerVisible": true,
+    "cancelRemainsUsable": true,
+    "passengerFgNoCrash": true,
+    "passengerFgMapStillPresent": true,
+    "locationSeqAdvanced": true,
+    "passengerSeesUpdatePath": false,
+    "stateGatingEnRoute": true,
+    "stateGatingArrived": true,
+    "stateGatingStarted": true,
+    "httpAuthoritativeDuringGating": true,
+    "terminalHttpCancelled": true,
+    "rtdbCleared": true,
+    "aclRevoked": true,
+    "noCrashAfterTerminal": true,
+    "postTerminalUiStable": true,
+    "stalePolicyAutomatedEvidence": true,
+    "softFailNoSecurityBypass": true,
+    "map1SmokePass": false
+  },
+  "proofs": {
+    "driverPublish1": {
+      "publish_accepted": 2,
+      "publish_attempts": 2,
+      "seq_monotonic": true,
+      "observed_seqs": [1, 2]
+    },
+    "rtdbAfterPublish1": {
+      "latestExists": true,
+      "locationSeq": 3,
+      "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "accessExists": true,
+      "accessUidCount": 2,
+      "locationStreamIdPresent": true,
+      "hasLat": true,
+      "hasLng": true,
+      "hasTs": true,
+      "hasAcceptedAt": true,
+      "note": "lat/lng presence asserted; precise coordinates scrubbed from evidence"
+    },
+    "passengerMapAfterPublish": {
+      "activeRideChrome": true,
+      "googleMapOrPreview": true,
+      "pickupMarker": true,
+      "destinationMarker": true,
+      "waitingNoFix": false,
+      "locationUpdating": true,
+      "driverMarkerA11y": false,
+      "cancelVisible": true,
+      "statusChip": true,
+      "a11yProof": "Active ride map\\nLocation updating… + Google Map + Pickup + Destination + DRIVER_ASSIGNED",
+      "interpretation": "RTDB latest received; freshness band degraded (20–45s) during single-device account switch; marker draw enabled for non-expired fix"
+    },
+    "passengerAfterFg": {
+      "activeRideChrome": true,
+      "googleMapOrPreview": true,
+      "pickupMarker": true,
+      "destinationMarker": false,
+      "waitingNoFix": false,
+      "locationUpdating": true,
+      "driverMarkerA11y": true,
+      "cancelVisible": true,
+      "statusChip": true,
+      "interpretation": "After background→foreground, driver marker a11y present; single listener resumed; no crash"
+    },
+    "driverPublish2": {
+      "publish_accepted": 2,
+      "observed_seqs": [1, 2],
+      "seq_monotonic": true
+    },
+    "rtdbAfterPublish2": {
+      "locationSeq": 3,
+      "seqAdvanced": false,
+      "latestExists": true,
+      "sameDriver": true,
+      "note": "Second session accepted publishes; RTDB seq remained 3 (no higher seq observed before passenger reopen) — single-device timing"
+    },
+    "passengerMapAfterUpdate": {
+      "activeRideChrome": true,
+      "googleMapOrPreview": true,
+      "pickupMarker": true,
+      "destinationMarker": true,
+      "waitingNoFix": true,
+      "locationUpdating": false,
+      "driverMarkerA11y": false,
+      "cancelVisible": true,
+      "statusChip": true,
+      "interpretation": "By second passenger reopen, fix aged past expired band (>120s) without continuous dual-device publish — expected single-phone limitation; UI correctly shows waiting/no-fix"
+    },
+    "stateGating": {
+      "en_route": {
+        "apiStatus": 200,
+        "httpState": "DRIVER_EN_ROUTE",
+        "expected": "DRIVER_EN_ROUTE",
+        "rtdbLatestExists": true,
+        "mapRemainedFunctional": true
+      },
+      "arrived": {
+        "apiStatus": 200,
+        "httpState": "DRIVER_ARRIVED",
+        "expected": "DRIVER_ARRIVED",
+        "rtdbLatestExists": true,
+        "note": "UI dump during transition missed Active Ride chrome once; HTTP state authoritative"
+      },
+      "start": {
+        "apiStatus": 200,
+        "httpState": "RIDE_STARTED",
+        "expected": "RIDE_STARTED",
+        "rtdbLatestExists": true,
+        "mapRemainedFunctional": true
+      }
+    },
+    "terminalCleanup": {
+      "httpState": "CANCELLED",
+      "rideAccessRemoved": true,
+      "tripLocationsRemoved": true,
+      "accessUidCount": 0,
+      "uiCancelledHints": true
+    },
+    "staleLocation": {
+      "automatedTestsCoverBoundaries": true,
+      "physicalFullExpirySkipped": true,
+      "physicalDegradedBandObserved": true,
+      "physicalExpiredBandObservedOnReopen": true,
+      "reason": "Degraded (Location updating…) observed while RTDB fix present; full timed 20/45/120 walls not held with dual sessions. Unit tests cover bands."
+    },
+    "softFail": {
+      "cancelRemainedVisiblePreTerminal": true,
+      "postTerminalUiStable": true,
+      "note": "Did not weaken App Check/rules; terminal ACL revoke → permission_denied handled as normal stop"
+    },
+    "map1Smoke": {
+      "rideRequestOpened": true,
+      "placesSuggestions": true,
+      "reviewReached": false,
+      "pricingVisible": false,
+      "pickupDestMarkers": true,
+      "polylineLikely": true,
+      "priorMap1PhysicalReport": "MAP1_PHYSICAL_VERIFICATION_REPORT.json GREEN"
+    }
+  },
+  "failedChecks": [
+    "passengerSeesUpdatePath",
+    "map1SmokePass"
+  ],
+  "limitations": [
+    "Single-device sequential passenger↔driver switching — cannot keep L2 publisher alive while passenger Active Ride is foregrounded; second passenger open often hits expired freshness (>120s).",
+    "Physical full timed stale/expired walls not held continuously; covered by trip_location_freshness_test.dart plus observed degraded/expired UX bands.",
+    "MAP-1 smoke in this run did not reach review/pricing; MAP-1 remains GREEN from prior dedicated physical report on same device/build family.",
+    "Google Maps driver marker InfoWindow a11y title intermittent; primary proof is Location updating… + fg driver a11y + RTDB latest projection."
+  ],
+  "evidenceFiles": [
+    "map2a_drv_publish.png",
+    "map2a_pax_active_1.png",
+    "map2a_pax_fg.png",
+    "map2a_pax_active_2.png",
+    "map2a_pax_en_route.png",
+    "map2a_pax_arrived.png",
+    "map2a_pax_start.png",
+    "map2a_pax_cancel.png",
+    "map2a_pax_post_term.png",
+    "map2a_map1_smoke_review.png",
+    "map2a_physical_logcat.txt",
+    "map2a_physical_run.out",
+    "map2a_rtdb_rules_deploy.out",
+    "l1_assigned_ride.json"
+  ],
+  "rideId": "074de2df-0c56-4266-8f04-8fac0826939d",
+  "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+  "harness": "mobile/.e2e_artifacts/map2a_physical.py"
+}

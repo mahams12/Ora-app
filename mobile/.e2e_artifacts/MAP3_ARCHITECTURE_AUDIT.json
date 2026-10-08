@@ -1,0 +1,341 @@
+{
+  "artifact": "MAP3_ARCHITECTURE_AUDIT",
+  "slice": "MAP-3 — Next functional active-ride map slice (post MAP-2C)",
+  "kind": "ARCHITECTURE_AUDIT_ONLY",
+  "capturedAt": "2026-10-08T09:23:00.000Z",
+  "verdict": "GREEN",
+  "verdictLabel": "MAP-3 ARCHITECTURE AUDIT — GREEN",
+  "verdictMeaning": "Next slice is clearly bounded: user-gesture camera ownership (pause automatic animateCamera after passenger pan/zoom until Recenter). Not visual redesign. Not road route/ETA. No product code implemented.",
+  "notImplementedConfirmation": "NO PRODUCT CODE WAS IMPLEMENTED. Audit only. Wait for review before implementation.",
+  "map3Implemented": false,
+  "closedPrerequisites": {
+    "MAP1": "GREEN / CLOSED — request/review Google Map + display polyline",
+    "MAP2A": "GREEN / CLOSED — RTDB live driver location",
+    "MAP2B": "GREEN / CLOSED — phase-aware tick-stable camera",
+    "MAP2C": {
+      "status": "GREEN / CLOSED",
+      "proofRideId": "9d654d18-b0da-43be-bac0-281e89cab6d7",
+      "device": "SM-A325F / RF8R40ZQ1JH",
+      "stagingRevision": "ora-auth-service-staging-00026-4tz",
+      "report": "mobile/.e2e_artifacts/MAP2C_PHYSICAL_VERIFICATION_REPORT.json"
+    }
+  },
+
+  "lockedProductDirectionDeferredVisual": [
+    "Ora black/dark + orange identity",
+    "3D/depth/perspective",
+    "custom Ora markers",
+    "smooth animations / cinematic camera language",
+    "polished road-route visuals",
+    "Mapbox / custom tiles",
+    "continuous follow-with-bearing navigation"
+  ],
+
+  "currentStateFindings": {
+    "verifiedAgainstCode": true,
+    "activeRideMap": {
+      "file": "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart",
+      "shows": [
+        "pickup/destination/driver markers",
+        "MAP-2B phase camera + Recenter (one-shot)",
+        "MAP-2C dashed geometric guides"
+      ],
+      "gestures": "GoogleMap defaults leave pan/zoom enabled — NOT disabled",
+      "userGestureGate": "ABSENT — no onCameraMoveStarted handler; no userOwnsCamera flag",
+      "autoFitTriggers": [
+        "onMapCreated",
+        "fitIdentity change (first driver appear/disappear, phase flip, anchor change)",
+        "Recenter button"
+      ],
+      "autoFitDoesNotTriggerOn": "every RTDB locationSeq tick (MAP-2B proven)"
+    },
+    "cameraPolicy": {
+      "file": "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart",
+      "frozen": true,
+      "fitIdentity": "phase + pickup/dest @4dp + driverPresent|Absent"
+    },
+    "progressionPolicy": {
+      "file": "mobile/lib/features/ride/presentation/utils/active_ride_map_progression_policy.dart",
+      "frozen": true,
+      "nature": "display-only geometric guides — not road routes / ETA / navigation"
+    },
+    "passengerCopy": {
+      "file": "mobile/lib/features/ride/presentation/active_ride/active_ride_display.dart",
+      "forbids": ["invented ETA", "turn-by-turn navigation"],
+      "arrivedWait": "arrivedWaitLabel from real Ride.arrivedAt only"
+    },
+    "publicRide": {
+      "exposes": ["pickup", "destination", "state", "arrivedAt", "fare fields"],
+      "omits": ["routePolyline", "distanceKm", "estimatedDurationMin"],
+      "createForces": "routePolyline: null; distance/duration copied from snapshot inputs into RideDoc only"
+    },
+    "googleRoutes": {
+      "productionCallSites": ["POST /v1/pricing/estimate only"],
+      "notCalledForActiveRide": true
+    },
+    "rideMapPreviewMap1": {
+      "onCameraMoveStarted": "empty stub only — same gesture-ownership gap pattern on request map"
+    },
+    "largestFunctionalGapAfterMap2c": "Camera ownership incomplete: passenger can pan/zoom the live map, but automatic animateCamera still snaps on semantic identity changes (first driver fix, RIDE_STARTED phase flip) with no 'user gestured → pause auto-fit until Recenter' gate. Recenter exists but cannot reclaim ownership after a fight because there is no ownership model."
+  },
+
+  "answersToRequiredQuestions": {
+    "1_biggestFunctionalGap": "User vs automatic camera ownership on ActiveRideMap after MAP-2C geometry is closed.",
+    "2_smallestSafeNextSlice": "Pause automatic camera fits after user gesture until explicit Recenter (MAP-3).",
+    "3_whyNotVisualRedesign": "Visual/Ora branding is LOCKED deferred; functional camera ownership is incomplete and prerequisite to cinematic/follow UX later.",
+    "4_existingAuthoritativeData": "None new — uses existing CameraUpdate scheduling + GoogleMap gesture callbacks + Recenter control.",
+    "5_missingData": "No missing backend field for this slice — only client camera-ownership state.",
+    "6_backendChanges": "NO — proven: slice is presentation-only camera gate in ActiveRideMap.",
+    "7_rtdbChanges": "NO",
+    "8_googleRoutes": "NO — not required for gesture ownership. (C2 corridor / D ETA would need Routes or persisted estimate geometry — deferred.)",
+    "9_driverPublisher": "NO",
+    "10_cameraPolicy": "NO change to ActiveRideMapCameraPolicy.fitIdentity / composition math — only when ActiveRideMap is allowed to call animateCamera.",
+    "11_boundaryRisk": "LOW if scoped to ActiveRideMap ownership flag only; HIGH if fitIdentity or progression policy rewritten.",
+    "12_outOfScope": "See exactOutOfScope",
+    "13_dataFlow": "See dataFlow",
+    "14_lifecycle": "See stateLifecycleBehavior",
+    "15_failure": "See failureBehavior",
+    "16_security": "No new network; no new PII surfaces; do not log precise coords.",
+    "17_performance": "Fewer animateCamera calls when user owns camera — better on SM-A325F.",
+    "18_androidIos": "google_maps_flutter onCameraMoveStarted available both platforms; no Manifest/key changes.",
+    "19_tests": "See requiredTests",
+    "20_physicalProof": "See physicalProofPlan"
+  },
+
+  "candidateSlicesEvaluated": {
+    "A_gestureCameraOwnership": {
+      "name": "User-gesture camera ownership (pause auto-fit until Recenter)",
+      "userValue": "MEDIUM-HIGH",
+      "complexity": "LOW-MEDIUM",
+      "backend": false,
+      "rtdb": false,
+      "googleRoutes": false,
+      "authority": "Presentation-only; clear",
+      "regressionRisk": "LOW if MAP-2B fitIdentity untouched",
+      "recommendationRank": 1
+    },
+    "C2_tripCorridorPolyline": {
+      "name": "Server-authored pickup→dest road corridor on active ride",
+      "userValue": "HIGH for corridor; LOW for to_pickup",
+      "complexity": "MEDIUM-HIGH",
+      "backend": true,
+      "googleRoutes": "0 extra if persist at estimate; else 1× at create",
+      "authority": "NEW — must design privacy (routePolyline currently stripped) + display-only labeling",
+      "blocker": "Not free — polyline never persisted; estimate polyline not on snapshot",
+      "recommendationRank": 2
+    },
+    "M_tripMetricsOnActiveRide": {
+      "name": "Expose distanceKm / estimatedDurationMin as booking metrics",
+      "userValue": "MEDIUM",
+      "complexity": "LOW",
+      "backend": "small publicRide + Ride parse",
+      "authorityRisk": "HIGH — durationMin will be read as ETA despite doctrine",
+      "recommendationRank": 3
+    },
+    "B_markerLerp": {
+      "name": "Display-only marker interpolation",
+      "recommendationRank": 4,
+      "note": "Visual-adjacent; invents motion between fixes; deferred with Ora motion language"
+    },
+    "D_serverEta": {
+      "name": "Server ETA",
+      "recommendationRank": 5,
+      "note": "Requires new authoritative source; client speed×distance forbidden"
+    },
+    "C3_liveReroute": {
+      "name": "Live driver→target Google Routes",
+      "recommendationRank": 6,
+      "note": "High cost/rate; new API; not smallest"
+    },
+    "E_followMode": {
+      "name": "Continuous follow / tilt-bearing chase",
+      "recommendationRank": 7,
+      "note": "Conflicts with deferred visual + locked 'never continuously fight user' — ownership (A) is prerequisite"
+    }
+  },
+
+  "recommendedSlice": {
+    "id": "MAP-3",
+    "name": "User-gesture camera ownership on ActiveRideMap",
+    "candidate": "A",
+    "why": [
+      "MAP-2C closed the largest geometry gap (disconnected pins). Remaining high-value asks (road corridor, ETA, live re-route) are authority/cost problems — not the smallest next slice.",
+      "Code evidence: GoogleMap allows gestures; Recenter is one-shot; no userOwnsCamera gate — auto-fit still fights users on first-fix and RIDE_STARTED.",
+      "Product direction explicitly requires: user-controlled pan/zoom; Recenter/Follow control; automatic camera must never continuously fight user gestures. Ownership is the missing functional prerequisite before follow/cinematic work.",
+      "Zero backend / RTDB / Routes / publisher / MAP-1 / MAP-2A / MAP-2C policy changes.",
+      "Does not implement Ora visual redesign."
+    ],
+    "exactInScope": [
+      "ActiveRideMap: detect user camera interaction (onCameraMoveStarted or equivalent)",
+      "Set userOwnsCamera=true → suppress automatic _scheduleCameraFit animateCamera while owned",
+      "Recenter: clear ownership + one-shot policy fit (existing button semantics)",
+      "Preserve MAP-2B: when ownership=false, fitIdentity still drives refits (first appear / phase / anchors)",
+      "Preserve MAP-2C: guide endpoints still update every driver tick without camera calls",
+      "Unit/widget tests for ownership latch + MAP-2B animateCamera counts",
+      "Physical proof: pan then wait for first fix / phase flip without yank; Recenter restores policy framing"
+    ],
+    "exactOutOfScope": [
+      "Continuous follow mode / bearing chase / tilt",
+      "Changes to ActiveRideMapCameraPolicy.fitIdentity composition math",
+      "Changes to ActiveRideMapProgressionPolicy",
+      "TripLocationSession / RTDB / publisher / location/update",
+      "Google Routes / road polylines / estimate polyline reuse",
+      "ETA (any source) / speed×distance",
+      "Exposing distanceKm/estimatedDurationMin as passenger ETA-looking metrics",
+      "Marker interpolation / 3D / custom markers / map styling / Ora brand theme",
+      "MAP-1 RideMapPreview ownership (optional later twin — not required for MAP-3)",
+      "Backend publicRide schema changes"
+    ],
+    "openProductDecisions": [
+      {
+        "id": "OD1",
+        "question": "If userOwnsCamera=true, should RIDE_STARTED phase flip still force one auto-fit, or require Recenter?",
+        "recommendation": "Require Recenter (strict ownership) — simpler; avoids surprising yank mid-pan. Document in implementation."
+      },
+      {
+        "id": "OD2",
+        "question": "Should first driver appearance auto-fit if user already panned before any fix?",
+        "recommendation": "If ownership already true → do not auto-fit; Recenter still available. Prefer predictable ownership over silent override."
+      },
+      {
+        "id": "OD3",
+        "question": "Is a visible 'Following / Recenter' chip needed beyond the existing IconButton?",
+        "recommendation": "Optional UX polish — not required for MAP-3 functional closure; keep IconButton if sufficient."
+      }
+    ]
+  },
+
+  "dataFlow": {
+    "unchanged": [
+      "HTTP poll → Ride.state + pickup/dest",
+      "RTDB → TripLocationSession → markers + MAP-2C guides",
+      "ActiveRideMapCameraPolicy → CameraUpdate candidates"
+    ],
+    "map3Addition": [
+      "GoogleMap.onCameraMoveStarted → userOwnsCamera=true",
+      "_scheduleCameraFit / _performAnimate gated by !userOwnsCamera (except Recenter path)",
+      "Recenter → userOwnsCamera=false → one policy fit"
+    ],
+    "diagram": [
+      "User gesture → owns camera (auto-fit suppressed)",
+      "Recenter → release ownership → MAP-2B policy fit once",
+      "RTDB ticks → markers/guides update; camera unchanged if owned OR if identity unchanged"
+    ]
+  },
+
+  "stateLifecycleBehavior": {
+    "initialMount": "ownership=false → first policy fit as today",
+    "userPanZoom": "ownership=true → suppress auto animateCamera",
+    "firstDriverFix_whileOwned": "marker+guide update; NO camera yank (OD2)",
+    "firstDriverFix_whileNotOwned": "MAP-2B one intentional reframe",
+    "EN_ROUTE_ARRIVED": "same phase — no identity change — no camera regardless",
+    "RIDE_STARTED_whileOwned": "guides switch to_dest; camera stays until Recenter (OD1)",
+    "RIDE_STARTED_whileNotOwned": "MAP-2B one phase reframe",
+    "Recenter": "clear ownership + fit",
+    "terminal": "unchanged MAP-2A cleanup"
+  },
+
+  "failureBehavior": {
+    "mapsDisabled": "shell — no camera/ownership",
+    "animateCameraThrows": "soft-fail catch retained",
+    "gestureCallbackMissingOnPlatform": "ownership stays false — current behavior (safe fallback)",
+    "neverGateCancelClose": true
+  },
+
+  "securityConsiderations": [
+    "No new endpoints or secrets",
+    "No precise coordinate logging in evidence",
+    "Does not weaken RTDB fail-closed rules"
+  ],
+
+  "performanceConsiderations": {
+    "samsung_SM_A325F": "Fewer animateCamera after user pan — reduces jank; guides still cheap",
+    "ios": "Same Dart gate"
+  },
+
+  "requiredTests": [
+    "Widget: userCameraMoveStarted suppresses subsequent identity-driven animateCamera until Recenter",
+    "Widget: Recenter restores one animateCamera and clears ownership",
+    "Widget: MAP-2B regression — without gesture, seq ticks still do not spam animateCamera",
+    "Widget: MAP-2B regression — without gesture, RIDE_STARTED still one reframe",
+    "Widget: MAP-2C regression — guide kind still switches on RIDE_STARTED even when ownership suppresses camera",
+    "Unit: unchanged camera policy + progression policy suites",
+    "MAP-2A / MAP-1 regression suites"
+  ],
+
+  "physicalProofPlan": {
+    "device": "Samsung SM-A325F RF8R40ZQ1JH",
+    "env": "STAGING ONLY",
+    "order": "Passenger Active Ride open BEFORE first fresh publish",
+    "steps": [
+      "Fresh DRIVER_ASSIGNED; open Active Ride; assert map+guides",
+      "Manually pan map away from policy framing",
+      "Publish fresh driver location — assert marker+driver↔pickup guide appear WITHOUT camera yank back",
+      "Multi-publish — guides update; camera stays where user left it",
+      "Tap Recenter — one intentional return to policy framing",
+      "Advance EN_ROUTE/ARRIVED — no thrash",
+      "Advance RIDE_STARTED — guides flip; if ownership was reclaimed by Recenter, expect one phase reframe; if user re-panned after Recenter, camera stays until Recenter again (per OD1)",
+      "Cancel — RTDB/ACL cleanup; MAP-1 short smoke"
+    ],
+    "artifact": "mobile/.e2e_artifacts/MAP3_PHYSICAL_VERIFICATION_REPORT.json (future)",
+    "greenRule": "GREEN only if gesture pause + Recenter reclaim proven on device; do not claim visual-design GREEN"
+  },
+
+  "risks": [
+    {
+      "risk": "Users miss first-fix reframe because they brushed the map",
+      "mitigation": "Recenter always available; optional one-time tooltip later — not MAP-3 required"
+    },
+    {
+      "risk": "onCameraMoveStarted fires on programmatic animateCamera → ownership latch false-positive",
+      "mitigation": "Ignore move-started while _pendingIdentity/_performingAnimate; widget-test both paths"
+    },
+    {
+      "risk": "Scope creep into follow mode / tilt",
+      "mitigation": "Explicit out-of-scope; OD3 chip only if needed"
+    },
+    {
+      "risk": "Temptation to ship C2 corridor 'while touching camera'",
+      "mitigation": "Separate authority design required; not MAP-3"
+    }
+  ],
+
+  "filesLikelyToChange": [
+    "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart",
+    "mobile/test/features/ride/active_ride_map_camera_test.dart (extend)",
+    "mobile/test/features/ride/active_ride_map_gesture_ownership_test.dart (new)",
+    "mobile/.e2e_artifacts/MAP3_IMPLEMENTATION_STATUS.json (future)",
+    "mobile/.e2e_artifacts/MAP3_PHYSICAL_VERIFICATION_REPORT.json (future)"
+  ],
+
+  "filesThatMustRemainUntouched": [
+    "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart",
+    "mobile/lib/features/ride/presentation/utils/active_ride_map_progression_policy.dart",
+    "mobile/lib/features/ride/presentation/location/trip_location_session.dart",
+    "mobile/lib/features/ride/data/location/rtdb_trip_location_data_source.dart",
+    "mobile/lib/features/driver/domain/location/driver_trip_location_publisher.dart",
+    "backend/auth-service/src/location/**",
+    "backend/auth-service/src/rtdb/**",
+    "backend/auth-service/src/routing/**",
+    "backend/auth-service/src/pricing/**",
+    "backend/auth-service/src/rides/**",
+    "database.rules.json",
+    "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart",
+    "Google Maps key / AndroidManifest maps config"
+  ],
+
+  "definitionOfDone": [
+    "User gesture pauses automatic camera until Recenter",
+    "Recenter restores MAP-2B policy framing once",
+    "MAP-2B tick-stability preserved when not owned",
+    "MAP-2C guides still update without camera thrash",
+    "MAP-2A / MAP-1 regressions green",
+    "Physical proof on SM-A325F with passenger-open-before-publish",
+    "No visual redesign / ETA / Routes / follow mode claimed"
+  ],
+
+  "finalVerdict": {
+    "status": "GREEN",
+    "summary": "MAP-3 ARCHITECTURE AUDIT — GREEN. Recommended next slice: user-gesture camera ownership on ActiveRideMap. Stop for review — do not implement yet."
+  }
+}

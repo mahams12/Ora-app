@@ -1,0 +1,31 @@
+{
+  "artifact": "MAP3_PHYSICAL_OD1_RETRY",
+  "startedAt": "2026-10-08T10:11:57.930002+00:00",
+  "rideId": "fe3141a3-fb31-4d9a-b01b-9eb5566c455b",
+  "fp": {
+    "B": {
+      "sha1": "ecc5773b17cbbbaa",
+      "meanLum": 221.09
+    },
+    "C": {
+      "sha1": "dd00b0b627e6fcc6",
+      "meanLum": 221.56
+    },
+    "D": {
+      "sha1": "e5f068c4ce01c51c",
+      "meanLum": 221.59
+    },
+    "E_start": {
+      "sha1": "fdf61310f6a8b468",
+      "meanLum": 225.29
+    },
+    "F": {
+      "sha1": "fdf61310f6a8b468",
+      "meanLum": 225.29
+    }
+  },
+  "od1_pass": false,
+  "recenter_moved_from_e": false,
+  "recenter_moved_from_pan": true,
+  "endedAt": "2026-10-08T10:15:18.355960+00:00"
+}

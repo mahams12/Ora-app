@@ -1,0 +1,455 @@
+{
+  "artifact": "MAP_ENGINE_ARCHITECTURE_AUDIT",
+  "kind": "ARCHITECTURE_AUDIT_ONLY",
+  "capturedAt": "2026-10-08T11:05:00.000Z",
+  "status": "MAP ENGINE AUDIT COMPLETE — IMPLEMENTATION DECISION PENDING",
+  "productCodeModified": false,
+  "visualDirectionLocked": {
+    "foundation": "Ora navy + primary blue (latest approved map reference)",
+    "notTarget": "orange-heavy prior concepts; default Google Maps look",
+    "goals": [
+      "custom route styling",
+      "custom driver/vehicle marker",
+      "2.5D/3D perspective where suitable",
+      "3D buildings/landmarks where available",
+      "smooth marker + camera",
+      "gesture ownership (MAP-3 principles)",
+      "premium depth without provider-branded look",
+      "mid-range Android viability (SM-A325F class)"
+    ]
+  },
+
+  "currentRenderer": {
+    "package": "google_maps_flutter ^2.12.3",
+    "widgets": [
+      "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart (MAP-1)",
+      "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart (MAP-2A/2B/2C/3)"
+    ],
+    "policiesCoupledToGoogleTypes": [
+      "active_ride_map_camera_policy.dart (LatLng, CameraUpdate)",
+      "active_ride_map_progression_policy.dart (LatLng)",
+      "ride_map_camera_policy.dart (MAP-1)"
+    ],
+    "markers": {
+      "type": "BitmapDescriptor.defaultMarkerWithHue",
+      "pickup": "hueAzure",
+      "destination": "hueOrange",
+      "driver": "hueGreen + heading rotation + alpha by freshness",
+      "customAssets": false
+    },
+    "polylines": {
+      "map1": "server estimate encodedPolyline (display-only)",
+      "map2c": "geometric dashed guides (not road routes)"
+    },
+    "camera": {
+      "map1": "fit pickup+destination on identity change",
+      "map2b": "fitIdentity phase-aware tick-stable",
+      "map3": "userOwnsCamera + onCameraMoveStarted + Recenter one-shot"
+    },
+    "styleAppliedInApp": false,
+    "mapIdCloudStyling": false,
+    "buildingsEnabledExplicit": "default GoogleMap buildingsEnabled (not customized)",
+    "tiltBearingUsed": false,
+    "keys": {
+      "androidMapsSdk": "AndroidManifest com.google.android.geo.API_KEY via ORA_GOOGLE_MAPS_ANDROID_API_KEY",
+      "iosMapsSdk": "AppDelegate has no explicit GMSServices — relies on GoogleService-Info / plugin defaults (VERIFY before iOS ship)",
+      "placesClient": "ORA_GOOGLE_PLACES_API_KEY dart-define → GooglePlacesHttpSearch",
+      "routesServer": "GOOGLE_MAPS_SERVER_KEY backend only — never in mobile"
+    },
+    "places": {
+      "file": "google_places_http_search.dart",
+      "apis": ["Places API (New) autocomplete/details", "Geocoding reverse"],
+      "authority": "place resolution only — not pricing"
+    },
+    "routing": {
+      "file": "backend/.../google_routes_provider.ts",
+      "api": "Routes API computeRoutes",
+      "authority": "pricing estimate distance/duration (+ optional encodedPolyline for MAP-1 display)",
+      "activeRide": "routePolyline forced null on RideDoc create; not on publicRide"
+    },
+    "authoritySeparationAlreadyCorrect": {
+      "firestoreHttp": "ride lifecycle",
+      "rtdb": "display-only live driver latest",
+      "renderer": "visualization only",
+      "clientGps": "never pricing authority"
+    },
+    "failureBehavior": "soft shell Map preview / maps unavailable — never gates cancel/close/pricing",
+    "testsAndProof": {
+      "map1": "unit/widget + physical GREEN",
+      "map2a": "unit/widget + physical GREEN",
+      "map2b": "unit/widget + physical GREEN",
+      "map2c": "unit/widget + physical GREEN",
+      "map3": "115 automated PASS; physical YELLOW (human OD1 pending)"
+    },
+    "placeholderMapsLayer": {
+      "maps_service.dart": "PlaceholderMapsService — unused by MAP-1..3",
+      "features/maps/maps.dart": "empty library stub"
+    }
+  },
+
+  "candidates": {
+    "google": {
+      "renderer": "Google Maps SDK via google_maps_flutter",
+      "tileData": "Google (bundled with SDK)",
+      "flutterMaturity": "HIGH — production-proven in Ora on SM-A325F",
+      "customStyle": {
+        "jsonStyle": "SUPPORTED by API (GoogleMap.style) — NOT used in Ora yet",
+        "cloudMapId": "SUPPORTED by API — NOT used in Ora yet",
+        "fullOraBrandEraseGoogleLook": "PARTIAL — can darken/recolor; Google visual DNA + attribution remain",
+        "evidence": "Google cloud styling docs; google_maps_flutter GoogleMap.style/mapId"
+      },
+      "threeD": {
+        "tiltRotateGestures": "SUPPORTED by API",
+        "buildingsEnabled": "API flag exists",
+        "flutter3dBuildingsReliability": "DISPUTED — open Flutter issue reports 3D buildings not showing despite cloud style 3D setting",
+        "evidence": "github.com/flutter/flutter/issues/193065 (NOT PROVEN working in google_maps_flutter)"
+      },
+      "performanceOnA325F": {
+        "status": "MEASURED_IN_PRODUCT_USE",
+        "notes": "MAP-1..2C physical proofs rendered maps acceptably; no formal FPS/memory suite"
+      },
+      "pakistanCoverage": "HIGH — proven Lahore staging rides",
+      "licensingAttribution": {
+        "visualBranding": "Google logo/watermark typically required on map",
+        "legalAttribution": "mandatory per Google Maps Platform Terms",
+        "hidingBranding": "NOT ALLOWED"
+      },
+      "lockIn": "HIGH for tiles+POI+basemap; Places/Routes already separate keys — good",
+      "costDrivers": ["map loads", "dynamic maps", "Places", "Routes", "Geocoding"],
+      "riskToFinalVisual": "HIGH — hard to look like non-Google premium product"
+    },
+    "maplibre": {
+      "renderer": "MapLibre Native (Android/iOS) via maplibre_gl ^0.27.x",
+      "tileData": "REQUIRED EXTERNAL — MapLibre does NOT ship global map data",
+      "flutterMaturity": "MEDIUM-HIGH — official MapLibre Flutter docs/feature matrix; production apps exist; Ora has ZERO integration yet",
+      "customStyle": {
+        "mapLibreStyleSpec": "FULL vector style control (land/roads/water/buildings/labels/POIs)",
+        "oraNavyBlueTheme": "FEASIBLE via custom style JSON + sprites",
+        "evidence": "maplibre.org/flutter-maplibre-gl feature matrix + style docs"
+      },
+      "threeD": {
+        "pitchRotation": "SUPPORTED Android/iOS",
+        "fillExtrusionBuildings": "SUPPORTED Android/iOS per feature matrix",
+        "terrainDem": "NOT on native Android/iOS in matrix (web only)",
+        "globe": "web only"
+      },
+      "performanceOnA325F": {
+        "status": "NOT PROVEN",
+        "inference": "GPU vector rendering typically efficient; mid-range OpenGL ES risk remains until benchmarked",
+        "evidenceClass": "engineering_inference"
+      },
+      "pakistanCoverage": {
+        "renderer": "N/A",
+        "dependsOnTileProvider": true,
+        "mapTilerOsmExtracts": "Pakistan / Lahore / Karachi datasets exist (MapTiler on-prem/OSM)",
+        "coverageQuality": "OSM-quality — acceptable for rides but POI density ≠ Google; VERIFY physically"
+      },
+      "recommendedTileProviders": [
+        {
+          "name": "MapTiler Cloud or On-Prem",
+          "pros": ["Pakistan extracts", "style editor", "commercial support"],
+          "cons": ["cost", "OSM attribution", "POI gaps vs Google"],
+          "pricing": "VERIFY CURRENT — do not invent"
+        },
+        {
+          "name": "Stadia Maps",
+          "pros": ["MapLibre-first docs", "styles"],
+          "cons": ["Pakistan depth VERIFY", "pricing VERIFY"]
+        },
+        {
+          "name": "Protomaps / self-hosted PMTiles",
+          "pros": ["control", "offline-ish", "cost predictable"],
+          "cons": ["ops burden", "freshness", "engineering cost"]
+        },
+        {
+          "name": "Public OSM tile servers",
+          "pros": ["free"],
+          "cons": ["NOT production-suitable — ToS/rate limits"],
+          "recommendation": "DO NOT USE IN PRODUCTION"
+        }
+      ],
+      "licensingAttribution": {
+        "mapLibre": "BSD-3 — no MapLibre watermark required",
+        "tileData": "typically OSM + provider attribution required — legal, can be discreet UI chrome",
+        "hidingRequiredAttribution": "NOT ALLOWED"
+      },
+      "lockIn": "LOW for renderer; MEDIUM for chosen tile vendor",
+      "costDrivers": ["tile MAU/requests", "style hosting", "optional self-host ops"],
+      "riskToFinalVisual": "LOW — best match to Ora-native look"
+    },
+    "tpl": {
+      "renderer": "TPL Maps native SDK via tplmapsflutterplugin 2.0.x",
+      "tileData": "TPL Maps servers (coupled)",
+      "flutterMaturity": "MEDIUM-LOW — published Flutter plugin with Android/iOS; maintainer contacts listed; pub 'unverified uploader'; API surface appears thinner/less typed than Google/MapLibre",
+      "documentedCapabilities": {
+        "nightMode": "DOCUMENTED (MapMode.NIGHT)",
+        "buildingsToggle": "DOCUMENTED (isShowBuildings / showBuildings)",
+        "customMarkersBase64": "DOCUMENTED",
+        "polylinesCirclesPolygons": "DOCUMENTED",
+        "gestures": "DOCUMENTED allGesturesEnabled",
+        "cameraAnimate": "DOCUMENTED setCameraPositionAnimated",
+        "placesSearch": "DOCUMENTED TPlSearchViewController",
+        "routing": "DOCUMENTED TPLRoutingViewController",
+        "traffic": "DOCUMENTED"
+      },
+      "customStyleDepth": {
+        "fullVectorStyleSpecLikeMapLibre": "UNVERIFIED",
+        "oraNavyCompleteRestyle": "UNVERIFIED — night mode ≠ full brand style control",
+        "evidence": "pub.dev docs show modes/toggles; no MapLibre-style JSON layer evidence found in audit"
+      },
+      "threeD": {
+        "buildingsFlag": "DOCUMENTED",
+        "qualityPitchExtrusionParity": "UNVERIFIED",
+        "performanceOnA325F": "NOT PROVEN"
+      },
+      "performanceOnA325F": {
+        "status": "NOT PROVEN",
+        "evidenceClass": "unknown"
+      },
+      "pakistanCoverage": {
+        "status": "LIKELY HIGH — Pakistani vendor; examples use Islamabad/Karachi coords",
+        "evidenceClass": "vendor_documentation + regional inference",
+        "productionProofInOra": false
+      },
+      "licensingAttribution": {
+        "status": "UNVERIFIED exact watermark/attribution rules — must obtain commercial terms",
+        "pluginLicenseField": "unknown on pub.dev"
+      },
+      "lockIn": "HIGH if renderer+tiles+places+routing all TPL",
+      "architectureRisk": "Coupling renderer to Places/Routing SDKs tempts second source of truth — must keep Ora authority separation",
+      "costDrivers": ["SDK licensing", "API calls", "support contracts — VERIFY with TPL"],
+      "riskToFinalVisual": "MEDIUM — can look less Google; full Ora control UNVERIFIED vs MapLibre"
+    }
+  },
+
+  "performance": {
+    "measured": {
+      "googleOnOraStagingDevice": "Acceptable for current MAP-1..2C functional use on SM-A325F; no formal FPS/memory report"
+    },
+    "vendorDocs": {
+      "maplibre": "Claims GPU-accelerated native rendering",
+      "tpl": "Claims SDK handles download/display/gestures — no public FPS benchmarks found",
+      "google": "Mature SDK; known mid-range cost of platform views"
+    },
+    "inference": {
+      "vectorGpuMapLibre": "Often better control of style cost and caching than raster-like Google look customization",
+      "doNotClaimMapLibreFasterThanTpl": true,
+      "doNotClaimTplFasterThanMapLibre": true
+    },
+    "unknown": [
+      "Cold start ms MapLibre vs TPL vs Google on SM-A325F",
+      "Pan/zoom/rotate/pitch frame stability",
+      "3D building FPS",
+      "50+ markers memory",
+      "tile bandwidth Pakistan networks"
+    ]
+  },
+
+  "customization": {
+    "rankForOraBrandControl": ["maplibre", "tpl(UNVERIFIED_depth)", "google"],
+    "notes": "Google can dark-theme via cloud style but retains Google identity. MapLibre enables full basemap redesign. TPL night/buildings/custom markers documented; complete style authorship UNVERIFIED."
+  },
+
+  "threeD": {
+    "rank": ["maplibre(fill-extrusion documented)", "tpl(buildings flag UNVERIFIED quality)", "google(flutter reliability disputed)"],
+    "oraRecommendation": "Treat cinematic 3D as Phase-2 visual after renderer PoC; do not block foundation choice solely on unproven 3D"
+  },
+
+  "android": {
+    "google": "PROVEN on SM-A325F",
+    "maplibre": "API 21+; JDK 21 build req per docs — VERIFY Ora Android toolchain",
+    "tpl": "minSdk 21 documented — runtime quality NOT PROVEN"
+  },
+
+  "ios": {
+    "google": "Plugin supported; Ora iOS Maps key init VERIFY before ship",
+    "maplibre": "iOS 13+ documented",
+    "tpl": "requires tplservices.config — UNVERIFIED in Ora"
+  },
+
+  "pakistanCoverage": {
+    "google": "PROVEN",
+    "maplibrePlusCommercialTiles": "FEASIBLE via MapTiler/OSM extracts — quality VERIFY",
+    "tpl": "LIKELY STRONG — VERIFY production SLA/coverage gaps"
+  },
+
+  "licensing": {
+    "google": "GMP ToS; mandatory branding/attribution",
+    "maplibre": "BSD-3 renderer; tile/OSM attribution separate",
+    "tpl": "commercial terms UNVERIFIED — obtain before commitment"
+  },
+
+  "cost": {
+    "google": "Known Maps+Places+Routes billable SKUs — already in stack",
+    "maplibre": "Renderer free; tile provider billed — VERIFY quotes",
+    "tpl": "VERIFY quote (SDK + APIs)",
+    "doNotInventPricing": true
+  },
+
+  "attribution": {
+    "principle": "Never hide legally required attribution; separate from large provider logo occupying hero map",
+    "google": "Google logo typically on map face",
+    "maplibrePlusOsm": "Text attribution can live in chrome/footer — still mandatory",
+    "tpl": "UNVERIFIED placement rules"
+  },
+
+  "migrationRisk": {
+    "preserve": [
+      "TripLocationSession / RTDB",
+      "driver publisher",
+      "publicRide authority",
+      "Places port interface",
+      "RoutingProvider backend port",
+      "MAP-2B fitIdentity semantics",
+      "MAP-2C progression geometry policy",
+      "MAP-3 ownership semantics"
+    ],
+    "rewriteLikely": [
+      "ride_map_preview.dart",
+      "active_ride_map.dart",
+      "camera/progression policies LatLng/CameraUpdate types → OraMap types",
+      "Android/iOS native config + keys",
+      "widget tests mocking GoogleMap"
+    ],
+    "recommendedAbstractionBeforeSwap": [
+      "OraMapView",
+      "OraMapController",
+      "OraMapMarker",
+      "OraMapPolyline",
+      "OraMapCameraUpdate",
+      "OraMapCameraOwnership (MAP-3 semantics)"
+    ],
+    "rollback": "Feature-flag renderer; keep Google path until MapLibre PoC GREEN on SM-A325F",
+    "riskLevel": "HIGH if big-bang; MEDIUM if abstraction + dual-run PoC"
+  },
+
+  "physicalBenchmarkPlan": {
+    "device": "Samsung SM-A325F Android 13",
+    "candidates": ["google_maps_flutter (baseline)", "maplibre_gl + chosen tile style", "tplmapsflutterplugin"],
+    "metrics": [
+      "cold map first-frame ms",
+      "warm reopen ms",
+      "pan jank (frame time p95)",
+      "pinch zoom jank",
+      "rotate jank",
+      "pitch/tilt jank",
+      "3D buildings enabled FPS",
+      "50 markers add/update FPS + RSS",
+      "polyline 200 pts render",
+      "camera animate duration/jank",
+      "peak memory MB",
+      "tile bytes first 30s on cellular",
+      "10× open/close leak check",
+      "driver marker 1Hz update for 60s"
+    ],
+    "passBar": "No worse than current Google baseline on pan/zoom jank and memory; cold start within agreed budget",
+    "doNotRunInThisAudit": true
+  },
+
+  "recommendedArchitecture": {
+    "primary": {
+      "renderer": "MapLibre Native via maplibre_gl",
+      "tiles": "Commercial MapLibre-compatible vector tiles (prefer MapTiler Cloud or equivalent with Pakistan coverage — finalize after quote + PoC)",
+      "placesNearTerm": "Keep Google Places HTTP (existing PlaceSearchPort)",
+      "routingNearTerm": "Keep Google Routes (existing RoutingProvider) for pricing authority",
+      "rideBackend": "Firestore/HTTP unchanged",
+      "liveLocation": "RTDB latest unchanged",
+      "rendererRole": "DISPLAY ONLY"
+    },
+    "whyNotTplAsPrimaryRendererYet": [
+      "Full Ora brand style authorship UNVERIFIED vs MapLibre Style Spec",
+      "Flutter plugin maturity/API quality weaker evidence than MapLibre/Google",
+      "Performance vs MapLibre NOT PROVEN",
+      "High lock-in if also adopting TPL Places/Routing",
+      "Commercial terms/attribution UNVERIFIED"
+    ],
+    "whyNotStayGoogleForever": [
+      "Product requires Ora-native map identity, not Google Maps look",
+      "Flutter 3D buildings reliability disputed",
+      "Mandatory Google branding conflicts with premium unbranded map goal"
+    ],
+    "whyKeepGoogleServicesShortTerm": [
+      "Places/Routes already production-proven for Pakistan rides",
+      "Authority separation already correct",
+      "Avoid swapping three systems at once"
+    ],
+    "tplAsOptionalFuture": "Evaluate TPL later as Pakistan tile/POI/routing supplement IF MapLibre tile POI quality insufficient — never as second pricing authority",
+    "immediateNextSteps": [
+      "DO NOT implement renderer swap yet",
+      "Design OraMap abstraction (docs only / thin interfaces) without breaking MAP-1..3",
+      "Build disposable MapLibre visual PoC APK (separate spike branch) for SM-A325F",
+      "Obtain MapTiler/Stadia/TPL commercial quotes + attribution rules",
+      "Run physicalBenchmarkPlan before committing migration",
+      "Close MAP-3 human OD1 separately (unrelated to engine choice)"
+    ],
+    "explicitlyDoNot": [
+      "Replace Google Maps in mainline now",
+      "Install MapLibre/TPL into production app now",
+      "Change MAP-1..3 behavior",
+      "Change RTDB/publisher/backend/Places/Routes/ride cards",
+      "Use public OSM tile servers in production",
+      "Invent ETA or trust renderer for pricing"
+    ]
+  },
+
+  "confidence": {
+    "performanceWinner": "NOT PROVEN between MapLibre and TPL; Google baseline MEASURED in-product only",
+    "bestVisualControl": "HIGH → MapLibre",
+    "bestPakistanBasemapToday": "HIGH → Google; LIKELY → TPL; FEASIBLE → MapLibre+tiles",
+    "threeD": "MEDIUM → MapLibre docs; LOW-MEDIUM Google Flutter; UNVERIFIED TPL quality",
+    "androidMidRange": "Google PROVEN; others NEED PoC",
+    "ios": "ALL NEED Ora-specific verification",
+    "architectureRecommendation": "HIGH that MapLibre+commercial tiles is correct long-term direction; MEDIUM until PoC"
+  },
+
+  "unknowns": [
+    "Exact MapTiler/Stadia/TPL 2026 pricing for Ora scale",
+    "TPL full style authorship depth",
+    "TPL vs MapLibre FPS on SM-A325F",
+    "google_maps_flutter 3D buildings with cloud mapId on A325F",
+    "iOS Google Maps API key initialization completeness in Ora",
+    "OSM POI sufficiency for Lahore/Karachi passenger UX",
+    "MapLibre JDK 21 requirement vs current Ora Android CI"
+  ],
+
+  "risks": [
+    {
+      "risk": "Big-bang renderer swap regresses MAP-1..3",
+      "mitigation": "Abstraction + feature flag + keep Google path"
+    },
+    {
+      "risk": "MapLibre looks great but mid-range jank",
+      "mitigation": "Mandatory SM-A325F benchmark before migration"
+    },
+    {
+      "risk": "Choosing TPL for Pakistan then discovering weak brand styling",
+      "mitigation": "Require style-spec depth PoC before TPL commitment"
+    },
+    {
+      "risk": "Tile provider POI gaps hurt place discovery if Places also swapped",
+      "mitigation": "Keep Google Places until renderer stable"
+    },
+    {
+      "risk": "Legal attribution mishandling",
+      "mitigation": "Legal review of Google/OSM/TPL terms; never hide required credits"
+    }
+  ],
+
+  "finalDecisionSummary": {
+    "1_currentFoundation": "google_maps_flutter (MAP-1..3) + Google Places + Google Routes",
+    "2_bestRenderer": "MapLibre Native (maplibre_gl)",
+    "3_bestTileDataProvider": "Commercial MapLibre-compatible vector tiles (MapTiler preferred candidate — finalize after quote/PoC)",
+    "4_placesProvider": "Google Places (near-term keep)",
+    "5_routingProvider": "Google Routes (near-term keep)",
+    "6_why": "Best long-term Ora visual control + 3D fill-extrusion path without Google identity; preserves proven Places/Routes authority; avoids TPL lock-in until style/perf proven",
+    "7_performanceConfidence": "NOT PROVEN vs TPL; Google baseline only — PoC required",
+    "8_threeDConfidence": "MEDIUM (MapLibre docs); Google Flutter disputed; TPL UNVERIFIED quality",
+    "9_androidConfidence": "HIGH plan / MEDIUM until A325F PoC",
+    "10_iosConfidence": "MEDIUM — docs OK; Ora integration unverified",
+    "11_pakistanConfidence": "HIGH for services (Google); FEASIBLE for MapLibre tiles; LIKELY for TPL basemap",
+    "12_costLicensingRisk": "MEDIUM — new tile vendor cost + attribution; Google costs remain for Places/Routes",
+    "13_migrationRisk": "HIGH if rushed; MEDIUM with abstraction + dual-run",
+    "14_whatNext": "OraMap abstraction design + disposable MapLibre visual PoC + vendor quotes + SM-A325F benchmark; freeze MAP-1..3",
+    "15_whatNotToDo": "Do not replace Google in mainline, install SDKs into prod app, or change backend/RTDB/publisher/Places/Routes/ride cards in this phase"
+  }
+}

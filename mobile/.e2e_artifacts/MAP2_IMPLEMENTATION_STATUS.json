@@ -1,0 +1,63 @@
+{
+  "artifact": "MAP2_IMPLEMENTATION_STATUS",
+  "slice": "MAP-2A — Passenger live driver location (active ride)",
+  "status": "MAP-2A IMPLEMENTATION COMPLETE — PHYSICAL PROOF PENDING",
+  "map2Implemented": true,
+  "map2bImplemented": false,
+  "createdAt": "2026-10-08",
+  "architectureAudit": "MAP2_ARCHITECTURE_AUDIT.json",
+  "automatedResults": {
+    "flutterAnalyzeRideMap2a": "No issues found",
+    "focusedMap2aTests": "PASS (parse, freshness, gate, camera, session, active ride UI)",
+    "activeRideViewModelTests": "PASS",
+    "map1RideMapPreviewTests": "PASS (untouched)",
+    "map1RideRequestUiTests": "PASS",
+    "backendLocationRtdbFocused": "38/38 PASS (location_trip_auth, location_trip_projection, rtdb_foundation)",
+    "debugApkBuild": "PASS",
+    "apkInstalledDevice": "RF8R40ZQ1JH SM-A325F"
+  },
+  "scopeRespected": {
+    "noEta": true,
+    "noNavigation": true,
+    "noInterpolation": true,
+    "noHistory": true,
+    "noFlutterRtdbWrites": true,
+    "noRulesChanges": true,
+    "noBackendLocationChanges": true,
+    "noDriverPublisherChanges": true,
+    "noMap1PreviewChanges": true,
+    "httpAuthoritativeState": true,
+    "rtdbDisplayOnly": true
+  },
+  "filesAdded": [
+    "mobile/lib/features/ride/domain/models/trip_location_latest.dart",
+    "mobile/lib/features/ride/domain/ports/trip_location_port.dart",
+    "mobile/lib/features/ride/domain/location/trip_location_listen_gate.dart",
+    "mobile/lib/features/ride/domain/location/trip_location_freshness.dart",
+    "mobile/lib/features/ride/data/location/rtdb_trip_location_data_source.dart",
+    "mobile/lib/features/ride/presentation/location/trip_location_session.dart",
+    "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart",
+    "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart",
+    "mobile/test/features/ride/trip_location_*.dart",
+    "mobile/test/features/ride/active_ride_map_camera_policy_test.dart"
+  ],
+  "filesModified": [
+    "mobile/pubspec.yaml",
+    "mobile/lib/app/config/app_config.dart",
+    "mobile/lib/app/di/providers.dart",
+    "mobile/lib/features/ride/presentation/views/active_ride_view.dart",
+    "mobile/lib/features/ride/presentation/active_ride/active_ride_display.dart",
+    "mobile/scripts/build_staging_apk.sh",
+    "mobile/.env.example",
+    "mobile/test/features/ride/active_ride_ui_test.dart"
+  ],
+  "physicalProof": {
+    "status": "PENDING",
+    "device": "SM-A325F RF8R40ZQ1JH",
+    "environment": "staging",
+    "apkInstalled": true,
+    "firebaseDatabaseInApk": true,
+    "report": "MAP2_PHYSICAL_VERIFICATION_REPORT.json"
+  },
+  "note": "Pre-existing dirty tree may include L2/MAP-1 files; MAP-2A did not modify forbidden surfaces (rules, backend rtdb/location, driver publisher, RideMapPreview)."
+}

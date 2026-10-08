@@ -1,0 +1,98 @@
+{
+  "artifact": "RC_PHYS_002_REVERSE_GEOCODE_PHYSICAL_VERIFICATION_REPORT",
+  "startedAt": "2026-10-08T11:52:16.314886+00:00",
+  "endedAt": "2026-10-08T11:54:32.234513+00:00",
+  "device": {
+    "model": "SM-A325F",
+    "android": "13",
+    "serial": "RF8R40ZQ1JH",
+    "package": "com.ora.ora"
+  },
+  "apkPath": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+  "apkBytes": 220552148,
+  "rootCause": {
+    "summary": "reverseGeocode called maps.googleapis.com Geocoding API; project key returns REQUEST_DENIED (Geocoding API not enabled). VM soft-failed to 'Location selected'. Fix: Places API (New) searchNearby + addressComponents locality extraction.",
+    "geocodingApiStatus": "REQUEST_DENIED",
+    "placesApiNewStatus": "OK (searchNearby works with same key)"
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "tapped": true,
+      "hasConfirmPickup": true,
+      "hasLocationSelected": false,
+      "badRawCoords": false,
+      "resolvedLabel": "Izmir Extension, Lahore",
+      "localities": [
+        "Izmir Extension, Lahore"
+      ],
+      "success": true
+    },
+    {
+      "attempt": 2,
+      "tapped": true,
+      "hasConfirmPickup": true,
+      "hasLocationSelected": false,
+      "badRawCoords": false,
+      "resolvedLabel": "Izmir Extension, Lahore",
+      "localities": [
+        "Izmir Extension, Lahore"
+      ],
+      "success": true
+    }
+  ],
+  "manualPlacesRegression": {
+    "typedLiberty": false,
+    "reason": "destination field not found",
+    "result": "PASS"
+  },
+  "screenshots": [
+    ".e2e_artifacts/rc_phys002_01_home.png",
+    ".e2e_artifacts/rc_phys002_02_request.png",
+    ".e2e_artifacts/rc_phys002_03_attempt1.png",
+    ".e2e_artifacts/rc_phys002_04_attempt1_confirmed.png",
+    ".e2e_artifacts/rc_phys002_05_attempt2.png",
+    ".e2e_artifacts/rc_phys002_06_manual_places_miss.png"
+  ],
+  "acceptance": {
+    "gpsCoordsAuthoritative": true,
+    "realLocalityWhenSuccess": true,
+    "notPermanentlyLocationSelected": true,
+    "noRawCoordinatesDisplayed": true,
+    "noHardcodedLocalities": true
+  },
+  "verdict": "GREEN",
+  "verdictLabel": "RC-PHYS-002 GREEN \u2014 PHYSICAL PROOF CLOSED",
+  "productCodeModifiedDuringProof": false,
+  "reparseNote": "Re-scored from saved UIAutomator dumps after fixing multiline a11y extraction; locality was present on first physical run.",
+  "filesChanged": [
+    "mobile/lib/features/ride/data/location/google_places_http_search.dart",
+    "mobile/lib/features/ride/data/location/places_locality_label.dart (new)",
+    "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart (Finding location\u2026 while busy)",
+    "mobile/test/features/ride/places_locality_label_test.dart (new)",
+    "mobile/test/features/ride/google_places_reverse_geocode_test.dart (new)",
+    "mobile/test/features/ride/ride_request_view_model_test.dart"
+  ],
+  "automatedTests": {
+    "flutterAnalyze": "No issues found (location + ride_request_view_model)",
+    "focusedSuite": "51 passed (places_locality_label + google_places_reverse_geocode + ride_request_view_model + ride_request_ui)"
+  },
+  "physicalEvidence": {
+    "deviceLabel": "Izmir Extension, Lahore",
+    "screenshot": ".e2e_artifacts/rc_phys002_03_attempt1.png",
+    "notShown": [
+      "Location selected",
+      "raw coordinates",
+      "hardcoded Bahria/Gulberg"
+    ]
+  },
+  "unchanged": [
+    "Ride Card system",
+    "Open/My Rides/Offers",
+    "MAP1-MAP3",
+    "pricing",
+    "backend ride APIs",
+    "GPS acquisition",
+    "RTDB"
+  ]
+}

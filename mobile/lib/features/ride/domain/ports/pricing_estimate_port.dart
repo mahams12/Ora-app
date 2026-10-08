@@ -14,6 +14,7 @@ class PricingEstimate {
     required this.distanceKm,
     required this.durationMin,
     required this.category,
+    this.encodedPolyline,
   });
 
   final String pricingSnapshotId;
@@ -27,6 +28,15 @@ class PricingEstimate {
   final double distanceKm;
   final double durationMin;
   final String category;
+
+  /// Optional Google encoded polyline for map preview only (MAP-1).
+  /// Display-only — never used for fare authority.
+  final String? encodedPolyline;
+
+  bool get hasUsableEncodedPolyline {
+    final value = encodedPolyline?.trim();
+    return value != null && value.isNotEmpty;
+  }
 
   bool isExpiredAt(DateTime now) {
     final expires = DateTime.tryParse(expiresAt);
@@ -60,6 +70,13 @@ class PricingEstimate {
       throw FormatException('$field missing');
     }
 
+    String? asOptionalPolyline(Object? v) {
+      if (v == null) return null;
+      if (v is! String) return null;
+      final trimmed = v.trim();
+      return trimmed.isEmpty ? null : trimmed;
+    }
+
     return PricingEstimate(
       pricingSnapshotId: snapshotId.trim(),
       recommendedFareMinor: asInt(json['recommendedFareMinor'], 'recommendedFareMinor'),
@@ -73,6 +90,7 @@ class PricingEstimate {
       distanceKm: asDouble(json['distanceKm'], 'distanceKm'),
       durationMin: asDouble(json['durationMin'], 'durationMin'),
       category: asString(json['category'], 'category'),
+      encodedPolyline: asOptionalPolyline(json['encodedPolyline']),
     );
   }
 }

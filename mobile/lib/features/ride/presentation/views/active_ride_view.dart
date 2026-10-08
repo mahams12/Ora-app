@@ -4,18 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/di/providers.dart';
 import '../../../../app/router/routes.dart';
 import '../../../../app/theme/ora_colors.dart';
-import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../domain/entities/ride.dart';
 import '../active_ride/active_ride_display.dart';
+import '../location/trip_location_session.dart';
 import '../view_models/active_ride_view_model.dart';
+import '../widgets/active_ride_map.dart';
 
-/// Passenger active-ride screen — server-authoritative, no maps/GPS/driver controls.
+/// Passenger active-ride screen — HTTP ride state authoritative; RTDB display-only.
 class ActiveRideView extends ConsumerStatefulWidget {
   const ActiveRideView({required this.rideId, super.key});
 
@@ -42,6 +44,9 @@ class _ActiveRideViewState extends ConsumerState<ActiveRideView>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final vm = ref.read(activeRideViewModelProvider(widget.rideId).notifier);
+    final tripSession =
+        ref.read(tripLocationSessionProvider(widget.rideId).notifier);
+    tripSession.onAppLifecycle(state);
     if (state == AppLifecycleState.resumed) {
       unawaited(vm.resumePolling());
       return;
@@ -218,6 +223,7 @@ class _ActiveBody extends ConsumerWidget {
     final errorMessage = ref.watch(
       activeRideViewModelProvider(rideId).select((s) => s.errorMessage),
     );
+    final tripLocation = ref.watch(tripLocationSessionProvider(rideId));
 
     if (ride == null) {
       return const Center(child: OraLoadingIndicator());
@@ -242,7 +248,11 @@ class _ActiveBody extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const _MapPlaceholder(),
+            ActiveRideMap(
+              ride: ride,
+              locationSession: tripLocation,
+              enableMaps: ref.watch(activeRideMapsEnabledProvider),
+            ),
             const SizedBox(height: OraSpacing.md),
             OraCard(
               child: Column(
@@ -409,48 +419,3 @@ class _ArrivedWaitLabel extends ConsumerWidget {
   }
 }
 
-class _MapPlaceholder extends StatelessWidget {
-  const _MapPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 160,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(OraRadius.xxl),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [OraColors.navy, OraColors.navyElevated],
-        ),
-        border: Border.all(color: OraColors.border),
-      ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(OraSpacing.md),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.map_outlined,
-                color: OraColors.primary.withValues(alpha: 0.85),
-              ),
-              const SizedBox(height: OraSpacing.xs),
-              Text(
-                'Map preview',
-                style: OraTypography.label(OraColors.textPrimary),
-              ),
-              Text(
-                'Live maps, GPS, and driver markers are not in this build. '
-                'This is not your location.',
-                textAlign: TextAlign.center,
-                style: OraTypography.caption(OraColors.textMuted),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

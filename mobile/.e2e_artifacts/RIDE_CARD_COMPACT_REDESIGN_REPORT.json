@@ -1,0 +1,132 @@
+{
+  "artifact": "RIDE_CARD_COMPACT_REDESIGN_REPORT",
+  "task": "RC-PHYS-001 — ultra-compact marketplace Ride Card redesign",
+  "completedAt": "2026-10-08T11:35:34.550216+00:00",
+  "verdict": "GREEN",
+  "rcPhys001": "CLOSED",
+  "rcPhys002": "OUT_OF_SCOPE (not modified)",
+  "summary": "Shared OraRideCard system densified so one Driver Open Ride card + Respond fit the first viewport on Samsung SM-A325F without scrolling. No API/backend/MAP/pricing/business-logic changes. No fake profile/vehicle data.",
+  "filesChanged": {
+    "sharedCardSystem": [
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_adapters.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_header.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_metrics.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_fare.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_actions.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_route_compact.dart (new)"
+    ],
+    "tests": [
+      "mobile/test/features/ride/ride_card_system_test.dart",
+      "mobile/test/features/driver/slice_m_driver_test.dart"
+    ],
+    "physicalQa": [
+      "mobile/.e2e_artifacts/ride_card_physical.py",
+      "mobile/.e2e_artifacts/RIDE_CARD_PHYSICAL_VERIFICATION_REPORT.json",
+      "mobile/.e2e_artifacts/RIDE_CARD_COMPACT_REDESIGN_REPORT.json"
+    ],
+    "unchangedByDesign": [
+      "backend/API/schema",
+      "MAP1/MAP2A/MAP2B/MAP2C/MAP3",
+      "pricing",
+      "ride state machine",
+      "reverse-geocoding architecture (RC-PHYS-002)"
+    ]
+  },
+  "informationRemovedByVariant": {
+    "openRequest": [
+      "passenger photo / avatar placeholder",
+      "passenger name / 'Passenger' role row",
+      "passenger rating",
+      "passenger trip count",
+      "vehicle / plate",
+      "large painter route preview (~72px+)",
+      "Pickup/Dropoff caption chrome",
+      "Easy/Medium category badge",
+      "passenger count chip",
+      "service type chip",
+      "title 'Ride request'",
+      "fare caption 'Passenger offer'",
+      "secondary recommended-fare duplication",
+      "long 'Expires in N min' prose (replaced with short age)"
+    ],
+    "driverJob": [
+      "passenger placeholder row",
+      "painter route preview",
+      "passenger count / service chips",
+      "duplicate fare caption block"
+    ],
+    "passengerHistory": [
+      "driver placeholder row (identity belongs in detail)",
+      "painter route preview",
+      "passenger count / service chips",
+      "fabricated vehicle/rating"
+    ],
+    "offer": [
+      "fabricated route preview",
+      "participant row unless API supplies displayName",
+      "no invented vehicle/rating/verification"
+    ]
+  },
+  "openRideCardHierarchyKept": [
+    "status (SEARCHING)",
+    "short age (e.g. 1m)",
+    "pickup text",
+    "destination text",
+    "distance · duration · payment",
+    "offered fare (Rs)",
+    "primary Respond action"
+  ],
+  "automatedTests": {
+    "flutterAnalyze": "No issues found (ride_card/)",
+    "ride_card_system_test": "PASS",
+    "slice_m_driver_test": "PASS",
+    "totalFocused": "43 passed"
+  },
+  "physicalQa": {
+    "device": "Samsung SM-A325F Android 13",
+    "serial": "RF8R40ZQ1JH",
+    "package": "com.ora.ora",
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "seededRideId": "18bf334e-3c9b-41c6-b6cb-e8ebd0971482",
+    "report": "mobile/.e2e_artifacts/RIDE_CARD_PHYSICAL_VERIFICATION_REPORT.json",
+    "verdict": "GREEN",
+    "rcPhys001": "CLOSED",
+    "respondBoundsFirstViewport": [98, 1058, 982, 1163],
+    "displayBounds": [0, 0, 1080, 2194],
+    "cardApproxBounds": [53, 622, 1028, 1203],
+    "checks": {
+      "A_driverOpenRides": "PASS",
+      "B_openRideScroll": "PASS",
+      "C_driverRespondFlow": "PASS",
+      "D_driverMyRides": "PASS",
+      "E_passengerMyRides": "PASS",
+      "F_offersInbox": "NOT_TESTED (no live offer inbox ride)",
+      "G_currentLocationResolution": "PASS (observed; RC-PHYS-002 soft-fail 'Location selected' still separate)",
+      "I_noFakeData": "PASS",
+      "J_cardPerformance": "PASS (no per-card GoogleMap)",
+      "K_regression": "PASS"
+    },
+    "screenshotEvidence": [
+      ".e2e_artifacts/ride_card_02_driver_open_rides.png",
+      ".e2e_artifacts/ride_card_04_driver_respond_sheet.png",
+      ".e2e_artifacts/ride_card_05_driver_my_rides.png",
+      ".e2e_artifacts/ride_card_07_passenger_my_rides.png"
+    ]
+  },
+  "acceptance": {
+    "1_firstViewportFit": true,
+    "2_respondVisibleWithoutScroll": true,
+    "3_decisionCriticalOnly": true,
+    "4_noPassengerIdentityOnOpenRides": true,
+    "5_scannableMultipleRequests": true,
+    "6_noFakeData": true,
+    "7_noPerCardMapEngine": true,
+    "8_apiUnchanged": true,
+    "9_rideBehaviorUnchanged": true,
+    "10_mapSlicesUnchanged": true,
+    "11_focusedTestsPass": true,
+    "12_flutterAnalyzePass": true,
+    "13_physicalQaPass": true
+  }
+}

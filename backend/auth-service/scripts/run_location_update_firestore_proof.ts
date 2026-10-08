@@ -161,6 +161,13 @@ async function main(): Promise<void> {
 
   await test('8. trip stream independent', async () => {
     const tripRide = `trip-${suffix}`;
+    await db.collection('rides').doc(tripRide).set({
+      rideId: tripRide,
+      state: 'DRIVER_ASSIGNED',
+      assignedDriverId: driverId,
+      passengerId,
+      createdAt: new Date().toISOString(),
+    });
     const res = await request(appFor(db, driverId))
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
@@ -211,9 +218,9 @@ async function main(): Promise<void> {
 
   await test('11. no RTDB/Redis dependency required', async () => {
     // Proof ran with Firestore emulator only (FIRESTORE_EMULATOR_HOST).
+    // N2A accept must not require Redis/RTDB; URL may be set for other slices.
     assert(!!process.env.FIRESTORE_EMULATOR_HOST, 'firestore emulator');
-    assert(!process.env.REDIS_URL, 'no redis required');
-    assert(!process.env.FIREBASE_DATABASE_URL, 'no rtdb required');
+    assert(!process.env.REDIS_URL, 'no redis required for this N2A proof');
   });
 
   await test('12. unrelated ride sentinel unchanged', async () => {

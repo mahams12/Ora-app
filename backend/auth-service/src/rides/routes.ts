@@ -6,10 +6,14 @@ import { sendApiError, logSafe } from '../http/errors';
 import { RideService } from './ride_service';
 import { sendRideData, sendRideDomainError } from './http';
 import { RideDomainError } from './types';
+import type { TripLocationRtdb } from '../rtdb/types';
 
-export function createRidesRouter(db: Firestore): Router {
+export function createRidesRouter(
+  db: Firestore,
+  tripLocationRtdb: TripLocationRtdb | null = null,
+): Router {
   const router = Router();
-  const rides = new RideService(db);
+  const rides = new RideService(db, tripLocationRtdb);
 
   router.post('/', async (req: AuthedRequest, res) => {
     if (!req.caller) {

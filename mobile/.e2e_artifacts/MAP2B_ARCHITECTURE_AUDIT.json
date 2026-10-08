@@ -1,0 +1,372 @@
+{
+  "artifact": "MAP2B_ARCHITECTURE_AUDIT",
+  "slice": "MAP-2B — Next functional active-ride map slice (post MAP-2A)",
+  "kind": "ARCHITECTURE_AUDIT_ONLY",
+  "capturedAt": "2026-10-08T07:25:00.000Z",
+  "verdict": "GREEN",
+  "verdictLabel": "MAP-2B ARCHITECTURE AUDIT — GREEN",
+  "verdictMeaning": "Next slice is clearly bounded and safe to implement: phase-aware active-ride camera composition (Candidate A). No backend/RTDB/publisher/MAP-1 changes. Visual design (3D/theme/custom markers/animation language) remains deferred.",
+  "notImplementedConfirmation": "NO PRODUCT CODE WAS IMPLEMENTED. Audit artifact + canvas only.",
+  "map2bImplemented": false,
+  "map2aClosed": {
+    "status": "GREEN",
+    "proofRideId": "074de2df-0c56-4266-8f04-8fac0826939d",
+    "device": "SM-A325F / RF8R40ZQ1JH",
+    "stagingRevision": "ora-auth-service-staging-00026-4tz",
+    "report": "mobile/.e2e_artifacts/MAP2_PHYSICAL_VERIFICATION_REPORT.json"
+  },
+  "map1Closed": {
+    "status": "GREEN",
+    "report": "mobile/.e2e_artifacts/MAP1_PHYSICAL_VERIFICATION_REPORT.json"
+  },
+
+  "currentStateFindings": {
+    "verifiedAgainstCode": true,
+    "activeRideView": {
+      "file": "mobile/lib/features/ride/presentation/views/active_ride_view.dart",
+      "authority": "HTTP ActiveRideViewModel polling (3s→5s→8s); cancel/close/rate unchanged",
+      "mapWiring": "ActiveRideMap(ride, tripLocationSession); lifecycle forwards to TripLocationSession + VM pause/resume",
+      "mapHeight": 168
+    },
+    "activeRideMap": {
+      "file": "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart",
+      "shows": ["pickup Marker (azure)", "destination Marker (orange)", "driver Marker (green, alpha by freshness, rotation=heading)"],
+      "polylines": "NONE",
+      "camera": "ActiveRideMapCameraPolicy — animateCamera on first fit / identity change; soft-fail",
+      "softFail": "enableMaps=false or missing anchors → shell; never gates cancel"
+    },
+    "tripLocationSession": {
+      "file": "mobile/lib/features/ride/presentation/location/trip_location_session.dart",
+      "pattern": "AutoDisposeFamilyNotifier per rideId; one RTDB watch; seq monotonic; freshness timer 5s",
+      "lifecycle": "pause watch on background (keep last fix); clear on terminal; resume on foreground",
+      "gates": "trip_location_listen_gate.dart — DRIVER_ASSIGNED|EN_ROUTE|ARRIVED|RIDE_STARTED"
+    },
+    "rtdbDataSource": {
+      "file": "mobile/lib/features/ride/data/location/rtdb_trip_location_data_source.dart",
+      "path": "tripLocations/{rideId}/latest",
+      "writes": false,
+      "payload": "TripLocationLatest — lat,lng,accuracy,heading,speed,ts,acceptedAt,driverId,locationSeq,locationStreamId"
+    },
+    "httpRideModel": {
+      "file": "mobile/lib/features/ride/domain/entities/ride.dart",
+      "hasPickupDest": true,
+      "hasEncodedPolyline": false,
+      "hasEtaFields": false,
+      "assignedDriverId": "present on snapshot when assigned"
+    },
+    "backendRideDoc": {
+      "routePolylineField": "exists on RideDoc but always created as null; stripped from open/list projections (privacy tests)",
+      "distanceKm_estimatedDurationMin": "copied from pricing snapshot inputs at create — not passenger-facing ETA for live trip",
+      "implication": "Route visualization on active ride cannot reuse a live ride polyline without a NEW backend population story — out of MAP-2B"
+    },
+    "cameraPolicyToday": {
+      "file": "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart",
+      "phases": {
+        "DRIVER_ASSIGNED|EN_ROUTE|ARRIVED": "to_pickup — fit driver+pickup when driver present",
+        "RIDE_STARTED": "to_dest — fit driver+destination when driver present",
+        "noDriver": "fit pickup+destination"
+      },
+      "fitIdentityIncludes": "phase + pickup + destination + driver rounded to 4 decimals",
+      "gap": "Driver coords in fitIdentity (~11m cells) cause camera re-animate on meaningful movement despite comment 'must NOT re-fit on every location tick'. Physical MAP-2A often showed single-pin framing with destination off-screen; map height 168px is tight on SM-A325F."
+    },
+    "freshness": {
+      "file": "mobile/lib/features/ride/domain/location/trip_location_freshness.dart",
+      "bands": "≤20 fresh / ≤45 stale / ≤120 degraded / >120 expired",
+      "markerPolicy": "show through degraded; hide expired/missing; alpha 1.0/0.75/0.55"
+    },
+    "markerMovementToday": {
+      "behavior": "Marker position snaps to each accepted RTDB latest; no interpolation; heading applied as Marker.rotation",
+      "publisherCadence": "L2 min 4s / 15m / heartbeat 10s / max 15/min — jumps between updates are expected until a later visual slice"
+    },
+    "map1Boundary": {
+      "rideMapPreview": "untouched; estimate encodedPolyline only on request flow",
+      "mustRemainFrozen": true
+    },
+    "testsPresent": [
+      "active_ride_map_camera_policy_test.dart",
+      "trip_location_session_test.dart",
+      "trip_location_freshness_test.dart",
+      "trip_location_listen_gate_test.dart",
+      "trip_location_latest_test.dart",
+      "active_ride_ui_test.dart",
+      "active_ride_view_model_test.dart"
+    ]
+  },
+
+  "existingReusableInfrastructure": [
+    "ActiveRideMap + ActiveRideMapCameraPolicy (pure, unit-tested)",
+    "TripLocationSession / RtdbTripLocationDataSource / freshness / listen gates (MAP-2A closed)",
+    "HTTP Ride.pickup / Ride.destination / Ride.state authority",
+    "google_maps_flutter already integrated",
+    "Soft-fail map shell + activeRideMapsEnabledProvider",
+    "WidgetsBindingObserver lifecycle bridge in ActiveRideView",
+    "MAP-1 RideMapCameraPolicy patterns (conceptual only — do not merge APIs)"
+  ],
+
+  "candidateSlices": {
+    "A_cameraBehavior": {
+      "name": "Better active-ride camera composition",
+      "userProblem": "After MAP-2A, passengers often cannot see driver relative to trip anchors; camera either under-fits context or re-animates when driver moves ~11m because fitIdentity embeds fine-grained driver coords.",
+      "value": "HIGH",
+      "risk": "LOW",
+      "backend": false,
+      "rtdbSchema": false,
+      "newListeners": false,
+      "publisherChanges": false,
+      "newGoogleApis": false,
+      "recommendationRank": 1
+    },
+    "B_markerMovement": {
+      "name": "Driver marker movement/update behavior",
+      "userProblem": "Marker teleports between L2 publishes (4–15s). Smooth motion is desired eventually.",
+      "value": "MEDIUM-HIGH visually",
+      "risk": "MEDIUM-HIGH if interpolation invents motion between fixes; LOW if limited to presentational lerp with hard snap-on-seq/expire",
+      "note": "Heading rotation already applied. Position updates already work. True smooth motion belongs nearer the deferred ORA visual design phase unless tightly scoped as display-only lerp — still riskier than A and easier to confuse with fake GPS.",
+      "recommendationRank": 2
+    },
+    "C_routeProgression": {
+      "name": "Route / ride progression visualization",
+      "userProblem": "No line from driver→pickup or pickup→dest on active ride.",
+      "value": "HIGH eventually",
+      "risk": "MEDIUM without road route (straight line misleading); HIGH if populating RideDoc.routePolyline / new Routes calls",
+      "blockerForSmallSlice": "Ride entity has no polyline; backend routePolyline always null; MAP-1 polyline lives only on pricing estimate",
+      "recommendationRank": 3
+    },
+    "D_eta": {
+      "name": "ETA infrastructure/display",
+      "userProblem": "Copy explicitly says ETA is not estimated.",
+      "value": "HIGH product",
+      "risk": "HIGH — new data authority, Google Routes cost, clock/state races, must not invent from speed*distance client-side",
+      "recommendationRank": 5
+    },
+    "E_navigation": {
+      "name": "Navigation-oriented behavior",
+      "userProblem": "Turn-by-turn / follow-with-bearing for passenger or driver.",
+      "value": "Driver-side more than passenger MAP-2B",
+      "risk": "HIGH — out of passenger active-ride scope; conflicts with deferred visual 3D/tilt work",
+      "recommendationRank": 6
+    },
+    "F_otherPrerequisite": {
+      "name": "Other prerequisite",
+      "finding": "No missing prerequisite blocks camera-only MAP-2B. RTDB rules were deployed during MAP-2A physical; listener architecture is GREEN. No further infra gate required for Candidate A.",
+      "recommendationRank": null
+    }
+  },
+
+  "recommendedSlice": {
+    "id": "MAP-2B",
+    "name": "Active-ride camera composition (phase-aware, tick-stable)",
+    "candidate": "A",
+    "whySmallestSafestUseful": [
+      "Closes the largest remaining functional UX gap observed in MAP-2A physical proof (poor framing / single-pin composition) without inventing motion, routes, or ETA.",
+      "Pure Flutter presentation: ActiveRideMapCameraPolicy + ActiveRideMap only.",
+      "No backend authority change, no RTDB schema/rules, no driver publisher, no MAP-1, no new Firebase listeners, no new Google Maps APIs.",
+      "Corrects an internal inconsistency: fitIdentity currently includes 4-decimal driver coords, fighting the stated no-refit-every-tick doctrine.",
+      "Leaves visual design (theme, 3D, custom markers, cinematic motion) fully deferred while keeping policy pure/testable for that future phase."
+    ],
+    "exactInScope": [
+      "Rework ActiveRideMapCameraPolicy.fitIdentity so driver presence/phase/anchors drive refit — NOT fine-grained driver lat/lng every ~11m",
+      "Phase-aware composition: no-driver → fit pickup+destination; to_pickup → prefer bounds covering driver+pickup (optionally include destination when span remains readable); to_dest → driver+destination (optionally keep pickup if span ok)",
+      "Refit triggers only: first driver fix appears/disappears, HTTP ride state phase change (to_pickup↔to_dest), pickup/dest identity change, optional explicit passenger 'Recenter' control",
+      "Modest padding/height tuning for readable composition on SM-A325F (functional, not visual branding)",
+      "Unit tests for policy identities + phase fits; widget test that rapid seq updates do not spam animateCamera",
+      "Physical proof on SM-A325F that phase transitions reframe correctly and mid-publish ticks do not thrash camera"
+    ],
+    "exactOutOfScope": [
+      "MAP-1 RideMapPreview / pricing polyline / ride request flow",
+      "MAP-2A RTDB listener architecture / TripLocationSession contracts",
+      "Driver L2 publisher / POST /v1/location/update / locationStreams",
+      "database.rules.json / RTDB schema / rideAccess",
+      "HTTP ride state machine authority",
+      "ETA (client-invented or server)",
+      "Navigation / turn-by-turn / tilt-follow camera",
+      "Route polylines (road or straight) — Candidate C later",
+      "Marker interpolation / cinematic motion language — Candidate B / visual phase",
+      "Custom Ora markers, dark map theme, 3D buildings, Mapbox, glow, shadows",
+      "Passenger location publishing / offline queue",
+      "Google Maps key / styling JSON"
+    ]
+  },
+
+  "dataFlow": {
+    "unchangedAuthority": "HTTP GET ride → ActiveRideViewModel → Ride.state + pickup/dest",
+    "unchangedLocation": "RTDB latest → TripLocationSession → freshness → ActiveRideMap driver LatLng",
+    "map2bAddition": "ActiveRideMapCameraPolicy consumes (rideState, pickup, dest, driver?) and emits CameraUpdate only on stable identity changes; GoogleMapController.animateCamera soft-fail",
+    "diagram": [
+      "HTTP poll → Ride.state / pickup / dest",
+      "RTDB watch → TripLocationLatest (display-only)",
+      "FreshnessPolicy → show/hide/alpha driver marker",
+      "CameraPolicy(phase, anchors, driverPresence) → occasional CameraUpdate",
+      "Markers render at real published coords (no lerp in MAP-2B)"
+    ]
+  },
+
+  "stateLifecycleBehavior": {
+    "DRIVER_ASSIGNED": "Listen RTDB; camera to_pickup; fit P+D until first fix then D+P; marker when non-expired",
+    "DRIVER_EN_ROUTE": "Same to_pickup phase; refit only if phase identity requires (already to_pickup) — no thrash on ticks",
+    "DRIVER_ARRIVED": "Still to_pickup; driver near pickup expected; close-points zoom policy applies",
+    "RIDE_STARTED": "Phase flip to_dest → one intentional refit to driver+destination",
+    "terminal_CANCELLED_COMPLETED_CLOSED_NO_SHOW": "Listener stops/clears per MAP-2A; map may unmount or show anchors only; camera not required",
+    "rtdbUnavailable": "MAP-2A soft-fail unchanged — banner; camera falls back to pickup+dest fit",
+    "staleLocation": "Freshness alpha/hide unchanged; camera must not chase expired phantom — treat missing driver as anchors-only identity",
+    "backgroundForeground": "MAP-2A pause/resume watch; on resume do not force camera thrash unless identity actually changed",
+    "rideChangeWhileMounted": "Family providers keyed by rideId; new rideId = new session; old dispose cancels watch"
+  },
+
+  "failureBehavior": {
+    "cameraAnimateThrows": "catch + debugPrint (existing pattern) — ride chrome continues",
+    "mapsDisabled": "shell; no camera calls",
+    "missingAnchors": "null CameraUpdate; idle Lahore camera only as last resort (existing)",
+    "permission_denied_after_terminal": "MAP-2A already soft — MAP-2B must not re-subscribe"
+  },
+
+  "securityConsiderations": [
+    "No new network surfaces",
+    "Do not log precise coordinates in evidence/tests beyond existing scrubbing norms",
+    "Do not weaken RTDB rules or App Check",
+    "Camera policy must not invent positions — only frame real Ride + RTDB points"
+  ],
+
+  "performanceConsiderations": {
+    "samsung_SM_A325F": [
+      "Avoid animateCamera on every RTDB tick (primary MAP-2B fix)",
+      "Keep map height modest; avoid 3D/tilt/buildings (deferred)",
+      "Single GoogleMap instance already; do not add second map",
+      "Marker set rebuilds on Riverpod rebuilds — acceptable at L2 cadence; do not add Timer-based lerp in this slice"
+    ],
+    "ios": "Same policy pure Dart — no platform channel changes expected",
+    "android": "No Manifest/key changes"
+  },
+
+  "architecturalQuestions": {
+    "1_smallestUsefulSlice": "Phase-aware, tick-stable active-ride camera composition (Candidate A).",
+    "2_userVisibleProblem": "Passenger cannot reliably see driver in trip context; camera either under-frames or re-animates on driver movement cells.",
+    "3_reuse": "ActiveRideMapCameraPolicy, ActiveRideMap, TripLocationSession, Ride HTTP snapshot, existing tests.",
+    "4_newData": "None.",
+    "5_withoutBackendAuthorityChange": "Yes.",
+    "6_newBackendApis": "No.",
+    "7_rtdbSchemaChanges": "No.",
+    "8_newFirebaseListeners": "No.",
+    "9_driverPublisherChanges": "No.",
+    "10_newGoogleMapsCapabilities": "No — existing animateCamera / LatLngBounds only.",
+    "11_stateMatrix": "See stateLifecycleBehavior.",
+    "12_rtdbUnavailable": "Anchors-only camera; MAP-2A unavailable banner.",
+    "13_stale": "Hide/dim marker per freshness; camera identity without driver.",
+    "14_bgFg": "No forced thrash; resume listener only.",
+    "15_rideChange": "rideId-scoped providers; dispose cancels.",
+    "16_races": "HTTP state flip vs RTDB tick — refit on phase only; seq ignore older; avoid concurrent animateCamera by identity latch.",
+    "17_performanceRisks": "Camera thrash if identity still includes fine coords (MAP-2B must remove); excess height/3D later.",
+    "18_androidIos": "Policy-only; both platforms.",
+    "19_tests": "See requiredTests.",
+    "20_physicalProof": "See physicalProofPlan."
+  },
+
+  "requiredTests": [
+    "Unit: fitIdentity stable across driver moves within same phase when only coords change",
+    "Unit: fitIdentity changes on first driver appearance and on RIDE_STARTED phase flip",
+    "Unit: to_pickup vs to_dest anchor selection",
+    "Unit: expired/missing driver → anchors-only identity",
+    "Widget: ActiveRideMap does not call animateCamera on every locationSession seq bump (mock controller / call counter)",
+    "Regression: trip_location_* and active_ride_ui_test still pass",
+    "Regression: MAP-1 ride_map_preview_test / ride_request_ui_test untouched"
+  ],
+
+  "physicalProofPlan": {
+    "device": "Samsung SM-A325F RF8R40ZQ1JH",
+    "env": "STAGING ONLY",
+    "steps": [
+      "Fresh DRIVER_ASSIGNED ride via existing staging tooling",
+      "Driver L2 publish until RTDB latest exists",
+      "Passenger Active Ride: assert map shows pickup+dest context before and after first fix",
+      "Hold passenger Active Ride while driver publishes ≥2 additional fixes — assert camera does NOT thrash each tick",
+      "Advance HTTP EN_ROUTE → ARRIVED (same to_pickup phase) — no unnecessary dramatic refit",
+      "Advance HTTP RIDE_STARTED — exactly one intentional reframing toward destination",
+      "Optional Recenter control (if shipped) restores policy framing after manual pan",
+      "Cancel/complete — no crash; MAP-2A cleanup still holds",
+      "MAP-1 smoke unchanged"
+    ],
+    "artifact": "mobile/.e2e_artifacts/MAP2B_PHYSICAL_VERIFICATION_REPORT.json (future implementation step)",
+    "greenRule": "GREEN only if tick-stable camera + phase-aware reframing proven on-device; do not claim visual-design GREEN"
+  },
+
+  "risks": [
+    {
+      "risk": "Over-fitting all three points always → over-zoomed-out useless map",
+      "mitigation": "Phase-primary pair with optional third point only when bounds span under a max threshold"
+    },
+    {
+      "risk": "Recenter control scope creep into follow-mode navigation",
+      "mitigation": "One-shot policy fit only; no continuous follow in MAP-2B"
+    },
+    {
+      "risk": "Temptation to add interpolation 'while touching camera'",
+      "mitigation": "Explicit out-of-scope; marker snaps remain MAP-2A behavior"
+    },
+    {
+      "risk": "Changing MAP-1 camera helpers by consolidation",
+      "mitigation": "Keep ActiveRideMapCameraPolicy separate from RideMapCameraPolicy"
+    }
+  ],
+
+  "deferredItems": {
+    "functionalLater": [
+      "Candidate B — display-only marker lerp between last two real fixes (snap on seq/expire)",
+      "Candidate C — road route polyline once RideDoc.routePolyline or dedicated trip-route API exists",
+      "Candidate D — server ETA",
+      "Candidate E — navigation"
+    ],
+    "oraVisualDesignLockedDeferred": [
+      "Ora color theme / dark premium map treatment",
+      "3D/tilted perspective",
+      "Custom pickup/destination/vehicle markers",
+      "Smooth driver movement language / cinematic camera",
+      "Route animation / custom overlays / glow / shadows",
+      "Mapbox migration / custom tiles"
+    ],
+    "architecturalForeshadowFlagsOnly": [
+      "Keep camera policy pure and free of Marker BitmapDescriptor / MapStyle strings so visual phase can inject theme later",
+      "Do not hardcode brand hues into domain models (presentation-only today — keep it that way)",
+      "Do not store display polylines in RTDB",
+      "Avoid merging MAP-1 and MAP-2 camera APIs into one god-object"
+    ]
+  },
+
+  "filesLikelyToChange": [
+    "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart",
+    "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart",
+    "mobile/test/features/ride/active_ride_map_camera_policy_test.dart",
+    "mobile/test/features/ride/active_ride_ui_test.dart (camera call-count / composition assertions)",
+    "Possibly active_ride_view.dart only if Recenter control or modest map height prop is added"
+  ],
+
+  "filesMustNotChange": [
+    "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart",
+    "mobile/lib/features/ride/presentation/models/ride_map_preview_model.dart",
+    "mobile/lib/features/ride/presentation/views/ride_request_view.dart",
+    "mobile/lib/features/ride/presentation/utils/ride_map_camera_policy.dart",
+    "mobile/lib/features/ride/presentation/location/trip_location_session.dart (unless tiny lifecycle hook for recenter — prefer avoid)",
+    "mobile/lib/features/ride/data/location/rtdb_trip_location_data_source.dart",
+    "mobile/lib/features/driver/domain/location/driver_trip_location_publisher.dart",
+    "backend/auth-service/src/location/**",
+    "backend/auth-service/src/rtdb/**",
+    "database.rules.json",
+    "Google Maps key / local.properties maps config"
+  ],
+
+  "definitionOfDone": [
+    "Camera policy unit tests prove tick-stable identity + phase refit",
+    "Widget test proves no animateCamera spam on sequential RTDB updates",
+    "flutter analyze + focused MAP-2A/MAP-1 regressions pass",
+    "Physical proof on SM-A325F staging with fresh assigned ride",
+    "MAP2B_PHYSICAL_VERIFICATION_REPORT.json GREEN",
+    "No backend/RTDB/publisher/MAP-1 diffs",
+    "No visual-design (theme/3D/custom markers/interpolation) shipped"
+  ],
+
+  "finalVerdict": {
+    "status": "GREEN",
+    "label": "MAP-2B ARCHITECTURE AUDIT — GREEN",
+    "summary": "Implement Candidate A only: tick-stable, phase-aware active-ride camera composition on top of closed MAP-2A. Defer route/ETA/nav/interpolation and all Ora visual design.",
+    "nextAction": "STOP — await review before any MAP-2B implementation"
+  }
+}

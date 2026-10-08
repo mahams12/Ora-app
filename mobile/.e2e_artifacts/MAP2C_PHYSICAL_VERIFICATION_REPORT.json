@@ -1,0 +1,213 @@
+{
+  "artifact": "MAP2C_PHYSICAL_VERIFICATION_REPORT",
+  "slice": "MAP-2C \u2014 Phase-aware display-only progression guides",
+  "startedAt": "2026-10-08T09:14:21.208062+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "sessionArrangement": {
+    "mode": "single_device_passenger_fg_then_http_publish",
+    "order": "passenger_active_ride_open_BEFORE_first_publish",
+    "productCodeModifiedDuringProof": false
+  },
+  "build": {
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "stagingCloudRunRevision": "ora-auth-service-staging-00026-4tz"
+  },
+  "checks": {
+    "freshAssignedRide": true,
+    "beforeActiveRide": true,
+    "beforeGoogleMap": true,
+    "beforePickup": true,
+    "beforeDestination": true,
+    "beforeWaitingOrNoMarker": true,
+    "beforeNoDriverGuide": true,
+    "firstPublishAccepted": true,
+    "rtdbFirstFix": true,
+    "driverMarkerAfterFirstFix": true,
+    "guideDriverPickupAfterFirstFix": true,
+    "passengerRemainedOnActiveRide": true,
+    "multiPublishAccepted": true,
+    "multiPublishNoCrash": true,
+    "multiPublishMarkerStable": true,
+    "noCameraThrashObservational": true,
+    "enRouteHttp": true,
+    "enRouteGuideStable": true,
+    "arrivedHttp": true,
+    "startedHttp": true,
+    "startedUiMap": true,
+    "rideStartedGuideOrMap": true,
+    "terminalCancelled": true,
+    "map2aRtdbCleared": true,
+    "map2aAclRevoked": true,
+    "terminalNoCrash": true,
+    "map1Smoke": true
+  },
+  "proofs": {
+    "beforeFirstPublish": {
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": true,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true,
+      "guideSemantics": true,
+      "guideDriverPickup": false,
+      "guideDriverDest": false,
+      "guidePickupDest": true
+    },
+    "firstPublish": {
+      "http": {
+        "status": 200,
+        "accepted": true,
+        "locationSeq": 1,
+        "hasLatLng": true
+      },
+      "rtdbLatestExists": true,
+      "locationSeq": 1,
+      "driverIdMatch": true
+    },
+    "afterFirstPublish": {
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": false,
+      "locationUpdating": false,
+      "driverMarker": true,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true,
+      "guideSemantics": true,
+      "guideDriverPickup": true,
+      "guideDriverDest": false,
+      "guidePickupDest": false
+    },
+    "markerAppearedAfterSeconds": 0,
+    "multiPublish": {
+      "publishes": [
+        {
+          "seq": 2,
+          "accepted": true,
+          "driverMarker": true,
+          "guideSemantics": true,
+          "uiStillActive": true
+        },
+        {
+          "seq": 3,
+          "accepted": true,
+          "driverMarker": true,
+          "guideSemantics": true,
+          "uiStillActive": true
+        },
+        {
+          "seq": 4,
+          "accepted": true,
+          "driverMarker": true,
+          "guideSemantics": true,
+          "uiStillActive": true
+        }
+      ],
+      "rtdbSeq": 4
+    },
+    "stateGating": {
+      "en_route": {
+        "apiStatus": 200,
+        "httpState": "DRIVER_EN_ROUTE",
+        "expected": "DRIVER_EN_ROUTE",
+        "ui": {
+          "activeRide": true,
+          "googleMap": true,
+          "pickup": true,
+          "destination": true,
+          "waiting": false,
+          "locationUpdating": false,
+          "driverMarker": true,
+          "recenter": true,
+          "status": "DRIVER_ASSIGNED",
+          "cancel": true,
+          "guideSemantics": true,
+          "guideDriverPickup": true,
+          "guideDriverDest": false,
+          "guidePickupDest": false
+        }
+      },
+      "arrived": {
+        "apiStatus": 200,
+        "httpState": "DRIVER_ARRIVED",
+        "expected": "DRIVER_ARRIVED",
+        "ui": {
+          "activeRide": true,
+          "googleMap": true,
+          "pickup": true,
+          "destination": true,
+          "waiting": false,
+          "locationUpdating": true,
+          "driverMarker": true,
+          "recenter": true,
+          "status": "DRIVER_EN_ROUTE",
+          "cancel": true,
+          "guideSemantics": true,
+          "guideDriverPickup": true,
+          "guideDriverDest": false,
+          "guidePickupDest": false
+        }
+      },
+      "start": {
+        "apiStatus": 200,
+        "httpState": "RIDE_STARTED",
+        "expected": "RIDE_STARTED",
+        "ui": {
+          "activeRide": true,
+          "googleMap": true,
+          "pickup": true,
+          "destination": true,
+          "waiting": false,
+          "locationUpdating": true,
+          "driverMarker": true,
+          "recenter": true,
+          "status": "DRIVER_ARRIVED",
+          "cancel": true,
+          "guideSemantics": true,
+          "guideDriverPickup": true,
+          "guideDriverDest": false,
+          "guidePickupDest": false
+        }
+      }
+    },
+    "terminal": {
+      "httpState": "CANCELLED",
+      "rtdbCleared": true,
+      "aclRevoked": true
+    }
+  },
+  "failedChecks": [],
+  "limitations": [
+    "MAP-1 smoke not re-run; prior MAP-2B physical already PASS",
+    "Guide a11y may lag Flutter Semantics \u2192 uiautomator; primary proof = marker + Active Ride stability + automated progression tests",
+    "Driver expiry physical wait (>120s) not enforced this run; covered by widget expired-freshness test"
+  ],
+  "rideId": "9d654d18-b0da-43be-bac0-281e89cab6d7",
+  "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "evidenceFiles": [
+    "map2a_map2c_arrived.png",
+    "map2a_map2c_before.png",
+    "map2a_map2c_en_route.png",
+    "map2a_map2c_marker_ok.png",
+    "map2a_map2c_start.png",
+    "map2a_map2c_t3_2.png",
+    "map2a_map2c_t3_3.png",
+    "map2a_map2c_t3_4.png",
+    "map2a_map2c_t7.png"
+  ],
+  "endedAt": "2026-10-08T09:18:01.459261+00:00",
+  "verdict": "MAP-2C GREEN \u2014 PHYSICAL PROOF CLOSED"
+}

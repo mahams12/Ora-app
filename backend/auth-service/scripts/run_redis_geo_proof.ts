@@ -181,8 +181,9 @@ async function main(): Promise<void> {
       assert(db.getDoc('locationStreams', driverId)?.lat === undefined, 'no gps');
     });
 
-    await test('13. no RTDB dependency', async () => {
-      assert(!process.env.FIREBASE_DATABASE_URL, 'no rtdb url required');
+    await test('13. N2C does not require RTDB', async () => {
+      // GEO projection is Redis-only; FIREBASE_DATABASE_URL may exist for L2.
+      assert(!!process.env.REDIS_URL, 'redis required for this live proof');
     });
   } finally {
     await redis!.zrem(GEO_DRIVERS_KEY, driverId);

@@ -1,0 +1,18 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rideAccess": {
+      "$rideId": {
+        ".read": false,
+        ".write": false
+      }
+    },
+    "tripLocations": {
+      "$rideId": {
+        ".read": "auth != null && root.child('rideAccess').child($rideId).child(auth.uid).val() === true",
+        ".write": false
+      }
+    }
+  }
+}

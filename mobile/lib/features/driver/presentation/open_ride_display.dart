@@ -37,11 +37,15 @@ String openRideServiceLine(OpenRide ride) {
   ].join(' ');
 }
 
-/// Location line — address when present; otherwise coordinates. Never invents place names.
+/// Location line — real address when present; never invents place names.
+///
+/// Does not expose raw coordinates to normal users. Legacy GPS placeholder
+/// `"Current location"` maps to [fallback] (typically "Location selected").
 String openRideLocationLabel(LatLngPoint point, {required String fallback}) {
   final address = point.address?.trim();
-  if (address != null && address.isNotEmpty) return address;
-  return '$fallback (${point.lat.toStringAsFixed(4)}, ${point.lng.toStringAsFixed(4)})';
+  if (address == null || address.isEmpty) return fallback;
+  if (address.toLowerCase() == 'current location') return fallback;
+  return address;
 }
 
 /// Formats open-ride fare minors via the canonical offer money formatter.

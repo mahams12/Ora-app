@@ -1,0 +1,467 @@
+{
+  "artifact": "MAP2_ARCHITECTURE_AUDIT",
+  "slice": "MAP-2 — Passenger live driver location (active ride)",
+  "kind": "ARCHITECTURE_AUDIT_ONLY",
+  "capturedAt": "2026-10-08T06:20:00.000Z",
+  "verdict": "GREEN",
+  "verdictMeaning": "Architecture is sufficiently defined and safe to implement as one vertical slice. L2 publish path + RTDB ACL + MAP-1 Maps SDK are closed prerequisites. Remaining work is passenger subscribe + active-ride map insertion — not redesign.",
+  "notImplementedConfirmation": "NO CODE WAS IMPLEMENTED. Audit artifact + canvas only. No Flutter listeners, no firebase_database dependency added, no ActiveRide map replacement, no RTDB/rules/API changes.",
+  "map2Implemented": false,
+
+  "prerequisites": {
+    "L2_STEP_1_tripAuth": "GREEN — LOCATION_PUBLISH_RIDE_STATES + assignedDriverId gate",
+    "L2_STEP_2_rtdbFoundation": "GREEN — paths/types/AdminTripLocationRtdb/rules",
+    "L2_STEP_3_projectionLifecycle": "GREEN — grant/project/cleanup hooks",
+    "L2_STEP_3A_liveStaging": "GREEN — live RTDB proof + rules emulator",
+    "L2_STEP_4_driverPublisher": "GREEN — physical publish → RTDB latest on SM-A325F",
+    "MAP1_passengerRequestMap": "GREEN — google_maps_flutter + soft-fail shell + camera policy patterns",
+    "stagingRtdbHost": "ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "stagingCloudRunRevisionAtMap1Close": "ora-auth-service-staging-00026-4tz"
+  },
+
+  "finalVerdict": {
+    "status": "GREEN",
+    "summary": "Smallest safe MAP-2 slice is passenger read-only RTDB listen on tripLocations/{rideId}/latest, gated by HTTP-polled ride state, rendered on ActiveRideView replacing _MapPlaceholder. Do not touch MAP-1 RideMapPreview, driver publisher, or database.rules.json. Soft-fail map/RTDB; no ETA/interpolation/history in this slice.",
+    "nextAction": "STOP — await review before any MAP-2 implementation"
+  },
+
+  "map1BoundaryReuse": {
+    "reuse": [
+      "google_maps_flutter dependency (already in pubspec.yaml)",
+      "Soft-fail map shell pattern from RideMapPreview (mapsEnabled / error shell)",
+      "OraColors / spacing / card chrome",
+      "Camera-fit helpers conceptually (close-points, padding) — not the pickup/dest-only API as-is",
+      "Optional static route polyline later — OUT OF this minimal slice unless already on ride projection"
+    ],
+    "doNotTouch": [
+      "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart",
+      "mobile/lib/features/ride/presentation/models/ride_map_preview_model.dart",
+      "mobile/lib/features/ride/presentation/views/ride_request_view.dart",
+      "pricing estimate / encodedPolyline authority",
+      "DriverTripLocationPublisher / DriverLocationSession GPS publish path",
+      "database.rules.json (ACL already sufficient)",
+      "POST /v1/location/update contract"
+    ],
+    "foreshadowing": {
+      "MAP1_ARCHITECTURE_AUDIT.map2Boundary": [
+        "live driver marker",
+        "RTDB passenger listener",
+        "live driver tracking",
+        "ETA",
+        "interpolation",
+        "passenger live-location subscriptions"
+      ],
+      "L2_STEP4_ARCHITECTURE_AUDIT": "maps / passenger RTDB listeners / ETA = OUT OF SCOPE; STOP before passenger listeners"
+    }
+  },
+
+  "currentArchitectureEvidence": {
+    "driverPublishPath": {
+      "summary": "Flutter NEVER writes RTDB. GPS → classifier → DriverTripLocationPublisher throttle → HTTP POST /v1/location/update → durable locationStreams → best-effort RTDB tripLocations/{rideId}/latest.",
+      "files": [
+        "mobile/lib/features/driver/domain/location/driver_trip_location_publisher.dart",
+        "mobile/lib/features/driver/domain/location/driver_location_lifecycle.dart",
+        "mobile/lib/features/driver/presentation/location/driver_location_session.dart",
+        "mobile/lib/features/driver/data/location/driver_location_remote_data_source.dart",
+        "backend/auth-service/src/location/location_update_service.ts",
+        "backend/auth-service/src/location/routes.ts",
+        "backend/auth-service/src/rtdb/ride_location_lifecycle.ts"
+      ],
+      "cadenceConstants": {
+        "kTripLocationMinIntervalMs": 4000,
+        "kTripLocationMinMovementMeters": 15,
+        "kTripLocationHeartbeatMs": 10000,
+        "kTripLocationHeartbeatFreshnessSec": 12,
+        "kTripLocationMaxPublishesPerMinute": 15
+      },
+      "flutterWatchStates": [
+        "DRIVER_ASSIGNED",
+        "DRIVER_EN_ROUTE",
+        "DRIVER_ARRIVED",
+        "RIDE_STARTED"
+      ],
+      "backendPublishStates": "LOCATION_PUBLISH_RIDE_STATES — identical four states",
+      "physicalProof": "mobile/.e2e_artifacts/L2_STEP4_PHYSICAL_VERIFICATION_REPORT.json GREEN; accessUidCount=2; cancel clears ACL+tripLocations"
+    },
+    "rtdbSchemaSecurity": {
+      "rulesFile": "database.rules.json",
+      "firebaseJsonWire": "firebase.json → database.rules",
+      "paths": {
+        "latest": "tripLocations/{rideId}/latest",
+        "acl": "rideAccess/{rideId}/{uid}"
+      },
+      "clientRead": "auth != null && rideAccess/{rideId}/{auth.uid} === true",
+      "clientWrite": "false on tripLocations and rideAccess (Admin SDK only)",
+      "payloadType": "TripLocationLatest — lat,lng,accuracy,heading,speed,ts,acceptedAt,driverId,locationSeq,locationStreamId",
+      "pathBuilders": "backend/auth-service/src/rtdb/paths.ts (rejects . / # $ [ ])",
+      "noCustomClaims": true
+    },
+    "rideStateMachineHooks": {
+      "grantAcl": "selectOffer → DRIVER_ASSIGNED → afterRideAssigned → grantRideLocationAccess(passenger+driver)",
+      "projectLatest": "first+subsequent accepted trip publishes → projectAcceptedTripLocationLatest",
+      "cleanup": "afterRideTerminal on CANCELLED / RIDE_COMPLETED / RIDE_CLOSED / NO_SHOW → revoke ACL + clear tripLocations + close Firestore stream",
+      "visibilityWindow": "same four LOCATION_PUBLISH_RIDE_STATES; node may be absent until first successful publish; cleanup at RIDE_COMPLETED (before close)"
+    },
+    "passengerActiveRideToday": {
+      "view": "mobile/lib/features/ride/presentation/views/active_ride_view.dart",
+      "map": "_MapPlaceholder — explicit copy that live maps/GPS/driver markers are not in this build",
+      "stateObservation": "ActiveRideViewModel HTTP polling ActiveRidePollingPolicy 3s→5s→8s via GetRideUseCase",
+      "rideEntityHasCoords": "Ride.pickup / Ride.destination LatLngPoint already on polled snapshot",
+      "copyForeshadow": "active_ride_display.dart — 'Live location and ETA are not available in this build'",
+      "mobileRtdbClient": "ABSENT — firebase_database not in pubspec.yaml; zero FirebaseDatabase usages under mobile/lib"
+    }
+  },
+
+  "smallestSafeSlice": {
+    "name": "MAP-2A — Passenger live driver marker on active ride",
+    "inScope": [
+      "Add firebase_database dependency + Auth-signed read-only listener adapter",
+      "Domain port: TripLocationLatestPort / stream of TripLocationLatest? for rideId",
+      "Start listener only while ride.state in LOCATION_PUBLISH_RIDE_STATES and phase allows",
+      "Replace ActiveRideView._MapPlaceholder with active-ride map widget",
+      "Show pickup + destination pins from Ride snapshot + live driver marker from RTDB latest",
+      "Camera policy that fits driver + relevant anchors (phase-aware: to-pickup vs to-dest)",
+      "Stale-location UX from ts/acceptedAt without inventing motion",
+      "Soft-fail: RTDB/map errors must not break cancel/close/polling",
+      "Tear down listener on dispose, terminal states, rideId change, background optional pause policy"
+    ],
+    "explicitlyOutOfScope": [
+      "ETA",
+      "Driver navigation / turn-by-turn",
+      "Client-side interpolation / dead reckoning",
+      "Location history / breadcrumbs trail",
+      "Passenger writing location",
+      "Flutter RTDB writes of any kind",
+      "Changing database.rules.json",
+      "Changing location publish API or driver publisher cadence",
+      "MAP-1 request-flow RideMapPreview changes",
+      "Idle-mode driver location",
+      "FCM-driven ride state (keep HTTP poll)",
+      "Wiring onDriverOffline (known L2 gap; not required to unblock MAP-2A)"
+    ]
+  },
+
+  "dataFlow": {
+    "ascii": [
+      "Driver GPS → Publisher → POST /v1/location/update",
+      "  → locationStreams accept (durable)",
+      "  → RTDB tripLocations/{rideId}/latest (best-effort Admin write)",
+      "Passenger ActiveRideViewModel ← HTTP GET ride (poll) [authoritative state + pickup/dest]",
+      "Passenger TripLocationListener ← RTDB onValue latest [display-only driver position]",
+      "ActiveRideMap ← merge(ride.state gate, pickup/dest, optional latest, freshness)"
+    ],
+    "authoritySplit": {
+      "rideStateAssignmentTerminal": "HTTP ride API only",
+      "driverLivePosition": "RTDB latest only (display)",
+      "neverInvert": "Do not infer ride state from RTDB presence; do not treat RTDB as fare/assignment authority"
+    }
+  },
+
+  "stateGating": {
+    "showLiveDriverMarkerWhen": [
+      "ActiveRidePhase is active (or equivalent non-terminal UI phase)",
+      "ride.state in DRIVER_ASSIGNED | DRIVER_EN_ROUTE | DRIVER_ARRIVED | RIDE_STARTED",
+      "rideAccess still valid (listener permission)",
+      "optional: latest payload present"
+    ],
+    "stopListenerWhen": [
+      "RIDE_COMPLETED (server cleanup runs here)",
+      "CANCELLED | NO_SHOW | RIDE_CLOSED | EXPIRED",
+      "widget/provider dispose",
+      "rideId change"
+    ],
+    "emptyLatestAfterGrant": "Valid — show waiting/no-fix chrome; do not fabricate coordinates",
+    "alignWith": [
+      "driverLocationShouldWatch",
+      "LOCATION_PUBLISH_RIDE_STATES",
+      "isActiveRidePollingState (subset overlap; stop live map at COMPLETED even if poll continues)"
+    ],
+    "note": "isActiveRidePollingState includes RIDE_COMPLETED for close UX; live location listener MUST stop at COMPLETED because cleanupTripLocationOnTerminal clears RTDB then."
+  },
+
+  "rtdbListenerLifecycle": {
+    "recommendedShape": "AutoDispose family provider keyed by rideId (mirror DriverLocationSession discipline)",
+    "subscribe": "FirebaseDatabase.instance.ref('tripLocations/$rideId/latest').onValue (or onChild equivalent for latest leaf)",
+    "auth": "Reuse existing Firebase Auth session; App Check already in app — verify RTDB App Check policy if enabled on project",
+    "parse": "Validate TripLocationLatest fields; reject non-finite lat/lng; ignore malformed snapshots",
+    "layering": "Adapter in data/; port in domain/; ViewModel/presentation must not import firebase_database directly (mvvm_layer_test forbids firebase_database in views)",
+    "singleFlight": "One listener per rideId; cancel previous on rideId/state stop",
+    "permissionDenied": "Treat as stopped/unavailable — expected after ACL revoke; do not crash"
+  },
+
+  "staleLocationBehavior": {
+    "sourceFields": ["ts (client fix ms)", "acceptedAt (server ISO)"],
+    "recommendedDefaults": {
+      "freshThresholdSec": 20,
+      "staleThresholdSec": 45,
+      "hideOrDimAfterSec": 120
+    },
+    "rationale": "Publisher heartbeat ~10s when fix fresh (12s freshness); background stops GPS+publish → passenger must surface staleness rather than animate",
+    "ux": [
+      "Fresh: solid driver marker",
+      "Stale: dimmed marker + 'Location updating…' / last-updated relative copy (no precise coords in logs)",
+      "Missing: waiting shell; keep pickup/dest if available",
+      "Never invent heading motion when stale"
+    ],
+    "seqMonotonicity": "Prefer higher locationSeq; ignore older seq if out-of-order delivery observed"
+  },
+
+  "cameraPolicy": {
+    "map1PolicyInsufficient": "RideMapCameraPolicy only fits pickup/destination — no driver LatLng parameter",
+    "newPurePolicyRecommended": "ActiveRideMapCameraPolicy (unit-testable, parallel to MAP-1)",
+    "phaseHints": {
+      "DRIVER_ASSIGNED_EN_ROUTE_ARRIVED": "Fit driver + pickup (destination optional secondary)",
+      "RIDE_STARTED": "Fit driver + destination (pickup optional)",
+      "noDriverFixYet": "Fit pickup + destination from Ride snapshot"
+    },
+    "followMode": "MVP: re-fit on first fix + significant span change; optional gentle follow later — not required for MAP-2A",
+    "softFail": "Camera errors must not unmount ride actions"
+  },
+
+  "security": {
+    "alreadyAdequate": [
+      "Client cannot write tripLocations or rideAccess",
+      "Read requires rideAccess/{rideId}/{uid}===true granted only by Admin after assign",
+      "Driver publish still requires assignedDriverId==auth.uid + publish states",
+      "Path segment sanitization server-side"
+    ],
+    "map2MustEnsure": [
+      "No Flutter RTDB writes",
+      "Do not log lat/lng/tokens (reuse _bannedLogKeys pattern)",
+      "Evidence artifacts scrub precise coordinates",
+      "Passenger listener uses Auth uid that matches granted passengerId"
+    ],
+    "residualRisks": [
+      "Best-effort projection: HTTP 200 can succeed while RTDB project fails — passenger may miss updates (operational, not ACL hole)",
+      "Grant is best-effort: if grant fails, passenger gets permission_denied — UI must soft-fail",
+      "Driver also has ACL read — unused by MAP-2A; no product requirement to listen as driver"
+    ]
+  },
+
+  "failureModes": [
+    {
+      "id": "F1",
+      "mode": "RTDB not configured / NullTripLocationRtdb on server",
+      "passengerSees": "No latest forever",
+      "handling": "Soft unavailable chrome; ride actions continue"
+    },
+    {
+      "id": "F2",
+      "mode": "ACL grant failed after assign",
+      "passengerSees": "permission_denied on listen",
+      "handling": "Treat as map unavailable; do not retry forever without backoff"
+    },
+    {
+      "id": "F3",
+      "mode": "Publish accepted but RTDB project failed",
+      "passengerSees": "Stale or missing marker while driver believes publishing",
+      "handling": "Stale UX; ops logs RTDB_TRIP_LOCATION_PROJECT_FAILED"
+    },
+    {
+      "id": "F4",
+      "mode": "Driver backgrounded / GPS stopped",
+      "passengerSees": "Stale marker",
+      "handling": "Dim + last-updated; no fake motion"
+    },
+    {
+      "id": "F5",
+      "mode": "Terminal cleanup races late snapshot",
+      "passengerSees": "permission_denied or null",
+      "handling": "Stop listener on terminal HTTP state first"
+    },
+    {
+      "id": "F6",
+      "mode": "Maps SDK / tile failure",
+      "passengerSees": "Soft map shell",
+      "handling": "Same MAP-1 soft-fail principle — never block cancel/close"
+    },
+    {
+      "id": "F7",
+      "mode": "Malformed RTDB payload",
+      "passengerSees": "Ignore update",
+      "handling": "Validate before applying; keep last good fix until stale policy expires"
+    }
+  ],
+
+  "testsPlan": {
+    "unit": [
+      "TripLocationLatest parsing / validation",
+      "ActiveRideMapCameraPolicy fits (driver+pickup, driver+dest, anchors-only, close points)",
+      "Freshness classifier (fresh/stale/expired) from ts/acceptedAt with injectable clock",
+      "State gate: listener shouldRun(state) matrix aligned with LOCATION_PUBLISH_RIDE_STATES",
+      "Seq monotonic apply / ignore older"
+    ],
+    "widgetViewModel": [
+      "Active ride map shows waiting when assigned but no latest",
+      "Shows driver marker when latest present and state publishable",
+      "Hides/stops on RIDE_COMPLETED / CANCELLED",
+      "Map/RTDB failure does not clear cancel button / polling",
+      "mvvm_layer_test: views still forbid direct firebase_database import"
+    ],
+    "backendRegression": [
+      "Existing L2 location_trip_auth / rtdb_foundation / location_trip_projection tests remain green — no MAP-2 backend change expected"
+    ],
+    "doNotRequireForSlice": [
+      "ETA unit tests",
+      "Interpolation tests",
+      "Rules changes (already proven in L2_STEP3A)"
+    ]
+  },
+
+  "physicalProofPlan": {
+    "devicePrimary": "Samsung SM-A325F Android 13 (RF8R40ZQ1JH)",
+    "environment": "staging only",
+    "reuseExistingPublishPath": "L2 Step 4 driver publisher already proven → RTDB latest",
+    "steps": [
+      "Passenger + driver signed into staging; assign ride to DRIVER_ASSIGNED+",
+      "Confirm rideAccess has passenger+driver UIDs (ops/admin read; do not put UIDs in public evidence unnecessarily)",
+      "Driver assigned screen publishes; passenger Active Ride shows map tiles",
+      "Passenger sees driver marker move or update after publish (screenshot + a11y if available)",
+      "Change ride state EN_ROUTE/ARRIVED/STARTED — marker still gated correctly",
+      "Complete or cancel — listener stops; marker clears; no crash; ACL/tripLocations removed (server-side check)",
+      "Airplane/maps failure soft shell — cancel still works",
+      "Background passenger briefly — no duplicate listener storm on resume"
+    ],
+    "evidenceArtifact": "mobile/.e2e_artifacts/MAP2_PHYSICAL_VERIFICATION_REPORT.json",
+    "mustNotIncludeInEvidence": [
+      "API keys",
+      "precise raw coordinates",
+      "Firebase tokens",
+      "service account credentials"
+    ],
+    "passCriteria": [
+      "Real Maps tiles on active ride",
+      "Real RTDB-driven driver marker (not fabricated)",
+      "State-gated visibility",
+      "Terminal cleanup / soft-fail proven",
+      "MAP-1 request map unchanged regression smoke"
+    ]
+  },
+
+  "exactFilesLikelyToChange": {
+    "add": [
+      "mobile/pubspec.yaml (firebase_database)",
+      "mobile/lib/features/ride/domain/ports/trip_location_port.dart (name flexible)",
+      "mobile/lib/features/ride/domain/models/trip_location_latest.dart",
+      "mobile/lib/features/ride/data/location/rtdb_trip_location_data_source.dart",
+      "mobile/lib/features/ride/presentation/location/trip_location_session.dart (or provider)",
+      "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart",
+      "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart",
+      "mobile/lib/features/ride/presentation/utils/trip_location_freshness.dart",
+      "mobile/test/features/ride/active_ride_map_camera_policy_test.dart",
+      "mobile/test/features/ride/trip_location_freshness_test.dart",
+      "mobile/test/features/ride/trip_location_session_test.dart",
+      "mobile/.e2e_artifacts/MAP2_PHYSICAL_VERIFICATION_REPORT.json (after implement)"
+    ],
+    "modify": [
+      "mobile/lib/app/di/providers.dart — wire trip location port/session",
+      "mobile/lib/features/ride/presentation/views/active_ride_view.dart — replace _MapPlaceholder",
+      "mobile/lib/features/ride/presentation/view_models/active_ride_view_model.dart — optional expose map/listen flags (keep thin)",
+      "mobile/lib/features/ride/presentation/active_ride/active_ride_display.dart — update copy when live location ships",
+      "mobile/test/features/ride/active_ride_ui_test.dart"
+    ],
+    "likelyUnchanged": [
+      "database.rules.json",
+      "backend/auth-service/src/rtdb/*",
+      "backend/auth-service/src/location/*",
+      "mobile/lib/features/driver/domain/location/*",
+      "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart",
+      "mobile/lib/features/ride/presentation/views/ride_request_view.dart"
+    ]
+  },
+
+  "openDecisionsWithRecommendedDefaults": [
+    {
+      "id": "D1",
+      "decision": "Follow-camera vs fit-bounds on each update",
+      "recommendation": "Fit on first fix + when geometry span changes materially; avoid per-tick animate for MVP",
+      "blocksImplement": false
+    },
+    {
+      "id": "D2",
+      "decision": "Exact stale thresholds",
+      "recommendation": "20s fresh / 45s stale / 120s hide-or-dim — tunable constants",
+      "blocksImplement": false
+    },
+    {
+      "id": "D3",
+      "decision": "Pause RTDB listen when app backgrounded",
+      "recommendation": "Pause on background to save cost; resume on foreground (mirror driver session stop-watch discipline)",
+      "blocksImplement": false
+    },
+    {
+      "id": "D4",
+      "decision": "Show static estimate polyline on active ride",
+      "recommendation": "OUT of MAP-2A; pins + live driver only unless ride API already exposes polyline",
+      "blocksImplement": false
+    }
+  ],
+
+  "riskRegister": [
+    {
+      "id": "R1",
+      "severity": "YELLOW",
+      "detail": "Best-effort RTDB projection can diverge from durable accept — passenger UX must tolerate gaps (not a security issue)."
+    },
+    {
+      "id": "R2",
+      "severity": "GREEN",
+      "detail": "Security rules already enforce passenger-only read via ACL; MAP-2 adds no write surface."
+    },
+    {
+      "id": "R3",
+      "severity": "GREEN",
+      "detail": "Insertion point is ActiveRide _MapPlaceholder — MAP-1 request map remains isolated."
+    },
+    {
+      "id": "R4",
+      "severity": "YELLOW",
+      "detail": "New firebase_database dependency + App Check/RTDB policy must be verified on staging during physical proof."
+    },
+    {
+      "id": "R5",
+      "severity": "GREEN",
+      "detail": "Dual observation (HTTP state + RTDB location) is intentional and already foreshadowed by L2/MAP-1 audits."
+    },
+    {
+      "id": "R6",
+      "severity": "GREEN",
+      "detail": "onDriverOffline unwired is a known L2 gap; stale UX covers passenger impact for MAP-2A."
+    }
+  ],
+
+  "filesInspected": {
+    "driverPublish": [
+      "mobile/lib/features/driver/domain/location/driver_trip_location_publisher.dart",
+      "mobile/lib/features/driver/domain/location/driver_location_lifecycle.dart",
+      "mobile/lib/features/driver/presentation/location/driver_location_session.dart",
+      "mobile/lib/features/driver/data/location/driver_location_remote_data_source.dart"
+    ],
+    "rtdbBackend": [
+      "database.rules.json",
+      "backend/auth-service/src/rtdb/paths.ts",
+      "backend/auth-service/src/rtdb/types.ts",
+      "backend/auth-service/src/rtdb/ride_location_lifecycle.ts",
+      "backend/auth-service/src/location/location_update_service.ts",
+      "backend/auth-service/src/rides/ride_service.ts"
+    ],
+    "passengerMapRide": [
+      "mobile/lib/features/ride/presentation/views/active_ride_view.dart",
+      "mobile/lib/features/ride/presentation/view_models/active_ride_view_model.dart",
+      "mobile/lib/features/ride/presentation/active_ride/active_ride_display.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart",
+      "mobile/lib/features/ride/presentation/utils/ride_map_camera_policy.dart",
+      "mobile/lib/features/ride/domain/entities/ride.dart",
+      "mobile/pubspec.yaml",
+      "mobile/test/features/mvvm_layer_test.dart"
+    ],
+    "priorAuditsProofs": [
+      "mobile/.e2e_artifacts/MAP1_ARCHITECTURE_AUDIT.json",
+      "mobile/.e2e_artifacts/MAP1_IMPLEMENTATION_STATUS.json",
+      "mobile/.e2e_artifacts/MAP1_PHYSICAL_VERIFICATION_REPORT.json",
+      "mobile/.e2e_artifacts/L2_STEP4_ARCHITECTURE_AUDIT.json",
+      "mobile/.e2e_artifacts/L2_STEP4_PHYSICAL_VERIFICATION_REPORT.json",
+      "mobile/.e2e_artifacts/L2_STEP3A_LIVE_STAGING_RTDB_PROOF.json"
+    ]
+  }
+}

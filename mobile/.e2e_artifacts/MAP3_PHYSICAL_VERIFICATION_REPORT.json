@@ -1,0 +1,551 @@
+{
+  "artifact": "MAP3_PHYSICAL_VERIFICATION_REPORT",
+  "slice": "MAP-3 \u2014 User-gesture camera ownership on ActiveRideMap",
+  "startedAt": "2026-10-08T10:02:36.708928+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "sessionArrangement": {
+    "mode": "single_device_passenger_fg_then_http_publish",
+    "order": "passenger_active_ride_open_BEFORE_first_publish",
+    "productCodeModifiedDuringProof": false
+  },
+  "build": {
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "stagingCloudRunRevision": "ora-auth-service-staging-00026-4tz"
+  },
+  "checks": {
+    "apkInstalled": true,
+    "freshAssignedRide": true,
+    "A_activeRide": true,
+    "A_googleMap": true,
+    "A_pickup": true,
+    "A_destination": true,
+    "A_noDriverBeforePublish": true,
+    "A_recenterPresent": true,
+    "A_noCrash": true,
+    "B_firstPublishAccepted": true,
+    "B_rtdbFirstFix": true,
+    "B_driverMarker": true,
+    "B_guideDriverPickup": true,
+    "B_passengerRemained": true,
+    "C_panExecuted": true,
+    "C_uiStillActive": true,
+    "C_cameraMovedFromPolicy": true,
+    "D_multiPublishAccepted": true,
+    "D_markerStable": true,
+    "D_uiStable": true,
+    "D_noCameraYank": true,
+    "E_enRouteHttp": true,
+    "E_arrivedHttp": true,
+    "E_startedHttp": true,
+    "E_startedUiAlive": true,
+    "E_OD1_noAutoFitWhileOwned": false,
+    "F_recenterTapped": true,
+    "F_uiAlive": true,
+    "F_cameraReframed": false,
+    "F_noImmediateFalseReown": true,
+    "G_publishAccepted": true,
+    "G_markerStable": true,
+    "G_tickStableNoLoop": true,
+    "H_terminalCancelled": true,
+    "H_rtdbCleared": true,
+    "H_aclRevoked": true,
+    "H_noCrash": true,
+    "I_map1Smoke": false
+  },
+  "proofs": {
+    "apkInstall": {
+      "ok": true,
+      "stdoutTail": "Performing Streamed Install\nSuccess\n",
+      "lastUpdateBefore": "2026-10-08 14:14:17",
+      "lastUpdateAfter": "2026-10-08 15:02:57",
+      "apkBytes": 159857600
+    },
+    "checkA": {
+      "ui": {
+        "activeRide": true,
+        "googleMap": true,
+        "pickup": true,
+        "destination": true,
+        "waiting": true,
+        "locationUpdating": false,
+        "driverMarker": false,
+        "recenter": true,
+        "status": "DRIVER_ASSIGNED",
+        "cancel": true,
+        "guideSemantics": true,
+        "guideDriverPickup": false,
+        "guideDriverDest": false,
+        "guidePickupDest": true
+      },
+      "fingerprint": {
+        "ok": true,
+        "mode": "avg_hash",
+        "sha1": "7b8f0c8f83cfb7ae",
+        "meanLum": 193.2,
+        "cropSize": [
+          64,
+          36
+        ]
+      },
+      "mapBounds": [
+        53,
+        259,
+        1028,
+        784
+      ]
+    },
+    "checkB": {
+      "http": {
+        "status": 200,
+        "accepted": true,
+        "locationSeq": 1,
+        "hasLatLng": true
+      },
+      "rtdb": {
+        "latestExists": true,
+        "locationSeq": 1,
+        "driverIdMatch": true
+      },
+      "ui": {
+        "activeRide": true,
+        "googleMap": true,
+        "pickup": true,
+        "destination": true,
+        "waiting": false,
+        "locationUpdating": false,
+        "driverMarker": true,
+        "recenter": true,
+        "status": "DRIVER_ASSIGNED",
+        "cancel": true,
+        "guideSemantics": true,
+        "guideDriverPickup": true,
+        "guideDriverDest": false,
+        "guidePickupDest": false
+      },
+      "markerAppearedAfterSeconds": 0,
+      "fingerprint": {
+        "ok": true,
+        "mode": "avg_hash",
+        "sha1": "76cf3f2ff2500e2e",
+        "meanLum": 221.17,
+        "cropSize": [
+          64,
+          36
+        ]
+      },
+      "programmaticOwnershipNotObservableViaA11y": true
+    },
+    "checkC": {
+      "pan": {
+        "bounds": [
+          53,
+          259,
+          1028,
+          784
+        ],
+        "swipe1": [
+          540,
+          521,
+          120,
+          744
+        ],
+        "swipe2": [
+          540,
+          521,
+          920,
+          299
+        ]
+      },
+      "ui": {
+        "activeRide": true,
+        "googleMap": true,
+        "pickup": true,
+        "destination": true,
+        "waiting": false,
+        "locationUpdating": false,
+        "driverMarker": true,
+        "recenter": true,
+        "status": "DRIVER_ASSIGNED",
+        "cancel": true,
+        "guideSemantics": true,
+        "guideDriverPickup": true,
+        "guideDriverDest": false,
+        "guidePickupDest": false
+      },
+      "fingerprint": {
+        "ok": true,
+        "mode": "avg_hash",
+        "sha1": "a96283f00afd9b9e",
+        "meanLum": 202.13,
+        "cropSize": [
+          64,
+          36
+        ]
+      },
+      "vsFirstFix": {
+        "comparable": true,
+        "exactHashMatch": false,
+        "lumDelta": 19.04,
+        "stableFraming": false,
+        "largeShift": true
+      },
+      "ownershipInference": "User gesture performed via adb input swipe on map bounds; production does not expose _userOwnsCamera in a11y \u2014 ownership proven by Checks D/E (no yank) + F (Recenter reclaim)."
+    },
+    "checkD": {
+      "publishes": [
+        {
+          "seq": 2,
+          "accepted": true,
+          "driverMarker": true,
+          "guideSemantics": true,
+          "guideDriverPickup": true,
+          "uiStillActive": true,
+          "vsPan": {
+            "comparable": true,
+            "exactHashMatch": true,
+            "lumDelta": 0.01,
+            "stableFraming": true,
+            "largeShift": false
+          }
+        },
+        {
+          "seq": 3,
+          "accepted": true,
+          "driverMarker": true,
+          "guideSemantics": true,
+          "guideDriverPickup": true,
+          "uiStillActive": true,
+          "vsPan": {
+            "comparable": true,
+            "exactHashMatch": false,
+            "lumDelta": 0.05,
+            "stableFraming": true,
+            "largeShift": false
+          }
+        },
+        {
+          "seq": 4,
+          "accepted": true,
+          "driverMarker": true,
+          "guideSemantics": true,
+          "guideDriverPickup": true,
+          "uiStillActive": true,
+          "vsPan": {
+            "comparable": true,
+            "exactHashMatch": false,
+            "lumDelta": 0.08,
+            "stableFraming": true,
+            "largeShift": false
+          }
+        },
+        {
+          "seq": 5,
+          "accepted": true,
+          "driverMarker": true,
+          "guideSemantics": true,
+          "guideDriverPickup": true,
+          "uiStillActive": true,
+          "vsPan": {
+            "comparable": true,
+            "exactHashMatch": false,
+            "lumDelta": 0.12,
+            "stableFraming": true,
+            "largeShift": false
+          }
+        }
+      ],
+      "rtdbSeq": 5,
+      "lastVsPan": {
+        "comparable": true,
+        "exactHashMatch": false,
+        "lumDelta": 0.12,
+        "stableFraming": true,
+        "largeShift": false
+      },
+      "lastVsPolicyFirstFix": {
+        "comparable": true,
+        "exactHashMatch": false,
+        "lumDelta": 19.16,
+        "stableFraming": false,
+        "largeShift": true
+      }
+    },
+    "checkE": {
+      "en_route": {
+        "apiStatus": 200,
+        "httpState": "DRIVER_EN_ROUTE",
+        "expected": "DRIVER_EN_ROUTE",
+        "publishAccepted": true,
+        "ui": {
+          "activeRide": true,
+          "googleMap": true,
+          "pickup": true,
+          "destination": true,
+          "waiting": false,
+          "locationUpdating": false,
+          "driverMarker": true,
+          "recenter": true,
+          "status": "DRIVER_EN_ROUTE",
+          "cancel": true,
+          "guideSemantics": true,
+          "guideDriverPickup": true,
+          "guideDriverDest": false,
+          "guidePickupDest": false
+        },
+        "vsPan": {
+          "comparable": true,
+          "exactHashMatch": false,
+          "lumDelta": 0.03,
+          "stableFraming": true,
+          "largeShift": false
+        }
+      },
+      "arrived": {
+        "apiStatus": 200,
+        "httpState": "DRIVER_ARRIVED",
+        "expected": "DRIVER_ARRIVED",
+        "publishAccepted": true,
+        "ui": {
+          "activeRide": true,
+          "googleMap": true,
+          "pickup": true,
+          "destination": true,
+          "waiting": false,
+          "locationUpdating": false,
+          "driverMarker": true,
+          "recenter": true,
+          "status": "DRIVER_ARRIVED",
+          "cancel": true,
+          "guideSemantics": true,
+          "guideDriverPickup": true,
+          "guideDriverDest": false,
+          "guidePickupDest": false
+        },
+        "vsPan": {
+          "comparable": true,
+          "exactHashMatch": false,
+          "lumDelta": 0.01,
+          "stableFraming": true,
+          "largeShift": false
+        }
+      },
+      "start": {
+        "apiStatus": 200,
+        "httpState": "RIDE_STARTED",
+        "expected": "RIDE_STARTED",
+        "publishAccepted": true,
+        "ui": {
+          "activeRide": true,
+          "googleMap": true,
+          "pickup": false,
+          "destination": true,
+          "waiting": false,
+          "locationUpdating": false,
+          "driverMarker": true,
+          "recenter": true,
+          "status": "RIDE_STARTED",
+          "cancel": true,
+          "guideSemantics": true,
+          "guideDriverPickup": false,
+          "guideDriverDest": true,
+          "guidePickupDest": false
+        },
+        "vsPan": {
+          "comparable": true,
+          "exactHashMatch": false,
+          "lumDelta": 4.5,
+          "stableFraming": false,
+          "largeShift": false
+        }
+      }
+    },
+    "checkF": {
+      "recenterTapped": true,
+      "ui": {
+        "activeRide": true,
+        "googleMap": true,
+        "pickup": false,
+        "destination": true,
+        "waiting": false,
+        "locationUpdating": false,
+        "driverMarker": true,
+        "recenter": true,
+        "status": "RIDE_STARTED",
+        "cancel": true,
+        "guideSemantics": true,
+        "guideDriverPickup": false,
+        "guideDriverDest": true,
+        "guidePickupDest": false
+      },
+      "fingerprint": {
+        "ok": true,
+        "mode": "avg_hash",
+        "sha1": "305f32c73a0a5c9a",
+        "meanLum": 206.63,
+        "cropSize": [
+          64,
+          36
+        ]
+      },
+      "vsPan": {
+        "comparable": true,
+        "exactHashMatch": false,
+        "lumDelta": 4.5,
+        "stableFraming": false,
+        "largeShift": false
+      },
+      "vsPolicyFirstFix": {
+        "comparable": true,
+        "exactHashMatch": false,
+        "lumDelta": 14.54,
+        "stableFraming": false,
+        "largeShift": true
+      },
+      "inference": "Recenter should move framing away from user-pan toward policy composition. Ownership release not a11y-visible; proven by post-Recenter behavior (G)."
+    },
+    "checkG": {
+      "publishes": [
+        {
+          "seq": 9,
+          "accepted": true,
+          "driverMarker": true,
+          "uiStillActive": true,
+          "vsRecenter": {
+            "comparable": true,
+            "exactHashMatch": false,
+            "lumDelta": 0.13,
+            "stableFraming": true,
+            "largeShift": false
+          }
+        },
+        {
+          "seq": 10,
+          "accepted": true,
+          "driverMarker": true,
+          "uiStillActive": true,
+          "vsRecenter": {
+            "comparable": true,
+            "exactHashMatch": false,
+            "lumDelta": 0.27,
+            "stableFraming": true,
+            "largeShift": false
+          }
+        },
+        {
+          "seq": 11,
+          "accepted": true,
+          "driverMarker": true,
+          "uiStillActive": true,
+          "vsRecenter": {
+            "comparable": true,
+            "exactHashMatch": false,
+            "lumDelta": 0.39,
+            "stableFraming": true,
+            "largeShift": false
+          }
+        }
+      ]
+    },
+    "checkH": {
+      "httpState": "CANCELLED",
+      "rtdbCleared": true,
+      "aclRevoked": true
+    },
+    "checkI": {
+      "rideRequestOpened": true,
+      "placesSuggestions": true,
+      "reviewReached": false,
+      "pricingVisible": false,
+      "pickupDestMarkers": true,
+      "polylineLikely": true
+    },
+    "od1Reanalysis": {
+      "primaryRideId": "1620cc68-0e0a-4e0a-be7e-cdd8983e000d",
+      "finding": "After a clear user pan (regional zoom-out visible on map3_c_after_pan / map3_d_seq5), RTDB ticks and EN_ROUTE/ARRIVED kept the panned framing (Check D PASS). At RIDE_STARTED the map crop fingerprint became identical to post-Recenter (sha1 match map3_e_start == map3_f_after_recenter). That means MAP-2B phase auto-fit ran \u2014 Flutter _userOwnsCamera was NOT held through RIDE_STARTED. Most likely cause: adb/input gestures pan the Google Map visually but do not reliably invoke google_maps_flutter onCameraMoveStarted ownership latch on this device.",
+      "e_start_equals_after_recenter": true,
+      "d_panHeldThroughTicks": true
+    },
+    "od1Retry": {
+      "rideId": "fe3141a3-fb31-4d9a-b01b-9eb5566c455b",
+      "od1_pass": false,
+      "recenter_moved_from_e": false,
+      "fp": {
+        "B": {
+          "sha1": "ecc5773b17cbbbaa",
+          "meanLum": 221.09
+        },
+        "C": {
+          "sha1": "dd00b0b627e6fcc6",
+          "meanLum": 221.56
+        },
+        "D": {
+          "sha1": "e5f068c4ce01c51c",
+          "meanLum": 221.59
+        },
+        "E_start": {
+          "sha1": "fdf61310f6a8b468",
+          "meanLum": 225.29
+        },
+        "F": {
+          "sha1": "fdf61310f6a8b468",
+          "meanLum": 225.29
+        }
+      },
+      "note": "touchscreen swipe retry; pan displacement weaker; OD1 still false; Recenter no-op vs e_start"
+    }
+  },
+  "failedChecks": [
+    "E_OD1_noAutoFitWhileOwned",
+    "F_cameraReframed",
+    "I_map1Smoke"
+  ],
+  "limitations": [
+    "OD1 not proven on device via adb gestures: RIDE_STARTED auto-fit matched Recenter frame (ownership latch not confirmed).",
+    "Recenter reclaim inconclusive for the same reason (already at policy after RIDE_STARTED).",
+    "Check D PASS remains strong: after clear pan, seq 2\u20135 RTDB updates did not yank camera (also consistent with MAP-2B tick stability).",
+    "MAP-1 smoke partial (reviewReached false) \u2014 Places suggestion flakiness; request map + markers still observed.",
+    "Ownership boolean not exposed in production a11y; physical proof is behavioral/screenshot-based.",
+    "Human finger pan on SM-A325F recommended to close OD1/Recenter to GREEN without product-code debug hooks."
+  ],
+  "lateOnCameraMoveStartedIssue": {
+    "observed": false,
+    "relatedFinding": "Not a late programmatic false-latch. Inverse problem observed under automation: map panned visually without durable Flutter ownership through RIDE_STARTED.",
+    "reproducible": true,
+    "recenterRecovers": "N/A \u2014 already at policy after RIDE_STARTED fit",
+    "notes": "Do not add timing delays. Need human gesture or non-product instrumentation to confirm latch."
+  },
+  "rideId": "1620cc68-0e0a-4e0a-be7e-cdd8983e000d",
+  "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "evidenceFiles": [
+    "map2a_map3_a_before.png",
+    "map2a_map3_b_first_fix.png",
+    "map2a_map3_c_after_pan.png",
+    "map2a_map3_d_seq2.png",
+    "map2a_map3_d_seq3.png",
+    "map2a_map3_d_seq4.png",
+    "map2a_map3_d_seq5.png",
+    "map2a_map3_e_arrived.png",
+    "map2a_map3_e_en_route.png",
+    "map2a_map3_e_start.png",
+    "map2a_map3_f_after_recenter.png",
+    "map2a_map3_g_seq10.png",
+    "map2a_map3_g_seq11.png",
+    "map2a_map3_g_seq9.png",
+    "map2a_map3_h_after.png"
+  ],
+  "automatedGatesFromImplementation": {
+    "note": "From MAP3_IMPLEMENTATION_STATUS \u2014 not re-run in this physical session",
+    "statusFile": "mobile/.e2e_artifacts/MAP3_IMPLEMENTATION_STATUS.json"
+  },
+  "endedAt": "2026-10-08T10:09:46.625029+00:00",
+  "verdict": "YELLOW",
+  "verdictLabel": "MAP-3 PHYSICAL \u2014 YELLOW",
+  "verdictReason": "Core no-yank-after-pan under RTDB ticks PASS; OD1/Recenter reclaim not proven with adb gestures (RIDE_STARTED == Recenter frame). Not GREEN. Not RED for confirmed product regression \u2014 automated unit/widget OD1 PASS; physical ownership latch via injected input unverified.",
+  "reanalyzedAt": "2026-10-08T10:15:49.966049+00:00"
+}

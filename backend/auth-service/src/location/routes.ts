@@ -10,9 +10,14 @@ import { LocationDomainError } from './types';
 export function createLocationRouter(
   db: Firestore,
   geoProjection?: import('../redis/geo_projection').RedisGeoProjectionService | null,
+  tripLocationRtdb?: import('../rtdb/types').TripLocationRtdb | null,
 ): Router {
   const router = Router();
-  const locations = new LocationUpdateService(db, geoProjection ?? null);
+  const locations = new LocationUpdateService(
+    db,
+    geoProjection ?? null,
+    tripLocationRtdb ?? null,
+  );
 
   router.post('/update', async (req: AuthedRequest, res) => {
     if (!req.caller) {

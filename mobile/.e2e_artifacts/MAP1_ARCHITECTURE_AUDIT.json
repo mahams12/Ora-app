@@ -1,0 +1,639 @@
+{
+  "artifact": "MAP1_ARCHITECTURE_AUDIT",
+  "slice": "MAP-1 — Passenger Map Preview",
+  "mode": "INVESTIGATION_ONLY",
+  "createdAt": "2026-10-06",
+  "productCodeModified": false,
+  "verdict": "GREEN",
+  "verdictReason": "Architecture is safe and sufficiently defined: exact insertion point exists, both real coordinates are already available after confirm, Maps SDK is absent but installable without minSdk conflict on target devices, polyline should come from an additive optional estimate field on the existing server Routes call (display-only), and map failure must never block ride creation. Ops Maps SDK key setup remains an implementation prerequisite, not an architecture redesign.",
+  "priorClosedSlices": [
+    "L1 GPS",
+    "L2 Step 1",
+    "L2 Step 2",
+    "L2 Step 3",
+    "L2 Step 3A",
+    "L2 Step 4",
+    "L2 Step 4 Physical Proof"
+  ],
+  "explicitNonGoalsThisAudit": [
+    "No product code changes",
+    "No map UI implementation",
+    "No backend API changes in this step",
+    "No Firestore/RTDB changes",
+    "No passenger live location listeners",
+    "No live driver tracking / ETA / navigation",
+    "No L3",
+    "No N3/N4/D1 changes",
+    "No production touch"
+  ],
+
+  "currentPassengerFlow": {
+    "summary": "Single GoRouter screen /rides/request with in-widget phases compose → review → submit. Not separate pickup/destination/pricing routes.",
+    "orderedSteps": [
+      {
+        "step": 0,
+        "name": "Home",
+        "files": [
+          "mobile/lib/features/passenger/presentation/views/home_shell_view.dart",
+          "mobile/lib/features/passenger/presentation/views/passenger_home_view.dart"
+        ],
+        "route": "/home",
+        "notes": "Search / City rides / category / saved-place rows call onRequestRideEntry → push /rides/request"
+      },
+      {
+        "step": 1,
+        "name": "Ride request entry",
+        "files": [
+          "mobile/lib/app/router/app_router.dart",
+          "mobile/lib/app/router/routes.dart"
+        ],
+        "route": "/rides/request",
+        "widget": "RideRequestView"
+      },
+      {
+        "step": 2,
+        "name": "Compose — pickup",
+        "files": [
+          "mobile/lib/features/ride/presentation/views/ride_request_view.dart (_ComposePane)",
+          "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart"
+        ],
+        "actions": [
+          "Places autocomplete + Place Details",
+          "Use current location (Geolocator)",
+          "Confirm pickup → confirmedPickup"
+        ],
+        "navigation": "same screen; phase=compose"
+      },
+      {
+        "step": 3,
+        "name": "Compose — destination",
+        "files": [
+          "mobile/lib/features/ride/presentation/views/ride_request_view.dart",
+          "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart",
+          "mobile/lib/features/ride/data/location/google_places_http_search.dart"
+        ],
+        "actions": [
+          "Places autocomplete → Place Details resolve",
+          "Confirm destination → confirmedDestination"
+        ],
+        "navigation": "same screen; phase=compose"
+      },
+      {
+        "step": 4,
+        "name": "Continue → review",
+        "gate": "canAdvanceToReview = confirmedPickup && confirmedDestination",
+        "file": "ride_request_view_model.dart goToReview",
+        "navigation": "phase flip only (RideRequestPhase.review)"
+      },
+      {
+        "step": 5,
+        "name": "Review + pricing",
+        "files": [
+          "ride_request_view.dart (_ReviewPane / _PricingCard)",
+          "ride_request_view_model.dart requestPricingEstimate"
+        ],
+        "api": "POST /v1/pricing/estimate",
+        "notes": "Pricing also prefetches when second location is confirmed"
+      },
+      {
+        "step": 6,
+        "name": "Submit ride request",
+        "file": "ride_request_view_model.dart submit",
+        "api": "create ride POST",
+        "postCreate": "navigate to offers inbox"
+      }
+    ],
+    "controllersProviders": {
+      "rideRequestViewModelProvider": "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart",
+      "deviceLocationPortProvider": "mobile/lib/app/di/providers.dart",
+      "placeSearchPortProvider": "mobile/lib/app/di/providers.dart",
+      "pricingEstimatePortProvider": "mobile/lib/app/di/providers.dart",
+      "homeViewModelProvider": "greeting only — no ride coordinates"
+    }
+  },
+
+  "exactMapInsertionPoint": {
+    "recommended": "Replace RideLocationPlaceholder contents (or sibling widget swapped at the same call site)",
+    "callSite": "mobile/lib/features/ride/presentation/views/ride_request_view.dart — RideLocationPlaceholder(~156-168)",
+    "widgetFile": "mobile/lib/features/ride/presentation/widgets/ride_location_placeholder.dart",
+    "layout": "Header ~168px above compose/review sheet; already labeled 'Map preview'; Maps SDK deferred comment present",
+    "rationale": [
+      "Smallest change: reserved header slot already exists for both compose and review",
+      "No new routes or phase redesign",
+      "Parent already watches rideRequestViewModelProvider; can pass confirmed/proposed coords",
+      "Smaller than review-only insertion (would miss compose feedback) or a new screen"
+    ],
+    "notRecommended": [
+      "New /rides/map route",
+      "Only inside _ReviewPane",
+      "Active-ride _MapPlaceholder (post-booking; out of MAP-1 request flow)"
+    ]
+  },
+
+  "currentCoordinateSources": {
+    "pickup": {
+      "gps": {
+        "port": "DeviceLocationPort",
+        "impl": "mobile/lib/features/ride/data/location/geolocator_device_location.dart",
+        "vm": "useCurrentLocationForPickup",
+        "model": "ResolvedPassengerLocation(source: gps)",
+        "addressNote": "Literal 'Current location' — no reverse geocode yet"
+      },
+      "places": {
+        "impl": "GooglePlacesHttpSearch.resolvePlace",
+        "file": "mobile/lib/features/ride/data/location/google_places_http_search.dart",
+        "vm": "selectPlaceSuggestion → proposedPickup → confirmPickup",
+        "model": "ResolvedPassengerLocation(source: place)"
+      }
+    },
+    "destination": {
+      "placesOnly": true,
+      "path": "autocomplete (no lat/lng) → Place Details → proposedDestination → confirmDestination",
+      "model": "ResolvedPassengerLocation(source: place)"
+    },
+    "sharedModel": "mobile/lib/features/ride/domain/models/resolved_passenger_location.dart",
+    "createPayloadModel": "LatLngPoint in ride.dart (lat/lng/address?)",
+    "bothAvailableTogether": {
+      "when": "After both confirms (required before Continue / review / estimate / create)",
+      "gate": "RideRequestUiState.canAdvanceToReview",
+      "gapBeforeBothConfirms": "Zero or one pin only; no route",
+      "stubsNotWired": ["PassengerLocationSource.mapPin", "PassengerLocationSource.savedPlace", "Home saved places UI does not inject coords"]
+    },
+    "fakeCoordinates": "NONE in live path — GPS and Places Details provide real lat/lng"
+  },
+
+  "googleMapsSdkStatus": {
+    "A_sdkInstalled": false,
+    "google_maps_flutter_in_pubspec": false,
+    "GoogleMap_usage_in_lib": false,
+    "existingPlaceholders": [
+      "RideLocationPlaceholder (request flow)",
+      "active_ride_view _MapPlaceholder (post-booking)",
+      "mobile/lib/core/maps/maps_service.dart PlaceholderMapsService",
+      "mobile/lib/features/maps/maps.dart empty library"
+    ],
+    "B_apiKeyConfiguredForMapsSdk": false,
+    "C_platformConfigComplete": {
+      "android": {
+        "manifestMapsMetaData": false,
+        "file": "mobile/android/app/src/main/AndroidManifest.xml",
+        "notes": "INTERNET + location permissions present; no com.google.android.geo.API_KEY",
+        "minSdk": "flutter.minSdkVersion (Flutter default 24)",
+        "applicationId": "com.ora.ora",
+        "googleServicesPlugin": true
+      },
+      "ios": {
+        "GMSServices_provideAPIKey": false,
+        "Podfile": "absent",
+        "deploymentTarget": "iOS 13.0",
+        "locationUsageDescription": true
+      }
+    },
+    "D_missing": [
+      "google_maps_flutter dependency",
+      "Android Maps API key meta-data",
+      "iOS GMSServices.provideAPIKey + CocoaPods Maps",
+      "Dedicated Maps SDK client key (separate from Places dart-define and server Routes key)",
+      "Optional encoded polyline on pricing estimate response"
+    ],
+    "E_intendedGcpProject": {
+      "placesClient": "ORA_GOOGLE_PLACES_API_KEY via --dart-define (build scripts require it)",
+      "routesServer": "GOOGLE_MAPS_SERVER_KEY via env / Secret Manager (ora-staging-google-maps-server-key)",
+      "mapsSdk": "NOT configured yet — should be same Google Cloud project as Places/Routes with a SEPARATE restricted Maps SDK key",
+      "doNotReuse": [
+        "Do not put GOOGLE_MAPS_SERVER_KEY in Flutter",
+        "Do not use Places HTTP key as AndroidManifest Maps SDK key without confirming API enablement + restriction model",
+        "Prefer dedicated Maps SDK key restricted to package+SHA + Maps SDK API only"
+      ]
+    },
+    "F_apiRestrictionsPresent": {
+      "placesClient": "Documented intent: API-restrict Places API (New); package+SHA does not apply the same way to Flutter HTTP Places",
+      "routesServer": "Documented intent: Routes (+ Geocoding if used) + IP/service; Secret Manager on Cloud Run",
+      "mapsSdk": "Documented in docs but NOT present in code; docs incorrectly cite package com.ora.app in places — real applicationId is com.ora.ora",
+      "auditDidNotCreateOrModifyKeys": true,
+      "secretsNotPrinted": true
+    }
+  },
+
+  "existingPlacesRoutesIntegration": {
+    "places": {
+      "status": "LIVE on client",
+      "endpoints": ["places.googleapis.com v1 autocomplete", "place details"],
+      "sessionTokens": true,
+      "regionBias": "pk",
+      "backendPlacesProxy": false
+    },
+    "routes": {
+      "status": "LIVE on server for pricing only",
+      "provider": "backend/auth-service/src/routing/google_routes_provider.ts",
+      "url": "https://routes.googleapis.com/directions/v2:computeRoutes",
+      "fieldMaskToday": "routes.distanceMeters,routes.duration",
+      "polylineIntentionallyOmitted": true,
+      "typesAllowOptionalEncodedPolyline": true,
+      "flutterRoutesClient": false
+    },
+    "pricingDependency": {
+      "flow": "Flutter POST /v1/pricing/estimate → PricingEstimateService → routing.computeDriveRoute → calculateFare → pricingSnapshots → response with distanceKm/durationMin",
+      "clientNeverSendsDistanceOrFare": true,
+      "estimateResponseHasPolyline": false,
+      "rideCreateRoutePolyline": "schema field exists; create sets null; publicRide typically omits polyline"
+    }
+  },
+
+  "routePolylineAvailability": {
+    "availableTodayEndToEnd": false,
+    "distanceKmAvailableToClient": true,
+    "durationMinAvailableToClient": true,
+    "canOneRoutesCallSupportPricingAndMap": {
+      "architecturally": true,
+      "currently": false,
+      "recommendedPath": "Extend Google Routes field mask with routes.polyline.encodedPolyline on the SAME estimate computeRoutes call; return optional encodedPolyline on estimate response for display only; do NOT persist as pricing authority; do NOT trust client polyline for fare",
+      "rejectedPath": "Second Flutter/server Routes call solely for map (unnecessary cost duplication)",
+      "pinsOnlyWithoutPolyline": "Possible interim UI but does NOT meet MAP-1 DoD (real route/polyline required)"
+    },
+    "priorDecisionAlignment": "docs/implementation/phase-4-5-location-pricing-decision.md already foresaw optional estimate polyline for preview without requiring ride schema change"
+  },
+
+  "proposedArchitecture": {
+    "flutterOwns": [
+      "Map widget rendering (google_maps_flutter)",
+      "Pickup/destination markers",
+      "Camera fit / padding / close-points zoom fallback",
+      "Polyline presentation (decode encoded polyline → Polyline)",
+      "UI loading / empty / error shells",
+      "Binding map surface to RideRequestUiState coords + optional estimate polyline"
+    ],
+    "backendRemainsAuthoritativeFor": [
+      "Pricing",
+      "Route metrics used for fare (distanceKm, durationMin)",
+      "pricingSnapshot contract",
+      "Ride creation / security / server validation"
+    ],
+    "hardRules": [
+      "Never move pricing authority to Flutter",
+      "Never trust client-computed distance/fare",
+      "Map polyline is display-only",
+      "Map failure must not block compose / review / request unless an existing business rule already blocks (coords/pricing)",
+      "No Flutter RTDB writes",
+      "No passenger live location listeners in MAP-1"
+    ],
+    "polylineSourceDecision": {
+      "decision": "RECOMMENDED — additive optional encodedPolyline on POST /v1/pricing/estimate from existing Routes call",
+      "implementationImpact": "Small backend field-mask + response mapping + Flutter PricingEstimate optional field; does not change fare math or create-ride contract",
+      "requiresUserApprovalBeforeImpl": true,
+      "note": "This audit does not implement it; MAP-1 implementation order includes this as vertical-slice step 1 if approved"
+    }
+  },
+
+  "dataModel": {
+    "minimumRequired": {
+      "pickup": ["latitude", "longitude"],
+      "destination": ["latitude", "longitude"],
+      "route": ["encodedPolyline (geometry)", "distanceKm (optional display)", "durationMin (optional display)"]
+    },
+    "reuseExisting": [
+      "ResolvedPassengerLocation for pins",
+      "PricingEstimate for distanceKm/durationMin (extend with optional encodedPolyline)",
+      "Do not invent parallel lat/lng types"
+    ],
+    "newLightweightUiModel": {
+      "name": "RideMapPreviewModel (suggested)",
+      "fields": [
+        "pickup LatLng",
+        "destination LatLng",
+        "encodedPolyline?",
+        "routeIdentity (coord-pair key or pricingGen)",
+        "status: idle|loading|ready|unavailable"
+      ],
+      "purpose": "View-layer only; mapped from confirmed locations + estimate; avoid Freezed/domain duplication"
+    }
+  },
+
+  "cameraStrategy": {
+    "initial": "LatLngBounds(pickup, destination) + padding when both present",
+    "singlePoint": "Center on proposed/confirmed point with medium zoom while other side unresolved",
+    "empty": "Keep gradient/shell or default city-agnostic idle camera; do not invent fake coords",
+    "veryClosePoints": "If bounds span below threshold, use fixed fallback zoom (e.g. ~15) centered on midpoint",
+    "fitTiming": "On map created + when routeIdentity changes; avoid animating on every rebuild",
+    "padding": "Account for status chip / back button overlays (~48-64 logical px)"
+  },
+
+  "uxStates": {
+    "loading": "Map shell visible; markers may appear before polyline; non-blocking spinner/chip for route",
+    "ready": "Both markers + polyline + fitted camera",
+    "partial": "One marker only during compose",
+    "routeUnavailable": "Show markers if coords valid; omit polyline; keep existing pricing error UX",
+    "mapsSdkUnavailable": "Fall back to current RideLocationPlaceholder behavior; ride flow continues",
+    "invalidCoordinates": "Do not render pins; keep status chip messaging",
+    "networkFailure": "Reuse estimate failure paths; map remains optional",
+    "hardDependency": false
+  },
+
+  "performanceStrategy": {
+    "mapInit": "Initialize when RideRequestView mounts (header always shown); acceptable cost for request screen",
+    "routeRequest": "Reuse existing requestPricingEstimate — once per confirmed pickup/destination/category/city generation; do not add a second Routes client",
+    "caching": "Existing _pricingGen + _invalidatePricing already clears estimate on location/category change; map must key polyline to same generation / coord identity",
+    "avoid": [
+      "Rebuilding GoogleMap widget identity unnecessarily (use const keys / stable GoogleMapController)",
+      "Refitting camera on every Riverpod rebuild without coord/route identity change",
+      "Decoding polyline repeatedly — decode once per routeIdentity"
+    ],
+    "noPrematureOptimization": true
+  },
+
+  "changeRebuildBehavior": {
+    "pickupChanges": "_invalidatePricing + clear confirmed/proposed as today → clear map polyline via routeIdentity mismatch",
+    "destinationChanges": "same",
+    "destinationSearchResultChanges": "proposed only until confirm — map may show proposed pin; polyline only after both confirmed + estimate",
+    "cancelDestinationOrBackToCompose": "goToCompose keeps confirmed coords; map should still show last confirmed pair if still present",
+    "reopenReview": "goToReview reuses usable pricing if present; map reuses same polyline if routeIdentity matches",
+    "gpsPickupRefresh": "clears confirmed pickup + pricing → map clears dual-pin route until re-confirm",
+    "staleRoutePrevention": {
+      "strategy": "routeIdentity = hash(pickupLat,pickupLng,destLat,destLng,categoryId) tied to pricingGen or pricingSnapshotId",
+      "rule": "Never draw polyline whose identity != current confirmed pair"
+    }
+  },
+
+  "rideCreationCompatibility": {
+    "mustNotChange": [
+      "ride request API",
+      "pricing fare authority / snapshot contract semantics",
+      "offer flow",
+      "driver discovery",
+      "N3/N4",
+      "D1",
+      "L2 location publish path"
+    ],
+    "allowedAdditive": [
+      "Optional encodedPolyline on estimate response (display-only)",
+      "Flutter map UI + SDK config"
+    ],
+    "mapIsNotRideDependency": true
+  },
+
+  "platformDeviceAudit": {
+    "samsung_SM_A325F": {
+      "android": 13,
+      "apiLevel": 33,
+      "compatibleWithGoogleMapsFlutterMinSdk24": true
+    },
+    "oppo_CPH2083": {
+      "android": 9,
+      "apiLevel": 28,
+      "compatibleWithGoogleMapsFlutterMinSdk24": true
+    },
+    "projectMinSdk": "Flutter default 24 — do not change for MAP-1",
+    "ios": "Deployment 13.0; Maps SDK wiring absent but not blocking Android-first physical proof"
+  },
+
+  "testPlan": {
+    "unit": [
+      "Coordinate mapping ResolvedPassengerLocation → map LatLng",
+      "PricingEstimate optional polyline mapping",
+      "routeIdentity changes when either coordinate changes",
+      "Invalid coordinate handling (out of range)",
+      "Stale polyline discarded when pricingGen advances"
+    ],
+    "widget": [
+      "Map loading shell",
+      "Pickup + destination markers when confirmed",
+      "Polyline when estimate provides geometry",
+      "Map failure / unavailable does not break review Continuability",
+      "Camera fit invoked on ready",
+      "Back from review to compose preserves/clears map correctly per state"
+    ],
+    "integration": [
+      "pickup+destination confirm → estimate → map preview model ready"
+    ],
+    "physical": [
+      "Samsung SM-A325F",
+      "Real Google Maps SDK tiles",
+      "Real GPS/Places coords (no fabricated lat/lng in evidence)",
+      "Real encoded polyline rendered",
+      "Camera fits both points",
+      "Change destination → stale route cleared → new route",
+      "Disable/break Maps key or force map error → still create ride if pricing OK"
+    ],
+    "noImplementationYet": true
+  },
+
+  "physicalProofPlan": {
+    "devicePrimary": "Samsung SM-A325F Android 13 package com.ora.ora",
+    "deviceSecondaryOptional": "Oppo CPH2083 Android 9",
+    "environment": "staging only",
+    "buildRequires": [
+      "ORA_ENV=staging",
+      "ORA_API_BASE_URL=staging Cloud Run",
+      "ORA_GOOGLE_PLACES_API_KEY (existing)",
+      "NEW Maps SDK key in AndroidManifest (ops prerequisite)"
+    ],
+    "evidenceArtifactSuggested": "mobile/.e2e_artifacts/MAP1_PHYSICAL_VERIFICATION_REPORT.json",
+    "mustNotIncludeInEvidence": [
+      "API keys",
+      "precise raw coordinates",
+      "Firebase tokens",
+      "service account credentials"
+    ]
+  },
+
+  "securityCostAudit": {
+    "requiredApisForMap1": [
+      "Maps SDK for Android (client)",
+      "Maps SDK for iOS (later if shipping iOS)",
+      "Places API (New) — already used",
+      "Routes API computeRoutes — already used; field mask expands for polyline SKU impact"
+    ],
+    "keySeparation": {
+      "placesClientDartDefine": "ORA_GOOGLE_PLACES_API_KEY",
+      "routesServerSecret": "GOOGLE_MAPS_SERVER_KEY",
+      "mapsSdkClient": "NOT YET — create restricted Maps SDK key only"
+    },
+    "risks": [
+      "Unrestricted Maps key if created without package+SHA",
+      "Doc package ID mismatch com.ora.app vs com.ora.ora could misconfigure restrictions",
+      "Duplicate Routes calls if map ignores estimate polyline",
+      "Polyline field increases Routes response size/cost vs distance/duration-only mask"
+    ],
+    "costControl": [
+      "One Routes call per estimate generation",
+      "Map init only on request screen",
+      "No polling",
+      "No Static Maps duplicate",
+      "Session tokens already used for Places"
+    ],
+    "didNotCreateOrModifyKeys": true
+  },
+
+  "files": {
+    "likelyReuseModify": [
+      "mobile/pubspec.yaml",
+      "mobile/android/app/src/main/AndroidManifest.xml",
+      "mobile/lib/features/ride/presentation/widgets/ride_location_placeholder.dart",
+      "mobile/lib/features/ride/presentation/views/ride_request_view.dart",
+      "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart",
+      "mobile/lib/features/ride/domain/ports/pricing_estimate_port.dart",
+      "mobile/lib/app/di/providers.dart",
+      "backend/auth-service/src/routing/google_routes_provider.ts",
+      "backend/auth-service/src/routing/types.ts",
+      "backend/auth-service/src/pricing/estimate_service.ts",
+      "backend/auth-service/src/pricing/types.ts"
+    ],
+    "likelyNew": [
+      "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart (or maps feature widget)",
+      "mobile/lib/features/ride/presentation/models/ride_map_preview_model.dart",
+      "mobile/lib/features/ride/presentation/utils/encoded_polyline_decoder.dart (or thin decoder util)",
+      "mobile/test/... map preview unit/widget tests",
+      "optional: assets/map_style.json later (NOT required for MAP-1 MVP)"
+    ],
+    "doNotTouchForMap1": [
+      "L2 RTDB / driver publisher",
+      "active ride live tracking UI beyond leaving placeholder",
+      "Firestore schema",
+      "database.rules.json",
+      "production deploy scripts as primary path"
+    ]
+  },
+
+  "risks": [
+    {
+      "id": "R1",
+      "name": "API key / Maps SDK configuration",
+      "severity": "YELLOW",
+      "detail": "Maps SDK key not present; physical proof blocked until ops creates restricted key. Doc package ID mismatch (com.ora.app vs com.ora.ora)."
+    },
+    {
+      "id": "R2",
+      "name": "Google Maps billing / cost",
+      "severity": "YELLOW",
+      "detail": "Maps SDK loads + Routes polyline field add incremental cost; mitigated by single estimate call and request-screen-only init."
+    },
+    {
+      "id": "R3",
+      "name": "Route duplication",
+      "severity": "GREEN",
+      "detail": "Avoided if map consumes estimate polyline; RED only if a second Routes client is added."
+    },
+    {
+      "id": "R4",
+      "name": "Stale route geometry",
+      "severity": "YELLOW",
+      "detail": "Must bind polyline to routeIdentity / pricingGen; existing pricing invalidation is a good hook."
+    },
+    {
+      "id": "R5",
+      "name": "UI performance",
+      "severity": "GREEN",
+      "detail": "Header map is bounded; avoid controller thrash and unnecessary camera animations."
+    },
+    {
+      "id": "R6",
+      "name": "Coordinate mismatch",
+      "severity": "GREEN",
+      "detail": "Same confirmedPickup/confirmedDestination feed estimate and create; map must use those only."
+    },
+    {
+      "id": "R7",
+      "name": "Platform compatibility",
+      "severity": "GREEN",
+      "detail": "SM-A325F API 33 and Oppo API 28 both above google_maps_flutter Android minSdk 24."
+    },
+    {
+      "id": "R8",
+      "name": "Map failure blocking ride flow",
+      "severity": "GREEN",
+      "detail": "Architecture requires map to be soft dependency; ride create continues to depend only on coords + pricing rules."
+    },
+    {
+      "id": "R9",
+      "name": "Security — unrestricted client key",
+      "severity": "YELLOW",
+      "detail": "If Maps key ships unrestricted, abuse risk. Must restrict package+SHA+Maps SDK API before any release build."
+    }
+  ],
+
+  "implementationOrder": {
+    "prefer": "One vertical slice",
+    "steps": [
+      {
+        "n": 1,
+        "title": "Additive estimate polyline (backend + Flutter model)",
+        "detail": "Field mask + optional encodedPolyline on estimate response; unit tests; pricing math unchanged"
+      },
+      {
+        "n": 2,
+        "title": "Maps SDK dependency + Android key wiring",
+        "detail": "google_maps_flutter; Manifest meta-data via build-time placeholder; staging key only; no production"
+      },
+      {
+        "n": 3,
+        "title": "RideMapPreview widget replacing placeholder",
+        "detail": "Markers from confirmed/proposed; camera fit; decode polyline; soft failure fallback"
+      },
+      {
+        "n": 4,
+        "title": "Wire RideRequestView → preview model + routeIdentity",
+        "detail": "Pass state; clear stale geometry on invalidate"
+      },
+      {
+        "n": 5,
+        "title": "Unit + widget tests",
+        "detail": "Per test plan; map failure does not break review"
+      },
+      {
+        "n": 6,
+        "title": "Physical proof on SM-A325F staging",
+        "detail": "MAP1_PHYSICAL_VERIFICATION_REPORT.json; regression suite"
+      }
+    ],
+    "excludedFromMap1": [
+      "Custom map style polish (optional later)",
+      "Map-pin drag adjust",
+      "iOS-first proof",
+      "Active-ride map",
+      "Live driver marker"
+    ]
+  },
+
+  "definitionOfDone": {
+    "objectiveCriteria": [
+      "Real Google Map renders on passenger ride request screen",
+      "Pickup marker renders from real confirmed/proposed coordinates",
+      "Destination marker renders from real confirmed/proposed coordinates",
+      "Real route/polyline from server estimate geometry renders",
+      "Camera fits both points with padding (close-points fallback works)",
+      "Pickup/destination changes update markers and clear/replace polyline (no stale route)",
+      "Map/SDK/route failure does not break existing ride request flow",
+      "No pricing/ride API regression (fare authority unchanged)",
+      "Android physical proof on Samsung SM-A325F passes",
+      "Flutter analyze + relevant tests green",
+      "Backend focused pricing/routes tests green"
+    ]
+  },
+
+  "map2Boundary": {
+    "outOfMap1": [
+      "live driver marker",
+      "RTDB passenger listener",
+      "live driver tracking",
+      "ETA",
+      "driver route/navigation",
+      "interpolation",
+      "location history",
+      "passenger live-location subscriptions",
+      "background passenger tracking"
+    ],
+    "belongsTo": "future MAP-2 / live-ride slice"
+  },
+
+  "openItemsForReviewer": [
+    "Approve additive optional encodedPolyline on POST /v1/pricing/estimate as MAP-1 vertical-slice step 1",
+    "Ops: create/restrict Maps SDK Android key for com.ora.ora (not com.ora.app) before physical proof",
+    "Confirm Android-first physical proof is sufficient for MAP-1 close (iOS Maps wiring can follow)"
+  ],
+
+  "finalVerdict": {
+    "status": "GREEN",
+    "summary": "MAP-1 architecture is safe and sufficiently defined. Smallest insertion is RideLocationPlaceholder. Coordinates already real and available after confirm. Maps SDK not installed/configured (implementation prerequisite). Polyline not available today — recommend one shared Routes response via additive estimate field. Map must remain soft dependency. MAP-2 live tracking explicitly excluded.",
+    "nextAction": "STOP — await review before any MAP-1 implementation"
+  }
+}

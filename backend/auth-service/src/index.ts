@@ -9,6 +9,10 @@ import { createFirebaseFcmSender } from './delivery/fcm_sender';
 import { logSafe } from './http/errors';
 import { createGoogleRoutesProviderFromEnv } from './routing/google_routes_provider';
 import type { RoutingProvider } from './routing/types';
+import {
+  createTripLocationRtdbFromEnv,
+  resolveFirebaseAdminAppOptions,
+} from './rtdb/client';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -29,9 +33,13 @@ async function main() {
   if (getApps().length === 0) {
     // eslint-disable-next-line no-console
     console.error('[auth-service] initializeApp…');
+    const adminOpts = resolveFirebaseAdminAppOptions(process.env);
     initializeApp({
       credential: applicationDefault(),
-      projectId,
+      projectId: adminOpts.projectId,
+      ...(adminOpts.databaseURL
+        ? { databaseURL: adminOpts.databaseURL }
+        : {}),
     });
   }
 
@@ -39,6 +47,12 @@ async function main() {
   console.error('[auth-service] getAuth/getFirestore…');
   const auth = getAuth();
   const db = getFirestore();
+
+  // L2 Step 2/3 — RTDB foundation + projection (optional until FIREBASE_DATABASE_URL).
+  const tripLocationRtdb = createTripLocationRtdbFromEnv(process.env);
+  logSafe('rtdb_init', {
+    configured: process.env.FIREBASE_DATABASE_URL?.trim() ? true : false,
+  });
 
   const redisClient = await createRedisGeoClientFromEnv(process.env);
   const geoProjection = new RedisGeoProjectionService(redisClient);
@@ -64,6 +78,7 @@ async function main() {
     db,
     requireAppCheck,
     geoProjection,
+    tripLocationRtdb,
     redis: redisClient,
     fcmSender,
     routingProvider,
@@ -79,7 +94,7 @@ async function main() {
   app.listen(port, () => {
     // eslint-disable-next-line no-console
     console.log(
-      `ora-auth-service listening on :${port} project=${projectId} appCheck=${requireAppCheck} redisGeo=${redisClient != null} routing=${routingProvider != null}`,
+      `ora-auth-service listening on :${port} project=${projectId} appCheck=${requireAppCheck} redisGeo=${redisClient != null} routing=${routingProvider != null} rtdb=${Boolean(process.env.FIREBASE_DATABASE_URL?.trim())}`,
     );
   });
 }

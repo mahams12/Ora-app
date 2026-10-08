@@ -1,0 +1,48 @@
+{
+  "artifact": "MAP2C_IMPLEMENTATION_STATUS",
+  "slice": "MAP-2C — Phase-aware display-only progression guides (C1)",
+  "verdict": "MAP-2C GREEN — PHYSICAL PROOF CLOSED",
+  "implementedAt": "2026-10-08T09:10:00.000Z",
+  "physicalProofClosedAt": "2026-10-08T09:18:00.000Z",
+  "productCodeModified": true,
+  "changedFiles": {
+    "new": [
+      "mobile/lib/features/ride/presentation/utils/active_ride_map_progression_policy.dart",
+      "mobile/test/features/ride/active_ride_map_progression_policy_test.dart",
+      "mobile/test/features/ride/active_ride_map_progression_test.dart"
+    ],
+    "modified": [
+      "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart"
+    ]
+  },
+  "frozenConfirmedUntouched": [
+    "ActiveRideMapCameraPolicy",
+    "TripLocationSession",
+    "RTDB / database.rules.json",
+    "driver publisher / location/update",
+    "GoogleRoutesProvider / pricing",
+    "MAP-1 RideMapPreview"
+  ],
+  "automatedGate": {
+    "flutterAnalyze": "PASS (changed files)",
+    "focusedSuite": "92/92 PASS",
+    "stagingApk": "mobile/build/app/outputs/flutter-apk/app-debug.apk"
+  },
+  "physicalProof": {
+    "report": "mobile/.e2e_artifacts/MAP2C_PHYSICAL_VERIFICATION_REPORT.json",
+    "rideId": "9d654d18-b0da-43be-bac0-281e89cab6d7",
+    "device": "SM-A325F / RF8R40ZQ1JH",
+    "order": "passenger_active_ride_open_BEFORE_first_publish",
+    "guideDriverPickupObserved": true,
+    "verdict": "MAP-2C GREEN — PHYSICAL PROOF CLOSED"
+  },
+  "scopeConfirmed": {
+    "noEta": true,
+    "noNavigation": true,
+    "noGoogleRoutes": true,
+    "noInterpolation": true,
+    "no3d": true,
+    "noCameraPolicyChange": true,
+    "guidesAreDisplayOnly": true
+  }
+}

@@ -1,0 +1,437 @@
+{
+  "artifact": "MAP2C_ARCHITECTURE_AUDIT",
+  "slice": "MAP-2C — Next functional active-ride map slice (post MAP-2B)",
+  "kind": "ARCHITECTURE_AUDIT_ONLY",
+  "capturedAt": "2026-10-08T08:37:00.000Z",
+  "verdict": "GREEN",
+  "verdictLabel": "MAP-2C ARCHITECTURE AUDIT — GREEN",
+  "verdictMeaning": "Next slice is clearly bounded and safe to implement after review: phase-aware display-only progression guides on ActiveRideMap (Candidate C1). No ETA, no live road re-route, no RTDB/publisher/MAP-1/MAP-2A/MAP-2B authority changes. Visual design remains deferred.",
+  "notImplementedConfirmation": "NO PRODUCT CODE WAS IMPLEMENTED. Audit artifact + canvas only. Wait for review before implementation.",
+  "map2cImplemented": false,
+  "closedPrerequisites": {
+    "MAP1": {
+      "status": "GREEN / CLOSED",
+      "report": "mobile/.e2e_artifacts/MAP1_PHYSICAL_VERIFICATION_REPORT.json"
+    },
+    "MAP2A": {
+      "status": "GREEN / CLOSED",
+      "report": "mobile/.e2e_artifacts/MAP2_PHYSICAL_VERIFICATION_REPORT.json"
+    },
+    "MAP2B": {
+      "status": "GREEN / CLOSED",
+      "proofRideId": "680cb762-b238-4bec-a20b-f19941c47ae8",
+      "device": "SM-A325F / RF8R40ZQ1JH",
+      "report": "mobile/.e2e_artifacts/MAP2B_PHYSICAL_VERIFICATION_REPORT.json"
+    }
+  },
+
+  "currentStateFindings": {
+    "verifiedAgainstCode": true,
+    "activeRideMap": {
+      "file": "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart",
+      "shows": [
+        "pickup Marker (azure)",
+        "destination Marker (orange)",
+        "driver Marker (green, alpha by freshness, rotation=heading)",
+        "MAP-2B phase-aware camera + Recenter",
+        "soft location status banner"
+      ],
+      "polylines": "NONE — GoogleMap has no polylines: argument",
+      "etaOverlay": "NONE",
+      "authoritySplit": "HTTP Ride → pickup/dest/state; RTDB TripLocationSession → driver coords when freshness allows"
+    },
+    "cameraPolicyMap2bClosed": {
+      "file": "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart",
+      "phases": {
+        "to_pickup": "DRIVER_ASSIGNED | DRIVER_EN_ROUTE | DRIVER_ARRIVED → frame driver+pickup (+dest if span readable)",
+        "to_dest": "RIDE_STARTED → frame driver+destination (+pickup if span readable)",
+        "anchors": "no driver / other → pickup+destination"
+      },
+      "fitIdentity": "phase + pickup/dest @4dp + driverPresent|Absent — tick-stable (proven physically)",
+      "frozenForMap2c": true
+    },
+    "passengerCopyDoctrine": {
+      "file": "mobile/lib/features/ride/presentation/active_ride/active_ride_display.dart",
+      "explicit": [
+        "ETA is not estimated here",
+        "no invented ETA",
+        "no turn-by-turn navigation in this build"
+      ]
+    },
+    "httpRideProjection": {
+      "file": "backend/auth-service/src/rides/ride_service.ts#publicRide",
+      "hasPickupDestState": true,
+      "hasEncodedPolyline": false,
+      "hasEtaFields": false,
+      "hasDistanceDuration": false,
+      "note": "publicRide deliberately omits routePolyline (privacy tests assert SECRET_POLY stripped from list/open projections)"
+    },
+    "rideDocInternal": {
+      "file": "backend/auth-service/src/rides/types.ts",
+      "routePolyline": "string | null — ALWAYS set null at create (ride_service.ts ~672)",
+      "distanceKm_estimatedDurationMin": "copied from pricing snapshot inputs at create — fare math / discovery only, NOT live passenger ETA",
+      "implication": "No authoritative road geometry exists on the passenger active-ride API surface today"
+    },
+    "pricingEstimateMap1": {
+      "endpoint": "POST /v1/pricing/estimate",
+      "provider": "GoogleRoutesProvider (DRIVE) — distanceKm, durationMin, optional encodedPolyline",
+      "polylineAuthority": "Ephemeral display-only on estimate response; NOT stored in snapshot inputs; NOT copied to RideDoc.routePolyline",
+      "mobileReuse": "RideMapPreview + EncodedPolylineDecoder on request flow only — ActiveRideMap does not consume"
+    },
+    "googleRoutesCallSites": {
+      "only": "PricingEstimateService via POST /v1/pricing/estimate",
+      "notCalledFor": [
+        "ride create/offer/accept",
+        "en-route/arrive/start",
+        "location/update",
+        "active-ride GET"
+      ]
+    },
+    "rtdb": {
+      "path": "tripLocations/{rideId}/latest",
+      "shape": "point-only overwrite (lat/lng/heading/speed/seq/…) — no history trail, no route geometry",
+      "frozen": true
+    },
+    "largestFunctionalGapAfterMap2b": "Markers and phase camera exist, but there is still no visual link between the points the camera already frames — passenger cannot see progression geometry (driver↔pickup or driver↔destination) on the map."
+  },
+
+  "existingReusableInfrastructure": [
+    "ActiveRideMap + ActiveRideMapCameraPolicy.anchorPhase (phase already matches progression geometry)",
+    "TripLocationSession / freshness / listen gates (MAP-2A closed — do not modify contracts)",
+    "HTTP Ride.pickup / Ride.destination / Ride.state",
+    "google_maps_flutter Polyline API (already used by MAP-1 RideMapPreview — pattern only)",
+    "EncodedPolylineDecoder (decode utility only — do NOT feed it pricing/stale estimate strings as live nav)",
+    "Soft-fail map shell + never-gate-cancel doctrine",
+    "GoogleRoutesProvider (available for a FUTURE server trip-route/ETA slice — not required for recommended MAP-2C)"
+  ],
+
+  "candidateSlices": {
+    "C1_phaseAwareProgressionGuides": {
+      "name": "Phase-aware display-only progression guides (geometric segments)",
+      "userProblem": "Active ride map shows disconnected pins; no visual progression between driver and the phase target.",
+      "userValue": "HIGH",
+      "implementationComplexity": "LOW",
+      "backendImpact": "NONE",
+      "rtdbImpact": "NONE",
+      "googleApiImpact": "NONE (no new Routes calls)",
+      "dataAuthority": "Composed only from already-trusted HTTP anchors + RTDB latest when marker is shown — labeled as guide, NOT road route",
+      "costImplications": "NONE",
+      "raceConditions": "LOW — endpoints update with marker; camera identity remains MAP-2B tick-stable",
+      "physicalProofComplexity": "LOW-MEDIUM — a11y + screenshots before/after first fix and phase flip",
+      "regressionRisk": "LOW if camera policy untouched and soft-fail preserved",
+      "recommendationRank": 1
+    },
+    "C2_serverTripCorridorPolyline": {
+      "name": "Persist/serve pickup→destination road corridor on active ride",
+      "userProblem": "Want real road shape for the booked trip (MAP-1 parity on active ride).",
+      "userValue": "HIGH for trip corridor; LOW for to_pickup (estimate is pickup→dest, not driver→pickup)",
+      "implementationComplexity": "MEDIUM-HIGH",
+      "backendImpact": "YES — store polyline on snapshot or create; expose field on publicRide to parties only; privacy redesign vs current SECRET_POLY stripping",
+      "rtdbImpact": "NONE",
+      "googleApiImpact": "ZERO extra if captured at estimate; else one Routes call at create",
+      "dataAuthority": "NEW — must become explicit display-only trip corridor at pricing/create time; must NOT be marketed as live navigation",
+      "costImplications": "LOW if reuse estimate call; MEDIUM if re-fetch",
+      "raceConditions": "MEDIUM — stale corridor vs real driver path; pickup/dest edits after estimate",
+      "physicalProofComplexity": "MEDIUM",
+      "regressionRisk": "MEDIUM — privacy + publicRide schema + MAP-1 snapshot contracts",
+      "recommendationRank": 2,
+      "note": "Requires a new authoritative route-source story. Do not invent by client straight-line-as-road or by stuffing client estimate polyline."
+    },
+    "C3_liveDriverTargetRoadRoute": {
+      "name": "Live Google Routes re-route driver→phase target",
+      "userValue": "HIGH",
+      "implementationComplexity": "HIGH",
+      "backendImpact": "YES — new trip-route API, refresh policy, authz",
+      "rtdbImpact": "Possibly optional cache — prefer not",
+      "googleApiImpact": "HIGH cost/rate (per publish or throttled)",
+      "dataAuthority": "NEW server Routes response with version/freshness",
+      "costImplications": "HIGH",
+      "raceConditions": "HIGH",
+      "physicalProofComplexity": "HIGH",
+      "regressionRisk": "HIGH",
+      "recommendationRank": 4,
+      "blocker": "New authoritative route source required — explicitly defer"
+    },
+    "B_markerLerp": {
+      "name": "Display-only marker interpolation between real fixes",
+      "userValue": "MEDIUM (visual polish)",
+      "implementationComplexity": "MEDIUM",
+      "backendImpact": "NONE",
+      "rtdbImpact": "NONE (client hold prior fix)",
+      "googleApiImpact": "NONE",
+      "dataAuthority": "Presentation only — risk of looking like invented GPS",
+      "costImplications": "NONE",
+      "raceConditions": "MEDIUM — seq/expire snap rules",
+      "physicalProofComplexity": "MEDIUM (hard to assert without instrumentation)",
+      "regressionRisk": "MEDIUM — conflicts with locked Ora visual motion language",
+      "recommendationRank": 3,
+      "note": "MAP-2B audit ranked this after camera; still riskier than C1 and closer to deferred visual design"
+    },
+    "D_eta": {
+      "name": "ETA display",
+      "userValue": "HIGH product",
+      "implementationComplexity": "HIGH",
+      "backendImpact": "YES — new server-authoritative ETA source required",
+      "rtdbImpact": "NONE preferred",
+      "googleApiImpact": "YES if Routes duration used live",
+      "dataAuthority": "MUST be server — client speed×distance and pricing durationMin are FORBIDDEN as live ETA",
+      "costImplications": "MEDIUM-HIGH",
+      "raceConditions": "HIGH",
+      "physicalProofComplexity": "HIGH",
+      "regressionRisk": "HIGH — contradicts current passenger copy doctrine",
+      "recommendationRank": 5
+    },
+    "E_navigation": {
+      "name": "Turn-by-turn / follow-bearing navigation",
+      "userValue": "Driver-side primarily",
+      "recommendationRank": 6,
+      "risk": "HIGHEST — out of passenger MAP-2C; conflicts with deferred 3D/tilt visual layer"
+    }
+  },
+
+  "candidateComparison": [
+    {
+      "id": "C1",
+      "vsOthers": "Smallest additive Flutter-only slice that closes the largest remaining functional map gap without new authority, APIs, or cost"
+    },
+    {
+      "id": "C2",
+      "vsOthers": "Better road truth for pickup→dest corridor but needs backend+privacy work and does not solve driver→pickup progression"
+    },
+    {
+      "id": "B",
+      "vsOthers": "Does not add progression understanding; invents in-between motion; overlaps deferred visual language"
+    },
+    {
+      "id": "C3/D/E",
+      "vsOthers": "Require new server authority and/or high Google cost — document later, do not start as MAP-2C"
+    }
+  ],
+
+  "recommendedSlice": {
+    "id": "MAP-2C",
+    "name": "Phase-aware display-only progression guides",
+    "candidate": "C1",
+    "whySmallestSafestUseful": [
+      "Closes the largest remaining functional gap after MAP-2B: disconnected markers with no progression geometry.",
+      "Reuses the exact same trusted points ActiveRideMapCameraPolicy already frames — no new data plane.",
+      "Zero backend / RTDB / publisher / Google Routes / MAP-1 / MAP-2A / MAP-2B camera-policy changes.",
+      "Does NOT claim to be a road route or ETA — explicit guide semantics avoid inventing navigation authority.",
+      "Isolatable pure policy + ActiveRideMap polylines; unit/widget tests; physical proof mirrors MAP-2B order (passenger open before publish).",
+      "Leaves C2/C3/D as documented later slices when a real route/ETA authority is designed."
+    ],
+    "exactInScope": [
+      "Add a pure progression policy (e.g. ActiveRideMapProgressionPolicy) keyed by camera phase: to_pickup → segment(s) among driver (when shown)+pickup (+optional faint pickup→dest context); to_dest → driver+destination (+optional faint pickup→dest); no-driver → optional pickup→dest guide only",
+      "Render GoogleMap polylines from those LatLng endpoints only — dashed/distinct stroke; never from client-invented road geometry or estimate polylines",
+      "Update guide endpoints when driver marker position updates — WITHOUT calling animateCamera / without changing MAP-2B fitIdentity rules",
+      "Accessibility semantics that distinguish guide lines from road routes (content-desc / semantics label)",
+      "Soft-fail: missing points → omit polyline; never gate cancel/close; never throw",
+      "Unit tests for phase segment selection; widget test that RTDB seq ticks update polyline endpoints but do not spam animateCamera",
+      "Physical proof: waiting→first fix shows driver↔pickup guide; multi-publish keeps guide without camera thrash; RIDE_STARTED switches toward destination guide; terminal safe; MAP-2A cleanup + MAP-1 smoke"
+    ],
+    "exactOutOfScope": [
+      "Road/encoded polylines from Google Routes on active ride (Candidate C2/C3)",
+      "Persisting or exposing RideDoc.routePolyline on publicRide",
+      "Reusing MAP-1 / pricing estimate encodedPolyline as live active-ride geometry",
+      "Client straight-line-as-road marketing or turning guides into 'navigation'",
+      "ETA of any kind (server or client); speed×distance; pricing durationMin as arrival time",
+      "Marker interpolation / cinematic camera / tilt / 3D / custom markers / map styling",
+      "Changes to ActiveRideMapCameraPolicy fitIdentity / thrash guarantees (MAP-2B frozen)",
+      "TripLocationSession / RTDB schema/rules / driver publisher / POST /v1/location/update",
+      "MAP-1 RideMapPreview / request flow behavior changes",
+      "Mapbox / custom tiles / glow / shadows / route animation"
+    ]
+  },
+
+  "dataFlow": {
+    "unchanged": [
+      "HTTP poll → Ride.state + pickup + destination",
+      "RTDB watch → TripLocationLatest → freshness → driver marker visibility/position",
+      "MAP-2B CameraPolicy → rare CameraUpdate on semantic identity only"
+    ],
+    "map2cAddition": "ProgressionPolicy(phase, pickup, dest, driver?) → Set<Polyline> endpoints; redraw on rebuild; no network",
+    "diagram": [
+      "HTTP Ride.state → phase (to_pickup | to_dest | anchors)",
+      "HTTP Ride.pickup/destination → guide anchors",
+      "RTDB latest (if marker shown) → driver endpoint",
+      "ProgressionPolicy → display-only Polyline(s)",
+      "CameraPolicy unchanged — still tick-stable"
+    ]
+  },
+
+  "authoritySourceOfTruth": {
+    "rideStatePhase": "HTTP Ride.state (server)",
+    "pickupDestination": "HTTP Ride anchors (server)",
+    "driverPosition": "RTDB latest via TripLocationSession (server-projected; display-only)",
+    "guideGeometry": "CLIENT COMPOSITION of the above points — NOT a road route authority; MUST be labeled as guide",
+    "explicitlyNotAuthority": [
+      "Pricing estimate encodedPolyline",
+      "RideDoc.routePolyline (always null; not public)",
+      "distanceKm / estimatedDurationMin as live ETA",
+      "Client speed × distance",
+      "Straight-line length as travel time"
+    ],
+    "ifRoadRouteDesiredLater": "Requires NEW server-authoritative source (populate corridor at create with privacy rules, or dedicated live trip-route API). Documented as C2/C3 — not MAP-2C."
+  },
+
+  "stateLifecycleBehavior": {
+    "DRIVER_ASSIGNED_beforeFix": "No driver endpoint → optional pickup↔dest guide only OR no guide; waiting banner unchanged",
+    "DRIVER_ASSIGNED_afterFix": "to_pickup guide driver↔pickup appears with marker; camera may reframe once per MAP-2B",
+    "DRIVER_EN_ROUTE": "Same to_pickup guide; endpoints track driver ticks; camera stable",
+    "DRIVER_ARRIVED": "Same to_pickup; short segment near pickup expected",
+    "RIDE_STARTED": "Switch to to_dest guide driver↔destination; one camera phase reframe (MAP-2B); no continuous follow",
+    "expired_missing_driver": "Drop driver endpoint; fall back to anchors-only guide or none — never keep phantom endpoint",
+    "terminal": "Unmount/stop listen per MAP-2A; polylines gone with map; no new cleanup path",
+    "backgroundForeground": "No extra work beyond MAP-2A resume; do not force camera thrash"
+  },
+
+  "failureBehavior": {
+    "mapsDisabled": "shell — no polylines",
+    "missingAnchors": "omit guides",
+    "rtdbUnavailable": "anchors-only optional guide; MAP-2A banner unchanged",
+    "malformedCoords": "skip segment; never crash",
+    "polylineRenderThrows": "catch soft — ride chrome continues"
+  },
+
+  "securityConsiderations": [
+    "No new network surfaces or secrets",
+    "Do not expose internal routePolyline to open discovery (existing privacy tests must remain green if C2 ever happens)",
+    "Do not log precise coordinates in evidence beyond scrubbing norms",
+    "Do not weaken RTDB rules / App Check",
+    "Guides must not invent positions beyond published Ride + RTDB points"
+  ],
+
+  "performanceConsiderations": {
+    "samsung_SM_A325F": [
+      "Polyline endpoint updates at L2 cadence are cheap vs animateCamera — keep MAP-2B camera latch untouched",
+      "Single GoogleMap; one or two Polyline objects max",
+      "Avoid PatternItem thrash allocations — reuse const stroke config",
+      "No Timer-based animation loops in this slice"
+    ],
+    "ios": "Same Dart policy; google_maps_flutter Polyline already supported",
+    "android": "No Manifest/key/config changes"
+  },
+
+  "apiCostImplications": {
+    "map2c_C1": "Zero Google Routes / Maps Platform billable API calls beyond existing map tiles",
+    "deferred_C2": "Zero extra if estimate polyline captured server-side; else +1 computeRoutes at create",
+    "deferred_C3_D": "Ongoing Routes cost — needs explicit budget/throttle design before implementation"
+  },
+
+  "requiredTests": [
+    "Unit: progression segments for to_pickup with/without driver",
+    "Unit: progression segments for to_dest with driver",
+    "Unit: expired/missing driver drops driver endpoint",
+    "Unit: never emit ETA or duration derived from segment length",
+    "Widget: ActiveRideMap shows polyline after first driver fix; Rapid seq updates do not call animateCamera extra times (MAP-2B regression)",
+    "Widget: RIDE_STARTED switches guide endpoints toward destination",
+    "Regression: active_ride_map_camera_policy_test + trip_location_* + MAP-1 ride_map_preview_test"
+  ],
+
+  "physicalProofPlan": {
+    "device": "Samsung SM-A325F RF8R40ZQ1JH",
+    "env": "STAGING ONLY",
+    "orderCritical": "Passenger Active Ride MUST be open and listening BEFORE first fresh publish (MAP-2B lesson)",
+    "steps": [
+      "Fresh DRIVER_ASSIGNED ride",
+      "Open passenger Active Ride — assert map + pickup + dest; waiting/no driver marker; optional anchors guide only",
+      "Keep FG — publish fresh assigned-driver location (L2 or POST /v1/location/update contract)",
+      "Assert driver marker + driver↔pickup guide appears; one intentional camera reframe (MAP-2B)",
+      "≥2–3 more publishes — guide endpoints move; camera does not thrash",
+      "EN_ROUTE / ARRIVED — to_pickup guide remains; stable camera",
+      "RIDE_STARTED — guide favors destination; one phase camera reframe; map functional",
+      "Cancel — no crash; RTDB/ACL cleanup; MAP-1 smoke short"
+    ],
+    "artifact": "mobile/.e2e_artifacts/MAP2C_PHYSICAL_VERIFICATION_REPORT.json (future implementation step)",
+    "greenRule": "GREEN only if phase-aware guides proven on-device without inventing road/ETA authority; do not claim visual-design GREEN"
+  },
+
+  "risks": [
+    {
+      "risk": "Users interpret dashed guides as turn-by-turn road routes",
+      "mitigation": "Dashed style + explicit a11y/copy 'Guide line — not a road route'; never show duration from length; keep passenger copy doctrine"
+    },
+    {
+      "risk": "Temptation to pipe MAP-1 estimate polyline into ActiveRideMap",
+      "mitigation": "Explicit out-of-scope; estimate polyline is stale pickup→dest and never persisted"
+    },
+    {
+      "risk": "Guide redraw coupled to camera thrash",
+      "mitigation": "Do not touch ActiveRideMapCameraPolicy; widget test locks animateCamera counts"
+    },
+    {
+      "risk": "Scope creep into C2/C3/ETA mid-slice",
+      "mitigation": "Definition of Done limited to geometric guides from existing points only"
+    }
+  ],
+
+  "deferredItems": {
+    "functionalLater": [
+      "C2 — server-authored pickup→dest trip corridor on party-scoped publicRide (new authority + privacy)",
+      "C3 — live driver→target Google Routes with refresh/throttle budget",
+      "D — server ETA (never client approximation)",
+      "B — display-only marker lerp with hard snap on seq/expire (visual-adjacent)",
+      "E — navigation / tilt-follow"
+    ],
+    "oraVisualDesignLockedDeferred": [
+      "Ora 3D map / tilt",
+      "dark/orange map styling",
+      "custom vehicle / pickup / destination markers",
+      "smooth marker interpolation language",
+      "cinematic camera / route animation",
+      "glow/shadows / custom overlays",
+      "Mapbox / custom tiles"
+    ],
+    "architecturalForeshadowForVisualLayer": [
+      "Keep progression policy pure (LatLng in → PolylineSpec out) — no BitmapDescriptor / MapStyle in domain",
+      "Stroke color/width stay presentation constants injectable later for Ora theme",
+      "Do not store display polylines in RTDB",
+      "Do not bake ETA into guide model — leaves room for future server ETA chip without coupling geometry"
+    ]
+  },
+
+  "filesLikelyToChange": [
+    "mobile/lib/features/ride/presentation/utils/active_ride_map_progression_policy.dart (new)",
+    "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart (polylines wiring only)",
+    "mobile/test/features/ride/active_ride_map_progression_policy_test.dart (new)",
+    "mobile/test/features/ride/active_ride_map_* widget tests (extend)",
+    "mobile/.e2e_artifacts/MAP2C_IMPLEMENTATION_STATUS.json (future)",
+    "mobile/.e2e_artifacts/MAP2C_PHYSICAL_VERIFICATION_REPORT.json (future)"
+  ],
+
+  "filesThatMustRemainUntouched": [
+    "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart (MAP-2B frozen unless proven defect)",
+    "mobile/lib/features/ride/presentation/location/trip_location_session.dart",
+    "mobile/lib/features/ride/data/location/rtdb_trip_location_data_source.dart",
+    "mobile/lib/features/driver/domain/location/driver_trip_location_publisher.dart",
+    "backend/auth-service/src/location/**",
+    "backend/auth-service/src/rtdb/**",
+    "database.rules.json",
+    "backend/auth-service/src/routing/google_routes_provider.ts (no new call sites in MAP-2C)",
+    "backend/auth-service/src/pricing/**",
+    "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart (MAP-1)",
+    "mobile/lib/features/ride/presentation/models/ride_map_preview_model.dart",
+    "Google Maps key / AndroidManifest maps config"
+  ],
+
+  "definitionOfDone": [
+    "Progression guides render phase-correctly from trusted points only",
+    "Guides labeled/styled as non-road; no ETA derived",
+    "MAP-2B camera tick-stability preserved (widget + physical)",
+    "MAP-2A listener/cleanup unchanged",
+    "MAP-1 regression green",
+    "Focused unit/widget tests pass; flutter analyze pass",
+    "Physical proof on SM-A325F with passenger-open-before-publish order",
+    "No product claim of navigation/ETA/road-route authority",
+    "Status after implementation+proof: MAP-2C GREEN — PHYSICAL PROOF CLOSED (future step — not this audit)"
+  ],
+
+  "architecturalQuestionsAnswered": {
+    "1_currentGaps": "No polylines; no ETA; no road geometry on publicRide; markers+camera only",
+    "2_reusable": "Phase from camera policy; Ride anchors; RTDB driver; Polyline widget pattern from MAP-1",
+    "3_routeNeedsNewAuthority": "YES for road routes (C2/C3). Geometric guides (C1) do not — they are compositions, not routes",
+    "4_etaNeedsNewAuthority": "YES — document only; forbid client approximation",
+    "5_recommended": "C1 phase-aware progression guides",
+    "6_whyNotAssumeRouteEtaNav": "Evidence: no public polyline, routePolyline null, copy forbids ETA/nav, Routes only at pricing"
+  }
+}

@@ -21,14 +21,34 @@ if [[ "$ORA_API_BASE_URL" != https://* ]]; then
 fi
 
 if [[ -z "${ORA_GOOGLE_PLACES_API_KEY:-}" ]]; then
-  echo "ERROR: export ORA_GOOGLE_PLACES_API_KEY (client Places key only)" >&2
+  LP="$MOBILE/android/local.properties"
+  if [[ -f "$LP" ]]; then
+    ORA_GOOGLE_PLACES_API_KEY="$(grep '^ORA_GOOGLE_PLACES_API_KEY=' "$LP" | cut -d= -f2- | tr -d '[:space:]')"
+  fi
+fi
+if [[ -z "${ORA_GOOGLE_PLACES_API_KEY:-}" ]]; then
+  echo "ERROR: export ORA_GOOGLE_PLACES_API_KEY or set in android/local.properties (client Places key only)" >&2
   exit 2
 fi
 
-KEY_PROPS="$MOBILE/android/key.properties"
+KEY_PROPS="${ORA_ANDROID_KEY_PROPERTIES_FILE:-$MOBILE/android/key.properties}"
+export ORA_ANDROID_KEY_PROPERTIES_FILE="$KEY_PROPS"
 if [[ ! -f "$KEY_PROPS" ]]; then
-  echo "ERROR: missing $KEY_PROPS — provision an authorized release keystore first (see android/key.properties.example)" >&2
+  echo "ERROR: missing release signing config at $KEY_PROPS (see android/key.properties.example)" >&2
   exit 2
+fi
+# storeFile must exist (path relative to android/ unless absolute)
+STORE_REL="$(grep '^storeFile=' "$KEY_PROPS" | cut -d= -f2- | tr -d '[:space:]')"
+if [[ -n "$STORE_REL" ]]; then
+  if [[ "$STORE_REL" = /* ]]; then
+    STORE_PATH="$STORE_REL"
+  else
+    STORE_PATH="$MOBILE/android/$STORE_REL"
+  fi
+  if [[ ! -f "$STORE_PATH" ]]; then
+    echo "ERROR: keystore file not found at $STORE_PATH (from storeFile in key.properties)" >&2
+    exit 2
+  fi
 fi
 
 cd "$MOBILE"

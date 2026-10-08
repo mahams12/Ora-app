@@ -1,0 +1,43 @@
+{
+  "data": {
+    "rideId": "18bf334e-3c9b-41c6-b6cb-e8ebd0971482",
+    "passengerId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "assignedDriverId": null,
+    "state": "SEARCHING",
+    "version": 1,
+    "requestVersion": 1,
+    "category": "easy",
+    "serviceType": "ride",
+    "city": "lahore",
+    "pickup": {
+      "lat": 31.4127578,
+      "lng": 74.1725224,
+      "address": "Liberty Market Lahore"
+    },
+    "destination": {
+      "lat": 31.51058,
+      "lng": 74.34445,
+      "address": "Gulberg Lahore"
+    },
+    "pricingSnapshotId": "ps_145be722-2ce7-4b8c-bd23-48093dc2a525",
+    "recommendedFareMinor": 114000,
+    "passengerOfferMinor": 114000,
+    "agreedFareMinor": null,
+    "agreedOfferId": null,
+    "agreedFareCurrency": null,
+    "paymentMethod": "CASH",
+    "passengerCount": 1,
+    "expiresAt": "2026-10-08T11:35:50.858Z",
+    "assignedAt": null,
+    "arrivedAt": null,
+    "startedAt": null,
+    "completedAt": null,
+    "closedAt": null,
+    "cancelledBy": null,
+    "cancellationReason": null,
+    "createdAt": "2026-10-08T11:30:50.858Z",
+    "updatedAt": "2026-10-08T11:30:50.858Z"
+  },
+  "requestId": "bc284f4d-d2bb-4648-8602-88de939ab763",
+  "timestamp": "2026-10-08T11:30:51.751Z"
+}

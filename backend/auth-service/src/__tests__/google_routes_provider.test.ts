@@ -43,7 +43,13 @@ describe('google routes provider — HTTP boundary', () => {
       const body = JSON.parse(String(init?.body));
       expect(body.travelMode).toBe('DRIVE');
       return jsonResponse(200, {
-        routes: [{ distanceMeters: 5800, duration: '840s' }],
+        routes: [
+          {
+            distanceMeters: 5800,
+            duration: '840s',
+            polyline: { encodedPolyline: '_p~iF~ps|U_ulLnnqC_mqNvxq`@' },
+          },
+        ],
       });
     });
 
@@ -58,9 +64,30 @@ describe('google routes provider — HTTP boundary', () => {
     expect(result).toEqual({
       distanceKm: 5.8,
       durationMin: 14,
+      encodedPolyline: '_p~iF~ps|U_ulLnnqC_mqNvxq`@',
       provider: 'google_routes',
     });
     expect(fetchImpl).toHaveBeenCalledOnce();
+  });
+
+  it('3b. missing polyline still returns D/T (MAP-1 soft)', async () => {
+    const provider = new GoogleRoutesProvider({
+      apiKey: 'test-key',
+      fetchImpl: (async () =>
+        jsonResponse(200, {
+          routes: [{ distanceMeters: 5800, duration: '840s' }],
+        })) as unknown as typeof fetch,
+    });
+    const result = await provider.computeDriveRoute({
+      origin: { lat: 31.52, lng: 74.35 },
+      destination: { lat: 31.51, lng: 74.34 },
+    });
+    expect(result).toEqual({
+      distanceKm: 5.8,
+      durationMin: 14,
+      provider: 'google_routes',
+    });
+    expect(result.encodedPolyline).toBeUndefined();
   });
 
   it('4. missing routes → ROUTE_UNAVAILABLE', async () => {
@@ -194,9 +221,9 @@ describe('google routes provider — HTTP boundary', () => {
     }
   });
 
-  it('11. field mask constant is minimal D/T only', () => {
+  it('11. field mask includes D/T + optional display polyline', () => {
     expect(GOOGLE_ROUTES_FIELD_MASK).toBe(
-      'routes.distanceMeters,routes.duration',
+      'routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline',
     );
   });
 });

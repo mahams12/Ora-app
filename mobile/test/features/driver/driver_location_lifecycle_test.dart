@@ -329,6 +329,24 @@ void main() {
     expect(source.watchCount, 1);
   });
 
+  test('accepted fix callback receives only ACCEPTED classifications', () {
+    final accepted = <DriverLocationFix>[];
+    controller.dispose();
+    controller = DriverLocationLifecycleController(
+      source: source,
+      logger: logger,
+      now: () => now,
+      onStatus: (_) {},
+      onAcceptedFix: accepted.add,
+      acquisitionTimeout: Duration.zero,
+    );
+    controller.onRide(rideId: 'ride-1', rideState: 'DRIVER_ASSIGNED');
+    source.emit(DriverLocationFixReading(sample(accuracyMeters: 80)));
+    expect(accepted, isEmpty);
+    source.emit(DriverLocationFixReading(sample(accuracyMeters: 8)));
+    expect(accepted, hasLength(1));
+  });
+
   test('acquisition timing diagnostics omit coordinates', () {
     controller.onRide(rideId: 'ride-1', rideState: 'DRIVER_ASSIGNED');
     source.emit(DriverLocationFixReading(sample()));

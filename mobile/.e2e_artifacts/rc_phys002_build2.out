@@ -1,0 +1,20 @@
+WARN: ORA_GOOGLE_MAPS_ANDROID_API_KEY unset — map tiles may fail until configured
+WARN: MAPLIBRE_TILE_KEY unset — MapLibre PoC will fail closed until configured
+Running Gradle task 'assembleDebug'...                          
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':maplibre_gl:compileDebugJavaWithJavac'.
+> error: invalid source release: 21
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 10s
+Running Gradle task 'assembleDebug'...                             10.9s
+Gradle task assembleDebug failed with exit code 1

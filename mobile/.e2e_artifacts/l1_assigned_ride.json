@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "rideId": "8974b962-e593-4133-9326-88e6e66c8090",
+  "rideId": "140ebd93-8120-493b-88e5-9a9709a00e67",
   "state": "DRIVER_ASSIGNED",
   "steps": {
     "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
@@ -15,24 +15,24 @@
     "createRide": {
       "status": 201
     },
-    "rideId": "8974b962-e593-4133-9326-88e6e66c8090",
+    "rideId": "140ebd93-8120-493b-88e5-9a9709a00e67",
     "createOffer": {
       "status": 201,
       "body": {
-        "offerId": "8974b962-e593-4133-9326-88e6e66c8090_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
-        "rideId": "8974b962-e593-4133-9326-88e6e66c8090",
+        "offerId": "140ebd93-8120-493b-88e5-9a9709a00e67_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "140ebd93-8120-493b-88e5-9a9709a00e67",
         "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
         "amountMinor": 114000,
         "currency": "PKR",
         "type": "PASSENGER_PRICE_ACCEPTED",
         "status": "PENDING",
         "requestVersion": 1,
-        "expiresAt": "2026-10-05T11:49:50.397Z",
+        "expiresAt": "2026-10-08T10:55:42.619Z",
         "driverSnapshot": {
           "displayName": null,
           "role": "driver"
         },
-        "createdAt": "2026-10-05T11:46:50.397Z",
+        "createdAt": "2026-10-08T10:52:42.619Z",
         "selectedAt": null,
         "withdrawnAt": null,
         "rideState": "OFFERS_AVAILABLE",
@@ -42,12 +42,12 @@
     "selectOffer": {
       "status": 200,
       "body": {
-        "rideId": "8974b962-e593-4133-9326-88e6e66c8090",
+        "rideId": "140ebd93-8120-493b-88e5-9a9709a00e67",
         "state": "DRIVER_ASSIGNED",
         "version": 3,
         "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
         "agreedFareMinor": 114000,
-        "agreedOfferId": "8974b962-e593-4133-9326-88e6e66c8090_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "agreedOfferId": "140ebd93-8120-493b-88e5-9a9709a00e67_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
         "currency": "PKR"
       }
     }

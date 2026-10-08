@@ -75,6 +75,19 @@ class _UiPlaceSearch implements PlaceSearchPort {
       source: PassengerLocationSource.place,
     );
   }
+
+  @override
+  Future<ResolvedPassengerLocation> reverseGeocode({
+    required double lat,
+    required double lng,
+  }) async {
+    return ResolvedPassengerLocation(
+      lat: lat,
+      lng: lng,
+      address: 'Bahria Town, Lahore',
+      source: PassengerLocationSource.gps,
+    );
+  }
 }
 
 class _UiDeviceLocation implements DeviceLocationPort {
@@ -83,7 +96,6 @@ class _UiDeviceLocation implements DeviceLocationPort {
     return const ResolvedPassengerLocation(
       lat: 31.46,
       lng: 74.26,
-      address: 'Current location',
       source: PassengerLocationSource.gps,
     );
   }
@@ -201,7 +213,8 @@ void main() {
     expect(find.text('Destination'), findsOneWidget);
     expect(find.text('Use current location'), findsOneWidget);
     expect(find.text('Continue'), findsOneWidget);
-    expect(find.textContaining('Search and GPS'), findsOneWidget);
+    expect(find.text('Map preview'), findsOneWidget);
+    expect(find.textContaining('Confirm pickup'), findsWidgets);
     expect(find.textContaining('Rs '), findsNothing);
   });
 
@@ -239,7 +252,7 @@ void main() {
 
       final confirmDestination = find.text('Confirm destination');
       expect(confirmDestination, findsOneWidget);
-      expect(find.textContaining('Place search ·'), findsOneWidget);
+      expect(find.text('Place search'), findsOneWidget);
 
       expect(
         container.read(rideRequestViewModelProvider).proposedDestination,

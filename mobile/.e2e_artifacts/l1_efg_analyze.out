@@ -1,0 +1,8 @@
+Analyzing mobile...                                             
+
+   info • 'hasFlag' is deprecated and shouldn't be used. Use flagsCollection instead. This feature was deprecated after v3.32.0-0.0.pre • test/features/driver/slice_m_driver_test.dart:1054:31 • deprecated_member_use
+   info • 'hasFlag' is deprecated and shouldn't be used. Use flagsCollection instead. This feature was deprecated after v3.32.0-0.0.pre • test/features/driver/slice_m_driver_test.dart:1105:28 • deprecated_member_use
+   info • 'hasFlag' is deprecated and shouldn't be used. Use flagsCollection instead. This feature was deprecated after v3.32.0-0.0.pre • test/features/ride/ride_request_ui_test.dart:254:49 • deprecated_member_use
+warning • The generic type 'Map<dynamic, dynamic>' should have explicit type arguments but doesn't • test/features/ride/ride_request_view_model_test.dart:520:34 • strict_raw_type
+
+4 issues found. (ran in 2.6s)

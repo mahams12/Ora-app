@@ -23,9 +23,10 @@ export function createInternalRouter(
   db: Firestore,
   redis: RedisGeoClient | null = null,
   fcm: FcmSender | null = null,
+  tripLocationRtdb: import('../rtdb/types').TripLocationRtdb | null = null,
 ): Router {
   const router = Router();
-  const rides = new RideService(db);
+  const rides = new RideService(db, tripLocationRtdb);
   const nearby = new NearbyDriversService(db, redis);
   const dispatch = new DispatchWaveService(db, nearby);
   const fcmSender = fcm ?? createNullFcmSender();

@@ -7,6 +7,10 @@
         android:label="ORA"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- Maps SDK for Android — key from local.properties / env (never in Dart). -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${ORA_GOOGLE_MAPS_ANDROID_API_KEY}"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

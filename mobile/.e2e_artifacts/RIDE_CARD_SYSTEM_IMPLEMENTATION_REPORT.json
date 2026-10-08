@@ -1,0 +1,133 @@
+{
+  "title": "RIDE CARD SYSTEM IMPLEMENTATION COMPLETE — PHYSICAL PROOF PENDING",
+  "status": "IMPLEMENTATION_COMPLETE_PHYSICAL_PROOF_PENDING",
+  "date": "2026-10-08",
+  "auditFindings": {
+    "existingCards": [
+      "driver_open_rides_view.dart::_OpenRideCard",
+      "driver_assigned_rides_view.dart::_AssignedRideCard",
+      "ride_history_view.dart::_RideHistoryCard",
+      "offer_card.dart::OfferCard"
+    ],
+    "profileVehicleData": "UNAVAILABLE — no photo/rating/tripCount/vehicle on ride DTOs or live user docs",
+    "openRidePrivacy": "GET /v1/rides/open intentionally omits passenger identity",
+    "reverseGeocode": "Did not exist — GPS hardcoded address 'Current location'",
+    "mapInLists": "Must not mount GoogleMap per card — CustomPainter lightweight preview used"
+  },
+  "filesChanged": {
+    "sharedCardSystem": [
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_model.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_adapters.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_header.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_status.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_route_preview.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_participant.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_vehicle.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_metrics.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_fare.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_actions.dart",
+      "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_location_label.dart"
+    ],
+    "screensMigrated": [
+      "mobile/lib/features/driver/presentation/views/driver_open_rides_view.dart",
+      "mobile/lib/features/driver/presentation/views/driver_assigned_rides_view.dart",
+      "mobile/lib/features/ride/presentation/views/ride_history_view.dart",
+      "mobile/lib/features/ride/presentation/widgets/offer_card.dart"
+    ],
+    "currentLocation": [
+      "mobile/lib/features/ride/domain/ports/place_search_port.dart",
+      "mobile/lib/features/ride/data/location/google_places_http_search.dart",
+      "mobile/lib/features/ride/data/location/geolocator_device_location.dart",
+      "mobile/lib/features/ride/domain/models/resolved_passenger_location.dart",
+      "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart",
+      "mobile/lib/features/ride/presentation/views/ride_request_view.dart",
+      "mobile/lib/features/driver/presentation/open_ride_display.dart"
+    ],
+    "tests": [
+      "mobile/test/features/ride/ride_card_system_test.dart",
+      "mobile/test/features/ride/ride_request_view_model_test.dart",
+      "mobile/test/features/ride/ride_request_ui_test.dart",
+      "mobile/test/features/driver/slice_m_driver_test.dart"
+    ]
+  },
+  "sharedComponents": [
+    "RideCard",
+    "RideCardHeader",
+    "RideCardStatus",
+    "RideCardRoutePreview",
+    "RideCardParticipantRow",
+    "RideCardVehicleRow",
+    "RideCardMetrics",
+    "RideCardFare",
+    "RideCardActions",
+    "RideCardAdapters (fromOpenRide/fromDriverJob/fromPassengerHistory/fromOffer)"
+  ],
+  "screensMigrated": [
+    "Driver Open Rides",
+    "Driver My Rides (Assigned)",
+    "Passenger My Rides (History)",
+    "Passenger Offers Inbox (OfferCard)"
+  ],
+  "currentLocationResolution": {
+    "flow": "GPS coords via DeviceLocationPort → PlaceSearchPort.reverseGeocode (Geocoding HTTP) → human place name on ResolvedPassengerLocation.address",
+    "coordsAuthority": "Exact lat/lng preserved for pricing/routing/create",
+    "fallback": "Location selected",
+    "neverShows": ["Current location (when resolved)", "raw coordinates in UI"]
+  },
+  "realDataFieldsUsed": [
+    "pickup/destination address+coords",
+    "passengerOfferMinor/recommendedFareMinor/agreedFareMinor",
+    "distanceKm/estimatedDurationMin (open rides)",
+    "paymentMethod/passengerCount/serviceType/category",
+    "state/status timestamps/expiresAt",
+    "offer amount/type/status/driverSnapshot.displayName when present"
+  ],
+  "fieldsUnavailableOmitted": [
+    "passenger/driver photoUrl",
+    "passenger/driver rating",
+    "passenger/driver trip/ride count",
+    "vehicle make/model/color/plate/image",
+    "passenger displayName on open rides (privacy-minimized DTO)"
+  ],
+  "backendApiChanges": "NONE — no ride state machine / pricing / RTDB / MAP slice changes",
+  "tests": {
+    "new": "ride_card_system_test.dart",
+    "updated": [
+      "ride_request_view_model_test (GPS reverse geocode success + failure)",
+      "ride_request_ui_test (PlaceSearchPort.reverseGeocode + no coord caption)",
+      "slice_m_driver_test (location label + taller surface for Respond)"
+    ],
+    "automatedResult": "PASS — see analyze/build below"
+  },
+  "analyzeResult": "PASS — No issues found on changed paths",
+  "buildResult": "not_run_apk — automated widget/unit tests only; no physical device build in this session",
+  "performanceConsiderations": [
+    "CustomPainter route preview — zero GoogleMap instances in lists",
+    "No per-card network for reverse geocode (display uses stored address)",
+    "Press scale micro-interaction only — no continuous loops",
+    "Cursor pagination / poll behavior preserved"
+  ],
+  "regressionsChecked": [
+    "Open rides Respond → offer sheet → submit",
+    "Offer select flow (offers inbox)",
+    "Ride request GPS + places + pricing UI",
+    "MAP-1 ride_map_preview_test",
+    "Driver slice M open/assigned helpers"
+  ],
+  "remainingLimitations": [
+    "Profile photo/rating/trip counts and vehicle data require future backend enrichment before they can render",
+    "Open rides cannot show passenger identity without a deliberate privacy/API change",
+    "Physical device visual verification not performed in this session",
+    "Geocoding API must be enabled on ORA_GOOGLE_PLACES_API_KEY (soft-fails to Location selected otherwise)"
+  ],
+  "closedSlicesUntouched": [
+    "MAP-1 route authority",
+    "MAP-2A listener",
+    "MAP-2B camera policy",
+    "MAP-2C progression policy",
+    "MAP-3 camera ownership",
+    "RTDB rules / driver location publisher / TripLocationSession",
+    "pricing / dispatch / ride state machine"
+  ]
+}

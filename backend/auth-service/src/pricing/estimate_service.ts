@@ -46,6 +46,11 @@ export interface PricingEstimateResult {
   distanceKm: number;
   durationMin: number;
   category: string;
+  /**
+   * Optional Google encoded polyline for map preview only (MAP-1).
+   * Not pricing authority — never used in fare calculation or snapshot inputs.
+   */
+  encodedPolyline?: string;
 }
 
 function rejectUnknownKeys(
@@ -255,6 +260,10 @@ export class PricingEstimateService {
       distanceKm: route.distanceKm,
       durationMin: route.durationMin,
       category: rules.category,
+      ...(typeof route.encodedPolyline === 'string' &&
+      route.encodedPolyline.trim().length > 0
+        ? { encodedPolyline: route.encodedPolyline.trim() }
+        : {}),
     };
   }
 }

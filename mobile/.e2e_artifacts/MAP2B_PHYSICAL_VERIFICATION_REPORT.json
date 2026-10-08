@@ -1,0 +1,281 @@
+{
+  "artifact": "MAP2B_PHYSICAL_VERIFICATION_REPORT",
+  "slice": "MAP-2B \u2014 Phase-aware tick-stable active-ride camera",
+  "retryOf": "MAP2B_PHYSICAL_VERIFICATION_REPORT.prev.json",
+  "startedAt": "2026-10-08T08:28:13.279613+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "sessionArrangement": {
+    "mode": "single_device_passenger_fg_then_http_publish",
+    "passengerDevice": "RF8R40ZQ1JH / SM-A325F",
+    "driverPublish": "POST /v1/location/update as assigned driver (L2 contract) while passenger Active Ride stays foregrounded \u2014 no passenger logout between open and first publish",
+    "productCodeModified": false
+  },
+  "build": {
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "productCodeModifiedDuringProof": false,
+    "stagingCloudRunRevision": "ora-auth-service-staging-00026-4tz"
+  },
+  "map2cImplemented": false,
+  "checks": {
+    "freshAssignedRide": true,
+    "beforeActiveRide": true,
+    "beforeGoogleMap": true,
+    "beforePickup": true,
+    "beforeDestination": true,
+    "beforeWaitingOrNoMarker": true,
+    "firstPublishAccepted": true,
+    "rtdbFirstFix": true,
+    "rtdbDriverIdMatch": true,
+    "passengerRemainedOnActiveRide": true,
+    "driverMarkerAfterFirstFix": true,
+    "firstFixIntentionalReframe": true,
+    "multiPublishAccepted": true,
+    "multiPublishMarkerStable": true,
+    "multiPublishNoCrash": true,
+    "noCameraThrashObservational": true,
+    "enRouteHttp": true,
+    "enRouteUiStable": true,
+    "arrivedHttp": true,
+    "arrivedUiStable": true,
+    "startedHttp": true,
+    "startedUiMap": true,
+    "rideStartedPhaseTransition": true,
+    "terminalCancelled": true,
+    "map2aRtdbCleared": true,
+    "map2aAclRevoked": true,
+    "terminalNoCrash": true,
+    "map1Smoke": true
+  },
+  "proofs": {
+    "beforeFirstPublish": {
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": true,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true
+    },
+    "timing": {
+      "passengerActiveRideOpenedAt": "2026-10-08T08:30:12.677675+00:00",
+      "order": "passenger_active_ride_open_BEFORE_first_publish"
+    },
+    "firstPublish": {
+      "publishedAt": "2026-10-08T08:30:15.030899+00:00",
+      "http": {
+        "status": 200,
+        "accepted": true,
+        "locationSeq": 1,
+        "hasLatLng": true
+      },
+      "rtdbLatestExists": true,
+      "locationSeq": 1,
+      "driverIdMatch": true,
+      "hasLat": true,
+      "hasLng": true,
+      "streamIdSuffix": "fffb01ff"
+    },
+    "afterFirstPublish": {
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": false,
+      "locationUpdating": false,
+      "driverMarker": true,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true
+    },
+    "markerAppearedAfterSeconds": 0,
+    "cameraReframeEvidence": {
+      "before": {
+        "waiting": true,
+        "driverMarker": false,
+        "pickup": true,
+        "destination": true
+      },
+      "after": {
+        "waiting": false,
+        "driverMarker": true,
+        "pickup": true,
+        "destination": true,
+        "locationUpdating": false
+      },
+      "method": "a11y before/after composition + marker appearance; widget tests remain authoritative for animateCamera call counts"
+    },
+    "multiPublish": {
+      "publishes": [
+        {
+          "seq": 2,
+          "accepted": true,
+          "status": 200,
+          "uiStillActive": true,
+          "driverMarker": true,
+          "waiting": false
+        },
+        {
+          "seq": 3,
+          "accepted": true,
+          "status": 200,
+          "uiStillActive": true,
+          "driverMarker": true,
+          "waiting": false
+        },
+        {
+          "seq": 4,
+          "accepted": true,
+          "status": 200,
+          "uiStillActive": true,
+          "driverMarker": true,
+          "waiting": false
+        }
+      ],
+      "rtdbSeq": 4,
+      "seqAdvanced": true
+    },
+    "stateGating": {
+      "en_route": {
+        "apiStatus": 200,
+        "httpState": "DRIVER_EN_ROUTE",
+        "expected": "DRIVER_EN_ROUTE",
+        "ui": {
+          "activeRide": true,
+          "googleMap": true,
+          "pickup": true,
+          "destination": true,
+          "waiting": false,
+          "locationUpdating": true,
+          "driverMarker": true,
+          "recenter": true,
+          "status": "DRIVER_EN_ROUTE",
+          "cancel": true
+        },
+        "rtdbLatestExists": true
+      },
+      "arrived": {
+        "apiStatus": 200,
+        "httpState": "DRIVER_ARRIVED",
+        "expected": "DRIVER_ARRIVED",
+        "ui": {
+          "activeRide": true,
+          "googleMap": true,
+          "pickup": true,
+          "destination": true,
+          "waiting": false,
+          "locationUpdating": true,
+          "driverMarker": true,
+          "recenter": true,
+          "status": "DRIVER_ARRIVED",
+          "cancel": true
+        },
+        "rtdbLatestExists": true
+      },
+      "start": {
+        "apiStatus": 200,
+        "httpState": "RIDE_STARTED",
+        "expected": "RIDE_STARTED",
+        "ui": {
+          "activeRide": true,
+          "googleMap": true,
+          "pickup": false,
+          "destination": true,
+          "waiting": false,
+          "locationUpdating": true,
+          "driverMarker": true,
+          "recenter": true,
+          "status": "RIDE_STARTED",
+          "cancel": true
+        },
+        "rtdbLatestExists": true
+      }
+    },
+    "terminal": {
+      "httpState": "CANCELLED",
+      "rtdbCleared": true,
+      "aclRevoked": true
+    }
+  },
+  "failedChecks": [],
+  "limitations": [
+    "MAP-1 smoke not re-run this retry; prior physical run already PASS",
+    "animateCamera call counts not instrumented on-device; first-fix reframe inferred from waiting\u2192Driver marker composition change while passenger FG; widget tests remain authoritative for call-count / tick stability"
+  ],
+  "evidenceFiles": [
+    "map2a_retry_after_0.png",
+    "map2a_retry_after_10.png",
+    "map2a_retry_after_21.png",
+    "map2a_retry_after_27.png",
+    "map2a_retry_arrived.png",
+    "map2a_retry_before.png",
+    "map2a_retry_en_route.png",
+    "map2a_retry_marker_ok.png",
+    "map2a_retry_start.png",
+    "map2a_retry_t3_2.png",
+    "map2a_retry_t3_3.png",
+    "map2a_retry_t3_4.png",
+    "map2a_retry_t7.png",
+    "map2a_retry_before.xml",
+    "map2a_retry_poll_0.xml",
+    "map2a_retry_poll_10.xml",
+    "map2a_retry_poll_17.xml",
+    "map2a_retry_poll_21.xml",
+    "map2a_retry_poll_27.xml",
+    "map2a_retry_poll_5.xml",
+    "map2a_retry_state_arrived.xml",
+    "map2a_retry_state_en_route.xml",
+    "map2a_retry_state_start.xml",
+    "map2a_retry_t3_2.xml",
+    "map2a_retry_t3_3.xml",
+    "map2a_retry_t3_4.xml",
+    "map2a_retry_t7_after.xml",
+    "map2a_retry_t7_dialog.xml",
+    "map2a_retry_t7_pre.xml"
+  ],
+  "priorRunSummary": {
+    "verdict": "MAP-2B PHYSICAL PROOF BLOCKED",
+    "rideId": "d389e505-c702-4414-bc15-1552b115c22d",
+    "blocker": "TEST2: passenger Active Ride was open before publish, publish accepted, but driver marker did not appear within poll window",
+    "endedAt": "2026-10-08T08:27:34.929393+00:00"
+  },
+  "rideId": "680cb762-b238-4bec-a20b-f19941c47ae8",
+  "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "endedAt": "2026-10-08T08:31:58.021779+00:00",
+  "verdict": "MAP-2B GREEN \u2014 PHYSICAL PROOF CLOSED",
+  "physicalChecks": {
+    "freshAssignedRide": true,
+    "passengerOpenBeforePublish": true,
+    "firstDriverFixReframesOnce": true,
+    "multiplePublishesNoCameraThrash": true,
+    "enRouteNoThrash": true,
+    "arrivedNoThrash": true,
+    "rideStartedOneReframe": true,
+    "terminalNoCrash": true,
+    "map2aRtdbCleanupStillHolds": true,
+    "map1SmokeUnaffected": true
+  },
+  "historicalRuns": [
+    {
+      "rideId": "d55c5cb8-d647-436c-b075-930bacc51392",
+      "result": "BLOCKED \u2014 first fix expired (>120s) before passenger reopen after driver L2 session"
+    },
+    {
+      "rideId": "d389e505-c702-4414-bc15-1552b115c22d",
+      "result": "BLOCKED \u2014 notification shade covered Active Ride during poll after otherwise-correct passenger-first publish",
+      "artifact": "MAP2B_PHYSICAL_VERIFICATION_REPORT.prev.json"
+    },
+    {
+      "rideId": "680cb762-b238-4bec-a20b-f19941c47ae8",
+      "result": "GREEN \u2014 passenger Active Ride open before fresh publish; marker at ~0s; multi-publish + states + terminal"
+    }
+  ]
+}

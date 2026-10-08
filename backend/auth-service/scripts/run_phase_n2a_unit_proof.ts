@@ -279,6 +279,18 @@ async function main(): Promise<void> {
   await test('20-23. idle vs trip isolation', async () => {
     const db = memoryDb();
     seedApprovedOnline(db, 'd1');
+    db.seed('rides', 'ride-1', {
+      rideId: 'ride-1',
+      state: 'DRIVER_ASSIGNED',
+      assignedDriverId: 'd1',
+      passengerId: 'p1',
+    });
+    db.seed('rides', 'ride-2', {
+      rideId: 'ride-2',
+      state: 'DRIVER_EN_ROUTE',
+      assignedDriverId: 'd1',
+      passengerId: 'p1',
+    });
     const app = appFor(db, 'd1');
     const idle = await request(app)
       .post('/v1/location/update')

@@ -1,0 +1,65 @@
+{
+  "step": "L2_STEP_3A",
+  "verdict": "GREEN_LIVE_STAGING_RTDB_PROOF_CLOSED",
+  "capturedAt": "2026-10-06T10:26:40.501Z",
+  "staging": {
+    "firebaseProjectId": "ora-app-d8112",
+    "cloudRunService": "ora-auth-service-staging",
+    "cloudRunRevision": "ora-auth-service-staging-00025-mrl",
+    "oraEnv": "staging",
+    "hasFirebaseDatabaseUrlEnv": true,
+    "rtdbHostname": "ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "rtdbUrlExactMatch": true
+  },
+  "proofRideId": "l2s3a-proof-muwj8o30",
+  "proofPassengerUid": "l2s3a-pax-muwj8o30",
+  "proofDriverUid": "l2s3a-drv-muwj8o30",
+  "proofs": {
+    "accessGrantVerified": true,
+    "latestLocationWriteVerified": true,
+    "latestFields": [
+      "acceptedAt",
+      "accuracy",
+      "driverId",
+      "heading",
+      "lat",
+      "lng",
+      "locationSeq",
+      "locationStreamId",
+      "speed",
+      "ts"
+    ],
+    "endToEndProjectionVerified": true,
+    "endToEndMode": "local_createApp_memory_cursor_plus_live_AdminTripLocationRtdb",
+    "endToEndHttpStatus": 200,
+    "endToEndStreamCursorAccepted": true,
+    "terminalCleanupVerified": true,
+    "repeatedCleanupVerified": true,
+    "cleanupCompleted": true,
+    "clientRulesProofStatus": "emulator_9_passing",
+    "cleanupReconfirmedAbsent": true
+  },
+  "safety": {
+    "usedExactConsoleVerifiedUrl": true,
+    "didNotCreateDatabase": true,
+    "didNotTouchProductionService": true
+  },
+  "regression": {
+    "step1_2_3_focused": "38/38 pass",
+    "fullNpmTest": "429/429 pass",
+    "databaseRulesEmulator": "9/9 pass"
+  },
+  "build": {
+    "tsc": "pass"
+  },
+  "limitations": [
+    "E2E used createApp + memory locationStreams cursor + live AdminTripLocationRtdb (same projection code path as Cloud Run). Did not call public staging HTTP with real Firebase user tokens to avoid device-auth coupling.",
+    "Staging Cloud Run revision ora-auth-service-staging-00025-mrl has FIREBASE_DATABASE_URL configured for runtime projection."
+  ],
+  "filesChanged": [
+    "backend/auth-service/.env (local FIREBASE_DATABASE_URL; not committed)",
+    "backend/auth-service/scripts/run_l2_step3a_live_rtdb_proof.ts (new live proof harness)",
+    "mobile/.e2e_artifacts/L2_STEP3A_LIVE_STAGING_RTDB_PROOF.json",
+    "mobile/.e2e_artifacts/l2_step3a_staging_deploy.out"
+  ]
+}

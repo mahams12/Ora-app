@@ -550,6 +550,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     _invalidatePricing();
     state = state.copyWith(
       pickupBusy: true,
+      pickupText: 'Finding location…',
       clearPickupSuggestions: true,
       clearProposedPickup: true,
       clearConfirmedPickup: true,
@@ -560,8 +561,13 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     );
 
     try {
-      final resolved = await _deviceLocation.getCurrentLocation();
+      final gps = await _deviceLocation.getCurrentLocation();
       if (!_isResolveCurrent(LocationField.pickup, generation)) return;
+
+      // Keep GPS coords authoritative; resolve a human-readable place name.
+      final resolved = await _resolveGpsPlaceName(gps);
+      if (!_isResolveCurrent(LocationField.pickup, generation)) return;
+
       state = state.copyWith(
         proposedPickup: resolved,
         pickupText: resolved.displayLabel,
@@ -577,6 +583,38 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
         clearProposedPickup: true,
       );
     }
+  }
+
+  /// Soft-fail reverse geocode: coords always preserved; never invent locality.
+  Future<ResolvedPassengerLocation> _resolveGpsPlaceName(
+    ResolvedPassengerLocation gps,
+  ) async {
+    try {
+      final named = await _placeSearch.reverseGeocode(
+        lat: gps.lat,
+        lng: gps.lng,
+      );
+      final label = named.address?.trim();
+      if (label != null &&
+          label.isNotEmpty &&
+          label.toLowerCase() != 'current location') {
+        return ResolvedPassengerLocation(
+          lat: gps.lat,
+          lng: gps.lng,
+          address: label,
+          placeId: named.placeId,
+          source: PassengerLocationSource.gps,
+        );
+      }
+    } catch (_) {
+      // Soft-fail — keep coords, use graceful display fallback.
+    }
+    return ResolvedPassengerLocation(
+      lat: gps.lat,
+      lng: gps.lng,
+      address: 'Location selected',
+      source: PassengerLocationSource.gps,
+    );
   }
 
   void confirmPickup() {

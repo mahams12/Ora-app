@@ -31,6 +31,9 @@ class AppRoutes {
   /// Passenger stars rating (Slice I). Use [rideRatingPath].
   static const rideRating = '/rides/:rideId/rate';
 
+  /// Disposable MapLibre renderer PoC — NOT production map / NOT ride flow.
+  static const mapLibrePoc = '/devtools/maplibre-poc';
+
   /// Driver shell (Slice L) — approved drivers only.
   static const driverHome = '/driver';
 

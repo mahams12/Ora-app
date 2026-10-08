@@ -1,0 +1,2956 @@
+SKIP_ASSIGN using existing l1_assigned_ride.json
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=89ms (0ms mobile, 0ms wifi, 89ms not connected)
+=== boot fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+=== home0 fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+TAP exact Menu  Menu
+=== drawer0 fg= com.ora.ora ===
+- O
+- ORA passenger
+- View profile
+- Home
+- My rides
+- Saved places
+- Wallet
+- Refer & earn | Get Rs 200 per friend
+- Safety centre
+- Switch to driver mode | Earn with the same account
+- Settings
+- Help centre
+- Log out
+TAP  Switch to driver mode  Switch to driver mode|Earn with the same account
+=== driver0 fg= com.ora.ora ===
+- Menu
+- Driver
+- HE
+- Today's earnings | — | Live payouts connect in a later slice · not invented
+- Map zones · coming later
+- Available for trips | Go online connects in a later slice
+- Open ride requests | Server open-ride list for approved drivers
+- Quick actions
+- Earnings
+- My trips
+- Payouts
+- Vehicle
+- Bonuses
+- Hot zones
+BASELINE ready
+TAP exact My trips  My trips
+=== trips fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+TAP  Assigned — head to pickup  Assigned — head to pickup|DRIVER_ASSIGNED|Liberty Market Lahore → Gulberg Lahor
+=== ride_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== base_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+status Location is ready
+TEST E
+=== e_left fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== e_ret_0 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_2 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_3 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_4 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_5 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_6 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_7 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_8 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_9 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_10 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_11 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_12 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_13 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_14 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_15 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_16 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_17 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_18 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_19 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_20 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_21 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_22 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_23 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== e_ret_24 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+E {'leftAssignedRide': True, 'watchStopsIncreased': True, 'watchStopsAfterLeave': 1, 'watchStartsBeforeLeave': 1, 'metricsAfterLeave': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 2, 'classification_counts': {'ACCEPTED': 2}, 'first_watch_line': '10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}', 'first_stop_line': '10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}', 'first_fix_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'first_accepted_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'start_lines': ['10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}'], 'stop_lines': ['10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 1}} {'assignedRideVisible': True, 'status': None, 'watchStartsAfterReturn': 1, 'watchStartedAgain': False, 'metrics': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 2, 'classification_counts': {'ACCEPTED': 2}, 'first_watch_line': '10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}', 'first_stop_line': '10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}', 'first_fix_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'first_accepted_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'start_lines': ['10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}'], 'stop_lines': ['10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 1}}
+TEST F
+=== f_prep_0 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_2 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_3 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_4 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_5 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_6 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_7 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_8 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_9 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_10 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_11 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_12 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_13 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_14 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_15 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_16 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_17 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_18 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_19 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_20 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_21 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_22 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_23 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_prep_24 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=57ms (0ms mobile, 0ms wifi, 57ms not connected)
+=== f0 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== f_ret_0 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_2 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_3 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_4 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_5 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_6 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_7 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_8 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_9 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_10 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_11 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_12 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_13 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_14 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_15 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_16 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+status None
+=== f_ret_17 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 11:54 | Agreed fare Rs 1140
+- Ride closed | RIDE_CLOSED | Current location → Liberty Market Gulberg III, Lahore, Pakistan | Ride · easy · 2026-09-29 14:37 | Agreed fare R
+- End of list from server
+status None
+=== f_ret_18 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_19 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_20 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_21 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_22 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_23 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== f_ret_24 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+F {'assignedRideVisible': True, 'status': None, 'watchStopsIncreasedOnBackground': False, 'noDuplicateWatchers': True, 'metricsBeforeBg': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 2, 'classification_counts': {'ACCEPTED': 2}, 'first_watch_line': '10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}', 'first_stop_line': '10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}', 'first_fix_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'first_accepted_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'start_lines': ['10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}'], 'stop_lines': ['10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 1}, 'metricsAfterBg': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 2, 'classification_counts': {'ACCEPTED': 2}, 'first_watch_line': '10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}', 'first_stop_line': '10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}', 'first_fix_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'first_accepted_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'start_lines': ['10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}'], 'stop_lines': ['10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 1}, 'metricsAfterFg': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 2, 'classification_counts': {'ACCEPTED': 2}, 'first_watch_line': '10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}', 'first_stop_line': '10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}', 'first_fix_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'first_accepted_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'start_lines': ['10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}'], 'stop_lines': ['10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 1}}
+TEST G cancel-while-active
+=== g_ready_0 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_2 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_3 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_4 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_5 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_6 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_7 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_8 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_9 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_10 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_11 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_12 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_13 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_14 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_15 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_16 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_17 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_18 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_19 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_20 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_21 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_22 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_23 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g_ready_24 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+status None
+=== g1 fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_wait_idle fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_dialog fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+=== g_term_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Getting your location…
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_1 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_2 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_3 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_4 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_5 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_6 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_7 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_8 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_9 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_10 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_11 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_12 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_13 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_14 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_15 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_16 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_17 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_18 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_term_19 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+G {'activeWatchBeforeCancel': False, 'acceptedFixesBeforeCancel': 2, 'uiTextHasCancelled': False, 'onAssignedRideDetail': True, 'visibleTerminalText': None, 'watchStoppedOnCancel': False, 'noFurtherAcceptedGrowth': False, 'metricsBefore': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 2, 'classification_counts': {'ACCEPTED': 2}, 'first_watch_line': '10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}', 'first_stop_line': '10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}', 'first_fix_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'first_accepted_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'start_lines': ['10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}'], 'stop_lines': ['10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 1}, 'metrics': {'watch_starts': 2, 'watch_stops': 1, 'fix_classifications': 20, 'classification_counts': {'ACCEPTED': 20}, 'first_watch_line': '10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}', 'first_stop_line': '10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}', 'first_fix_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'first_accepted_line': '10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}', 'start_lines': ['10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}', '10-06 11:40:51.361 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}'], 'stop_lines': ['10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}'], 'geolocator_starts': 2, 'geolocator_stops': 1}, 'noBackgroundBetweenReadyAndCancel': True}
+=== g_home fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:40 | Agreed fare Rs 1140
+{
+  "verdict": "YELLOW",
+  "failed": [
+    "E_returnReady",
+    "F_bgStopsWatch",
+    "F_returnReady",
+    "G_activeThenCancel"
+  ],
+  "E": {
+    "leave": {
+      "leftAssignedRide": true,
+      "watchStopsIncreased": true,
+      "watchStopsAfterLeave": 1,
+      "watchStartsBeforeLeave": 1,
+      "metricsAfterLeave": {
+        "watch_starts": 1,
+        "watch_stops": 1,
+        "fix_classifications": 2,
+        "classification_counts": {
+          "ACCEPTED": 2
+        },
+        "first_watch_line": "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}",
+        "first_stop_line": "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}",
+        "first_fix_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+        "first_accepted_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+        "start_lines": [
+          "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}"
+        ],
+        "stop_lines": [
+          "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}"
+        ],
+        "geolocator_starts": 1,
+        "geolocator_stops": 1
+      }
+    },
+    "return": {
+      "assignedRideVisible": true,
+      "status": null,
+      "watchStartsAfterReturn": 1,
+      "watchStartedAgain": false,
+      "metrics": {
+        "watch_starts": 1,
+        "watch_stops": 1,
+        "fix_classifications": 2,
+        "classification_counts": {
+          "ACCEPTED": 2
+        },
+        "first_watch_line": "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}",
+        "first_stop_line": "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}",
+        "first_fix_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+        "first_accepted_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+        "start_lines": [
+          "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}"
+        ],
+        "stop_lines": [
+          "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}"
+        ],
+        "geolocator_starts": 1,
+        "geolocator_stops": 1
+      }
+    }
+  },
+  "F": {
+    "assignedRideVisible": true,
+    "status": null,
+    "watchStopsIncreasedOnBackground": false,
+    "noDuplicateWatchers": true,
+    "metricsBeforeBg": {
+      "watch_starts": 1,
+      "watch_stops": 1,
+      "fix_classifications": 2,
+      "classification_counts": {
+        "ACCEPTED": 2
+      },
+      "first_watch_line": "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}",
+      "first_stop_line": "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}",
+      "first_fix_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "first_accepted_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "start_lines": [
+        "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}"
+      ],
+      "stop_lines": [
+        "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}"
+      ],
+      "geolocator_starts": 1,
+      "geolocator_stops": 1
+    },
+    "metricsAfterBg": {
+      "watch_starts": 1,
+      "watch_stops": 1,
+      "fix_classifications": 2,
+      "classification_counts": {
+        "ACCEPTED": 2
+      },
+      "first_watch_line": "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}",
+      "first_stop_line": "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}",
+      "first_fix_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "first_accepted_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "start_lines": [
+        "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}"
+      ],
+      "stop_lines": [
+        "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}"
+      ],
+      "geolocator_starts": 1,
+      "geolocator_stops": 1
+    },
+    "metricsAfterFg": {
+      "watch_starts": 1,
+      "watch_stops": 1,
+      "fix_classifications": 2,
+      "classification_counts": {
+        "ACCEPTED": 2
+      },
+      "first_watch_line": "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}",
+      "first_stop_line": "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}",
+      "first_fix_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "first_accepted_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "start_lines": [
+        "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}"
+      ],
+      "stop_lines": [
+        "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}"
+      ],
+      "geolocator_starts": 1,
+      "geolocator_stops": 1
+    }
+  },
+  "G": {
+    "activeWatchBeforeCancel": false,
+    "acceptedFixesBeforeCancel": 2,
+    "uiTextHasCancelled": false,
+    "onAssignedRideDetail": true,
+    "visibleTerminalText": null,
+    "watchStoppedOnCancel": false,
+    "noFurtherAcceptedGrowth": false,
+    "metricsBefore": {
+      "watch_starts": 1,
+      "watch_stops": 1,
+      "fix_classifications": 2,
+      "classification_counts": {
+        "ACCEPTED": 2
+      },
+      "first_watch_line": "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}",
+      "first_stop_line": "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}",
+      "first_fix_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "first_accepted_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "start_lines": [
+        "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}"
+      ],
+      "stop_lines": [
+        "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}"
+      ],
+      "geolocator_starts": 1,
+      "geolocator_stops": 1
+    },
+    "metrics": {
+      "watch_starts": 2,
+      "watch_stops": 1,
+      "fix_classifications": 20,
+      "classification_counts": {
+        "ACCEPTED": 20
+      },
+      "first_watch_line": "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}",
+      "first_stop_line": "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}",
+      "first_fix_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "first_accepted_line": "10-06 11:30:26.516 I/flutter (21186): [INFO] location_fix_classified {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, classification: ACCEPTED, accuracyMeters: 16.547000885009766}",
+      "start_lines": [
+        "10-06 11:30:23.477 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}",
+        "10-06 11:40:51.361 I/flutter (21186): [INFO] location_watch_started {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2}"
+      ],
+      "stop_lines": [
+        "10-06 11:30:36.120 I/flutter (21186): [INFO] location_watch_stopped {rideId: 0108f1bb-dd32-4957-a87f-d79eb229f2d2, reason: dispose}"
+      ],
+      "geolocator_starts": 2,
+      "geolocator_stops": 1
+    },
+    "noBackgroundBetweenReadyAndCancel": true
+  }
+}

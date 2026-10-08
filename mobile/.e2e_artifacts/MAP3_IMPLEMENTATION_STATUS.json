@@ -1,0 +1,100 @@
+{
+  "artifact": "MAP3_IMPLEMENTATION_STATUS",
+  "slice": "MAP-3 \u2014 User-gesture camera ownership on ActiveRideMap",
+  "capturedAt": "2026-10-08T10:00:00.000Z",
+  "status": "MAP-3 IMPLEMENTATION COMPLETE \u2014 PHYSICAL PROOF YELLOW",
+  "map3Implemented": true,
+  "physicalProof": {
+    "status": "YELLOW",
+    "report": "mobile/.e2e_artifacts/MAP3_PHYSICAL_VERIFICATION_REPORT.json",
+    "primaryRideId": "1620cc68-0e0a-4e0a-be7e-cdd8983e000d",
+    "retryRideId": "fe3141a3-fb31-4d9a-b01b-9eb5566c455b",
+    "note": "Do not claim GREEN until physical gesture ownership + Recenter reclaim proven on device."
+  },
+  "architectureAudit": "mobile/.e2e_artifacts/MAP3_ARCHITECTURE_AUDIT.json",
+  "approvedDecisions": {
+    "OD1": "RIDE_STARTED while owned \u2014 no auto-fit; require Recenter",
+    "OD2": "First driver fix while owned \u2014 no auto-fit; require Recenter",
+    "OD3": "Existing Recenter IconButton only \u2014 no Following chip"
+  },
+  "changedFiles": [
+    "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart",
+    "mobile/test/features/ride/active_ride_map_gesture_ownership_test.dart",
+    "mobile/.e2e_artifacts/MAP3_IMPLEMENTATION_STATUS.json"
+  ],
+  "frozenUntouched": [
+    "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart",
+    "mobile/lib/features/ride/presentation/utils/active_ride_map_progression_policy.dart",
+    "mobile/lib/features/ride/presentation/location/trip_location_session.dart",
+    "mobile/lib/features/ride/data/location/rtdb_trip_location_data_source.dart",
+    "mobile/lib/features/driver/domain/location/driver_trip_location_publisher.dart",
+    "backend/auth-service/src/location/**",
+    "backend/auth-service/src/rtdb/**",
+    "backend/auth-service/src/routing/**",
+    "backend/auth-service/src/pricing/**",
+    "backend/auth-service/src/rides/**",
+    "database.rules.json",
+    "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart"
+  ],
+  "ownershipImplementation": {
+    "state": "_userOwnsCamera (local ActiveRideMap state only)",
+    "userGesture": "GoogleMap.onCameraMoveStarted \u2192 _onUserCameraMoveStarted",
+    "testHook": "userCameraMoveEpoch bump simulates user gesture without platform map",
+    "gate": "_scheduleCameraFit returns early when _userOwnsCamera == true",
+    "recenter": "clears ownership \u2192 nulls fitted/pending identity \u2192 one MAP-2B policy fit",
+    "markersAndGuides": "continue updating via rebuild while owned; no animateCamera"
+  },
+  "programmaticVsUserGuard": {
+    "flag": "_programmaticCameraMove",
+    "setTrue": "before onAnimateCamera hook / controller.animateCamera",
+    "setFalse": "in finally after await completes",
+    "onCameraMoveStarted": "ignores latch while _programmaticCameraMove == true",
+    "provenByTest": "F. programmatic MAP-2B / Recenter animate does not latch ownership"
+  },
+  "automatedGates": {
+    "flutterAnalyze": "PASS \u2014 No issues found (MAP-3 related files)",
+    "map3GestureOwnershipTests": "PASS \u2014 active_ride_map_gesture_ownership_test.dart",
+    "map2bCameraRegression": "PASS \u2014 active_ride_map_camera_test.dart + camera_policy_test.dart",
+    "map2cProgressionRegression": "PASS \u2014 active_ride_map_progression_test.dart + progression_policy_test.dart",
+    "map2aRegression": "PASS \u2014 trip_location_session_test + listen_gate + freshness + active_ride_ui_test",
+    "map1Regression": "PASS \u2014 ride_map_preview_test.dart",
+    "publisherRegression": "PASS \u2014 driver_trip_location_publisher_test.dart",
+    "totalFocusedSuite": "115 tests passed",
+    "stagingApk": {
+      "result": "PASS",
+      "path": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+      "apiBase": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+      "note": "First assembleDebug failed with No space left on device in sandbox gradle cache; freed disk and rebuilt successfully."
+    }
+  },
+  "outOfScopeConfirmed": [
+    "no 3D / custom markers / Ora theme / map styling",
+    "no ETA / navigation / follow / bearing chase / tilt-follow",
+    "no Google Routes / road corridor",
+    "no backend / RTDB / publisher changes",
+    "no MAP-1 ownership",
+    "no camera/progression policy math changes",
+    "no interpolation"
+  ],
+  "knownLimitations": [
+    "If a platform delivers onCameraMoveStarted after programmatic animate Future completes, a rare false ownership latch is possible; Recenter recovers. Guard is await-scoped (no timing delays).",
+    "Recenter IconButton is also shown in widget-test mode when onAnimateCamera is set with enableMaps:false (testability only).",
+    "No visible Following/owned chip (OD3 deferred)."
+  ],
+  "selfAudit": {
+    "onlyMap3Scope": true,
+    "cameraPolicyMathUntouched": true,
+    "progressionPolicyUntouched": true,
+    "rtdbBackendUntouched": true,
+    "publisherUntouched": true,
+    "map1Untouched": true,
+    "noEta": true,
+    "noRoutes": true,
+    "noFollowMode": true,
+    "noVisualRedesign": true,
+    "noInterpolation": true,
+    "userGestureFightingSuppressedWhenOwned": true,
+    "programmaticCannotAcquireOwnership": true
+  },
+  "finalStatus": "MAP-3 IMPLEMENTATION COMPLETE \u2014 PHYSICAL PROOF YELLOW"
+}

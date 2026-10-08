@@ -137,7 +137,8 @@ void main() {
     expect(find.text('Cancelled'), findsOneWidget);
     expect(find.text('Closed'), findsOneWidget);
     expect(find.textContaining('Gulberg'), findsOneWidget);
-    expect(find.textContaining('Agreed fare'), findsOneWidget);
+    expect(find.textContaining('Fare'), findsOneWidget);
+    expect(find.textContaining('Rs 210'), findsOneWidget);
     expect(find.textContaining('4.9'), findsNothing);
     expect(find.textContaining('ETA'), findsNothing);
     expect(find.text('Submit rating'), findsNothing);
@@ -193,11 +194,32 @@ void main() {
       return RideListPage(rides: [_ride(id: 'r2')], nextCursor: null);
     });
 
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(wrap(const RideHistoryView(active: true)));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Load more'));
     await tester.pumpAndSettle();
     expect(find.text('Load more'), findsOneWidget);
 
     await tester.tap(find.text('Load more'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => listRides(
+        limit: any(named: 'limit'),
+        cursor: 'next',
+        status: any(named: 'status'),
+        serviceType: any(named: 'serviceType'),
+      ),
+    ).called(1);
+
+    // Tall cards may push the end-of-list footer out of the initial cache;
+    // fling to force lazy build of the pagination footer.
+    await tester.fling(find.byType(ListView), const Offset(0, -2400), 2000);
     await tester.pumpAndSettle();
     expect(find.text('End of list from server'), findsOneWidget);
   });

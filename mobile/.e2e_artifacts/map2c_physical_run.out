@@ -1,0 +1,134 @@
+=== ASSIGN ===
+{
+  "ok": true,
+  "rideId": "9d654d18-b0da-43be-bac0-281e89cab6d7",
+  "state": "DRIVER_ASSIGNED",
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "9d654d18-b0da-43be-bac0-281e89cab6d7",
+    "createOffer": {
+      "status": 201,
+      "body": {
+        "offerId": "9d654d18-b0da-43be-bac0-281e89cab6d7_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "9d654d18-b0da-43be-bac0-281e89cab6d7",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "amountMinor": 114000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "status": "PENDING",
+        "requestVersion": 1,
+        "expiresAt": "2026-10-08T09:17:37.057Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-10-08T09:14:37.057Z",
+        "selectedAt": null,
+        "withdrawnAt": null,
+        "rideState": "OFFERS_AVAILABLE",
+        "rideVersion": 2
+      }
+    },
+    "selectOffer": {
+      "status": 200,
+      "body": {
+        "rideId": "9d654d18-b0da-43be-bac0-281e89cab6d7",
+        "state": "DRIVER_ASSIGNED",
+        "version": 3,
+        "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "agreedFareMinor": 114000,
+        "agreedOfferId": "9d654d18-b0da-43be-bac0-281e89cab6d7_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "currency": "PKR"
+      }
+    }
+  }
+}
+=== Passenger Active Ride BEFORE publish ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=63ms (0ms mobile, 0ms wifi, 63ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.7 MB/s (5283 bytes in 0.007s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.6 MB/s (11597 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (11597 bytes in 0.006s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (11597 bytes in 0.005s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (8443 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (8450 bytes in 0.004s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.1 MB/s (6000 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5998 bytes in 0.004s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6003 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5282 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11596 bytes in 0.004s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (11596 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (11596 bytes in 0.005s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (8442 bytes in 0.004s)
+  TAP 'My rides'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (9901 bytes in 0.005s)
+  TAP 'Driver assigned\nDRIVER_ASSIGNED\nLiberty Market Lahore → Gulberg Lahore'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (10645 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (10645 bytes in 0.003s)
+/sdcard/map2a_map2c_before.png: 1 file pulled, 0 skipped. 19.2 MB/s (451992 bytes in 0.022s)
+  before {'activeRide': True, 'googleMap': True, 'pickup': True, 'destination': True, 'waiting': True, 'locationUpdating': False, 'driverMarker': False, 'recenter': True, 'status': 'DRIVER_ASSIGNED', 'cancel': True, 'guideSemantics': True, 'guideDriverPickup': False, 'guideDriverDest': False, 'guidePickupDest': True}
+=== First fresh publish ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (10919 bytes in 0.004s)
+  poll 0 {'activeRide': True, 'googleMap': True, 'pickup': True, 'destination': True, 'waiting': False, 'locationUpdating': False, 'driverMarker': True, 'recenter': True, 'status': 'DRIVER_ASSIGNED', 'cancel': True, 'guideSemantics': True, 'guideDriverPickup': True, 'guideDriverDest': False, 'guidePickupDest': False}
+/sdcard/map2a_map2c_marker_ok.png: 1 file pulled, 0 skipped. 19.2 MB/s (472331 bytes in 0.024s)
+=== Multi-publish ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (10919 bytes in 0.004s)
+/sdcard/map2a_map2c_t3_2.png: 1 file pulled, 0 skipped. 17.8 MB/s (472617 bytes in 0.025s)
+  pub 2 True True
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (10919 bytes in 0.004s)
+/sdcard/map2a_map2c_t3_3.png: 1 file pulled, 0 skipped. 19.3 MB/s (472414 bytes in 0.023s)
+  pub 3 True True
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (10919 bytes in 0.004s)
+/sdcard/map2a_map2c_t3_4.png: 1 file pulled, 0 skipped. 19.5 MB/s (471900 bytes in 0.023s)
+  pub 4 True True
+=== States ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (10919 bytes in 0.004s)
+/sdcard/map2a_map2c_en_route.png: 1 file pulled, 0 skipped. 17.9 MB/s (458527 bytes in 0.024s)
+  en_route 200 DRIVER_EN_ROUTE DRIVER_ASSIGNED guide True
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (10940 bytes in 0.004s)
+/sdcard/map2a_map2c_arrived.png: 1 file pulled, 0 skipped. 19.5 MB/s (449803 bytes in 0.022s)
+  arrived 200 DRIVER_ARRIVED DRIVER_EN_ROUTE guide True
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11254 bytes in 0.004s)
+/sdcard/map2a_map2c_start.png: 1 file pulled, 0 skipped. 19.4 MB/s (458660 bytes in 0.023s)
+  start 200 RIDE_STARTED DRIVER_ARRIVED guide True
+=== Terminal ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (10650 bytes in 0.006s)
+  TAP 'Cancel ride\nCancel ride'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5029 bytes in 0.004s)
+  TAP 'Cancel ride\nCancel ride'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (10181 bytes in 0.005s)
+/sdcard/map2a_map2c_t7.png: 1 file pulled, 0 skipped. 17.5 MB/s (424750 bytes in 0.023s)
+DONE {"verdict": "MAP-2C GREEN \u2014 PHYSICAL PROOF CLOSED", "failed": [], "rideId": "9d654d18-b0da-43be-bac0-281e89cab6d7"}

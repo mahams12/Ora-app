@@ -28,6 +28,12 @@ import {
   assertProgression,
   isExpirable,
 } from './state_machine';
+import type { TripLocationRtdb } from '../rtdb/types';
+import { NullTripLocationRtdb } from '../rtdb/admin_trip_location_rtdb';
+import {
+  cleanupTripLocationOnTerminal,
+  grantRideLocationAccess,
+} from '../rtdb/ride_location_lifecycle';
 import {
   assertOfferSelectableForAssignment,
   assertOfferWithdrawable,
@@ -104,8 +110,13 @@ export type MarkNoShowResult =
       rideId: string;
       fromState: RideState;
       version: number;
+      assignedDriverId?: string | null;
     }
-  | { outcome: 'already_no_show'; rideId: string }
+  | {
+      outcome: 'already_no_show';
+      rideId: string;
+      assignedDriverId?: string | null;
+    }
   | { outcome: 'skipped'; rideId: string; reason: string };
 
 export type SweepNoShowRidesResult = {
@@ -505,7 +516,47 @@ function assertIdempotencyRecord(
 }
 
 export class RideService {
-  constructor(private readonly db: Firestore) {}
+  private readonly tripLocationRtdb: TripLocationRtdb;
+
+  constructor(
+    private readonly db: Firestore,
+    tripLocationRtdb: TripLocationRtdb | null = null,
+  ) {
+    this.tripLocationRtdb = tripLocationRtdb ?? new NullTripLocationRtdb();
+  }
+
+  /** L2 Step 3 — grant rideAccess after durable DRIVER_ASSIGNED (best-effort). */
+  private async afterRideAssigned(input: {
+    rideId: string;
+    passengerId: string;
+    assignedDriverId: string;
+    requestId: string;
+  }): Promise<void> {
+    await grantRideLocationAccess({
+      rtdb: this.tripLocationRtdb,
+      rideId: input.rideId,
+      passengerId: input.passengerId,
+      assignedDriverId: input.assignedDriverId,
+      requestId: input.requestId,
+    });
+  }
+
+  /** L2 Step 3 — terminal RTDB + stream cleanup (best-effort / idempotent). */
+  private async afterRideTerminal(input: {
+    rideId: string;
+    assignedDriverId: string | null | undefined;
+    requestId: string;
+    reason: string;
+  }): Promise<void> {
+    await cleanupTripLocationOnTerminal({
+      db: this.db,
+      rtdb: this.tripLocationRtdb,
+      rideId: input.rideId,
+      assignedDriverId: input.assignedDriverId,
+      requestId: input.requestId,
+      reason: input.reason,
+    });
+  }
 
   async createRide(input: {
     caller: AuthenticatedCaller;
@@ -1674,6 +1725,28 @@ export class RideService {
       throw err;
     }
 
+    // L2 Step 3 — grant rideAccess from authoritative assignment snapshot.
+    const assigned =
+      responseBody &&
+      typeof responseBody === 'object' &&
+      'data' in responseBody
+        ? (responseBody as {
+            data: { assignedDriverId?: string | null };
+          }).data
+        : null;
+    if (
+      assigned &&
+      typeof assigned.assignedDriverId === 'string' &&
+      assigned.assignedDriverId
+    ) {
+      await this.afterRideAssigned({
+        rideId: input.rideId,
+        passengerId: input.caller.uid,
+        assignedDriverId: assigned.assignedDriverId,
+        requestId: input.correlationId,
+      });
+    }
+
     return { httpStatus: 200, body: responseBody };
   }
 
@@ -1903,6 +1976,19 @@ export class RideService {
       }
       throw err;
     }
+
+    const cancelledRide =
+      responseBody &&
+      typeof responseBody === 'object' &&
+      'data' in responseBody
+        ? (responseBody as { data: { assignedDriverId?: string | null } }).data
+        : null;
+    await this.afterRideTerminal({
+      rideId: input.rideId,
+      assignedDriverId: cancelledRide?.assignedDriverId ?? null,
+      requestId: input.correlationId,
+      reason: 'CANCELLED',
+    });
 
     return { httpStatus: 200, body: responseBody };
   }
@@ -2173,6 +2259,23 @@ export class RideService {
       throw err;
     }
 
+    if (input.toState === 'RIDE_COMPLETED') {
+      const completed =
+        responseBody &&
+        typeof responseBody === 'object' &&
+        'data' in responseBody
+          ? (responseBody as {
+              data: { assignedDriverId?: string | null };
+            }).data
+          : null;
+      await this.afterRideTerminal({
+        rideId: input.rideId,
+        assignedDriverId: completed?.assignedDriverId ?? null,
+        requestId: input.correlationId,
+        reason: 'RIDE_COMPLETED',
+      });
+    }
+
     return { httpStatus: 200, body: responseBody };
   }
 
@@ -2340,6 +2443,19 @@ export class RideService {
       }
       throw err;
     }
+
+    const closedRide =
+      responseBody &&
+      typeof responseBody === 'object' &&
+      'data' in responseBody
+        ? (responseBody as { data: { assignedDriverId?: string | null } }).data
+        : null;
+    await this.afterRideTerminal({
+      rideId: input.rideId,
+      assignedDriverId: closedRide?.assignedDriverId ?? null,
+      requestId: input.correlationId,
+      reason: 'RIDE_CLOSED',
+    });
 
     return { httpStatus: 200, body: responseBody };
   }
@@ -2669,7 +2785,7 @@ export class RideService {
     const nowIso = now.toISOString();
     const cutoffMs = now.getTime() - RIDE_NO_SHOW_WAIT_MS;
 
-    return this.db.runTransaction(async (tx) => {
+    const result = await this.db.runTransaction(async (tx) => {
       const rideRef = this.db.collection(RIDES).doc(input.rideId);
       const rideSnap = await tx.get(rideRef);
       if (!rideSnap.exists) {
@@ -2681,6 +2797,7 @@ export class RideService {
         return {
           outcome: 'already_no_show' as const,
           rideId: input.rideId,
+          assignedDriverId: ride.assignedDriverId,
         };
       }
 
@@ -2744,8 +2861,22 @@ export class RideService {
         rideId: input.rideId,
         fromState: 'DRIVER_ARRIVED' as RideState,
         version: nextVersion,
+        assignedDriverId: ride.assignedDriverId,
       };
     });
+
+    if (result.outcome === 'no_show' || result.outcome === 'already_no_show') {
+      const assignedDriverId =
+        'assignedDriverId' in result ? result.assignedDriverId : null;
+      await this.afterRideTerminal({
+        rideId: input.rideId,
+        assignedDriverId: assignedDriverId ?? null,
+        requestId: input.correlationId,
+        reason: 'NO_SHOW',
+      });
+    }
+
+    return result;
   }
 
   /**

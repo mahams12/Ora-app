@@ -4,10 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ora/app/di/providers.dart';
 import 'package:ora/app/theme/theme.dart';
+import 'package:ora/features/ride/data/location/rtdb_trip_location_data_source.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';
+import 'package:ora/features/ride/domain/models/trip_location_latest.dart';
 import 'package:ora/features/ride/domain/use_cases/ride_use_cases.dart';
 import 'package:ora/features/ride/presentation/view_models/active_ride_view_model.dart';
 import 'package:ora/features/ride/presentation/views/active_ride_view.dart';
+import 'package:ora/features/ride/presentation/widgets/active_ride_map.dart';
 
 import '../../helpers/in_memory_idempotency_nonce_store.dart';
 
@@ -79,6 +82,7 @@ void main() {
   late MockGetRideUseCase getRide;
   late MockCancelRideUseCase cancel;
   late MockCloseRideUseCase close;
+  late MemoryTripLocationPort tripPort;
 
   setUpAll(() {
     registerFallbackValue('');
@@ -88,15 +92,18 @@ void main() {
     getRide = MockGetRideUseCase();
     cancel = MockCancelRideUseCase();
     close = MockCloseRideUseCase();
+    tripPort = MemoryTripLocationPort();
   });
 
   List<Override> overrides() => [
         getRideUseCaseProvider.overrideWithValue(getRide),
         cancelRideUseCaseProvider.overrideWithValue(cancel),
         closeRideUseCaseProvider.overrideWithValue(close),
+        tripLocationPortProvider.overrideWithValue(tripPort),
+        activeRideMapsEnabledProvider.overrideWithValue(false),
       ];
 
-  testWidgets('DRIVER_ASSIGNED — no fake ETA/map claims', (tester) async {
+  testWidgets('DRIVER_ASSIGNED — map + cancel; no invented ETA', (tester) async {
     when(() => getRide(any())).thenAnswer((_) async => _ride());
 
     await tester.pumpWidget(
@@ -105,11 +112,12 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Driver assigned'), findsOneWidget);
-    expect(find.textContaining('not available in this build'), findsOneWidget);
-    expect(find.textContaining('ETA'), findsWidgets); // honest denial
+    expect(find.byType(ActiveRideMap), findsOneWidget);
+    expect(find.textContaining('ETA'), findsWidgets);
     expect(find.text('Mark En Route'), findsNothing);
     expect(find.textContaining('4.9'), findsNothing);
     expect(find.text('Cancel ride'), findsOneWidget);
+    expect(find.textContaining('Waiting for driver location'), findsWidgets);
   });
 
   testWidgets('DRIVER_EN_ROUTE honest copy', (tester) async {
@@ -122,7 +130,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Driver on the way'), findsOneWidget);
-    expect(find.textContaining('fake map'), findsOneWidget);
+    expect(find.textContaining('invented ETA'), findsOneWidget);
   });
 
   testWidgets('DRIVER_ARRIVED shows wait from arrivedAt', (tester) async {
@@ -211,5 +219,55 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('RTDB/map soft-fail keeps cancel available', (tester) async {
+    when(() => getRide(any())).thenAnswer((_) async => _ride());
+
+    await tester.pumpWidget(
+      _wrap(
+        const ActiveRideView(rideId: 'ride-1'),
+        overrides: [
+          ...overrides(),
+          // Force soft map shell (no platform GoogleMap).
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    tripPort.error('ride-1', Exception('permission_denied'));
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.text('Cancel ride'), findsOneWidget);
+    expect(find.byType(ActiveRideMap), findsOneWidget);
+  });
+
+  testWidgets('valid latest does not remove cancel/close actions', (tester) async {
+    when(() => getRide(any())).thenAnswer((_) async => _ride());
+
+    await tester.pumpWidget(
+      _wrap(const ActiveRideView(rideId: 'ride-1'), overrides: overrides()),
+    );
+    await tester.pumpAndSettle();
+
+    final now = DateTime.now().toUtc();
+    tripPort.emit(
+      'ride-1',
+      TripLocationLatest(
+        lat: 31.53,
+        lng: 74.36,
+        accuracy: 10,
+        heading: 0,
+        speed: 0,
+        ts: now.millisecondsSinceEpoch,
+        acceptedAt: now.toIso8601String(),
+        driverId: 'd1',
+        locationSeq: 1,
+        locationStreamId: 's1',
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.text('Cancel ride'), findsOneWidget);
   });
 }

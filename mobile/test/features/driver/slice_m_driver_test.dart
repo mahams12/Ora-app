@@ -113,6 +113,12 @@ Future<void> _pumpDriverOpenRidesView(
   required MockListOpenRidesUseCase listOpen,
   MockCreateOfferUseCase? createOffer,
 }) async {
+  // Compact marketplace cards — phone surface keeps Respond hittable.
+  tester.view.physicalSize = const Size(1080, 2400);
+  tester.view.devicePixelRatio = 3;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
@@ -133,6 +139,13 @@ Future<void> _pumpDriverOpenRidesView(
     ),
   );
   await tester.pumpAndSettle();
+}
+
+Future<void> _tapRespond(WidgetTester tester, {Finder? finder}) async {
+  final target = finder ?? find.text('Respond');
+  await tester.ensureVisible(target.first);
+  await tester.pumpAndSettle();
+  await tester.tap(target.first);
 }
 
 Ride _assignedRide({String id = 'assigned-1'}) {
@@ -187,11 +200,22 @@ void main() {
       expect(formatOpenRideDistanceKm(5), '5 km (server)');
     });
 
-    test('location falls back to coordinates, not invented place names', () {
+    test('location falls back without coords or invented place names', () {
       const point = LatLngPoint(lat: 24.86, lng: 67.0);
       final label = openRideLocationLabel(point, fallback: 'Pickup');
-      expect(label, contains('24.8600'));
+      expect(label, 'Pickup');
+      expect(label, isNot(contains('24.86')));
       expect(label.toLowerCase(), isNot(contains('karachi')));
+
+      const gpsLegacy = LatLngPoint(
+        lat: 31.46,
+        lng: 74.26,
+        address: 'Current location',
+      );
+      expect(
+        openRideLocationLabel(gpsLegacy, fallback: 'Location selected'),
+        'Location selected',
+      );
     });
 
     test('offer sheet rupees field text and parse round-trip PKR', () {
@@ -968,11 +992,11 @@ void main() {
 
       await _pumpDriverOpenRidesView(tester, listOpen: listOpen);
 
-      await tester.tap(find.text('Ride request'));
+      await tester.tap(find.textContaining('Pickup A'));
       await tester.pumpAndSettle();
       expect(find.text('Submit offer'), findsNothing);
 
-      await tester.tap(find.text('Respond'));
+      await _tapRespond(tester);
       await tester.pumpAndSettle();
 
       expect(find.text('Accept passenger price'), findsOneWidget);
@@ -1010,7 +1034,7 @@ void main() {
         listOpen: listOpen,
         createOffer: createOffer,
       );
-      await tester.tap(find.text('Respond'));
+      await _tapRespond(tester);
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Passenger offer: Rs 310'), findsOneWidget);
@@ -1050,10 +1074,10 @@ void main() {
       final respondSemantics = tester.getSemantics(find.text('Respond'));
       final cardSpan =
           tester.getBottomLeft(find.text('Respond')).dy -
-          tester.getTopLeft(find.text('Ride request')).dy;
+          tester.getTopLeft(find.textContaining('Pickup A')).dy;
       expect(respondSemantics.hasFlag(SemanticsFlag.isButton), isTrue);
-      expect(cardSpan, greaterThan(120));
-      expect(respondSemantics.rect.height, lessThan(cardSpan * 0.45));
+      expect(cardSpan, greaterThan(40));
+      expect(respondSemantics.rect.height, lessThan(cardSpan * 0.9));
       semanticsHandle.dispose();
     });
 
@@ -1090,7 +1114,7 @@ void main() {
         createOffer: createOffer,
       );
 
-      await tester.tap(find.text('Respond').first);
+      await _tapRespond(tester, finder: find.text('Respond').first);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Submit offer').last);
       await tester.pump();
@@ -1101,11 +1125,11 @@ void main() {
 
       final semanticsHandle = tester.ensureSemantics();
       await tester.pump();
-      final secondRespond = tester.getSemantics(find.text('Respond'));
+      final secondRespond = tester.getSemantics(find.text('Respond').last);
       expect(secondRespond.hasFlag(SemanticsFlag.isEnabled), isFalse);
 
       final sheetCount = find.text('Submit offer').evaluate().length;
-      await tester.tap(find.text('Respond'), warnIfMissed: false);
+      await tester.tap(find.text('Respond').last, warnIfMissed: false);
       await tester.pump();
       expect(find.text('Submit offer'), findsNWidgets(sheetCount));
 

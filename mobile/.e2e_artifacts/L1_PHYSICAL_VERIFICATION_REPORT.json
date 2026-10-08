@@ -1,117 +1,218 @@
 {
-  "startedAt": "2026-10-05T11:46:54.620984+00:00",
+  "startedAt": "2026-10-06T07:18:13.506691+00:00",
   "device": "RF8R40ZQ1JH",
   "deviceModel": "SM-A325F",
   "androidVersion": "13",
   "package": "com.ora.ora",
-  "rideId": "8974b962-e593-4133-9326-88e6e66c8090",
-  "method": "l1_ux_correction_physical",
+  "rideId": "3fb4ab51-13b7-434c-8f97-ea43355fcbab",
+  "method": "l1_efg_physical",
   "loggerSink": "ConsoleAppLogger \u2192 dart:developer name=ora; debug assert print mirror",
-  "A_permissionDenied": {
-    "dialogSeen": true,
-    "dialogDenied": true,
+  "priorProven": {
+    "A_denyUx": "GREEN (prior run)",
+    "B_recovery": "GREEN (prior run)"
+  },
+  "doNotStartL2": true,
+  "baseline": {
     "assignedRideVisible": true,
-    "status": "Location permission is needed",
-    "visibleUiStatusText": "Location permission is needed",
-    "hasAllowLocationCta": true,
-    "seconds": 31.3,
-    "endlessLoading": false,
-    "crash": false,
-    "noNetworkPublish": true,
-    "technicalLeak": false
-  },
-  "B_permissionRecovery": {
-    "assignedRideVisible": true,
-    "statusAfterWait": "Location is ready",
-    "readyAfterSeconds": 8.8,
-    "firstAcceptedElapsedMs": 1324,
-    "watchStarts": 1,
-    "fixClassifications": 2,
-    "firstWatchLine": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
-    "firstAcceptedLine": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}"
-  },
-  "C_logcat": {
-    "watch_starts": 1,
-    "watch_stops": 0,
-    "fix_classifications": 3,
-    "classification_counts": {
-      "ACCEPTED": 3
-    },
-    "first_watch_line": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
-    "first_stop_line": null,
-    "first_fix_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
-    "first_accepted_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
-    "start_lines": [
-      "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}"
-    ],
-    "stop_lines": [],
-    "geolocator_starts": 1,
-    "geolocator_stops": 0
-  },
-  "D_uiInteraction": {
-    "scrolled": true,
-    "statusStillVisible": true,
-    "noTechnicalLeak": true
-  },
-  "E_leave": {
-    "leftAssignedRide": true,
-    "watchStopsAfterLeave": 0,
-    "watchStartsBeforeLeave": 1
-  },
-  "E_return": {
-    "assignedRideVisible": true,
-    "status": null,
-    "watchStartsAfterReturn": 1
-  },
-  "F_backgroundForeground": {
-    "assignedRideVisible": true,
-    "status": null,
-    "watchStopsIncreasedOnBackground": false
-  },
-  "G_terminal": {
-    "activeWatchBeforeCancel": true,
-    "acceptedFixesBeforeCancel": 68,
-    "uiTextHasCancelled": false,
-    "onAssignedRideDetail": true,
-    "visibleTerminalText": null,
-    "watchStoppedOnCancel": false,
-    "metricsBefore": {
-      "watch_starts": 1,
-      "watch_stops": 0,
-      "fix_classifications": 69,
-      "classification_counts": {
-        "ACCEPTED": 68,
-        "POOR_ACCURACY": 1
-      },
-      "first_watch_line": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
-      "first_stop_line": null,
-      "first_fix_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
-      "first_accepted_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
-      "start_lines": [
-        "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}"
-      ],
-      "stop_lines": [],
-      "geolocator_starts": 1,
-      "geolocator_stops": 0
-    },
+    "status": "Location is ready",
     "metrics": {
       "watch_starts": 1,
       "watch_stops": 0,
-      "fix_classifications": 86,
+      "fix_classifications": 3,
       "classification_counts": {
-        "ACCEPTED": 85,
-        "POOR_ACCURACY": 1
+        "ACCEPTED": 3
       },
-      "first_watch_line": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
       "first_stop_line": null,
-      "first_fix_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
-      "first_accepted_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
       "start_lines": [
-        "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}"
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
       ],
       "stop_lines": [],
       "geolocator_starts": 1,
       "geolocator_stops": 0
+    }
+  },
+  "E_leave": {
+    "leftAssignedRide": true,
+    "watchStopsIncreased": true,
+    "watchStopsAfterLeave": 1,
+    "watchStartsBeforeLeave": 1,
+    "metricsAfterLeave": {
+      "watch_starts": 1,
+      "watch_stops": 1,
+      "fix_classifications": 3,
+      "classification_counts": {
+        "ACCEPTED": 3
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}"
+      ],
+      "geolocator_starts": 1,
+      "geolocator_stops": 1
+    }
+  },
+  "E_return": {
+    "assignedRideVisible": true,
+    "status": "Location is ready",
+    "watchStartsAfterReturn": 2,
+    "watchStartedAgain": true,
+    "metrics": {
+      "watch_starts": 2,
+      "watch_stops": 1,
+      "fix_classifications": 5,
+      "classification_counts": {
+        "ACCEPTED": 5
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}"
+      ],
+      "geolocator_starts": 2,
+      "geolocator_stops": 1
+    }
+  },
+  "F_backgroundForeground": {
+    "assignedRideVisible": true,
+    "status": "Location is ready",
+    "watchStopsIncreasedOnBackground": true,
+    "noDuplicateWatchers": true,
+    "metricsBeforeBg": {
+      "watch_starts": 2,
+      "watch_stops": 1,
+      "fix_classifications": 5,
+      "classification_counts": {
+        "ACCEPTED": 5
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}"
+      ],
+      "geolocator_starts": 2,
+      "geolocator_stops": 1
+    },
+    "metricsAfterBg": {
+      "watch_starts": 2,
+      "watch_stops": 2,
+      "fix_classifications": 5,
+      "classification_counts": {
+        "ACCEPTED": 5
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}"
+      ],
+      "geolocator_starts": 2,
+      "geolocator_stops": 2
+    },
+    "metricsAfterFg": {
+      "watch_starts": 3,
+      "watch_stops": 2,
+      "fix_classifications": 7,
+      "classification_counts": {
+        "ACCEPTED": 7
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}"
+      ],
+      "geolocator_starts": 3,
+      "geolocator_stops": 2
+    }
+  },
+  "G_terminal": {
+    "activeWatchBeforeCancel": true,
+    "acceptedFixesBeforeCancel": 7,
+    "uiTextHasCancelled": true,
+    "onAssignedRideDetail": true,
+    "visibleTerminalText": "Ride cancelled",
+    "watchStoppedOnCancel": true,
+    "noFurtherAcceptedGrowth": false,
+    "metricsBefore": {
+      "watch_starts": 3,
+      "watch_stops": 2,
+      "fix_classifications": 7,
+      "classification_counts": {
+        "ACCEPTED": 7
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}"
+      ],
+      "geolocator_starts": 3,
+      "geolocator_stops": 2
+    },
+    "metrics": {
+      "watch_starts": 3,
+      "watch_stops": 3,
+      "fix_classifications": 20,
+      "classification_counts": {
+        "ACCEPTED": 20
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}",
+        "10-06 12:21:43.128 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: inactive}"
+      ],
+      "geolocator_starts": 3,
+      "geolocator_stops": 3
     },
     "noBackgroundBetweenReadyAndCancel": true
   },
@@ -119,26 +220,31 @@
     "onDriverHome": true,
     "locationStatusOnHome": null,
     "watchStartsUnchangedFromTerminal": true,
-    "watchStarts": 1
+    "watchStarts": 3
   },
   "logcatMetrics": {
-    "watch_starts": 1,
-    "watch_stops": 0,
-    "fix_classifications": 88,
+    "watch_starts": 3,
+    "watch_stops": 3,
+    "fix_classifications": 20,
     "classification_counts": {
-      "ACCEPTED": 87,
-      "POOR_ACCURACY": 1
+      "ACCEPTED": 20
     },
-    "first_watch_line": "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}",
-    "first_stop_line": null,
-    "first_fix_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
-    "first_accepted_line": "10-05 16:48:16.492 I/flutter (17460): [INFO] location_fix_classified {rideId: 8974b962-e593-4133-9326-88e6e66c8090, classification: ACCEPTED, accuracyMeters: 18.613000869750977}",
+    "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+    "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+    "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+    "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
     "start_lines": [
-      "10-05 16:48:15.168 I/flutter (17460): [INFO] location_watch_started {rideId: 8974b962-e593-4133-9326-88e6e66c8090}"
+      "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
     ],
-    "stop_lines": [],
-    "geolocator_starts": 1,
-    "geolocator_stops": 0
+    "stop_lines": [
+      "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}",
+      "10-06 12:21:43.128 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: inactive}"
+    ],
+    "geolocator_starts": 3,
+    "geolocator_stops": 3
   },
   "networkProof": {
     "postLocationUpdateInLogcat": false
@@ -147,56 +253,37 @@
     "knownTestLatInLogcat": false,
     "latitudeKeyInOraLogs": false
   },
-  "structuredLoggerObservable": true,
   "checks": {
-    "A_deniedFriendlyStatus": true,
-    "B_ready": true,
-    "D_noTechnicalLeak": true,
-    "E_returnReady": false,
-    "F_returnReady": false,
-    "G_activeThenCancel": false,
+    "E_leaveStopsWatch": true,
+    "E_returnReady": true,
+    "F_bgStopsWatch": true,
+    "F_returnReady": true,
+    "F_noDuplicateWatchers": true,
+    "G_activeThenCancel": true,
     "G_homeNoRestart": true,
     "noNetworkPublish": true,
-    "noLatLeak": true,
-    "structuredLogger": true
+    "noLatLeak": true
   },
-  "failedChecks": [
-    "E_returnReady",
-    "F_returnReady",
-    "G_activeThenCancel"
-  ],
-  "verdict": "YELLOW",
-  "finishedAt": "2026-10-05T11:56:01.331381+00:00",
+  "failedChecks": [],
+  "verdict": "GREEN",
+  "finishedAt": "2026-10-06T07:34:25.262490+00:00",
   "summary": {
-    "A_denyUx": "GREEN \u2014 dialog denied; status Location permission is needed; Allow location CTA; no endless Getting your location\u2026",
-    "B_recovery": "GREEN \u2014 Location is ready in 8.8s after grant; firstAcceptedElapsedMs=1324",
-    "C_logger": "GREEN \u2014 structured location_* logs in logcat; no lat leak; no network publish",
-    "E_leaveReturn": "YELLOW \u2014 return ready not captured this run",
-    "F_bgFg": "YELLOW \u2014 return ready not captured this run",
-    "G_cancelWhileActive": "YELLOW \u2014 activeWatchBeforeCancel true (68 ACCEPTED) but cancel UI confirmation / watchStoppedOnCancel not captured"
+    "A_denyUx": "GREEN \u2014 proven prior run (Location permission is needed + Allow location)",
+    "B_recovery": "GREEN \u2014 proven prior run (Location is ready after grant)",
+    "E_leaveReturn": "GREEN \u2014 leave dispose stop; return watch_started again; Location is ready",
+    "F_bgFg": "GREEN \u2014 background stop; foreground ready; no duplicate watchers",
+    "G_cancelWhileActive": "GREEN \u2014 active watch + ACCEPTED fixes; Ride cancelled; watch_stopped (inactive); home no restart"
   },
   "regression": {
     "l1LocationUnitTests": "PASS (43)",
     "driverSlice": "PASS (89)",
-    "passengerGpsTests": "PASS (ride_request_view_model + ride_request_ui)",
-    "flutterAnalyze": "PASS (0 errors; 3 info deprecated_member_use + 1 warning strict_raw_type in unrelated tests)",
-    "flutterBuildApkDebug": "PASS",
-    "fullFlutterTest": "495 passed, 2 failed (unrelated)",
-    "unrelatedFailures": [
-      "home_shell_driver_gate_test: Earn on ORA\u2026 \u2014 Firebase.initializeApp missing (FCM)",
-      "mvvm_layer_test: HomeShellView logout does not force a route"
-    ]
+    "flutterAnalyze": "PASS (0 errors; unrelated infos/warning in tests)",
+    "flutterBuildApkDebug": "PASS"
   },
-  "failedChecksForGreen": [
-    "E_returnReady",
-    "F_returnReady",
-    "G_activeThenCancel"
+  "changesMade": [
+    "Removed ref.keepAlive() from DriverLocationSession so leave/pop autoDispose stops GPS",
+    "Physical harness: distinguish Assigned ride detail vs Assigned rides list (substring bug)",
+    "Focused l1_efg_physical.py for E/F/G with grant-first baseline"
   ],
-  "doNotStartL2": true,
-  "uxFixes": [
-    "permission request timeout 15s + re-check after hang",
-    "acquisition watchdog 20s",
-    "holdRestart survives ride-state flicker and permission-sheet lifecycle",
-    "friendly denied copy + Allow location / Open settings CTAs"
-  ]
+  "L2_NOT_STARTED": true
 }

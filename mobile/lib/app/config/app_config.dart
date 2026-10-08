@@ -10,6 +10,7 @@ class AppConfig {
     required this.appCheckEnabled,
     required this.clientVersion,
     this.googlePlacesApiKey = '',
+    this.firebaseDatabaseUrl = '',
   });
 
   factory AppConfig.development() => const AppConfig(
@@ -18,6 +19,7 @@ class AppConfig {
         appCheckEnabled: false,
         clientVersion: '1.0.0',
         googlePlacesApiKey: '',
+        firebaseDatabaseUrl: '',
       );
 
   factory AppConfig.fromEnvironment(AppEnvironment environment) {
@@ -72,12 +74,25 @@ class AppConfig {
       defaultValue: '',
     );
 
+    // Regional RTDB hostname (public). Override via dart-define when needed.
+    // Not a secret — Auth + rideAccess ACL + App Check enforce access.
+    const databaseUrlDefine = String.fromEnvironment(
+      'ORA_FIREBASE_DATABASE_URL',
+      defaultValue: '',
+    );
+    final firebaseDatabaseUrl = databaseUrlDefine.trim().isNotEmpty
+        ? databaseUrlDefine.trim()
+        : (environment.isDevelopment
+            ? ''
+            : 'https://ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app');
+
     return AppConfig(
       environment: environment,
       apiBaseUrl: apiBaseUrl,
       appCheckEnabled: appCheckEnabled,
       clientVersion: '1.0.0',
       googlePlacesApiKey: placesKey,
+      firebaseDatabaseUrl: firebaseDatabaseUrl,
     );
   }
 
@@ -90,5 +105,10 @@ class AppConfig {
   /// Never put Routes/server keys here.
   final String googlePlacesApiKey;
 
+  /// Firebase Realtime Database URL for MAP-2A read-only trip location.
+  final String firebaseDatabaseUrl;
+
   bool get hasGooglePlacesApiKey => googlePlacesApiKey.trim().isNotEmpty;
+
+  bool get hasFirebaseDatabaseUrl => firebaseDatabaseUrl.trim().isNotEmpty;
 }

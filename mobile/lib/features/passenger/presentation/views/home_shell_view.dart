@@ -193,6 +193,17 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
             onTap: _onSwitchToDriver,
           ),
           OraDrawerItem(
+            title: 'MapLibre PoC',
+            subtitle: 'Disposable renderer test — not production',
+            icon: Icons.map_outlined,
+            iconBackground: const Color(0x384FA3D9),
+            iconColor: OraColors.info,
+            onTap: () {
+              _closeDrawer();
+              context.push(AppRoutes.mapLibrePoc);
+            },
+          ),
+          OraDrawerItem(
             title: 'Settings',
             icon: Icons.settings_rounded,
             iconBackground: const Color(0x14FFFFFF),

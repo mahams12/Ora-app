@@ -1,0 +1,182 @@
+=== ASSIGN fresh ride ===
+{
+  "ok": true,
+  "rideId": "81c730fb-960f-4cbf-ab41-aea057c20a42",
+  "state": "DRIVER_ASSIGNED",
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "81c730fb-960f-4cbf-ab41-aea057c20a42",
+    "createOffer": {
+      "status": 201,
+      "body": {
+        "offerId": "81c730fb-960f-4cbf-ab41-aea057c20a42_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "81c730fb-960f-4cbf-ab41-aea057c20a42",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "amountMinor": 114000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "status": "PENDING",
+        "requestVersion": 1,
+        "expiresAt": "2026-10-08T08:22:08.730Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-10-08T08:19:08.730Z",
+        "selectedAt": null,
+        "withdrawnAt": null,
+        "rideState": "OFFERS_AVAILABLE",
+        "rideVersion": 2
+      }
+    },
+    "selectOffer": {
+      "status": 200,
+      "body": {
+        "rideId": "81c730fb-960f-4cbf-ab41-aea057c20a42",
+        "state": "DRIVER_ASSIGNED",
+        "version": 3,
+        "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "agreedFareMinor": 114000,
+        "agreedOfferId": "81c730fb-960f-4cbf-ab41-aea057c20a42_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "currency": "PKR"
+      }
+    }
+  }
+}
+ride 81c730fb-960f-4cbf-ab41-aea057c20a42 DRIVER_ASSIGNED
+=== Open passenger Active Ride BEFORE any publish ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=47ms (0ms mobile, 0ms wifi, 47ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 6.3 MB/s (53509 bytes in 0.008s)
+  MISS ("Don't allow",)
+  MISS ('Allow',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 7.5 MB/s (53509 bytes in 0.007s)
+  MISS ("Don't allow",)
+  MISS ('Allow',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 6.9 MB/s (53509 bytes in 0.007s)
+  MISS ("Don't allow",)
+  MISS ('Allow',)
+  MISS ('Menu',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 7.0 MB/s (53509 bytes in 0.007s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (6000 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6000 bytes in 0.003s)
+  MISS ('Log out',)
+  MISS ('Log out',)
+  ensure_ora:logout_fail_0 fg='com.sec.android.app.launcher' → relaunch
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=68ms (0ms mobile, 0ms wifi, 68ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (6000 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5998 bytes in 0.004s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6347 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (6351 bytes in 0.005s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (6351 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6351 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6351 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6351 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (5022 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5022 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6382 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6382 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6382 bytes in 0.003s)
+  MISS ('Menu',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (4728 bytes in 0.002s)
+  MISS ('Switch to passenger',)
+  MISS ('passenger mode',)
+  MISS ('Home',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (5063 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5063 bytes in 0.004s)
+  MISS ('Menu',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (5063 bytes in 0.004s)
+  MISS ('Switch to passenger',)
+  MISS ('passenger mode',)
+  MISS ('Home',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (5063 bytes in 0.003s)
+  MISS ('Menu',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (6421 bytes in 0.002s)
+  MISS ('My rides',)
+  MISS ('My trips',)
+  MISS ('Rides',)
+  WARN no My rides in drawer
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6419 bytes in 0.004s)
+  MISS ('DRIVER_ASSIGNED',)
+  MISS ('Assigned',)
+  MISS ('EN_ROUTE',)
+  MISS ('ARRIVED',)
+  MISS ('STARTED',)
+  MISS ('Driver assigned',)
+  MISS ('Driver on the way',)
+  MISS ('81c730fb',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6429 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6429 bytes in 0.003s)
+/sdcard/map2a_retry_before.png: 1 file pulled, 0 skipped. 21.1 MB/s (746329 bytes in 0.034s)
+  before {'activeRide': False, 'googleMap': False, 'pickup': False, 'destination': False, 'waiting': False, 'locationUpdating': False, 'driverMarker': False, 'recenter': False, 'status': None, 'cancel': False}

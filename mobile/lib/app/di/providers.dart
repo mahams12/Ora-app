@@ -41,14 +41,18 @@ import '../../features/onboarding/presentation/view_models/onboarding_view_state
 import '../../features/passenger/presentation/view_models/home_view_model.dart';
 import '../../features/ride/data/data_sources/pricing_remote_data_source.dart';
 import '../../features/ride/data/data_sources/ride_remote_data_source.dart';
+import '../../features/driver/data/location/driver_location_remote_data_source.dart';
 import '../../features/driver/data/location/geolocator_driver_location_source.dart';
 import '../../features/driver/domain/location/driver_location_source.dart';
 import '../../features/ride/data/location/geolocator_device_location.dart';
 import '../../features/ride/data/location/google_places_http_search.dart';
+import '../../features/ride/data/location/rtdb_trip_location_data_source.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
+import '../../features/ride/domain/location/trip_location_freshness.dart';
 import '../../features/ride/domain/ports/device_location_port.dart';
 import '../../features/ride/domain/ports/place_search_port.dart';
 import '../../features/ride/domain/ports/pricing_estimate_port.dart';
+import '../../features/ride/domain/ports/trip_location_port.dart';
 import '../../features/ride/domain/repositories/ride_repository.dart';
 import '../../features/ride/domain/use_cases/ride_use_cases.dart';
 import '../../core/notifications/dispatch_fcm_service.dart';
@@ -137,6 +141,12 @@ final driverLocationSourceProvider = Provider<DriverLocationSource>(
   (ref) => const GeolocatorDriverLocationSource(),
 );
 
+/// Trip-mode POST /v1/location/update (L2 Step 4). Uses existing ApiClient auth.
+final driverLocationRemoteDataSourceProvider =
+    Provider<DriverLocationRemoteDataSource>(
+  (ref) => ApiDriverLocationRemoteDataSource(ref.watch(apiClientProvider)),
+);
+
 /// Google Places autocomplete + details (Phase 4A). Not Routes.
 final placeSearchPortProvider = Provider<PlaceSearchPort>((ref) {
   final key = ref.watch(appConfigProvider).googlePlacesApiKey;
@@ -147,6 +157,28 @@ final placeSearchPortProvider = Provider<PlaceSearchPort>((ref) {
 final pricingEstimatePortProvider = Provider<PricingEstimatePort>(
   (ref) => PricingRemoteDataSource(ref.watch(apiClientProvider)),
 );
+
+/// MAP-2A — read-only RTDB tripLocations/{rideId}/latest (never writes).
+final tripLocationPortProvider = Provider<TripLocationPort>((ref) {
+  final config = ref.watch(appConfigProvider);
+  return RtdbTripLocationDataSource(
+    databaseUrl: config.firebaseDatabaseUrl,
+    logger: ref.watch(appLoggerProvider),
+  );
+});
+
+final tripLocationFreshnessPolicyProvider =
+    Provider<TripLocationFreshnessPolicy>(
+  (ref) => const TripLocationFreshnessPolicy(),
+);
+
+/// Injectable clock for freshness tests.
+final tripLocationClockProvider = Provider<DateTime Function()>(
+  (ref) => DateTime.now,
+);
+
+/// When false, ActiveRideMap shows soft shell (widget tests / soft-fail).
+final activeRideMapsEnabledProvider = Provider<bool>((ref) => true);
 
 final getRideUseCaseProvider = Provider<GetRideUseCase>(
   (ref) => GetRideUseCase(ref.watch(rideRepositoryProvider)),

@@ -1,0 +1,68 @@
+{
+  "artifact": "MAP2B_IMPLEMENTATION_STATUS",
+  "slice": "MAP-2B — Phase-aware tick-stable active-ride camera",
+  "status": "MAP-2B IMPLEMENTATION COMPLETE — PHYSICAL PROOF PENDING",
+  "map2cStarted": false,
+  "capturedAt": "2026-10-08T07:35:00.000Z",
+  "architectureAudit": "MAP2B_ARCHITECTURE_AUDIT.json GREEN — Candidate A only",
+  "changedFiles": [
+    "mobile/lib/features/ride/presentation/utils/active_ride_map_camera_policy.dart",
+    "mobile/lib/features/ride/presentation/widgets/active_ride_map.dart",
+    "mobile/test/features/ride/active_ride_map_camera_policy_test.dart",
+    "mobile/test/features/ride/active_ride_map_camera_test.dart"
+  ],
+  "intentionallyUnchanged": [
+    "MAP-1 RideMapPreview / RideMapCameraPolicy / ride_request_view",
+    "TripLocationSession / RtdbTripLocationDataSource",
+    "DriverTripLocationPublisher / location update backend",
+    "database.rules.json",
+    "active_ride_view.dart (Recenter lives inside ActiveRideMap)"
+  ],
+  "behavior": {
+    "fitIdentity": "phase + pickup/dest identity + driverPresent|driverAbsent — no driver lat/lng",
+    "refitTriggers": [
+      "first fit",
+      "driver appears/disappears",
+      "to_pickup ↔ to_dest phase flip",
+      "pickup/dest identity change",
+      "one-shot Recenter"
+    ],
+    "noRefitOn": [
+      "locationSeq",
+      "driver lat/lng movement",
+      "heading",
+      "speed",
+      "freshness timer alone (unless presence boundary)"
+    ],
+    "mapHeightPx": 200,
+    "padding": 48,
+    "optionalThirdAnchor": "included only when span ≤ 0.08°"
+  },
+  "tests": {
+    "active_ride_map_camera_policy_test": "PASS",
+    "active_ride_map_camera_test": "PASS (seq ticks no spam; RIDE_STARTED one refit)",
+    "active_ride_ui_test": "PASS",
+    "trip_location_*": "PASS",
+    "ride_map_preview_test": "PASS",
+    "ride_request_ui_test": "PASS",
+    "focusedSuiteTotal": "81 passed"
+  },
+  "flutterAnalyze": "PASS (MAP-2B files — no issues)",
+  "selfAudit": {
+    "backendLocationChangedByThisSlice": false,
+    "rtdbChangedByThisSlice": false,
+    "publisherChangedByThisSlice": false,
+    "map1ChangedByThisSlice": false,
+    "etaAdded": false,
+    "navigationAdded": false,
+    "interpolationAdded": false,
+    "polylineAdded": false,
+    "visualDesignAdded": false,
+    "newFirebaseListener": false
+  },
+  "physicalProof": {
+    "status": "PENDING",
+    "report": "MAP2B_PHYSICAL_VERIFICATION_REPORT.json",
+    "deviceRequired": "SM-A325F / RF8R40ZQ1JH staging"
+  }
+}

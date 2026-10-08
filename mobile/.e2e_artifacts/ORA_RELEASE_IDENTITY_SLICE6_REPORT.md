@@ -263,3 +263,41 @@ No backend, App Check middleware, N3, D1, Cloud Run, or mobile UI changes.
 **RELEASE IDENTITY SLICE = BLOCKED**
 
 **Reason:** No authorized production release keystore exists. GREEN requires configured **release signing identity**, **release SHA-256 on Firebase**, and **release-signed APK/AAB** passing static audit — all blocked until the owner provisions signing credentials.
+
+---
+
+## Verification continuation — 2026-10-08
+
+User reported keystore **provisioned**. Automated verification **could not complete** from this environment:
+
+| Check | Result |
+|-------|--------|
+| `mobile/android/key.properties` | **Not present** on disk |
+| `storeFile` keystore (per example path) | **Not present** |
+| `ORA_ANDROID_KEY_PROPERTIES_FILE` env | **Not set** in agent shell |
+| `ORA_GOOGLE_PLACES_API_KEY` | **Present** in `android/local.properties` (value not logged) |
+| Gradle fail-closed (no `key.properties`) | **Confirmed** earlier (`assembleRelease` → explicit error) |
+
+**Implemented for verification (no Slice 7):**
+
+- `ORA_ANDROID_KEY_PROPERTIES_FILE` — optional override path read by Gradle + build script
+- `build_production_release.sh` — validates `storeFile` exists; Places key fallback from `local.properties`
+- `scripts/verify_slice6_release_identity.sh` — build APK/AAB → apksigner SHA-256 → Firebase SHA register → static audit
+
+**To finish Slice 6 locally (after files are in place):**
+
+```bash
+# Standard layout:
+#   mobile/android/key.properties   (gitignored)
+#   mobile/android/app/upload-keystore.jks   (or path in storeFile)
+
+# Or external config:
+#   export ORA_ANDROID_KEY_PROPERTIES_FILE=/secure/path/key.properties
+
+cd mobile
+bash scripts/verify_slice6_release_identity.sh
+```
+
+On **GREEN**, update this report verdict and sections 4–13 with release SHA prefix + artifact paths from `mobile/.e2e_artifacts/slice6_verification_run.json`.
+
+**Still BLOCKED** until `key.properties` + keystore file are visible at the configured paths and verification script exits GREEN.

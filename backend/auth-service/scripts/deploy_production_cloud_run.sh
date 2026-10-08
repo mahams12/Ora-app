@@ -39,6 +39,10 @@ chmod +x scripts/wire_production_redis.sh scripts/wire_production_server_secrets
 ./scripts/wire_production_server_secrets.sh
 
 ENV_VARS="FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID},REQUIRE_APP_CHECK=true,ORA_ENV=production,NODE_ENV=production"
+# L2 Step 2 — optional RTDB URL (Admin SDK only; never ship to Flutter).
+if [[ -n "${FIREBASE_DATABASE_URL:-}" ]]; then
+  ENV_VARS="${ENV_VARS},FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL}"
+fi
 
 VPC_CONNECTOR="${PRODUCTION_VPC_CONNECTOR:-ora-staging-vpc}"
 REDIS_SECRET_NAME="${PRODUCTION_REDIS_SECRET_NAME:-ora-production-redis-url}"

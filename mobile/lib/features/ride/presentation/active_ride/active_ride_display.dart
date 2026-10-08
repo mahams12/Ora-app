@@ -20,17 +20,17 @@ String activeRideTitle(String state) {
 String activeRideMessage(String state) {
   return switch (state.toUpperCase()) {
     'DRIVER_ASSIGNED' =>
-      'A driver is assigned on Ora\'s servers. Live location and ETA are not '
-          'available in this build.',
+      'A driver is assigned. Live driver location appears on the map when the '
+          'driver publishes — ETA is not estimated here.',
     'DRIVER_EN_ROUTE' =>
-      'The assigned driver is marked en route by the server. Ora is not '
-          'showing a fake map or invented ETA.',
+      'The assigned driver is en route. The map shows their last published '
+          'location when available — no invented ETA.',
     'DRIVER_ARRIVED' =>
       'The driver has arrived according to the server. Waiting time below uses '
           'the real arrivedAt timestamp when present.',
     'RIDE_STARTED' =>
-      'Your ride has started on the server. Route progress requires location '
-          'services that are not in this build.',
+      'Your ride has started. The map tracks the driver\'s last published '
+          'location when available — no turn-by-turn navigation in this build.',
     'RIDE_COMPLETED' =>
       'The ride is completed on the server. Closing the ride is the next '
           'passenger step. You can rate after completion or close.',

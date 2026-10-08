@@ -1,0 +1,79 @@
+{
+  "rideId": "6e123362-0de8-4f10-aa59-9611eaedd2e1",
+  "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "l2": {
+    "publish_accepted": 2,
+    "rtdbSeq": 2
+  },
+  "samples": [
+    {
+      "wait_s": 4,
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": true,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true
+    },
+    {
+      "wait_s": 8,
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": true,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true
+    },
+    {
+      "wait_s": 12,
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": true,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true
+    },
+    {
+      "wait_s": 20,
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": true,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true
+    },
+    {
+      "wait_s": 30,
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": true,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true
+    }
+  ],
+  "markerEventuallyVisible": false,
+  "firstVisibleAtWaitS": null,
+  "terminalCancel": "CANCELLED",
+  "rtdbCleared": true
+}

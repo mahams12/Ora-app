@@ -1,0 +1,517 @@
+{
+  "step": "L2_STEP_4",
+  "kind": "ARCHITECTURE_AUDIT_ONLY",
+  "capturedAt": "2026-10-06T10:30:00.000Z",
+  "verdict": "GREEN",
+  "verdictMeaning": "Architecture is sufficiently defined and safe to implement as one vertical slice. Decisions below are recommended MVP defaults, not open blockers.",
+  "notImplementedConfirmation": "NO CODE WAS IMPLEMENTED. No files modified except this audit artifact. No Flutter publisher, no RTDB client writes, no Maps/ETA/L3, no API/schema/rules changes.",
+  "prerequisitesClosed": {
+    "L2_STEP_1": "GREEN",
+    "L2_STEP_2": "GREEN",
+    "L2_STEP_3": "GREEN",
+    "L2_STEP_3A": "GREEN",
+    "stagingRtdbHost": "ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "stagingCloudRunRevisionAtAudit": "ora-auth-service-staging-00025-mrl"
+  },
+
+  "currentArchitecture": {
+    "summary": "L1 acquires/classifies foreground GPS on the assigned-ride screen only. L2 backend already accepts trip locations via POST /v1/location/update, authorizes assigned driver + publishable states, durably accepts locationStreams, then projects RTDB latest. Flutter does NOT call the location API yet and does NOT write RTDB.",
+    "gpsPipeline": [
+      "DriverAssignedRideView (WidgetsBindingObserver)",
+      "driverLocationSessionProvider(rideId) AutoDisposeFamilyNotifier",
+      "DriverLocationLifecycleController",
+      "GeolocatorDriverLocationSource.watch()",
+      "DriverLocationClassifier",
+      "UI status via DriverLocationStatusLine only"
+    ],
+    "backendPipeline": [
+      "POST /v1/location/update (Bearer)",
+      "approved + online",
+      "if rideId: assignedDriverId==auth.uid && state in LOCATION_PUBLISH_RIDE_STATES",
+      "GPS validation",
+      "locationStreams transaction accept",
+      "RTDB tripLocations/{rideId}/latest best-effort",
+      "Redis GEO best-effort"
+    ],
+    "gap": "No Flutter → HTTP location publisher. Accepted fixes stay inside DriverLocationLifecycleController (_lastAccepted) and are not exposed to a network layer."
+  },
+
+  "filesInspected": {
+    "flutterGps": [
+      "mobile/lib/features/driver/presentation/location/driver_location_session.dart",
+      "mobile/lib/features/driver/domain/location/driver_location_lifecycle.dart",
+      "mobile/lib/features/driver/domain/location/driver_location_fix.dart",
+      "mobile/lib/features/driver/domain/location/driver_location_source.dart",
+      "mobile/lib/features/driver/domain/location/driver_location_classifier.dart",
+      "mobile/lib/features/driver/domain/location/driver_location_status.dart",
+      "mobile/lib/features/driver/data/location/geolocator_driver_location_source.dart",
+      "mobile/lib/features/driver/presentation/widgets/driver_location_status_line.dart",
+      "mobile/lib/features/driver/presentation/views/driver_assigned_ride_view.dart",
+      "mobile/lib/features/driver/presentation/driver_display.dart",
+      "mobile/lib/app/di/providers.dart"
+    ],
+    "flutterAuthNetwork": [
+      "mobile/lib/core/network/auth_token_provider.dart",
+      "mobile/lib/core/network/api_client.dart",
+      "mobile/lib/core/network/retry_policy.dart",
+      "mobile/lib/core/network/network_config.dart",
+      "mobile/lib/core/errors/failure_mapper.dart"
+    ],
+    "backendLocation": [
+      "backend/auth-service/src/location/routes.ts",
+      "backend/auth-service/src/location/location_update_service.ts",
+      "backend/auth-service/src/location/validation.ts",
+      "backend/auth-service/src/location/types.ts",
+      "backend/auth-service/src/location/http.ts",
+      "backend/auth-service/src/rtdb/ride_location_lifecycle.ts",
+      "backend/auth-service/src/app.ts"
+    ],
+    "testsEvidence": [
+      "mobile/test/features/driver/driver_location_lifecycle_test.dart",
+      "mobile/test/features/driver/driver_location_classifier_test.dart",
+      "mobile/test/features/driver/driver_location_status_test.dart",
+      "mobile/.e2e_artifacts/L1_PHYSICAL_VERIFICATION_REPORT.json",
+      "mobile/.e2e_artifacts/L2_STEP3A_LIVE_STAGING_RTDB_PROOF.json"
+    ],
+    "docsNote": "docs/architecture/N_LOCATION_FLOW.md is stale (claims Flutter GPS and N2B RTDB not implemented). Code authority overrides that doc for this audit."
+  },
+
+  "existingReusableComponents": {
+    "mustReuse": [
+      "DriverLocationLifecycleController + driverLocationShouldWatch (publish states already align with backend LOCATION_PUBLISH_RIDE_STATES)",
+      "DriverLocationClassifier / DriverLocationFix (units already match server: accuracy m, speed km/h)",
+      "DriverLocationSession autoDispose family keyed by rideId",
+      "DriverAssignedRideView lifecycle observer (background stops GPS)",
+      "ApiClient + FirebaseAuthTokenProvider (401 single-flight refresh)",
+      "POST /v1/location/update contract unchanged",
+      "Server trip authorization + locationStreams + RTDB projection"
+    ],
+    "mustNotReuseForWrites": [
+      "Any Flutter Firebase Database / RTDB SDK write path (none should be added)",
+      "Redis client from Flutter"
+    ]
+  },
+
+  "identifiedGaps": [
+    {
+      "id": "G1",
+      "gap": "Accepted GPS fixes are not emitted outside DriverLocationLifecycleController",
+      "impact": "Publisher needs a narrow onAcceptedFix (or stream) without bypassing classifier"
+    },
+    {
+      "id": "G2",
+      "gap": "No location remote data source / publisher class",
+      "impact": "Step 4 must add a dedicated publisher + HTTP mapping"
+    },
+    {
+      "id": "G3",
+      "gap": "onDriverOffline exists on controller but is not wired from session/UI",
+      "impact": "Step 4 should wire availability offline → stop GPS+publish (server also 403s)"
+    },
+    {
+      "id": "G4",
+      "gap": "Server requires finite heading; Flutter heading is optional",
+      "impact": "Publisher must send heading: 0 (or last known) when null — do not omit field"
+    },
+    {
+      "id": "G5",
+      "gap": "No client locationSeq / locationStreamId generation yet",
+      "impact": "Must define stream-id per watch generation and monotonic seq per stream"
+    },
+    {
+      "id": "G6",
+      "gap": "Default API rate limit is 60/min on /v1/location",
+      "impact": "Publish policy must stay well under ~1 Hz; recommend ≤15/min"
+    },
+    {
+      "id": "G7",
+      "gap": "ApiClient retries POST only when idempotent=true; location must remain non-idempotent",
+      "impact": "Good — publisher must NOT mark location POST idempotent (avoids seq replay storms)"
+    }
+  ],
+
+  "proposedArchitecture": {
+    "verticalSliceName": "Secure driver trip-mode location publishing",
+    "integrationPoint": "Inside DriverLocationSession / LifecycleController after ACCEPTED classification — never raw geolocator stream",
+    "flow": [
+      "L1 GPS watch (unchanged start/stop/foreground rules)",
+      "Classifier ACCEPTED fix",
+      "DriverTripLocationPublisher.consider(fix, rideId, rideState)",
+      "throttle / heartbeat / single-flight",
+      "map to POST body (rideId, locationSeq, locationStreamId, lat, lng, accuracy, heading, speed, timestamp, provider)",
+      "ApiClient.post('/v1/location/update', idempotent: false, CancelToken)",
+      "Backend auth → assignment/state → validate → locationStreams accept → RTDB latest"
+    ],
+    "authority": {
+      "clientSubmits": ["rideId from assigned-ride screen binding", "GPS observation fields", "locationSeq", "locationStreamId", "provider"],
+      "clientMustNotSubmitAsAuthority": ["driverId", "assignedDriverId", "ride state", "pricing", "ACL"],
+      "serverAuthoritative": ["caller.uid as driverId", "assignment check", "state gate", "accept cursor", "RTDB write"]
+    },
+    "rtdb": "Flutter NEVER writes RTDB. Backend Admin projection only.",
+    "idleMode": "OUT OF SCOPE for Step 4. Trip-mode only (rideId required). Idle publishing remains future/N-series if needed.",
+    "maps": "OUT OF SCOPE. No Maps SDK/UI, no passenger listener, no ETA."
+  },
+
+  "stateLifecycleMatrix": {
+    "publishStartOrContinue": [
+      "DRIVER_ASSIGNED",
+      "DRIVER_EN_ROUTE",
+      "DRIVER_ARRIVED",
+      "RIDE_STARTED"
+    ],
+    "publishStop": [
+      "CANCELLED",
+      "NO_SHOW",
+      "EXPIRED",
+      "RIDE_COMPLETED",
+      "RIDE_CLOSED",
+      "SEARCHING",
+      "OFFERS_AVAILABLE",
+      "null/unknown",
+      "screen dispose / sign-out / background / driver offline"
+    ],
+    "alignment": {
+      "flutterWatch": "driverLocationShouldWatch",
+      "backendPublish": "LOCATION_PUBLISH_RIDE_STATES",
+      "match": true
+    },
+    "notes": [
+      "RIDE_COMPLETED is NOT isDriverJobTerminalState for polling UI, but GPS/publish MUST stop (not in shouldWatch / LOCATION_PUBLISH_RIDE_STATES).",
+      "Reassignment impossible server-side (ALREADY_ASSIGNED); publisher still binds hard to session rideId arg."
+    ]
+  },
+
+  "locationApiContract": {
+    "methodPath": "POST /v1/location/update",
+    "auth": "Bearer Firebase ID token; App Check header when enabled",
+    "requestBody": {
+      "rideId": "string required for trip mode (Step 4 always set)",
+      "locationSeq": "non-negative integer; must be > lastAcceptedSeq for active stream",
+      "locationStreamId": "non-empty string; new id replaces stream and resets seq carry-over",
+      "lat": "number [-90,90]",
+      "lng": "number [-180,180]",
+      "accuracy": "meters 0..50",
+      "heading": "finite number REQUIRED (send 0 if unknown)",
+      "speed": "km/h 0..200",
+      "timestamp": "ISO string or epoch ms; must be within now-15s .. now+5s",
+      "provider": "non-empty string (use 'gps')",
+      "altitude": "optional number"
+    },
+    "response200": {
+      "data": {
+        "driverId": "auth uid",
+        "mode": "trip",
+        "rideId": "string",
+        "locationStreamId": "string",
+        "locationSeq": "number",
+        "acceptedAt": "ISO"
+      }
+    },
+    "errorCodes": {
+      "401": "UNAUTHENTICATED",
+      "403": ["DRIVER_NOT_APPROVED", "FORBIDDEN (offline)", "RIDE_LOCATION_FORBIDDEN"],
+      "422": ["INVALID_LOCATION", "STALE_LOCATION", "SEQUENCE_VIOLATION"],
+      "429": "rate limit (default 60/min)",
+      "5xx": "INTERNAL"
+    },
+    "idempotency": "NOT supported for location POST (docs/algorithms/idempotency.md). Transport retries must remain off.",
+    "concurrency": "Firestore transaction on locationStreams/{rideId}_{driverId}; closed stream rejects; late previousStreamIds rejected",
+    "rtdbProjection": "after durable accept only; failure does not fail HTTP",
+    "redis": "best-effort after accept; unchanged"
+  },
+
+  "authentication": {
+    "mechanism": "Existing ApiClient + FirebaseAuthTokenProvider",
+    "tokenSource": "FirebaseAuth.instance.currentUser.getIdToken(forceRefresh)",
+    "cache": "Firebase SDK cached token; getAccessToken uses forceRefresh=false",
+    "refresh": "401 interceptor forceRefresh single-flight; timeout 20s",
+    "timeouts": "connect 15s / send 30s / receive 30s",
+    "recommendation": "Reuse ApiClient only. Do not create a second auth stack. Location POST must use CancelToken and idempotent:false."
+  },
+
+  "publishPolicy": {
+    "philosophy": "Conservative MVP — prefer freshness within server stale window without saturating 60/min rate limit",
+    "sourceFixes": "Only DriverLocationClass.accepted",
+    "minIntervalMs": 4000,
+    "minMovementMeters": 15,
+    "heartbeatIntervalMs": 10000,
+    "heartbeatRule": "If no movement publish for 10s and last accepted fix is still fresh (<12s old), republish latest accepted (not a stale queued history)",
+    "maxPublishesPerMinute": 15,
+    "duplicateSuppression": "Classifier already drops exact duplicate timestamp+lat+lng; publisher also skips identical lastPublished payload",
+    "noOfflineQueue": true,
+    "noStaleReplay": true,
+    "rationale": {
+      "battery": "L1 already stops GPS in background; throttle reduces radio wakeups",
+      "bandwidth": "≤15 posts/min/driver",
+      "serverLoad": "Well under 60/min rate limiter",
+      "trackingSmoothness": "4s/15m + 10s heartbeat keeps RTDB latest useful without map work in this step"
+    }
+  },
+
+  "sequencePolicy": {
+    "locationStreamId": "UUID generated once per GPS watch start (controller generation). New watch after background/foreground or ride re-entry → new stream id.",
+    "locationSeq": "Start at 1 for each new locationStreamId. Increment by 1 for each outbound publish attempt that is actually sent. Never reuse a seq for different coordinates.",
+    "onSequenceViolation422": "If local seq is behind server, bump local seq to lastPublishedSeq+1 and wait for next fresh fix (do not invent coords). Prefer next accepted fix over aggressive burst.",
+    "onNewRide": "Session family key is rideId; new ride ⇒ new session ⇒ new stream + seq=1",
+    "backendContractChange": "NONE required"
+  },
+
+  "retryPolicy": {
+    "transportRetry": "DISABLED for location POST (idempotent=false already)",
+    "offline": "Drop; wait for next accepted fresh fix when online",
+    "timeout": "Drop in-flight; do not replay same body; next fresh fix may publish",
+    "401": "Rely on ApiClient single refresh+retry once; if still 401, stop publisher and surface session-level auth failure (existing patterns)",
+    "403_RIDE_LOCATION_FORBIDDEN": "Stop publisher for this ride immediately (terminal/unauthorized)",
+    "403_offline_or_not_approved": "Stop publisher; reconcile with driver availability UI",
+    "422_STALE_INVALID": "Drop; wait for next accepted fix",
+    "422_SEQUENCE_VIOLATION": "Adjust seq policy above; do not tight-loop",
+    "429": "Backoff (e.g. 2–5s) then resume with fresh fix only",
+    "5xx": "Drop; next fresh fix; optional light backoff 1–2s",
+    "cancelInFlightOnStop": true
+  },
+
+  "failureBehaviorMatrix": {
+    "noInternet": "No queue; skip; continue GPS locally; publish when network returns with fresh fix",
+    "httpTimeout": "Cancel/drop; no replay",
+    "http401": "ApiClient refresh once; else stop",
+    "http403": "Stop publish for ride / offline as above",
+    "http409": "Not used by location API today; treat as stop+log if seen",
+    "http429": "Backoff",
+    "http5xx": "Drop + short backoff",
+    "appBackgrounding": "Existing L1 stops GPS; publisher must cancel in-flight and pause",
+    "appForegrounding": "Existing L1 may restart ONE watch; new stream id; no duplicate session if autoDispose family intact",
+    "cancelWhileInFlight": "CancelToken cancel; ignore late response; stop",
+    "completeWhileInFlight": "Same as cancel; ride state listener stops wantsWatch",
+    "driverGoesOffline": "Wire onDriverOffline(true); stop watch+publish",
+    "permissionRevoked": "Existing failure readings holdRestart; publisher idle",
+    "gpsStreamStops": "Existing unavailable status; publisher idle"
+  },
+
+  "raceConditionProtections": {
+    "A_fixThenCancel": "Publisher checks rideState/wantsPublish immediately before send; CancelToken if state flips",
+    "B_inFlightThenTerminal": "CancelToken on stop; ignore response after generation mismatch",
+    "C_assignmentFlicker": "Hard-bind publisher to session rideId; server rejects wrong assignment; reassignment impossible (ALREADY_ASSIGNED)",
+    "D_multipleGpsListeners": "Single LifecycleController subscription per session; do not add second geolocator watch for publish",
+    "E_foregroundBackgroundDuplicate": "Keep autoDispose family; no keepAlive on session; generation++ on stop; one WidgetsBindingObserver path",
+    "F_oldRideSurvivesIntoNew": "Family arg=rideId; dispose stops old; new ride new streamId; never carry seq across rides"
+  },
+
+  "testPlan": {
+    "unit": [
+      "throttle: min interval / min movement / heartbeat",
+      "duplicate suppression",
+      "seq increments; new stream resets to 1",
+      "retry/backoff matrix (no offline queue)",
+      "terminal/cancel stops and cancels token",
+      "rideId binding rejects cross-ride consider()"
+    ],
+    "integration": [
+      "accepted fix → mock ApiClient POST body shape",
+      "HTTP 200 → local lastPublishedSeq advances",
+      "optional staging: accept → RTDB latest (reuse Step 3A Admin verify)"
+    ],
+    "lifecycle": [
+      "assigned/en_route/arrived/started publish allowed",
+      "cancelled/completed stop",
+      "background stop; foreground single restart"
+    ],
+    "failure": [
+      "offline drop",
+      "timeout drop",
+      "401/403/422/429/5xx behaviors"
+    ],
+    "regression": [
+      "existing driver_location_* tests remain green",
+      "backend Step1/2/3 + npm test + build unchanged (no backend edits expected)"
+    ]
+  },
+
+  "physicalProofPlan": {
+    "device": "Samsung SM-A325F Android 13 (reuse L1 harness)",
+    "package": "com.ora.ora",
+    "reuse": [
+      "mobile/.e2e_artifacts L1 physical scripts / logcat metrics (watch_starts/stops)",
+      "staging API + staging RTDB already proven in Step 3A"
+    ],
+    "mustDemonstrate": [
+      "GPS ACCEPTED → authenticated POST /v1/location/update → durable accept → live RTDB tripLocations/{rideId}/latest",
+      "ride cancellation → publishing stops → no further accepted publishes / no further RTDB updates for that ride",
+      "background→foreground does not create duplicate publishers (watch_starts/publishers == 1 active)"
+    ],
+    "evidenceArtifactSuggested": "mobile/.e2e_artifacts/L2_STEP4_PHYSICAL_VERIFICATION_REPORT.json (future implementation step)",
+    "constraints": [
+      "No Maps UI required for proof",
+      "No Flutter RTDB writes",
+      "Synthetic/real movement OK; do not leave residual proof rides uncleared if using dedicated proof ride"
+    ]
+  },
+
+  "mapDependency": {
+    "step4MustNotImplement": [
+      "Maps SDK / map widgets",
+      "passenger RTDB listeners",
+      "driver map camera",
+      "ETA",
+      "routes/navigation",
+      "interpolation/history",
+      "background location permission upgrade",
+      "L3"
+    ]
+  },
+
+  "filesArchitecture": {
+    "reuseUnchanged": [
+      "GeolocatorDriverLocationSource",
+      "DriverLocationClassifier",
+      "DriverLocationFix model",
+      "ApiClient / AuthTokenProvider",
+      "backend location/* and rtdb/* (no API change)"
+    ],
+    "likelyModify": [
+      "mobile/lib/features/driver/domain/location/driver_location_lifecycle.dart (emit accepted fixes; optional offline wiring hook)",
+      "mobile/lib/features/driver/presentation/location/driver_location_session.dart (own publisher lifecycle)",
+      "mobile/lib/features/driver/presentation/views/driver_assigned_ride_view.dart (wire offline if available)",
+      "mobile/lib/app/di/providers.dart (publisher/remote DS providers)"
+    ],
+    "likelyNew": [
+      "mobile/lib/features/driver/domain/location/driver_trip_location_publisher.dart (throttle/seq/single-flight)",
+      "mobile/lib/features/driver/data/location/driver_location_remote_data_source.dart (POST mapping)",
+      "mobile/test/features/driver/driver_trip_location_publisher_test.dart",
+      "optional: mobile/.e2e_artifacts physical proof scripts"
+    ],
+    "config": [
+      "No new Firebase project",
+      "Staging already has FIREBASE_DATABASE_URL on Cloud Run",
+      "Local mobile points at staging API via existing staging build defines"
+    ]
+  },
+
+  "riskAudit": [
+    {
+      "id": "R1",
+      "area": "security",
+      "risk": "Client trusts itself for assignment",
+      "mitigation": "Server Step 1 gate remains; client only sends rideId",
+      "class": "GREEN"
+    },
+    {
+      "id": "R2",
+      "area": "security",
+      "risk": "Flutter RTDB write temptation",
+      "mitigation": "Explicit ban; publish via backend only",
+      "class": "GREEN"
+    },
+    {
+      "id": "R3",
+      "area": "privacy",
+      "risk": "Logging lat/lng",
+      "mitigation": "Existing _bannedLogKeys; keep publisher logs metadata-only",
+      "class": "GREEN"
+    },
+    {
+      "id": "R4",
+      "area": "battery",
+      "risk": "High-frequency publish",
+      "mitigation": "4s/15m/10s heartbeat; background GPS already off",
+      "class": "GREEN"
+    },
+    {
+      "id": "R5",
+      "area": "race",
+      "risk": "In-flight after terminal",
+      "mitigation": "CancelToken + generation + state check",
+      "class": "YELLOW"
+    },
+    {
+      "id": "R6",
+      "area": "stale-location",
+      "risk": "Offline queue replay",
+      "mitigation": "No queue; server 15s stale reject",
+      "class": "GREEN"
+    },
+    {
+      "id": "R7",
+      "area": "duplicate publisher",
+      "risk": "keepAlive or second watch",
+      "mitigation": "Stay autoDispose; single controller; physical metric watch_starts",
+      "class": "YELLOW"
+    },
+    {
+      "id": "R8",
+      "area": "network retry",
+      "risk": "Idempotent POST retries duplicate seq",
+      "mitigation": "Force idempotent:false; no custom retry loop on same body",
+      "class": "GREEN"
+    },
+    {
+      "id": "R9",
+      "area": "lifecycle",
+      "risk": "onDriverOffline unwired today",
+      "mitigation": "Wire in Step 4; server 403 backup",
+      "class": "YELLOW"
+    },
+    {
+      "id": "R10",
+      "area": "heading",
+      "risk": "Missing heading → 422",
+      "mitigation": "Always send finite heading (0 if unknown)",
+      "class": "GREEN"
+    },
+    {
+      "id": "R11",
+      "area": "rate limit",
+      "risk": "60/min ceiling",
+      "mitigation": "Cap ≤15/min client-side",
+      "class": "GREEN"
+    }
+  ],
+
+  "implementationOrder": [
+    "1. Add accepted-fix emission hook on DriverLocationLifecycleController (no network inside controller)",
+    "2. Add DriverLocationRemoteDataSource mapping DriverLocationFix → POST /v1/location/update via ApiClient (idempotent:false, CancelToken)",
+    "3. Add DriverTripLocationPublisher (seq/streamId, throttle, heartbeat, single-flight, stop/cancel)",
+    "4. Wire publisher into DriverLocationSession dispose/start; bind rideId from family arg; listen ride state",
+    "5. Wire driver offline → onDriverOffline(true) if availability signal already exists on assigned-ride screen",
+    "6. Unit tests for publisher policies + failure matrix",
+    "7. Widget/lifecycle tests ensuring no duplicate session publishers",
+    "8. Staging physical proof on SM-A325F: publish→RTDB + cancel stops + bg/fg single publisher",
+    "9. Regression: Flutter driver location tests + backend Step1/2/3 suites if any shared touch (expect none)",
+    "10. STOP — do not start passenger listeners / maps / L3"
+  ],
+
+  "definitionOfDone": {
+    "backendAcceptance": "Authenticated trip publishes return 200 with accept snapshot for assigned publishable states",
+    "rtdbProjection": "After accept, staging RTDB tripLocations/{rideId}/latest matches server-authorized payload (physical verify)",
+    "lifecycleCorrectness": "Publish only in DRIVER_ASSIGNED|EN_ROUTE|ARRIVED|RIDE_STARTED; stops on terminal/completed/cancel/background/dispose/offline",
+    "noDuplicatePublishers": "One active publisher per ride session; bg→fg does not stack publishers",
+    "noStaleReplay": "No offline queue; no republish of aged coordinates beyond classifier/server freshness",
+    "cancellationStop": "Cancel/complete stops GPS watch and cancels in-flight HTTP; no further publishes",
+    "backgroundForeground": "Background stops; foreground restarts at most one watch/publisher for same ride",
+    "physicalDeviceProof": "SM-A325F evidence artifact with publish→RTDB and cancel-stop",
+    "regression": "Existing L1 location unit tests green; backend location suites remain green without API changes",
+    "explicitNonGoalsMet": "No Flutter RTDB writes, no maps, no passenger listeners, no ETA, no L3"
+  },
+
+  "openDecisionsResolvedByThisAudit": [
+    {
+      "decision": "Integration point",
+      "choice": "Post-classifier accepted fixes from LifecycleController into session-owned publisher"
+    },
+    {
+      "decision": "Offline queue",
+      "choice": "None"
+    },
+    {
+      "decision": "Idle publishing",
+      "choice": "Out of scope for Step 4"
+    },
+    {
+      "decision": "Publish cadence",
+      "choice": "min 4s, min 15m, heartbeat 10s, max 15/min"
+    },
+    {
+      "decision": "Seq/stream",
+      "choice": "UUID stream per watch generation; seq from 1 monotonic per stream"
+    }
+  ]
+}

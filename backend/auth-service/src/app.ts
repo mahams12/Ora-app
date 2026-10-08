@@ -17,6 +17,7 @@ import type { RedisGeoClient } from './redis/types';
 import type { FcmSender } from './delivery/fcm_sender';
 import type { RoutingProvider } from './routing/types';
 import { createPricingRouter } from './pricing/routes';
+import type { TripLocationRtdb } from './rtdb/types';
 
 export interface CreateAppOptions {
   auth: Auth;
@@ -45,6 +46,8 @@ export interface CreateAppOptions {
   internalWorkerToken?: string;
   /** N2C Redis GEO projection (optional; null = skip projection). */
   geoProjection?: RedisGeoProjectionService | null;
+  /** L2 Step 2/3 — RTDB trip location projection (optional; Null when unset). */
+  tripLocationRtdb?: TripLocationRtdb | null;
   /** N3 nearby GEORADIUS client (optional; null = DEPENDENCY_ERROR). */
   redis?: RedisGeoClient | null;
   /** D1 FCM sender (optional; null = null sender / no real FCM). */
@@ -86,11 +89,17 @@ export function createApp(options: CreateAppOptions) {
 
   const rateLimit = createRateLimitMiddleware(limiter);
   const geo = options.geoProjection ?? null;
+  const tripLocationRtdb = options.tripLocationRtdb ?? null;
 
   app.use('/v1/auth', requireAuth, rateLimit, createAuthRouter(options.db));
 
   // Phase 2E: ride core vertical slice — modular monolith on auth-service.
-  app.use('/v1/rides', requireAuth, rateLimit, createRidesRouter(options.db));
+  app.use(
+    '/v1/rides',
+    requireAuth,
+    rateLimit,
+    createRidesRouter(options.db, tripLocationRtdb),
+  );
 
   // N1 + N2C offline GEO cleanup.
   app.use(
@@ -100,12 +109,12 @@ export function createApp(options: CreateAppOptions) {
     createDriversRouter(options.db, geo),
   );
 
-  // N2A location cursor + N2C Redis GEO projection hook.
+  // N2A location cursor + L2 Step 3 RTDB projection + N2C Redis GEO.
   app.use(
     '/v1/location',
     requireAuth,
     rateLimit,
-    createLocationRouter(options.db, geo),
+    createLocationRouter(options.db, geo, tripLocationRtdb),
   );
 
   // Phase 4B/5B — pricing estimate (stricter per-uid limit than global auth).
@@ -150,6 +159,7 @@ export function createApp(options: CreateAppOptions) {
       options.db,
       options.redis ?? null,
       options.fcmSender ?? null,
+      tripLocationRtdb,
     ),
   );
 

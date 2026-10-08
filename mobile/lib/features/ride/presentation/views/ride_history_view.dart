@@ -11,6 +11,7 @@ import '../../../../core/utils/responsive.dart';
 import '../../domain/entities/ride.dart';
 import '../history/ride_history_display.dart';
 import '../view_models/ride_history_view_model.dart';
+import '../widgets/ride_card/ride_card.dart';
 
 /// Passenger My Rides — server-backed list via GET /v1/rides.
 ///
@@ -242,6 +243,8 @@ class _Body extends ConsumerWidget {
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
         ),
+        // Tall premium cards — keep footer/next page within build cache.
+        cacheExtent: 480,
         padding: EdgeInsets.fromLTRB(
           padding,
           OraSpacing.sm,
@@ -266,79 +269,16 @@ class _Body extends ConsumerWidget {
             final ride = state.rides[rideIndex];
             return Padding(
               padding: const EdgeInsets.only(bottom: OraSpacing.sm),
-              child: _RideHistoryCard(
-                ride: ride,
-                onTap: () => onOpen(context, ride),
+              child: RideCard(
+                model: RideCardAdapters.fromPassengerHistory(
+                  ride,
+                  onTap: () => onOpen(context, ride),
+                ),
               ),
             );
           }
           return _PaginationFooter(state: state, onLoadMore: vm.loadMore);
         },
-      ),
-    );
-  }
-}
-
-class _RideHistoryCard extends StatelessWidget {
-  const _RideHistoryCard({required this.ride, required this.onTap});
-
-  final Ride ride;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final fare = formatMinorFare(ride.agreedFareMinor, ride.agreedFareCurrency);
-    final when = formatHistoryTimestamp(ride.createdAt);
-    final pickup = ride.pickup.address;
-    final drop = ride.destination.address;
-
-    return OraCard(
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  historyRideTitle(ride.state),
-                  style: OraTypography.bodyEmphasis(OraColors.textPrimary),
-                ),
-              ),
-              OraChip(
-                label: ride.state,
-                selected: !isHistoryTerminalState(ride.state),
-                variant: OraChipVariant.status,
-              ),
-            ],
-          ),
-          const SizedBox(height: OraSpacing.xs),
-          Text(
-            [
-              if (pickup != null && pickup.isNotEmpty) pickup else 'Pickup',
-              '→',
-              if (drop != null && drop.isNotEmpty) drop else 'Destination',
-            ].join(' '),
-            style: OraTypography.body(OraColors.textSecondary),
-          ),
-          const SizedBox(height: OraSpacing.xs),
-          Text(
-            [
-              historyServiceTypeLabel(ride.serviceType),
-              '·',
-              ride.category,
-              if (when != null) ...['·', when],
-            ].join(' '),
-            style: OraTypography.caption(OraColors.textMuted),
-          ),
-          if (fare != null) ...[
-            const SizedBox(height: OraSpacing.xs),
-            Text(
-              'Agreed fare $fare',
-              style: OraTypography.caption(OraColors.textPrimary),
-            ),
-          ],
-        ],
       ),
     );
   }

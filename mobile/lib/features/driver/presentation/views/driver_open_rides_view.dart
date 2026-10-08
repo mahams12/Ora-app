@@ -7,7 +7,7 @@ import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../ride/domain/entities/ride.dart';
-import '../../../ride/presentation/history/ride_history_display.dart';
+import '../../../ride/presentation/widgets/ride_card/ride_card.dart';
 import '../open_ride_display.dart';
 import '../view_models/driver_direct_offer_view_model.dart';
 import '../view_models/driver_open_rides_view_model.dart';
@@ -167,6 +167,7 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
         ),
+        cacheExtent: 480,
         padding: EdgeInsets.fromLTRB(
           padding,
           OraSpacing.sm,
@@ -192,133 +193,18 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
             final offering = state.offeringRideId == ride.rideId;
             return Padding(
               padding: const EdgeInsets.only(bottom: OraSpacing.sm),
-              child: _OpenRideCard(
-                ride: ride,
-                offering: offering,
-                offerDisabled: state.isOffering,
-                onOffer: () => _openOfferSheet(ride),
+              child: RideCard(
+                model: RideCardAdapters.fromOpenRide(
+                  ride,
+                  offering: offering,
+                  offerDisabled: state.isOffering,
+                  onRespond: () => _openOfferSheet(ride),
+                ),
               ),
             );
           }
           return _OpenPaginationFooter(state: state, onLoadMore: vm.loadMore);
         },
-      ),
-    );
-  }
-}
-
-class _OpenRideCard extends StatelessWidget {
-  const _OpenRideCard({
-    required this.ride,
-    required this.offering,
-    required this.offerDisabled,
-    required this.onOffer,
-  });
-
-  final OpenRide ride;
-  final bool offering;
-  final bool offerDisabled;
-  final VoidCallback onOffer;
-
-  @override
-  Widget build(BuildContext context) {
-    final pickup = openRideLocationLabel(ride.pickup, fallback: 'Pickup');
-    final drop =
-        openRideLocationLabel(ride.destination, fallback: 'Destination');
-    final created = formatHistoryTimestamp(ride.createdAt);
-    final expires = openRideExpiresLabel(ride.expiresAt);
-    final distance = formatOpenRideDistanceKm(ride.distanceKm);
-    final duration = formatOpenRideDurationMin(ride.estimatedDurationMin);
-
-    return OraCard(
-      child: Semantics(
-        // Prevent Android from merging the lone Respond button into a
-        // full-card clickable target; keep hit bounds on the InkWell only.
-        label: 'Ride id ${ride.rideId}',
-        container: true,
-        explicitChildNodes: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Keep Respond as its own a11y target (UiAutomator / TalkBack).
-            ExcludeSemantics(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Ride request',
-                          style:
-                              OraTypography.bodyEmphasis(OraColors.textPrimary),
-                        ),
-                      ),
-                      OraChip(
-                        label: openRideStateLabel(ride.state),
-                        selected: true,
-                        variant: OraChipVariant.status,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: OraSpacing.xs),
-                  Text(
-                    '$pickup → $drop',
-                    style: OraTypography.body(OraColors.textSecondary),
-                  ),
-                  const SizedBox(height: OraSpacing.xs),
-                  Text(
-                    [
-                      openRideServiceLine(ride),
-                      '·',
-                      '${ride.passengerCount} passenger'
-                          '${ride.passengerCount == 1 ? '' : 's'}',
-                      '·',
-                      ride.paymentMethod,
-                    ].join(' '),
-                    style: OraTypography.caption(OraColors.textMuted),
-                  ),
-                  const SizedBox(height: OraSpacing.xs),
-                  Text(
-                    'Passenger offer ${formatOpenRideFareMinor(ride.passengerOfferMinor)}',
-                    style: OraTypography.caption(OraColors.textPrimary),
-                  ),
-                  Text(
-                    'Recommended ${formatOpenRideFareMinor(ride.recommendedFareMinor)}',
-                    style: OraTypography.caption(OraColors.textMuted),
-                  ),
-                  if (distance != null || duration != null) ...[
-                    const SizedBox(height: OraSpacing.xxs),
-                    Text(
-                      [
-                        if (distance != null) distance,
-                        if (duration != null) duration,
-                      ].join(' · '),
-                      style: OraTypography.caption(OraColors.textMuted),
-                    ),
-                  ],
-                  if (created != null || expires != null) ...[
-                    const SizedBox(height: OraSpacing.xxs),
-                    Text(
-                      [
-                        if (created != null) 'Requested $created',
-                        if (expires != null) expires,
-                      ].join(' · '),
-                      style: OraTypography.caption(OraColors.textMuted),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(height: OraSpacing.sm),
-            OraButton(
-              label: offering ? 'Submitting…' : 'Respond',
-              semanticLabel: 'Respond to ride request',
-              isLoading: offering,
-              onPressed: offerDisabled ? null : onOffer,
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -209,8 +209,22 @@ def ensure() -> str:
     return dump("ensure3")
 
 
+def on_assigned_detail(t: str) -> bool:
+    """True only on assigned-ride *detail*, not the 'Assigned rides' list."""
+    if "Mark en route" in t or "Mark arrived" in t or "Start ride" in t:
+        return True
+    # Exact title node — do not treat list header "Assigned rides" as detail.
+    return bool(
+        re.search(r'(?:text|content-desc)="Assigned ride"', t)
+    )
+
+
 def loc_status(t: str) -> str | None:
-    if "Assigned ride" not in t and "Mark en route" not in t and "CANCELLED" not in t and "Ride cancelled" not in t:
+    if (
+        not on_assigned_detail(t)
+        and "CANCELLED" not in t
+        and "Ride cancelled" not in t
+    ):
         return None
     for s in (
         "Getting your location…",
@@ -422,7 +436,7 @@ def open_assigned(from_home: bool = False) -> str:
         sh("input", "keyevent", "4")
         time.sleep(2)
         t = ensure()
-    if "Assigned ride" in t and "This ride aggregate is closed" not in t:
+    if on_assigned_detail(t) and "This ride aggregate is closed" not in t:
         return t
     if "Assigned rides" not in t:
         if not (tap(t, "My trips", exact=True) or tap(t, "My trips")):
@@ -450,7 +464,7 @@ def open_assigned(from_home: bool = False) -> str:
         t = dump(f"ride_open_{i}")
         if "permissioncontroller" in pkg or "Allow ORA to access" in t or "While using the app" in t:
             return show(f"ride_perm_{i}")
-        if "Assigned ride" in t and "This ride aggregate is closed" not in t:
+        if on_assigned_detail(t) and "This ride aggregate is closed" not in t:
             return show(f"ride_{i}")
     return show("ride")
 

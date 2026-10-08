@@ -117,6 +117,12 @@ async function main(): Promise<void> {
     const db = memoryDb();
     const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'Lahore');
+    db.seed('rides', 'ride-1', {
+      rideId: 'ride-1',
+      state: 'DRIVER_ASSIGNED',
+      assignedDriverId: 'd1',
+      passengerId: 'p1',
+    });
     const res = await request(appFor(db, 'd1', redis))
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')

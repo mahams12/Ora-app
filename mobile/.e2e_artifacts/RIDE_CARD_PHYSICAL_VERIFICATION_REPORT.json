@@ -1,0 +1,138 @@
+{
+  "artifact": "RIDE_CARD_PHYSICAL_VERIFICATION_REPORT",
+  "startedAt": "2026-10-08T11:31:03.946591+00:00",
+  "device": {
+    "model": "SM-A325F",
+    "android": "13",
+    "serial": "RF8R40ZQ1JH",
+    "package": "com.ora.ora"
+  },
+  "stagingRevision": "ora-auth-service-staging-00026-4tz",
+  "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+  "apkPath": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+  "apkBytes": 182765266,
+  "rideIdsUsed": [],
+  "checks": {
+    "A_driverOpenRides": "PASS",
+    "B_openRideScroll": "PASS",
+    "C_driverRespondFlow": "PASS",
+    "D_driverMyRides": "PASS",
+    "E_passengerMyRides": "PASS",
+    "F_offersInbox": "NOT_TESTED",
+    "G_currentLocationResolution": "PASS",
+    "H_geocodeFailureFallback": "NOT_TESTED",
+    "I_noFakeData": "PASS",
+    "J_cardPerformance": "PASS",
+    "K_regression": "PASS"
+  },
+  "details": {
+    "A": {
+      "hasOpenRidesChrome": true,
+      "hasRespond": true,
+      "respondBoundsAll": [
+        [
+          98,
+          1058,
+          982,
+          1163
+        ]
+      ],
+      "respondHittableInFirstViewport": true,
+      "respondFirstHittableBounds": [
+        98,
+        1058,
+        982,
+        1163
+      ],
+      "hasFare": true,
+      "noPainterRouteLabels": true,
+      "noPassengerIdentity": true,
+      "noFakeData": true,
+      "noGoogleMapInList": true,
+      "noDeclineInvented": true,
+      "visibleTextsSample": [
+        "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?><hierarchy rotation=\"0\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.FrameLayout\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,2194]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.LinearLayout\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,2194]\"><node index=\"0\" text=\"\" resource-id=\"android:id/content\" class=\"android.widget.FrameLayout\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,2194]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.FrameLayout\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"true\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,2194]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,2194]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,2194]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,2194]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.widget.Button\" package=\"com.ora.ora\" content-desc=\"Menu\" checkable=\"false\" checked=\"false\" clickable=\"true\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[21,101][147,227]\" /><node index=\"1\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"Open rides\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[147,130][926,198]\" /><node index=\"2\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"ORA\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[926,135][1038,193]\" /><node index=\"3\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"Open rides\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[53,349][479,444]\" /><node index=\"4\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"Available ride requests from Ora's servers for approved drivers. Not a GPS or map-radius feed.\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[53,454][1028,559]\" /><node index=\"5\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,591][1080,2194]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,591][1080,2194]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[53,622][1028,1235]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"Ride id 18bf334e-3c9b-41c6-b6cb-e8ebd0971482\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[53,622][1028,1203]\"><node index=\"0\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"SEARCHING\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[132,675][354,728]\" /><node index=\"1\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"1m\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[931,675][982,728]\" /><node index=\"2\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"Liberty Market Lahore\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[150,772][982,840]\" /><node index=\"3\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"Gulberg Lahore\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[150,867][982,935]\" /><node index=\"4\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"24.0 km  \u00b7  39 min  \u00b7  Cash\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[98,974][776,1027]\" /><node index=\"5\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"Rs 1140\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[776,966][982,1027]\" /><node index=\"6\" text=\"\" resource-id=\"\" class=\"android.widget.Button\" package=\"com.ora.ora\" content-desc=\"Respond to ride request",
+        "Respond\" checkable=\"false\" checked=\"false\" clickable=\"true\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[98,1058][982,1163]\" /></node></node><node index=\"1\" text=\"\" resource-id=\"\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"End of open rides from server\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"true\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[53,1235][1028,1371]\" /></node></node></node></node></node></node></node></node><node index=\"1\" text=\"\" resource-id=\"android:id/statusBarBackground\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][1080,80]\" /><node index=\"2\" text=\"\" resource-id=\"android:id/navigationBarBackground\" class=\"android.view.View\" package=\"com.ora.ora\" content-desc=\"\" checkable=\"false\" checked=\"false\" clickable=\"false\" enabled=\"true\" focusable=\"false\" focused=\"false\" scrollable=\"false\" long-clickable=\"false\" password=\"false\" selected=\"false\" bounds=\"[0,0][0,0]\" /></node></hierarchy>"
+      ],
+      "rcPhys001": "Respond visible in first viewport without scroll"
+    },
+    "B": {
+      "respondCount": 2,
+      "noGoogleMap": true,
+      "stillOpenChrome": true
+    },
+    "C": {
+      "sheetOpened": true,
+      "hasSubmit": true
+    },
+    "D": {
+      "hasListChrome": true,
+      "noFakeData": true,
+      "noGoogleMap": true,
+      "fakeHits": []
+    },
+    "E": {
+      "hasListChrome": true,
+      "noFakeData": true,
+      "noGoogleMap": true,
+      "fakeHits": []
+    },
+    "F": {
+      "opened": false,
+      "reason": "no marketplace ride available"
+    },
+    "G": {
+      "tappedUseCurrentLocation": true,
+      "placeOk": true,
+      "badCurrentLocationLabel": false,
+      "badRawCoords": false,
+      "resolvedSample": "Location selected",
+      "hasConfirmPickup": true,
+      "confirmedShowsPlace": true
+    },
+    "H": {
+      "reason": "No production config injection; covered by ride_request_view_model_test"
+    },
+    "I": {
+      "fakeHits": []
+    },
+    "J": {
+      "counts": {
+        "GoogleMapController": 5,
+        "Created map": 0,
+        "flutterGoogleMaps": 0,
+        "onMapCreated": 0,
+        "MapView": 2
+      },
+      "logcatBytes": 2670037
+    },
+    "K": {
+      "map1ChromePresent": true,
+      "coreScreensOk": true
+    }
+  },
+  "screenshots": [
+    ".e2e_artifacts/ride_card_01_driver_home.png",
+    ".e2e_artifacts/ride_card_02_driver_open_rides.png",
+    ".e2e_artifacts/ride_card_03_driver_open_scrolled.png",
+    ".e2e_artifacts/ride_card_04_driver_respond_sheet.png",
+    ".e2e_artifacts/ride_card_05_driver_my_rides.png",
+    ".e2e_artifacts/ride_card_06_passenger_home.png",
+    ".e2e_artifacts/ride_card_07_passenger_my_rides.png",
+    ".e2e_artifacts/ride_card_08_offers_inbox.png",
+    ".e2e_artifacts/ride_card_09_request_before_gps.png",
+    ".e2e_artifacts/ride_card_10_gps_resolved.png",
+    ".e2e_artifacts/ride_card_11_pickup_confirmed.png",
+    ".e2e_artifacts/ride_card_12_regression_request.png"
+  ],
+  "failedChecks": [],
+  "limitations": [
+    "Offers Inbox physical test limited \u2014 no live marketplace ride in passenger history",
+    "NOT PHYSICALLY TESTED \u2014 automated coverage only (geocode failure fallback)"
+  ],
+  "productCodeModifiedDuringProof": false,
+  "rcPhys001": "CLOSED",
+  "endedAt": "2026-10-08T11:35:34.550216+00:00",
+  "verdict": "GREEN",
+  "verdictLabel": "RIDE CARD COMPACT \u2014 PHYSICAL PROOF GREEN (RC-PHYS-001 CLOSED)"
+}

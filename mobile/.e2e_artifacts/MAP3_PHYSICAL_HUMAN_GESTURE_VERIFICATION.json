@@ -1,0 +1,79 @@
+{
+  "artifact": "MAP3_PHYSICAL_HUMAN_GESTURE_VERIFICATION",
+  "slice": "MAP-3 \u2014 Human finger camera ownership closure",
+  "startedAt": "2026-10-08T10:52:29.175729+00:00",
+  "humanGestureUsed": true,
+  "adbGestureUsedForOwnershipTest": false,
+  "productCodeModified": false,
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "build": {
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1"
+  },
+  "results": {
+    "initialMap": "PASS",
+    "firstDriverFix": "PASS",
+    "humanFingerPan": "FAIL"
+  },
+  "proofs": {
+    "test1": {
+      "activeRide": true,
+      "googleMap": true,
+      "pickup": true,
+      "destination": true,
+      "waiting": true,
+      "locationUpdating": false,
+      "driverMarker": false,
+      "recenter": true,
+      "status": "DRIVER_ASSIGNED",
+      "cancel": true,
+      "guideSemantics": true,
+      "guideDriverPickup": false,
+      "guideDriverDest": false,
+      "guidePickupDest": true
+    },
+    "test2": {
+      "http": {
+        "status": 200,
+        "accepted": true,
+        "locationSeq": 1,
+        "hasLatLng": true
+      },
+      "ui": {
+        "activeRide": true,
+        "googleMap": true,
+        "pickup": true,
+        "destination": true,
+        "waiting": false,
+        "locationUpdating": false,
+        "driverMarker": true,
+        "recenter": true,
+        "status": "DRIVER_ASSIGNED",
+        "cancel": true,
+        "guideSemantics": true,
+        "guideDriverPickup": true,
+        "guideDriverDest": false,
+        "guidePickupDest": false
+      },
+      "fingerprint": {
+        "ok": true,
+        "sha1": "300acf58b2ac5376",
+        "meanLum": 222.07
+      }
+    }
+  },
+  "evidenceFiles": [],
+  "failedChecks": [],
+  "limitations": [
+    "Operator did not signal human pan within timeout"
+  ],
+  "stagingRevision": "ora-auth-service-staging-00026-4tz",
+  "rideId": "140ebd93-8120-493b-88e5-9a9709a00e67",
+  "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "verdict": "MAP-3 PHYSICAL BLOCKED \u2014 human pan timeout"
+}

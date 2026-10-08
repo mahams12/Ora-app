@@ -18,7 +18,8 @@ class PlaceSearchException implements Exception {
   String toString() => 'PlaceSearchException($kind, $message)';
 }
 
-/// Places autocomplete + details. Implementations may use Google Places HTTP.
+/// Places autocomplete + details + reverse geocode.
+/// Implementations may use Google Places / Geocoding HTTP (no new SDK).
 abstract class PlaceSearchPort {
   Future<List<PlaceSuggestion>> autocomplete({
     required String query,
@@ -28,5 +29,14 @@ abstract class PlaceSearchPort {
   Future<ResolvedPassengerLocation> resolvePlace({
     required String placeId,
     required String sessionToken,
+  });
+
+  /// Resolve GPS coordinates to a human-readable locality/place name.
+  ///
+  /// Coordinates remain authoritative; the returned [address] is display-only.
+  /// Throws [PlaceSearchException] on failure — callers must soft-fail.
+  Future<ResolvedPassengerLocation> reverseGeocode({
+    required double lat,
+    required double lng,
   });
 }
