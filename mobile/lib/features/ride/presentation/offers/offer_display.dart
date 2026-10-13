@@ -12,6 +12,100 @@ String formatOfferAmountMinor(int amountMinor, String currency) {
   return '$whole $currency';
 }
 
+/// Whole PKR rupees for an editable offer field (integer major when exact).
+String offerRupeesFieldText(int amountMinor) {
+  final major = amountMinor / 100.0;
+  if (major == major.roundToDouble()) {
+    return major.toStringAsFixed(0);
+  }
+  return major.toStringAsFixed(2);
+}
+
+/// Parses passenger/driver-entered whole PKR rupees → paisas.
+///
+/// Rejects empty, non-integer, and non-positive input. No floating money math.
+int? parseOfferRupeesToMinor(String text) {
+  final trimmed = text.trim();
+  if (trimmed.isEmpty) return null;
+  final major = int.tryParse(trimmed);
+  if (major == null || major <= 0) return null;
+  return major * 100;
+}
+
+/// Result of validating a passenger offer draft against snapshot bounds.
+enum PassengerOfferParseStatus {
+  valid,
+  empty,
+  malformed,
+  belowMinimum,
+  aboveMaximum,
+}
+
+class PassengerOfferParseResult {
+  const PassengerOfferParseResult._({
+    required this.status,
+    this.amountMinor,
+    this.message,
+  });
+
+  final PassengerOfferParseStatus status;
+  final int? amountMinor;
+  final String? message;
+
+  bool get isValid => status == PassengerOfferParseStatus.valid;
+
+  factory PassengerOfferParseResult.valid(int amountMinor) =>
+      PassengerOfferParseResult._(
+        status: PassengerOfferParseStatus.valid,
+        amountMinor: amountMinor,
+      );
+
+  factory PassengerOfferParseResult.invalid({
+    required PassengerOfferParseStatus status,
+    required String message,
+  }) =>
+      PassengerOfferParseResult._(status: status, message: message);
+}
+
+/// Validates draft rupees against server snapshot bounds (authoritative).
+///
+/// Does **not** clamp — out-of-range stays invalid with a message.
+PassengerOfferParseResult validatePassengerOfferRupees({
+  required String text,
+  required int offerBoundMinMinor,
+  required int offerBoundMaxMinor,
+}) {
+  final trimmed = text.trim();
+  if (trimmed.isEmpty) {
+    return PassengerOfferParseResult.invalid(
+      status: PassengerOfferParseStatus.empty,
+      message: 'Enter your offer amount in PKR.',
+    );
+  }
+  final minor = parseOfferRupeesToMinor(trimmed);
+  if (minor == null) {
+    return PassengerOfferParseResult.invalid(
+      status: PassengerOfferParseStatus.malformed,
+      message: 'Enter a whole PKR amount (no decimals or letters).',
+    );
+  }
+  if (minor < offerBoundMinMinor) {
+    return PassengerOfferParseResult.invalid(
+      status: PassengerOfferParseStatus.belowMinimum,
+      message:
+          'Offer is below the minimum ${formatOfferAmountMinor(offerBoundMinMinor, 'PKR')}.',
+    );
+  }
+  if (minor > offerBoundMaxMinor) {
+    return PassengerOfferParseResult.invalid(
+      status: PassengerOfferParseStatus.aboveMaximum,
+      message:
+          'Offer is above the maximum ${formatOfferAmountMinor(offerBoundMaxMinor, 'PKR')}.',
+    );
+  }
+  return PassengerOfferParseResult.valid(minor);
+}
+
 /// Human label for an offer card — only uses real snapshot fields.
 ///
 /// Backend currently seeds `driverSnapshot: { displayName: null, role: 'driver' }`.

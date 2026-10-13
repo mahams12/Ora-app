@@ -26,6 +26,28 @@ void _scheduleFirstFrameMark() {
   });
 }
 
+/// Opt-in Flutter frame timing → logcat (never invent FPS).
+/// Enable with `--dart-define=ORA_FRAME_TIMING=1` on staging/profile builds.
+void _installFrameTimingLogger() {
+  const enabled = bool.fromEnvironment('ORA_FRAME_TIMING', defaultValue: false);
+  if (!enabled) return;
+  var sample = 0;
+  WidgetsBinding.instance.addTimingsCallback((timings) {
+    for (final t in timings) {
+      sample += 1;
+      final buildMs = t.buildDuration.inMicroseconds / 1000.0;
+      final rasterMs = t.rasterDuration.inMicroseconds / 1000.0;
+      final totalMs = t.totalSpan.inMicroseconds / 1000.0;
+      // ignore: avoid_print — intentional measurable evidence channel
+      debugPrint(
+        'ORA_FRAME n=$sample buildMs=${buildMs.toStringAsFixed(2)} '
+        'rasterMs=${rasterMs.toStringAsFixed(2)} '
+        'totalMs=${totalMs.toStringAsFixed(2)}',
+      );
+    }
+  });
+}
+
 /// Entrypoint.
 ///
 /// [Firebase.initializeApp] must complete before any Firebase service is
@@ -37,6 +59,7 @@ void _scheduleFirstFrameMark() {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   _startupMark('main_enter');
+  _installFrameTimingLogger();
 
   FlutterError.onError = (details) {
     FlutterError.presentError(details);

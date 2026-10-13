@@ -56,3 +56,6 @@ android/key.properties
 android/local.properties
 
 .gradle_home/
+
+# MAP-3 physical harness Pillow venv
+.e2e_artifacts/.venv_map3/

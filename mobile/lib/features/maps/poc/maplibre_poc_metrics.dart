@@ -60,22 +60,16 @@ class MapLibrePoCMetrics {
     mark('error:$message');
   }
 
-  int? get msOpenToMapCreated => mapCreatedAt == null
-      ? null
-      : mapCreatedAt!.difference(screenOpenAt).inMilliseconds;
+  int? get msOpenToMapCreated => mapCreatedAt?.difference(screenOpenAt).inMilliseconds;
 
   int? get msCreatedToStyle =>
       (mapCreatedAt == null || styleLoadedAt == null)
           ? null
           : styleLoadedAt!.difference(mapCreatedAt!).inMilliseconds;
 
-  int? get msOpenToFirstIdle => firstIdleAt == null
-      ? null
-      : firstIdleAt!.difference(screenOpenAt).inMilliseconds;
+  int? get msOpenToFirstIdle => firstIdleAt?.difference(screenOpenAt).inMilliseconds;
 
-  int? get msOpenToOverlays => overlaysReadyAt == null
-      ? null
-      : overlaysReadyAt!.difference(screenOpenAt).inMilliseconds;
+  int? get msOpenToOverlays => overlaysReadyAt?.difference(screenOpenAt).inMilliseconds;
 
   Map<String, Object?> toJson() => {
         'screenOpenAt': screenOpenAt.toIso8601String(),

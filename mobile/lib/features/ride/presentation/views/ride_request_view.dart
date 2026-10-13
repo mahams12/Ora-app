@@ -16,6 +16,7 @@ import '../../domain/models/ride_category_option.dart';
 import '../../domain/ports/pricing_estimate_port.dart';
 import '../offers/offer_display.dart';
 import '../models/ride_map_preview_model.dart';
+import '../utils/ride_request_map_layout.dart';
 import '../view_models/ride_request_view_model.dart';
 import '../widgets/ride_category_selector.dart';
 import '../widgets/ride_map_preview.dart';
@@ -35,6 +36,9 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
   late final TextEditingController _destinationController;
   final ScrollController _composeScrollController = ScrollController();
   final GlobalKey _destinationProposalKey = GlobalKey();
+
+  /// UI-only — expand/collapse must not touch pricing/Places/GPS/create.
+  bool _mapExpanded = false;
 
   @override
   void initState() {
@@ -56,6 +60,30 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
     _pickupController.dispose();
     _destinationController.dispose();
     super.dispose();
+  }
+
+  void _expandMap() {
+    if (_mapExpanded) return;
+    setState(() => _mapExpanded = true);
+  }
+
+  void _collapseMap() {
+    if (!_mapExpanded) return;
+    setState(() => _mapExpanded = false);
+  }
+
+  void _onMapBack(RideRequestUiState state) {
+    if (_mapExpanded) {
+      _collapseMap();
+      return;
+    }
+    if (state.phase == RideRequestPhase.review) {
+      ref.read(rideRequestViewModelProvider.notifier).goToCompose();
+    } else if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(AppRoutes.home);
+    }
   }
 
   void _scrollDestinationProposalIntoView() {
@@ -148,103 +176,133 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
       }
     });
 
-    return Scaffold(
-      backgroundColor: OraColors.background,
-      body: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            RideMapPreview(
-              model: RideMapPreviewModel.fromRideRequest(
-                confirmedPickup: state.confirmedPickup,
-                confirmedDestination: state.confirmedDestination,
-                proposedPickup: state.proposedPickup,
-                proposedDestination: state.proposedDestination,
-                pricingStatus: state.pricingStatus,
-                pricingEstimate: state.pricingEstimate,
-                hasUsablePricing: state.hasUsablePricing,
-              ),
-              onBack: () {
-                if (state.phase == RideRequestPhase.review) {
-                  vm.goToCompose();
-                } else if (context.canPop()) {
-                  context.pop();
-                } else {
-                  context.go(AppRoutes.home);
-                }
-              },
-            ),
-            Expanded(
-              child: Transform.translate(
-                offset: const Offset(0, -18),
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: OraColors.surfaceElevated,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(OraRadius.xxl),
+    return PopScope(
+      canPop: !_mapExpanded,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _mapExpanded) {
+          _collapseMap();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: OraColors.background,
+        resizeToAvoidBottomInset: true,
+        body: SafeArea(
+          top: false,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final keyboardVisible =
+                  MediaQuery.viewInsetsOf(context).bottom > 0;
+              final mapHeight = _mapExpanded
+                  ? RideRequestMapLayout.expandedMapHeight(
+                      viewportHeight: constraints.maxHeight,
+                    )
+                  : RideRequestMapLayout.compactMapHeight(
+                      viewportHeight: constraints.maxHeight,
+                      keyboardVisible: keyboardVisible,
+                    );
+
+              return Column(
+                children: [
+                  RideMapPreview(
+                    model: RideMapPreviewModel.fromRideRequest(
+                      confirmedPickup: state.confirmedPickup,
+                      confirmedDestination: state.confirmedDestination,
+                      proposedPickup: state.proposedPickup,
+                      proposedDestination: state.proposedDestination,
+                      pricingStatus: state.pricingStatus,
+                      pricingEstimate: state.pricingEstimate,
+                      hasUsablePricing: state.hasUsablePricing,
                     ),
+                    height: mapHeight,
+                    isExpanded: _mapExpanded,
+                    onExpand: _expandMap,
+                    onCollapse: _collapseMap,
+                    onBack: () => _onMapBack(state),
                   ),
-                  clipBehavior: Clip.antiAlias,
-                  child: state.phase == RideRequestPhase.submitting
-                      ? const Center(
-                          child: OraLoadingIndicator(
-                            message: 'Sending your request…',
+                  if (!_mapExpanded)
+                    Expanded(
+                      child: Transform.translate(
+                        offset:
+                            const Offset(0, -RideRequestMapLayout.sheetOverlap),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: const BoxDecoration(
+                            color: OraColors.surfaceElevated,
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(OraRadius.xxl),
+                            ),
                           ),
-                        )
-                      : state.phase == RideRequestPhase.error
-                          ? OraErrorState(
-                              title: 'Request failed',
-                              message: state.errorMessage ??
-                                  'Something went wrong. Please try again.',
-                              onRetry: vm.retryAfterError,
-                            )
-                          : state.phase == RideRequestPhase.review
-                              ? _ReviewPane(
-                                  state: state,
-                                  padding: padding,
-                                  onSelectCategory: vm.selectCategory,
-                                  onEditLocations: vm.goToCompose,
-                                  onSubmit: vm.submit,
-                                  onRetryPricing: vm.retryPricing,
-                                  onSelectCity: vm.setCitySlug,
-                                  onPaymentChange: () => _showGateSheet(
-                                    'Payments',
-                                    'Wallet and online payment are not '
-                                        'available in this build. Cash remains '
-                                        'the only honest option.',
+                          clipBehavior: Clip.antiAlias,
+                          child: state.phase == RideRequestPhase.submitting
+                              ? const Center(
+                                  child: OraLoadingIndicator(
+                                    message: 'Sending your request…',
                                   ),
                                 )
-                              : _ComposePane(
-                                  state: state,
-                                  padding: padding,
-                                  scrollController: _composeScrollController,
-                                  destinationProposalKey: _destinationProposalKey,
-                                  pickupController: _pickupController,
-                                  destinationController:
-                                      _destinationController,
-                                  onPickupChanged: vm.setPickupText,
-                                  onDestinationChanged: vm.setDestinationText,
-                                  onUseCurrentLocation:
-                                      vm.useCurrentLocationForPickup,
-                                  onSelectPickupSuggestion: (s) =>
-                                      vm.selectPlaceSuggestion(
-                                    field: LocationField.pickup,
-                                    suggestion: s,
-                                  ),
-                                  onSelectDestinationSuggestion: (s) =>
-                                      vm.selectPlaceSuggestion(
-                                    field: LocationField.destination,
-                                    suggestion: s,
-                                  ),
-                                  onConfirmPickup: vm.confirmPickup,
-                                  onConfirmDestination: vm.confirmDestination,
-                                  onContinue: vm.goToReview,
-                                ),
-                ),
-              ),
-            ),
-          ],
+                              : state.phase == RideRequestPhase.error
+                                  ? OraErrorState(
+                                      title: 'Request failed',
+                                      message: state.errorMessage ??
+                                          'Something went wrong. Please try again.',
+                                      onRetry: vm.retryAfterError,
+                                    )
+                                  : state.phase == RideRequestPhase.review
+                                      ? _ReviewPane(
+                                          state: state,
+                                          padding: padding,
+                                          canSubmit: vm.canSubmitRideRequest,
+                                          onSelectCategory: vm.selectCategory,
+                                          onEditLocations: vm.goToCompose,
+                                          onSubmit: vm.submit,
+                                          onRetryPricing: vm.retryPricing,
+                                          onSelectCity: vm.setCitySlug,
+                                          onOfferDraftChanged:
+                                              vm.setPassengerOfferDraft,
+                                          onPaymentChange: () =>
+                                              _showGateSheet(
+                                            'Payments',
+                                            'Wallet and online payment are not '
+                                                'available in this build. Cash remains '
+                                                'the only honest option.',
+                                          ),
+                                        )
+                                      : _ComposePane(
+                                          state: state,
+                                          padding: padding,
+                                          scrollController:
+                                              _composeScrollController,
+                                          destinationProposalKey:
+                                              _destinationProposalKey,
+                                          pickupController: _pickupController,
+                                          destinationController:
+                                              _destinationController,
+                                          onPickupChanged: vm.setPickupText,
+                                          onDestinationChanged:
+                                              vm.setDestinationText,
+                                          onUseCurrentLocation:
+                                              vm.useCurrentLocationForPickup,
+                                          onSelectPickupSuggestion: (s) =>
+                                              vm.selectPlaceSuggestion(
+                                            field: LocationField.pickup,
+                                            suggestion: s,
+                                          ),
+                                          onSelectDestinationSuggestion: (s) =>
+                                              vm.selectPlaceSuggestion(
+                                            field: LocationField.destination,
+                                            suggestion: s,
+                                          ),
+                                          onConfirmPickup: vm.confirmPickup,
+                                          onConfirmDestination:
+                                              vm.confirmDestination,
+                                          onContinue: vm.goToReview,
+                                        ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -550,26 +608,31 @@ class _ReviewPane extends StatelessWidget {
   const _ReviewPane({
     required this.state,
     required this.padding,
+    required this.canSubmit,
     required this.onSelectCategory,
     required this.onEditLocations,
     required this.onSubmit,
     required this.onRetryPricing,
     required this.onSelectCity,
+    required this.onOfferDraftChanged,
     required this.onPaymentChange,
   });
 
   final RideRequestUiState state;
   final double padding;
+  final bool canSubmit;
   final ValueChanged<String> onSelectCategory;
   final VoidCallback onEditLocations;
   final VoidCallback onSubmit;
   final VoidCallback onRetryPricing;
   final ValueChanged<String> onSelectCity;
+  final ValueChanged<String> onOfferDraftChanged;
   final VoidCallback onPaymentChange;
 
   String? get _selectedPriceLabel {
     final estimate = state.pricingEstimate;
     if (!state.hasUsablePricing || estimate == null) return null;
+    // Category chip shows guidance fare (recommended), not the passenger offer.
     return formatOfferAmountMinor(
       estimate.recommendedFareMinor,
       estimate.currency,
@@ -581,10 +644,6 @@ class _ReviewPane extends StatelessWidget {
     final cat = state.selectedCategory;
     final pickup = state.confirmedPickup;
     final destination = state.confirmedDestination;
-    final canSubmit = state.hasUsablePricing &&
-        state.citySlug != null &&
-        state.citySlug!.isNotEmpty &&
-        state.pricingStatus != PricingStatus.loading;
 
     return Column(
       children: [
@@ -649,6 +708,7 @@ class _ReviewPane extends StatelessWidget {
               _PricingCard(
                 state: state,
                 onRetry: onRetryPricing,
+                onOfferDraftChanged: onOfferDraftChanged,
               ),
               const SizedBox(height: OraSpacing.md),
               _CityRow(
@@ -760,10 +820,12 @@ class _PricingCard extends StatelessWidget {
   const _PricingCard({
     required this.state,
     required this.onRetry,
+    required this.onOfferDraftChanged,
   });
 
   final RideRequestUiState state;
   final VoidCallback onRetry;
+  final ValueChanged<String> onOfferDraftChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -809,7 +871,7 @@ class _PricingCard extends StatelessWidget {
       return OraCard(
         padding: const EdgeInsets.all(OraSpacing.md),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               'Estimated fare',
@@ -820,6 +882,11 @@ class _PricingCard extends StatelessWidget {
               fare,
               style: OraTypography.headline(OraColors.textPrimary),
             ),
+            const SizedBox(height: OraSpacing.xxs),
+            Text(
+              'Guidance only — set your offer below.',
+              style: OraTypography.caption(OraColors.textMuted),
+            ),
             const SizedBox(height: OraSpacing.xs),
             Text(
               'Offer range $minFare – $maxFare',
@@ -829,6 +896,14 @@ class _PricingCard extends StatelessWidget {
             Text(
               '$distance · $duration',
               style: OraTypography.caption(OraColors.textMuted),
+            ),
+            const SizedBox(height: OraSpacing.md),
+            _PassengerOfferField(
+              key: ValueKey<String>(estimate.pricingSnapshotId),
+              draftText: state.passengerOfferDraftText,
+              errorText: state.passengerOfferError,
+              enabled: state.phase != RideRequestPhase.submitting,
+              onChanged: onOfferDraftChanged,
             ),
           ],
         ),
@@ -870,6 +945,63 @@ String _formatDistanceKm(double km) {
 String _formatDurationMin(double minutes) {
   final whole = minutes.round();
   return '~$whole min';
+}
+
+/// Local text controller remounted when [key] (pricingSnapshotId) changes.
+class _PassengerOfferField extends StatefulWidget {
+  const _PassengerOfferField({
+    super.key,
+    required this.draftText,
+    required this.errorText,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  final String draftText;
+  final String? errorText;
+  final bool enabled;
+  final ValueChanged<String> onChanged;
+
+  @override
+  State<_PassengerOfferField> createState() => _PassengerOfferFieldState();
+}
+
+class _PassengerOfferFieldState extends State<_PassengerOfferField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.draftText);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // OraTextField paints the label as a sibling Text, so TalkBack would only
+    // hear the bare digits. Attach identifier + label onto the child TextField
+    // semantics — do NOT set textField/value here (that made Android expose a
+    // non-clickable EditText and blocked physical focus/typing).
+    return Semantics(
+      identifier: 'passenger_offer_field',
+      label: 'Your offer',
+      child: OraTextField(
+        controller: _controller,
+        label: 'Your offer',
+        hint: 'Amount in PKR',
+        errorText: widget.errorText,
+        enabled: widget.enabled,
+        keyboardType: TextInputType.number,
+        textInputAction: TextInputAction.done,
+        onChanged: widget.onChanged,
+      ),
+    );
+  }
 }
 
 class _StatusChip extends StatelessWidget {

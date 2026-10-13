@@ -1,0 +1,14 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+{
+  "ok": true,
+  "createAt": "2026-10-13T08:23:15.244Z",
+  "createStatus": 201,
+  "rideId": "1993da46-f60b-40db-8acf-150e4b6c7689",
+  "passengerOfferMinor": 67000,
+  "openStatus": 200,
+  "openCount": 1,
+  "openIds": [
+    "1993da46-f60b-40db-8acf-150e4b6c7689"
+  ],
+  "createError": null
+}

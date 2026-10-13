@@ -1,0 +1,17 @@
+{
+  "submitAt": "2026-10-13T09:04:40.493Z",
+  "submitStatus": 400,
+  "offer": {
+    "code": "VALIDATION_ERROR",
+    "message": "Unknown or forbidden fields: requestVersion."
+  },
+  "listStatus": 403,
+  "offers": {
+    "error": {
+      "code": "FORBIDDEN",
+      "message": "Only the ride passenger may list offers."
+    },
+    "requestId": "7d08a722-e89a-4e6b-abaf-3bce55fc3b25"
+  },
+  "requestVersion": 1
+}

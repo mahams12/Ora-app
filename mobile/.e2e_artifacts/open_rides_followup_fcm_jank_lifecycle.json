@@ -1,0 +1,166 @@
+{
+  "startedAt": "2026-10-13T08:58:35.252210+00:00",
+  "device": "RF8R40ZQ1JH",
+  "package": "com.ora.ora",
+  "openRidesPreRideIds": [],
+  "shots": {
+    "fcm_open_pre": "open_rides_followup_fcm_open_pre.png",
+    "fcm_card": "open_rides_followup_fcm_timeout.png"
+  },
+  "performance": {
+    "tag": "scroll2",
+    "method": "adb shell dumpsys gfxinfo com.ora.ora (HWUI profile enabled)",
+    "device": "RF8R40ZQ1JH",
+    "build": "debug staging APK",
+    "sampleDurationMs": 7596,
+    "rawPath": ".e2e_artifacts/open_rides_followup_gfxinfo_scroll2.txt",
+    "totalFramesRendered": 0,
+    "jankyFrames": 0,
+    "jankyPercent": 0.0,
+    "p50Ms": 4950,
+    "p90Ms": 4950,
+    "p95Ms": 4950,
+    "p99Ms": 4950,
+    "profileRowCount": 2,
+    "hasUsableFrameStats": false
+  },
+  "fcmPrep": {
+    "ok": true,
+    "rideId": "f8aadc89-e0c3-4798-ac9e-7eb68b6adec5",
+    "meta": {
+      "prepStartedAt": "2026-10-13T08:59:20.829469+00:00",
+      "prepFinishedAt": "2026-10-13T08:59:42.942224+00:00",
+      "prepWallMs": 22111
+    },
+    "dispatchTick": {
+      "status": 200,
+      "data": {
+        "outcome": "wave_completed",
+        "rideId": "f8aadc89-e0c3-4798-ac9e-7eb68b6adec5",
+        "waveNumber": 1,
+        "invitedCount": 1,
+        "driverIds": [
+          "SRjL7BJgCKTduhtpjtYMRZMq5fD2"
+        ]
+      }
+    },
+    "fcmSweep": {
+      "status": 200,
+      "data": {
+        "scanned": 25,
+        "processed": 0,
+        "delivered": 0,
+        "retryable": 0,
+        "deadLetter": 0,
+        "skipped": 25,
+        "failed": 0
+      }
+    },
+    "createRide": {
+      "status": 201,
+      "data": {
+        "rideId": "f8aadc89-e0c3-4798-ac9e-7eb68b6adec5",
+        "passengerId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+        "assignedDriverId": null,
+        "state": "SEARCHING",
+        "version": 1,
+        "requestVersion": 1,
+        "category": "easy",
+        "serviceType": "ride",
+        "city": "lahore",
+        "pickup": {
+          "lat": 31.4127578,
+          "lng": 74.1725224,
+          "address": "Liberty Market Lahore"
+        },
+        "destination": {
+          "lat": 31.51058,
+          "lng": 74.34445,
+          "address": "Gulberg Lahore"
+        },
+        "pricingSnapshotId": "ps_5ab0482c-da29-464e-a013-074ee9f15305",
+        "recommendedFareMinor": 114000,
+        "passengerOfferMinor": 114000,
+        "agreedFareMinor": null,
+        "agreedOfferId": null,
+        "agreedFareCurrency": null,
+        "paymentMethod": "CASH",
+        "passengerCount": 1,
+        "expiresAt": "2026-10-13T09:04:31.411Z",
+        "assignedAt": null,
+        "arrivedAt": null,
+        "startedAt": null,
+        "completedAt": null,
+        "closedAt": null,
+        "cancelledBy": null,
+        "cancellationReason": null,
+        "createdAt": "2026-10-13T08:59:31.411Z",
+        "updatedAt": "2026-10-13T08:59:31.411Z"
+      }
+    }
+  },
+  "realtime": {
+    "mechanism": "FCM DispatchFcmService \u2192 _refreshOpenRides (no pull-to-refresh used)",
+    "timestamps": {
+      "rideCreatedAt": "2026-10-13T08:59:31.411Z",
+      "prepFinishedAt": "2026-10-13T08:59:42.942224+00:00",
+      "fcmWallWatchStart": "2026-10-13T08:59:20.829129+00:00",
+      "cardPoll": {
+        "appeared": false,
+        "pollStartedAt": "2026-10-13T08:59:42.947752+00:00",
+        "appearLatencyMs": 290542,
+        "marker": "f8aadc89-e0c3-4798-ac9e-7eb68b6adec5"
+      },
+      "logcat": {
+        "filteredPath": ".e2e_artifacts/open_rides_followup_fcm_logcat_filtered.txt",
+        "matchCount": 2,
+        "firstMatchLine": "10-13 13:59:56.666 25877 25877 I FLTFireMsgService: FlutterFirebaseMessagingBackgroundService started!"
+      }
+    },
+    "fcmDeliveryFromSweep": {
+      "scanned": 25,
+      "processed": 0,
+      "delivered": 0,
+      "retryable": 0,
+      "deadLetter": 0,
+      "skipped": 25,
+      "failed": 0
+    },
+    "uiCardAppearedWithoutManualRefresh": false,
+    "verdict": "PARTIAL"
+  },
+  "physicalLifecycle": {
+    "ui": {
+      "sheetOpened": false
+    },
+    "server": {
+      "submitAt": "2026-10-13T09:04:40.493Z",
+      "submitStatus": 400,
+      "offer": {
+        "code": "VALIDATION_ERROR",
+        "message": "Unknown or forbidden fields: requestVersion."
+      },
+      "listStatus": 403,
+      "offers": {
+        "error": {
+          "code": "FORBIDDEN",
+          "message": "Only the ride passenger may list offers."
+        },
+        "requestId": "7d08a722-e89a-4e6b-abaf-3bce55fc3b25"
+      },
+      "requestVersion": 1
+    },
+    "verdict": "PARTIAL"
+  },
+  "myRidesMetrics": {
+    "cancelledVisible": true,
+    "km": [
+      "19.6 km"
+    ],
+    "emdash": true,
+    "distanceLabel": true,
+    "durationLabel": true,
+    "shot": "open_rides_followup_my_rides_v3.png"
+  },
+  "finishedAt": "2026-10-13T09:06:06.747426+00:00"
+}

@@ -1,0 +1,34 @@
+{
+  "cold": {
+    "wallMs": 14140,
+    "failClosed": false,
+    "styleChips": true,
+    "descs": [
+      "Back",
+      "MapLibre PoC",
+      "Orbit showcase",
+      "Metrics",
+      "DISPOSABLE PoC \u2014 Lahore vector tiles \u00b7 Ora dark style \u00b7 display-only route/markers \u00b7 not production \u00b7 not RTDB",
+      "Style: Ora-controlled",
+      "3D / pitch / rotate enabled",
+      "Route: DISPLAY-ONLY"
+    ],
+    "metrics": []
+  },
+  "warm": {
+    "wallMs": 13660,
+    "failClosed": false,
+    "styleChips": true,
+    "descs": [
+      "Back",
+      "MapLibre PoC",
+      "Orbit showcase",
+      "Metrics",
+      "DISPOSABLE PoC \u2014 Lahore vector tiles \u00b7 Ora dark style \u00b7 display-only route/markers \u00b7 not production \u00b7 not RTDB",
+      "Style: Ora-controlled",
+      "3D / pitch / rotate enabled",
+      "Route: DISPLAY-ONLY"
+    ],
+    "metrics": []
+  }
+}

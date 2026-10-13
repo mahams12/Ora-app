@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -82,7 +81,7 @@ void main() {
     clock = DateTime.utc(2026, 10, 8, 12, 0, 0);
   });
 
-  ProviderContainer _container({required String initialState}) {
+  ProviderContainer container({required String initialState}) {
     when(() => getRide(any())).thenAnswer((_) async => _ride(initialState));
     return ProviderContainer(
       overrides: [
@@ -103,7 +102,7 @@ void main() {
     );
   }
 
-  Future<void> _settle(
+  Future<void> settle(
     ProviderContainer c, {
     String rideId = 'ride-1',
     MemoryTripLocationPort? port,
@@ -123,9 +122,9 @@ void main() {
   }
 
   test('DRIVER_ASSIGNED starts exactly one listener', () async {
-    final c = _container(initialState: 'DRIVER_ASSIGNED');
+    final c = container(initialState: 'DRIVER_ASSIGNED');
     addTearDown(c.dispose);
-    await _settle(c);
+    await settle(c);
     expect(memoryPort.watchStartCount, 1);
     expect(memoryPort.activeRideIds, contains('ride-1'));
     final session = c.read(tripLocationSessionProvider('ride-1').notifier);
@@ -159,15 +158,15 @@ void main() {
         ],
       );
       addTearDown(c.dispose);
-      await _settle(c, port: port);
+      await settle(c, port: port);
       expect(port.watchStartCount, 1, reason: state);
     }
   });
 
   test('RIDE_COMPLETED stops listener', () async {
-    final c = _container(initialState: 'DRIVER_ASSIGNED');
+    final c = container(initialState: 'DRIVER_ASSIGNED');
     addTearDown(c.dispose);
-    await _settle(c);
+    await settle(c);
     expect(memoryPort.watchStartCount, 1);
 
     // Simulate VM state advance by overriding getRide and refreshing.
@@ -205,7 +204,7 @@ void main() {
         ],
       );
       addTearDown(c.dispose);
-      await _settle(c, port: port);
+      await settle(c, port: port);
       expect(port.watchStartCount, 1);
 
       when(() => getRide(any())).thenAnswer((_) async => _ride(terminal));
@@ -220,9 +219,9 @@ void main() {
   });
 
   test('waiting when assigned but no RTDB latest', () async {
-    final c = _container(initialState: 'DRIVER_ASSIGNED');
+    final c = container(initialState: 'DRIVER_ASSIGNED');
     addTearDown(c.dispose);
-    await _settle(c);
+    await settle(c);
     memoryPort.emit('ride-1', null);
     await Future<void>.delayed(const Duration(milliseconds: 20));
     final s = c.read(tripLocationSessionProvider('ride-1'));
@@ -231,9 +230,9 @@ void main() {
   });
 
   test('driver marker fields appear with valid latest', () async {
-    final c = _container(initialState: 'DRIVER_ASSIGNED');
+    final c = container(initialState: 'DRIVER_ASSIGNED');
     addTearDown(c.dispose);
-    await _settle(c);
+    await settle(c);
     memoryPort.emit('ride-1', _latest(seq: 1, acceptedAt: clock));
     await Future<void>.delayed(const Duration(milliseconds: 20));
     final s = c.read(tripLocationSessionProvider('ride-1'));
@@ -243,9 +242,9 @@ void main() {
   });
 
   test('older locationSeq is ignored', () async {
-    final c = _container(initialState: 'DRIVER_EN_ROUTE');
+    final c = container(initialState: 'DRIVER_EN_ROUTE');
     addTearDown(c.dispose);
-    await _settle(c);
+    await settle(c);
     memoryPort.emit('ride-1', _latest(seq: 5, lat: 31.54));
     await Future<void>.delayed(const Duration(milliseconds: 20));
     memoryPort.emit('ride-1', _latest(seq: 3, lat: 31.0));
@@ -256,17 +255,17 @@ void main() {
   });
 
   test('malformed latest does not crash session', () async {
-    final c = _container(initialState: 'DRIVER_ASSIGNED');
+    final c = container(initialState: 'DRIVER_ASSIGNED');
     addTearDown(c.dispose);
-    await _settle(c);
+    await settle(c);
     // Port only emits validated models; simulate soft null.
     expect(() => memoryPort.emit('ride-1', null), returnsNormally);
   });
 
   test('stale marker UX message', () async {
-    final c = _container(initialState: 'DRIVER_ASSIGNED');
+    final c = container(initialState: 'DRIVER_ASSIGNED');
     addTearDown(c.dispose);
-    await _settle(c);
+    await settle(c);
     final staleAt = clock.subtract(const Duration(seconds: 30));
     memoryPort.emit('ride-1', _latest(seq: 2, acceptedAt: staleAt));
     await Future<void>.delayed(const Duration(milliseconds: 20));
@@ -276,9 +275,9 @@ void main() {
   });
 
   test('no duplicate listener while already watching', () async {
-    final c = _container(initialState: 'DRIVER_ASSIGNED');
+    final c = container(initialState: 'DRIVER_ASSIGNED');
     addTearDown(c.dispose);
-    await _settle(c);
+    await settle(c);
     final gen1 = c.read(tripLocationSessionProvider('ride-1')).watchGeneration;
     // Lifecycle resume while already listening should not stack.
     c
@@ -293,9 +292,9 @@ void main() {
   });
 
   test('background pauses; foreground resumes one listener', () async {
-    final c = _container(initialState: 'DRIVER_ASSIGNED');
+    final c = container(initialState: 'DRIVER_ASSIGNED');
     addTearDown(c.dispose);
-    await _settle(c);
+    await settle(c);
     expect(memoryPort.watchStartCount, 1);
     final session = c.read(tripLocationSessionProvider('ride-1').notifier);
     session.onAppLifecycle(AppLifecycleState.paused);

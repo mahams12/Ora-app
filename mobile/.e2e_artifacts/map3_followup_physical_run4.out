@@ -1,0 +1,25 @@
+=== INSTALL MAP-3 APK ===
+Traceback (most recent call last):
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/map3_physical.py", line 902, in <module>
+    main()
+    ~~~~^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/map3_physical.py", line 293, in main
+    inst = install_apk()
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/map3_physical.py", line 78, in install_apk
+    after = M.sh("dumpsys", "package", M.PKG)
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/map2a_physical.py", line 56, in sh
+    return subprocess.check_output(
+           ~~~~~~~~~~~~~~~~~~~~~~~^
+        ["adb", "-s", DEV, "shell", *a], stderr=subprocess.STDOUT
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ).decode("utf-8", "replace")
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['adb', '-s', 'RF8R40ZQ1JH', 'shell', 'dumpsys', 'package', 'com.ora.ora']' returned non-zero exit status 1.

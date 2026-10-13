@@ -984,7 +984,239 @@ void main() {
       expect(captured?['passengerOfferMinor'], 42000);
       expect(pricing.requests.last.toJson()['city'], 'lahore');
     });
+
+    test('5D default offer equals recommended after estimate', () async {
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(
+        places: places,
+        pricing: FakePricingPort(estimateResult: _sampleEstimate()),
+      );
+      addTearDown(c.dispose);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+      await confirmBoth(vm, places: places);
+      final state = c.read(rideRequestViewModelProvider);
+      expect(state.passengerOfferMinor, 42000);
+      expect(state.passengerOfferDraftText, '420');
+      expect(state.hasValidPassengerOffer, isTrue);
+      expect(state.passengerOfferError, isNull);
+    });
+
+    test('5D in-range edit updates offer; out-of-range does not clamp', () async {
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(
+        places: places,
+        pricing: FakePricingPort(estimateResult: _sampleEstimate()),
+      );
+      addTearDown(c.dispose);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+      await confirmBoth(vm, places: places);
+
+      vm.setPassengerOfferDraft('500');
+      expect(c.read(rideRequestViewModelProvider).passengerOfferMinor, 50000);
+      expect(c.read(rideRequestViewModelProvider).passengerOfferError, isNull);
+      expect(vm.canSubmitRideRequest, isTrue);
+
+      vm.setPassengerOfferDraft('300');
+      expect(c.read(rideRequestViewModelProvider).passengerOfferMinor, 30000);
+
+      vm.setPassengerOfferDraft('750');
+      expect(c.read(rideRequestViewModelProvider).passengerOfferMinor, 75000);
+
+      vm.setPassengerOfferDraft('299');
+      var state = c.read(rideRequestViewModelProvider);
+      expect(state.passengerOfferMinor, isNull);
+      expect(state.passengerOfferDraftText, '299');
+      expect(state.passengerOfferError, contains('minimum'));
+      expect(vm.canSubmitRideRequest, isFalse);
+
+      vm.setPassengerOfferDraft('751');
+      state = c.read(rideRequestViewModelProvider);
+      expect(state.passengerOfferMinor, isNull);
+      expect(state.passengerOfferError, contains('maximum'));
+
+      vm.setPassengerOfferDraft('');
+      expect(
+        c.read(rideRequestViewModelProvider).passengerOfferError,
+        isNotNull,
+      );
+
+      vm.setPassengerOfferDraft('12.5');
+      expect(
+        c.read(rideRequestViewModelProvider).passengerOfferError,
+        contains('whole PKR'),
+      );
+    });
+
+    test('5D create sends exact chosen offer and snapshot id', () async {
+      final createRide = MockCreateRideUseCase();
+      Map<String, Object?>? captured;
+      when(
+        () => createRide(
+          body: any(named: 'body'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).thenAnswer((invocation) async {
+        captured = Map<String, Object?>.from(
+          invocation.namedArguments[#body] as Map,
+        );
+        return _sampleRide();
+      });
+
+      final pricing = FakePricingPort(
+        estimateResult: _sampleEstimate(snapshotId: 'ps_offer_5d'),
+      );
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(
+        createRide: createRide,
+        places: places,
+        pricing: pricing,
+      );
+      addTearDown(c.dispose);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+      await confirmBoth(vm, places: places);
+      vm.setPassengerOfferDraft('550');
+      await vm.submit();
+      expect(c.read(rideRequestViewModelProvider).phase, RideRequestPhase.created);
+      expect(captured?['passengerOfferMinor'], 55000);
+      expect(captured?['pricingSnapshotId'], 'ps_offer_5d');
+    });
+
+    test('5D invalid offer blocks create (no createRide call)', () async {
+      final createRide = MockCreateRideUseCase();
+      when(
+        () => createRide(
+          body: any(named: 'body'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).thenAnswer((_) async => _sampleRide());
+
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(
+        createRide: createRide,
+        places: places,
+        pricing: FakePricingPort(estimateResult: _sampleEstimate()),
+      );
+      addTearDown(c.dispose);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+      await confirmBoth(vm, places: places);
+      vm.setPassengerOfferDraft('100');
+      await vm.submit();
+      expect(c.read(rideRequestViewModelProvider).phase, isNot(RideRequestPhase.created));
+      verifyNever(
+        () => createRide(
+          body: any(named: 'body'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      );
+    });
+
+    test('5D new snapshot reconciles prior offer vs new bounds', () async {
+      // confirmBoth fires estimate on confirmDestination + force refresh.
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final sequential = _SequentialPricing([
+        _sampleEstimate(snapshotId: 'ps_warmup_a'),
+        _sampleEstimate(snapshotId: 'ps_warmup_b'),
+        const PricingEstimate(
+          pricingSnapshotId: 'ps_keep',
+          recommendedFareMinor: 50000,
+          offerBoundMinMinor: 40000,
+          offerBoundMaxMinor: 60000,
+          currency: 'PKR',
+          pricingRulesVersion: 'v1',
+          computedAt: '2026-01-01T00:00:00.000Z',
+          expiresAt: '2099-01-01T00:00:00.000Z',
+          distanceKm: 3.6,
+          durationMin: 12,
+          category: 'easy',
+        ),
+        const PricingEstimate(
+          pricingSnapshotId: 'ps_reset',
+          recommendedFareMinor: 20000,
+          offerBoundMinMinor: 15000,
+          offerBoundMaxMinor: 25000,
+          currency: 'PKR',
+          pricingRulesVersion: 'v1',
+          computedAt: '2026-01-01T00:00:00.000Z',
+          expiresAt: '2099-01-01T00:00:00.000Z',
+          distanceKm: 3.6,
+          durationMin: 12,
+          category: 'easy',
+        ),
+      ]);
+      final c = container(places: places, pricing: sequential);
+      addTearDown(c.dispose);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+      await confirmBoth(vm, places: places);
+      // After warmup estimates, offer defaults to recommended 420.
+      expect(c.read(rideRequestViewModelProvider).passengerOfferMinor, 42000);
+
+      vm.setPassengerOfferDraft('550');
+      expect(c.read(rideRequestViewModelProvider).passengerOfferMinor, 55000);
+
+      // In-bounds for ps_keep (40k–60k) → keep 550.
+      await vm.retryPricing();
+      expect(
+        c.read(rideRequestViewModelProvider).pricingEstimate?.pricingSnapshotId,
+        'ps_keep',
+      );
+      expect(c.read(rideRequestViewModelProvider).passengerOfferMinor, 55000);
+
+      // Out of bounds for ps_reset (15k–25k) → reset to recommended 200.
+      await vm.retryPricing();
+      expect(
+        c.read(rideRequestViewModelProvider).pricingEstimate?.pricingSnapshotId,
+        'ps_reset',
+      );
+      expect(c.read(rideRequestViewModelProvider).passengerOfferMinor, 20000);
+      expect(c.read(rideRequestViewModelProvider).passengerOfferDraftText, '200');
+    });
+
+    test('5D duplicate submit while submitting is ignored', () async {
+      final gate = Completer<Ride>();
+      final createRide = MockCreateRideUseCase();
+      var calls = 0;
+      when(
+        () => createRide(
+          body: any(named: 'body'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).thenAnswer((_) {
+        calls++;
+        return gate.future;
+      });
+
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(
+        createRide: createRide,
+        places: places,
+        pricing: FakePricingPort(estimateResult: _sampleEstimate()),
+      );
+      addTearDown(c.dispose);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+      await confirmBoth(vm, places: places);
+      final first = vm.submit();
+      final second = vm.submit();
+      expect(c.read(rideRequestViewModelProvider).phase, RideRequestPhase.submitting);
+      gate.complete(_sampleRide());
+      await Future.wait([first, second]);
+      expect(calls, 1);
+    });
   });
+}
+
+class _SequentialPricing implements PricingEstimatePort {
+  _SequentialPricing(this._results);
+
+  final List<PricingEstimate> _results;
+  int _i = 0;
+
+  @override
+  Future<PricingEstimate> estimate(PricingEstimateRequest request) async {
+    if (_i >= _results.length) {
+      throw StateError('no more estimates');
+    }
+    return _results[_i++];
+  }
 }
 
 class _ResolveRacePlaceSearch implements PlaceSearchPort {

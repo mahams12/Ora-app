@@ -1,0 +1,74 @@
+{
+  "artifact": "PASSENGER_FARE_OFFER_PHYSICAL_FOLLOWUP",
+  "startedAt": "2026-10-12T10:49:51.862599+00:00",
+  "endedAt": "2026-10-12T10:53:13.075788+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+  "checks": {
+    "deviceAttached": true,
+    "apkInstalled": true,
+    "reviewReached": true,
+    "offerFieldLocated": true,
+    "offerFieldLocateMethod": "resource-id-or-desc",
+    "outOfRangeRejected": false,
+    "customOfferEntered": false,
+    "customOfferDiffersFromRecommended": true,
+    "requestEnabledForCustom": false,
+    "submitTapped": false,
+    "postSubmitOffersOrCreated": false,
+    "durableOfferMatches": "UNVERIFIED",
+    "openListShowsOffer": "UNVERIFIED",
+    "pickupConfirmed": true
+  },
+  "failedChecks": [
+    "outOfRangeRejected",
+    "customOfferEntered",
+    "requestEnabledForCustom",
+    "submitTapped"
+  ],
+  "metrics": {
+    "recommendedSample": [
+      850
+    ],
+    "recommendedMajorPkr": 850,
+    "offerTextBeforeEdit": "850",
+    "oorFieldText": "850",
+    "oorRequestEnabled": true,
+    "oorErrorVisible": false,
+    "oorTextApplied": false,
+    "customOfferMajorPkr": 840,
+    "customFieldText": "850",
+    "customRequestEnabled": true
+  },
+  "notes": [
+    "OOR type failed; field still '850'",
+    "Request not enabled for custom=840 field='850' en=True"
+  ],
+  "evidenceFiles": [
+    "p5dfu_boot.png",
+    "p5dfu_compose.xml",
+    "p5dfu_compose.png",
+    "p5dfu_sugg.png",
+    "p5dfu_review_top.png",
+    "p5dfu_offer_visible.png",
+    "p5dfu_offer_visible.xml",
+    "p5dfu_oor.png",
+    "p5dfu_oor.xml",
+    "p5dfu_custom.xml",
+    "p5dfu_custom.png"
+  ],
+  "diagnosis": {
+    "priorBlocker": "EditText off-screen + label not on field semantics",
+    "fixApplied": [
+      "Semantics(identifier: passenger_offer_field, label: Your offer)",
+      "Harness scrolls in small steps until field found",
+      "Suggestion taps skip EditText nodes"
+    ]
+  },
+  "verdict": "PHYSICAL FAIL"
+}

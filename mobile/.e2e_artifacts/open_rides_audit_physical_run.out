@@ -1,0 +1,257 @@
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (10559 bytes in 0.004s)
+/sdcard/open_rides_audit_boot.png: 1 file pulled, 0 skipped. 23.1 MB/s (790742 bytes in 0.033s)
+  MISS ('Open rides',)
+  MISS ('Open',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (5651 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.8 MB/s (5651 bytes in 0.007s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (5651 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (5651 bytes in 0.004s)
+/sdcard/open_rides_audit_open_rides.png: 1 file pulled, 0 skipped. 21.9 MB/s (813074 bytes in 0.035s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.1 MB/s (5651 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (5651 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5651 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.9 MB/s (5651 bytes in 0.006s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (5651 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5651 bytes in 0.004s)
+--------- beginning of system
+10-13 12:46:17.577 22418 22418 I SDHMS:LOAD: type: LoadsFreqs, value: 0:0:0:959699:1443000:850000:674380:1800000:500000:5:299:0
+--------- beginning of main
+10-13 12:46:17.840 21204 21303 D MobileStatusTracker(0/1): onSignalStrengthsChanged level=4, vendorLevel=4
+10-13 12:46:17.844 21204 21303 D MobileSignalController(0/1): notifyListener: enabled=true, connected=true, dataConnected=false, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+10-13 12:46:17.844 21204 21303 D NetworkController: SignalStrength from intent slotId=0
+10-13 12:46:17.976  7676  7676 W RefBase : RefBase: Explicit destruction, weak count = 0 (in 0x70c0bef988). Use sp<> to manage this object.
+10-13 12:46:17.997  7676  7676 D RefBase : #00 pc 0000000000101358  /apex/com.android.runtime/lib64/bionic/libc.so (__cxa_finalize+280)
+10-13 12:46:17.997  7676  7676 D RefBase : #01 pc 00000000000f3078  /apex/com.android.runtime/lib64/bionic/libc.so (exit+24)
+10-13 12:46:17.997  7676  7676 D RefBase : #02 pc 0000000000085e14  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+100)
+10-13 12:46:18.054  1163  1230 I libPowerHal: perfUserScnCheckAll
+10-13 12:46:18.054  1163  1230 I libPowerHal: perfScnDumpAll cmd:0
+10-13 12:46:18.054  1163  1230 I libPowerHal: ========================
+10-13 12:46:18.054  1163  1230 I libPowerHal: ========================
+10-13 12:46:18.056  5365  5365 I adbd    : adbd service requested 'sync:'
+10-13 12:46:18.281   585   585 D io_stats: !@ 179,0 r 21535061 230147686 w 16927548 158024376 d 0 0 f 0 0 iot 13917428 0 th 0 0 0 pt 0 inp 0 0 217535.991
+10-13 12:46:18.984 21160 21160 I WifiHAL : Get link layer stats
+10-13 12:46:18.984 21160 21160 I WifiHAL : GetLinkStatsCommand::create
+10-13 12:46:18.984 21160 21160 D android.hardware.wifi@1.0-service-lazy: WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+10-13 12:46:18.984 21160 21160 I android.hardware.wifi@1.0-service-lazy: WifiCommand::requestResponse err=-95
+10-13 12:46:18.984 21160 21160 I WifiHAL : wifi_get_link_stats: result=-3
+10-13 12:46:18.986 20777 21036 E WifiVendorHal: $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+10-13 12:46:18.997 20777 22196 D SemWifiUsabilityStatsMonitor: onWifiUsabilityStats - seqNum 7550, isSameBssidAndFreq true
+10-13 12:46:18.998 20777 21109 I SemWifiLinkQualityMonitor: Link Qos query: inf. ms / 0 Mbps
+10-13 12:46:19.120 21204 21303 D MobileStatusTracker(0/1): onSignalStrengthsChanged level=4, vendorLevel=4
+10-13 12:46:19.123 21204 21303 D MobileSignalController(0/1): notifyListener: enabled=true, connected=true, dataConnected=false, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+10-13 12:46:19.124 21204 21303 D NetworkController: SignalStrength from intent slotId=0
+10-13 12:46:19.302  5365  5365 I adbd    : adbd service requested 'shell,v2,TERM=dumb,raw:uiautomator dump /sdcard/m2a.xml'
+10-13 12:46:19.539  7691  7691 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-13 12:46:19.551  7691  7691 I AndroidRuntime: Using default boot image
+10-13 12:46:19.551  7691  7691 I AndroidRuntime: Leaving lock profiling enabled
+10-13 12:46:19.552  7691  7691 D SecNativeFeatureCppIf: encoded
+10-13 12:46:19.552  7691  7691 D SecNativeFeatureCppIf: decoding and unzip finish
+10-13 12:46:19.552  7691  7691 D SecNativeFeatureCppIf: use unCompDataBuff. encoded
+10-13 12:46:19.552  7691  7691 D SecNativeFeatureCppIf: Free unCompDataBuff
+10-13 12:46:19.552  7691  7691 D AndroidRuntime: addProductProperty: pBrand1 is not null
+10-13 12:46:19.552  7691  7691 D AndroidRuntime: addProductProperty: not brand or 7
+10-13 12:46:19.558  7691  7691 I app_process: Core platform API enforcement reporting only by runtime option
+10-13 12:46:19.559  7691  7691 I app_process: Using generational CollectorTypeCC GC.
+10-13 12:46:19.699  7691  7691 D nativeloader: InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+10-13 12:46:19.733  7691  7691 D nativeloader: Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-13 12:46:19.733  7691  7691 D app_process: Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+10-13 12:46:19.733  7691  7691 D app_process: I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+10-13 12:46:19.736  7691  7691 D nativeloader: Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-13 12:46:19.739  7691  7691 D nativeloader: Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+10-13 12:46:19.741  7691  7691 I app_process: Priority-to-niceness mapping: 19, 16, 13, 10, 0, -2, -4, -5, -6, -8
+10-13 12:46:19.782  7691  7691 E SemDvfsManager_JNI: SemDvfsManager: registerfunction enter
+10-13 12:46:19.783  7691  7691 E SemAffinityControl: SemAffinityControl: registerfunction enter
+10-13 12:46:19.818  7691  7691 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+10-13 12:46:19.819  7691  7691 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-13 12:46:19.829  1196  1991 I SurfaceFlinger: id=124399 createSurf flag=80004, WindowToken{159d43d type=2032 android.os.Binder@d16194}#124399
+10-13 12:46:19.831 20777 23609 D SettingsProvider: isChangeAllowed() : name = accessibility_enabled
+10-13 12:46:19.831 20777 23609 I GenerationRegistry: mBackingStore.isClosed() : false
+10-13 12:46:19.832 20777 23609 I GenerationRegistry: mBackingStore.isClosed() : false
+10-13 12:46:19.832 20777 23609 D WindowMagnificationMgr: requestConnection :false mConnectionState : 3
+10-13 12:46:19.832 20777 23609 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-13 12:46:19.836 20777 23609 D SettingsProvider: isChangeAllowed() : name = accessibility_enabled
+10-13 12:46:19.836 20777 23609 I GenerationRegistry: mBackingStore.isClosed() : false
+10-13 12:46:19.836 20777 23609 I GenerationRegistry: mBackingStore.isClosed() : false
+10-13 12:46:19.837 20777 23609 D WindowMagnificationMgr: requestConnection :false mConnectionState : 3
+10-13 12:46:19.837 20777 23609 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-13 12:46:19.841  1150  2406 I hwcomposer: [HWCDisplay] [Display_0 (type:1)] fps:1.455683,dur:2747.85,max:2699.93,min:13.07  
+10-13 12:46:19.844 20777 21369 W WindowManager: Cannot find window which accessibility connection is added to
+10-13 12:46:19.846 20777 20777 D BatterySaverPolicy: accessibility changed to true, updating policy.
+10-13 12:46:19.847  6608  6608 I SafetyCenterAccessibilityListener: accessibility event occurred, safety center feature not enabled.
+10-13 12:46:19.848  6671  6671 I SafetyCenterAccessibilityListener: accessibility event occurred, safety center feature not enabled.
+10-13 12:46:19.848 20777 20777 I AccessibilityManagerService: semIsAccessibilityServiceEnabled()
+10-13 12:46:19.848 20777 20777 I AccessibilityManagerService: semIsAccessibilityServiceEnabled()
+10-13 12:46:19.848  1163  1188 I mtkpower@impl: [setMode] type:1, enabled:1
+10-13 12:46:19.848  1163  1188 E mtkpower@impl: [setMode] unknown type
+10-13 12:46:19.848 20777 20835 D BatterySaverController: send ACTION_POWER_SAVE_MODE_CHANGED
+10-13 12:46:19.849 20777 20835 D BatterySaverController: send ACTION_POWER_SAVE_MODE_CHANGED_INTERNAL
+10-13 12:46:19.849 20777 20777 D AS.AudioService: Accessibility volume enabled = false
+10-13 12:46:19.852 14650  3959 I SelfLocationFetcher: Starting self-location fetching naive strategy. [CONTEXT service_id=284 ]
+10-13 12:46:19.853 14568 14568 I AiAiCaptions: onReceive(): Battery saver mode turned on.
+10-13 12:46:19.853 14650 14650 I PersonalSafety: (REDACTED) [Settings] power saver mode changed to %s
+10-13 12:46:19.854 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: BATTERY_STATS: true
+10-13 12:46:19.858 15276 18739 I TouchInteractionService: onActiveNavBarRegionChanges, region : SkRegion((0,2274,388,2400)(389,2274,690,2400)(691,2274,961,2400))
+10-13 12:46:19.858 21204 21204 V Navbar.Store: ----handleEvent(0) OnUpdateRemoteViewContainer(leftContainer=android.widget.LinearLayout{3b098a3 I.E...... ......I. 0,0-118,126 #7f0b04f6 app:id/left_remoteview}, rightContainer=android.widget.LinearLayout{1c4d7a0 I.E...... ......I. 962,0-1080,126 #7f0b07aa app:id/right_remoteview}, contextualButtonVisible=false, darkIntensity=0.0) [Module] SamsungNavigationBarView
+10-13 12:46:19.858 21204 21204 V Navbar.Store: ------[Band]REMOTE_VIEW_PACK_SET_REMOTEVIEW_CONTAINER
+10-13 12:46:19.858 21204 21204 V Navbar.Store: --------apply(0) UpdateRemoteViewContainer
+10-13 12:46:19.858 21204 21204 V Navbar.Store: --------apply(0) UpdateRemoteViewDarkIntensity
+10-13 12:46:19.859 21204 21204 V Navbar.Store: handleEvent(0) OnNavBarUpdateA11YService(clickable=false, longClickable=false) [Module] NavigationBar
+10-13 12:46:19.859 21204 21204 V Navbar.Store: --[Band]SETUPWIZARD_PACK_UPDATE_A11Y_SERVICE
+10-13 12:46:19.859 21204 21204 I AODTileStateController: onReceive: BR = [android.os.action.POWER_SAVE_MODE_CHANGED]
+10-13 12:46:19.859 21204 21204 I AODTileStateController: requestListeningState: 
+10-13 12:46:19.859 20777 22988 D StatusBarManagerService: isSecCustomTile : componentName =ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+10-13 12:46:19.862 21204 21204 W PowerUI : unknown intent: Intent { act=android.os.action.POWER_SAVE_MODE_CHANGED flg=0x40000010 }
+10-13 12:46:19.862 16084 21225 I SelfLocationFetcher: Device is opted-out of last known location reporting. [CONTEXT service_id=284 ]
+10-13 12:46:19.864 14650  3959 I FusedLocation: (REDACTED) location delivery to %s blocked - too fast
+10-13 12:46:19.865 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: ANIMATION: false
+10-13 12:46:19.865 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: VIBRATION: false
+10-13 12:46:19.865 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: UNKNOWN: false
+10-13 12:46:19.865 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: FORCE_ALL_APPS_STANDBY: true
+10-13 12:46:19.866 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: UNKNOWN: true
+10-13 12:46:19.866 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: UNKNOWN: true
+10-13 12:46:19.866 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: FORCE_BACKGROUND_CHECK: true
+10-13 12:46:19.866 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: NETWORK_FIREWALL: true
+10-13 12:46:19.866 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: DATA_SAVER: false
+10-13 12:46:19.872  1196  1196 I BufferQueueProducer: [com.ora.ora/com.ora.ora.MainActivity$_6814#124344](this:0xb4000076ddecc838,id:-1,api:0,p:-1,c:1196) queueBuffer: fps=0.36 dur=2750.11 max=2750.11 min=2750.11
+10-13 12:46:19.872  1196  1196 I BufferQueueProducer: [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#124349](this:0xb4000076e586a838,id:-1,api:0,p:-1,c:1196) queueBuffer: fps=0.72 dur=2783.52 max=2733.56 min=49.96
+10-13 12:46:19.875 15276 18739 I TouchInteractionService: onActiveNavBarRegionChanges, region : SkRegion((0,2274,388,2400)(389,2274,690,2400)(691,2274,961,2400))
+10-13 12:46:19.875 21204 21204 D TileServices: Couldn't find tile for ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+10-13 12:46:20.282   585   585 D io_stats: !@ 179,0 r 21535061 230147686 w 16927561 158024428 d 0 0 f 0 0 iot 13917432 0 th 0 0 0 pt 0 inp 0 0 217537.992
+10-13 12:46:20.400 21204 21303 D MobileStatusTracker(0/1): onSignalStrengthsChanged level=4, vendorLevel=4
+10-13 12:46:20.403 21204 21303 D MobileSignalController(0/1): notifyListener: enabled=true, connected=true, dataConnected=false, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+10-13 12:46:20.403 21204 21303 D NetworkController: SignalStrength from intent slotId=0
+10-13 12:46:20.894  7691  7691 D SemCscFeature: Encoded
+10-13 12:46:20.914  7691  7691 W AccessibilityNodeInfoDumper: Fetch time: 11ms
+10-13 12:46:20.917 20777 23601 D SettingsProvider: isChangeAllowed() : name = accessibility_enabled
+10-13 12:46:20.918 20777 23601 I GenerationRegistry: mBackingStore.isClosed() : false
+10-13 12:46:20.918 20777 23601 I GenerationRegistry: mBackingStore.isClosed() : false
+10-13 12:46:20.919 20777 23601 D WindowMagnificationMgr: requestConnection :false mConnectionState : 3
+10-13 12:46:20.919 20777 23601 W WindowMagnificationMgr: requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+10-13 12:46:20.920 20777 23601 D SettingsProvider: isChangeAllowed() : name = accelerometer_rotation
+10-13 12:46:20.921 20777 23601 D SettingsProvider: isChangeAllowed() : name = user_rotation
+10-13 12:46:20.924 20777 23601 V WindowManager: rotationForOrientation(orient=SCREEN_ORIENTATION_UNSPECIFIED (-1), last=ROTATION_0 (0)); user=ROTATION_0 (0) 
+10-13 12:46:20.925 20777 23601 D WindowManager: rotationForOrientation, orientationSource=ActivityRecord{9d4aacf u0 com.ora.ora/.MainActivity} t55}
+10-13 12:46:20.925 20777 23601 V WindowManager: Computed rotation=ROTATION_0 (0) for display id=0 based on lastOrientation=SCREEN_ORIENTATION_UNSPECIFIED (-1) and oldRotation=ROTATION_0 (0), caller=com.android.server.wm.DisplayContent.updateRotationUnchecked:2410 com.android.server.wm.WindowManagerService.updateRotationUnchecked:4778 com.android.server.wm.WindowManagerService.thawDisplayRotation:4719 com.android.server.wm.WindowManagerService.thawRotation:4683 android.view.IWindowManager$Stub.onTransact:2536 com.android.server.wm.WindowManagerService.onTransact:1608 
+10-13 12:46:20.931 20777 22988 W WindowManager: Cannot find window which accessibility connection is added to
+10-13 12:46:20.932  7691  7691 D AndroidRuntime: Shutting down VM
+10-13 12:46:20.937  1196  1196 I Layer   : id=124399 removeFromCurrentState WindowToken{159d43d type=2032 android.os.Binder@d16194}#124399 (105)
+10-13 12:46:20.937  1196  1196 I BufferQueueProducer: [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#124349](this:0xb4000076e586a838,id:-1,api:0,p:-1,c:1196) queueBuffer: fps=0.94 dur=1064.76 max=1064.76 min=1064.76
+10-13 12:46:20.937  1196  1196 I SurfaceFlinger: id=124399 Removed WindowToken{159d43d type=2032 android.os.Binder@d16194}#124399 (105)
+10-13 12:46:20.938  1196  1196 I Layer   : id=124399 Destroyed WindowToken{159d43d type=2032 android.os.Binder@d16194}#124399
+10-13 12:46:20.941  1150  2406 I hwcomposer: [HWCDisplay] [Display_0 (type:1)] fps:2.727333,dur:1099.98,max:1066.60,min:16.30  
+10-13 12:46:20.942 20777 20777 D BatterySaverPolicy: accessibility changed to false, updating policy.
+10-13 12:46:20.945  1163  1188 I mtkpower@impl: [setMode] type:1, enabled:1
+10-13 12:46:20.945  1163  1188 E mtkpower@impl: [setMode] unknown type
+10-13 12:46:20.945 20777 20835 D BatterySaverController: send ACTION_POWER_SAVE_MODE_CHANGED
+10-13 12:46:20.946 20777 20835 D BatterySaverController: send ACTION_POWER_SAVE_MODE_CHANGED_INTERNAL
+10-13 12:46:20.948 21204 21204 W PowerUI : unknown intent: Intent { act=android.os.action.POWER_SAVE_MODE_CHANGED flg=0x40000010 }
+10-13 12:46:20.948 21204 21204 I AODTileStateController: onReceive: BR = [android.os.action.POWER_SAVE_MODE_CHANGED]
+10-13 12:46:20.948 21204 21204 I AODTileStateController: requestListeningState: 
+10-13 12:46:20.949 20777 21370 D StatusBarManagerService: isSecCustomTile : componentName =ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+10-13 12:46:20.949 14650  3959 I SelfLocationFetcher: Starting self-location fetching naive strategy. [CONTEXT service_id=284 ]
+10-13 12:46:20.949 21204 21204 D TileServices: Couldn't find tile for ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+10-13 12:46:20.950 14650 14650 I PersonalSafety: (REDACTED) [Settings] power saver mode changed to %s
+10-13 12:46:20.953  1119  1119 E audit   : type=1400 audit(1791877580.948:30950): avc:  denied  { write } for  pid=4444 comm="PerfettoTrace" name="traced_producer" dev="tmpfs" ino=839 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+10-13 12:46:20.954  1119  1119 E audit   : type=1300 audit(1791877580.948:30950): arch=c00000b7 syscall=203 success=no exit=-13 a0=58 a1=6e0051cb00 a2=1e a3=ffffffff95356ff5 items=0 ppid=20549 pid=4444 auid=4294967295 uid=10226 gid=10226 euid=10226 suid=10226 fsuid=10226 egid=10226 sgid=10226 fsgid=10226 tty=(none) ses=4294967295 comm="PerfettoTrace" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+10-13 12:46:20.954  1119  1119 E audit   : type=1327 audit(1791877580.948:30950): proctitle="com.google.android.gms.ui"
+10-13 12:46:20.956 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: BATTERY_STATS: true
+10-13 12:46:20.956 16084 21225 I SelfLocationFetcher: Device is opted-out of last known location reporting. [CONTEXT service_id=284 ]
+10-13 12:46:20.957 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: ANIMATION: false
+10-13 12:46:20.957 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: VIBRATION: true
+10-13 12:46:20.957 20777 20835 D VibratorManagerService: Updating device state...
+10-13 12:46:20.957 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: UNKNOWN: false
+10-13 12:46:20.958 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: FORCE_ALL_APPS_STANDBY: true
+10-13 12:46:20.958 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: UNKNOWN: true
+10-13 12:46:20.958 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: UNKNOWN: true
+10-13 12:46:20.958 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: FORCE_BACKGROUND_CHECK: true
+10-13 12:46:20.960 14568 14568 I AiAiCaptions: onReceive(): Battery saver mode turned on.
+10-13 12:46:20.961 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: NETWORK_FIREWALL: true
+10-13 12:46:20.961 20777 20835 D BatterySaverController: onLowPowerModeChanged: ServiceType: DATA_SAVER: false
+10-13 12:46:20.959 14650  3959 I FusedLocation: (REDACTED) location delivery to %s blocked - too fast
+10-13 12:46:20.975  1196  1196 I BufferQueueProducer: [com.ora.ora/com.ora.ora.MainActivity$_6814#124344](this:0xb4000076ddecc838,id:-1,api:0,p:-1,c:1196) queueBuffer: fps=0.91 dur=1102.86 max=1102.86 min=1102.86
+10-13 12:46:21.592 22001 22164 W bt_stack: pause_registered_clients()
+10-13 12:46:21.592 22001 22164 W bt_stack: le_impl :: OnPause()
+10-13 12:46:21.592 22001 22164 W bt_stack: le_impl :: ConnectabilityState is DISARMED. Call AckPause()
+10-13 12:46:21.592 22001 22164 W bt_stack: le_scanning_manager :: OnPause()
+10-13 12:46:21.592 22001 22164 W bt_stack: Stop LeSetExtendedScan
+10-13 12:46:21.592 22001 22164 W bt_stack: le_scanning_manager :: OnPause() - call AckPause
+10-13 12:46:21.593 22001 22164 W bt_stack: le_address_manager :: ack_pause()
+10-13 12:46:21.593 22001 22164 W bt_stack: le_address_manager :: ack_pause() - make sure all client paused. Return
+10-13 12:46:21.594  1145  1145 D [BT]    : mtk_bt_op: BT_VND_OP_LPM_WAKE_SET_STATE
+10-13 12:46:21.595 22001 22164 W bt_stack: le_address_manager :: ack_pause()
+10-13 12:46:21.595 22001 22164 W bt_stack: le_address_manager :: ack_pause() - handle_next_command
+10-13 12:46:21.595 22001 22164 W bt_stack: handle_next_command()
+10-13 12:46:21.603 22001 22164 W bt_stack: Received command complete with op_code LE_SET_RANDOM_ADDRESS
+10-13 12:46:21.603 22001 22164 W bt_stack: le_impl :: OnResume()
+10-13 12:46:21.603 22001 22164 W bt_stack: le_impl :: check_for_unregister()
+10-13 12:46:21.603 22001 22164 W bt_stack: le_scanning_manager :: OnResume()
+10-13 12:46:21.603 22001 22164 W bt_stack: Start LeSetExtendedScan
+10-13 12:46:21.603 22001 22164 W bt_stack: le_scanning_manager :: OnResume() - call AckResume
+10-13 12:46:21.604 22001 22164 W bt_stack: le_address_manager :: ack_resume()
+10-13 12:46:21.605 22001 22164 W bt_stack: le_address_manager :: ack_resume()
+10-13 12:46:21.680 21204 21303 D MobileStatusTracker(0/1): onSignalStrengthsChanged level=4, vendorLevel=4
+10-13 12:46:21.683 21204 21303 D MobileSignalController(0/1): notifyListener: enabled=true, connected=true, dataConnected=false, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+10-13 12:46:21.684 21204 21303 D NetworkController: SignalStrength from intent slotId=0
+10-13 12:46:21.802  7691  7691 W RefBase : RefBase: Explicit destruction, weak count = 0 (in 0x7f23fab988). Use sp<> to manage this object.
+10-13 12:46:21.814  7691  7691 D RefBase : #00 pc 0000000000101358  /apex/com.android.runtime/lib64/bionic/libc.so (__cxa_finalize+280)
+10-13 12:46:21.814  7691  7691 D RefBase : #01 pc 00000000000f3078  /apex/com.android.runtime/lib64/bionic/libc.so (exit+24)
+10-13 12:46:21.814  7691  7691 D RefBase : #02 pc 0000000000085e14  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+100)
+10-13 12:46:21.862  5365  5365 I adbd    : adbd service requested 'sync:'
+10-13 12:46:22.004 21160 21160 I WifiHAL : Get link layer stats
+10-13 12:46:22.004 21160 21160 I WifiHAL : GetLinkStatsCommand::create
+10-13 12:46:22.004 21160 21160 D android.hardware.wifi@1.0-service-lazy: WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+10-13 12:46:22.004 21160 21160 I android.hardware.wifi@1.0-service-lazy: WifiCommand::requestResponse err=-95
+10-13 12:46:22.004 21160 21160 I WifiHAL : wifi_get_link_stats: result=-3
+10-13 12:46:22.006 20777 21036 E WifiVendorHal: $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+10-13 12:46:22.017 20777 22196 D SemWifiUsabilityStatsMonitor: onWifiUsabilityStats - seqNum 7551, isSameBssidAndFreq true
+10-13 12:46:22.019 20777 21109 I SemWifiLinkQualityMonitor: Link Qos query: inf. ms / 0 Mbps
+10-13 12:46:22.020 21204 21204 D NetworkController.WifiSignalController: notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+10-13 12:46:22.023 21204 21303 D Tile.WifiTile: handleUpdateState isTransient=false transientEnabling =false cb.isTransient=false state.state = 2 mStateBeforeClick.value =false enabled =true
+10-13 12:46:22.025  1449  1449 D connsyslogger: Open FIFO for close
+10-13 12:46:22.059  1196  1196 I BufferQueueProducer: [StatusBar$_21204#121537](this:0xb4000076ebfd7838,id:-1,api:0,p:-1,c:1196) queueBuffer: fps=0.17 dur=6055.40 max=6055.40 min=6055.40
+10-13 12:46:22.062  1150  2406 I hwcomposer: [HWCDisplay] [Display_0 (type:1)] fps:4.459949,dur:1121.09,max:1067.67,min:3.54  
+10-13 12:46:22.283   585   585 D io_stats: !@ 179,0 r 21535061 230147686 w 16927573 158024480 d 0 0 f 0 0 iot 13917436 0 th 0 0 0 pt 0 inp 0 0 217539.993
+10-13 12:46:22.960 21204 21303 D MobileStatusTracker(0/1): onSignalStrengthsChanged level=4, vendorLevel=4
+10-13 12:46:22.963 21204 21303 D MobileSignalController(0/1): notifyListener: enabled=true, connected=true, dataConnected=false, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+10-13 12:46:22.964 21204 21303 D NetworkController: SignalStrength from intent slotId=0
+10-13 12:46:23.104  5365  5365 I adbd    : adbd service requested 'shell,v2,TERM=dumb,raw:logcat -d -t 200'
+logcat fail AttributeError
+physical partial written /Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/open_rides_audit_physical_partial.json
+checks {
+  "A_already_authed": "PASS",
+  "B_open_rides_screen": "FAIL",
+  "C_accept_visible": "FAIL",
+  "D_decline_visible": "FAIL",
+  "E_no_fake_name": "PASS",
+  "F_earnings_or_empty": "PARTIAL",
+  "G_accept_opens_sheet": "BLOCKED",
+  "H_decline_local": "BLOCKED",
+  "I_no_decline_success_claim": "BLOCKED"
+}

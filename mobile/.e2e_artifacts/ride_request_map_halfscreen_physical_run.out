@@ -1,0 +1,22 @@
+{
+  "verdict": "PHYSICAL PASS",
+  "failedChecks": [],
+  "checks": {
+    "deviceAttached": true,
+    "apkInstalled": true,
+    "appLaunched": true,
+    "rideRequestOpened": true,
+    "compactDefaultSheetVisible": true,
+    "compactHeightBand45to55": true,
+    "expandControlPresent": true,
+    "expandedFullScreen": true,
+    "collapseRestoredSheet": true,
+    "androidBackCollapsed": true,
+    "formAccessibleAfterCollapse": true,
+    "repeatedExpandCollapse": true,
+    "routeOrMarkersObserved": "PARTIAL_NO_CHIP",
+    "keyboardBehavior": "PASS_NO_OVERFLOW_SIGNAL",
+    "cameraJumpFlicker": "NO_CRASH_OBSERVED_DURING_REPEAT",
+    "unexpectedApiCalls": "NO_CREATE_RIDE_ON_TOGGLE"
+  }
+}

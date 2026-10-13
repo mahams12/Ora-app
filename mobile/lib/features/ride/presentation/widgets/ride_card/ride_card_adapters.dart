@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 
 import '../../../../driver/presentation/driver_display.dart';
@@ -12,49 +14,65 @@ import 'ride_card_model.dart';
 class RideCardAdapters {
   RideCardAdapters._();
 
-  /// Ultra-compact marketplace card — decision fields only.
-  ///
-  /// Omits passenger identity, vehicle, category badges, recommended-fare
-  /// duplication, passenger count, and painter route preview.
+  /// Open-rides marketplace card — epic layout; empty slots when unknown.
   static RideCardModel fromOpenRide(
     OpenRide ride, {
     required bool offering,
     required bool offerDisabled,
-    required VoidCallback onRespond,
+    required VoidCallback onAccept,
+    VoidCallback? onDecline,
   }) {
     final distance = _formatDistanceKm(ride.distanceKm);
     final duration = _formatDurationMin(ride.estimatedDurationMin);
     final active = !_isTerminalOpenState(ride.state);
+    final category = _category(ride.category);
 
     return RideCardModel(
       rideId: ride.rideId,
       variant: RideCardVariant.openRequest,
       tone: active ? RideCardTone.active : RideCardTone.standard,
-      statusLabel: openRideStateLabel(ride.state),
+      statusLabel: switch (ride.state.toUpperCase()) {
+        'SEARCHING' => 'Searching',
+        'OFFERS_AVAILABLE' => 'Offers',
+        _ => openRideStateLabel(ride.state),
+      },
+      statusKind:
+          active ? RideCardStatusKind.active : RideCardStatusKind.neutral,
       pickupLabel: rideCardLocationLabel(ride.pickup),
       destinationLabel: rideCardLocationLabel(ride.destination),
       pickupLat: ride.pickup.lat,
       pickupLng: ride.pickup.lng,
       destinationLat: ride.destination.lat,
       destinationLng: ride.destination.lng,
-      // No passenger identity on open discovery — do not invent.
+      // Privacy: open DTO has no passenger identity — leave empty slots.
       participant: null,
       fareLabel: formatOpenRideFareMinor(ride.passengerOfferMinor),
+      fareCaption: 'Your earnings',
       distanceLabel: distance,
       durationLabel: duration,
       paymentLabel: _paymentLabel(ride.paymentMethod),
-      // Short age / expiry for header trailing — not a second fare block.
-      expiresLabel: _compactOpenRideAge(
+      categoryLabel: category.$1,
+      categoryTone: category.$2,
+      carAsset: _carAssetFor(ride.rideId),
+      expiresLabel: _relativeAge(
         createdAt: ride.createdAt,
         expiresAt: ride.expiresAt,
       ),
-      showRoutePreview: false,
+      showRoutePreview: true,
+      showMapThumb: true,
+      showCarAccent: true,
       actions: [
         RideCardActionSpec(
-          label: offering ? 'Submitting…' : 'Respond',
-          semanticLabel: 'Respond to ride request',
+          label: 'Decline',
+          semanticLabel: 'Decline ride request',
+          isPrimary: false,
+          onPressed: offerDisabled ? null : onDecline,
+        ),
+        RideCardActionSpec(
+          label: offering ? 'Submitting…' : 'Accept',
+          semanticLabel: 'Accept ride request',
           isLoading: offering,
-          onPressed: offerDisabled ? null : onRespond,
+          onPressed: offerDisabled ? null : onAccept,
           isPrimary: true,
         ),
       ],
@@ -62,38 +80,56 @@ class RideCardAdapters {
     );
   }
 
-  /// Compact driver job / my-rides card.
+  /// Driver job / my-rides card — empty passenger/vehicle slots when unknown.
   static RideCardModel fromDriverJob(
     Ride ride, {
     VoidCallback? onTap,
   }) {
     final fare = formatMinorFare(ride.agreedFareMinor, ride.agreedFareCurrency);
     final active = !isDriverJobTerminalState(ride.state);
+    final kind = _statusKind(ride.state);
+    final secondary = active ? ride.state.toUpperCase() : null;
+    // History/job APIs omit distanceKm — derive display-only km from coords.
+    final distance = _formatDistanceFromPoints(ride.pickup, ride.destination);
 
     return RideCardModel(
       rideId: ride.rideId,
       variant: RideCardVariant.driverJob,
       tone: active ? RideCardTone.active : RideCardTone.standard,
       statusLabel: _statusBadge(ride.state),
+      secondaryStatusLabel: secondary,
+      statusKind: kind,
       pickupLabel: rideCardLocationLabel(ride.pickup),
       destinationLabel: rideCardLocationLabel(ride.destination),
       pickupLat: ride.pickup.lat,
       pickupLng: ride.pickup.lng,
       destinationLat: ride.destination.lat,
       destinationLng: ride.destination.lng,
-      // Assigned list has passengerId only — omit placeholder participant row.
-      // Ride history DTO has no distance/duration — omit rather than invent.
       participant: null,
+      vehicle: null,
       fareLabel: fare,
+      fareCaption: kind == RideCardStatusKind.danger
+          ? 'Cancelled'
+          : active
+              ? 'Agreed fare'
+              : 'Your earnings',
+      distanceLabel: distance,
+      // Duration is not on Ride DTO — leave null (grid shows "—").
+      durationLabel: null,
       paymentLabel: _paymentLabel(ride.paymentMethod),
-      timestampLabel: formatHistoryTimestamp(ride.createdAt),
-      showRoutePreview: false,
+      timestampLabel: active
+          ? _startedRelative(ride.startedAt ?? ride.assignedAt ?? ride.createdAt)
+          : formatHistoryTimestamp(ride.createdAt),
+      carAsset: _carAssetFor(ride.rideId),
+      showRoutePreview: true,
+      showMapThumb: true,
+      showCarAccent: true,
       onTap: onTap,
       semanticsLabel: 'Assigned ride ${ride.rideId}',
     );
   }
 
-  /// Compact passenger history card — no driver profile required.
+  /// Passenger history — empty driver/vehicle slots when unknown.
   static RideCardModel fromPassengerHistory(
     Ride ride, {
     VoidCallback? onTap,
@@ -104,31 +140,45 @@ class RideCardAdapters {
     );
     final active = !isHistoryTerminalState(ride.state) &&
         ride.state.toUpperCase() != 'RIDE_CLOSED';
+    final kind = _statusKind(ride.state);
+    final distance = _formatDistanceFromPoints(ride.pickup, ride.destination);
 
     return RideCardModel(
       rideId: ride.rideId,
       variant: RideCardVariant.passengerHistory,
       tone: active ? RideCardTone.active : RideCardTone.standard,
       statusLabel: _statusBadge(ride.state),
+      statusKind: kind,
       pickupLabel: rideCardLocationLabel(ride.pickup),
       destinationLabel: rideCardLocationLabel(ride.destination),
       pickupLat: ride.pickup.lat,
       pickupLng: ride.pickup.lng,
       destinationLat: ride.destination.lat,
       destinationLng: ride.destination.lng,
-      // History DTO has assignedDriverId only — identity belongs in detail.
-      // No distance/duration on Ride — omit rather than invent.
       participant: null,
+      vehicle: null,
       fareLabel: fare,
+      fareCaption: kind == RideCardStatusKind.danger
+          ? 'Cancelled'
+          : kind == RideCardStatusKind.success
+              ? (_paymentLabel(ride.paymentMethod) == null
+                  ? null
+                  : 'Paid (${_paymentLabel(ride.paymentMethod)})')
+              : null,
+      distanceLabel: distance,
+      durationLabel: null,
       paymentLabel: _paymentLabel(ride.paymentMethod),
       timestampLabel: formatHistoryTimestamp(ride.createdAt),
-      showRoutePreview: false,
+      carAsset: _carAssetFor(ride.rideId),
+      showRoutePreview: true,
+      showMapThumb: false,
+      showCarAccent: true,
       onTap: onTap,
       semanticsLabel: 'Ride ${ride.rideId}',
     );
   }
 
-  /// Offer inbox — slightly richer; only real API fields.
+  /// Offer inbox — empty driver slot when snapshot has no displayName.
   static RideCardModel fromOffer(
     RideOffer offer, {
     required VoidCallback? onSelect,
@@ -137,21 +187,22 @@ class RideCardAdapters {
   }) {
     final selectable = enabled && isOfferSelectable(offer) && !isSelecting;
     final amount = formatOfferAmountMinor(offer.amountMinor, offer.currency);
-    final driverName = offerDriverLabel(offer);
     final snapshotName = _snapshotDisplayName(offer.driverSnapshot);
+    final pending = offer.status.toUpperCase() == 'PENDING';
 
     return RideCardModel(
       rideId: offer.rideId,
       variant: RideCardVariant.offer,
-      tone: offer.status.toUpperCase() == 'PENDING'
-          ? RideCardTone.active
-          : RideCardTone.standard,
-      title: driverName,
+      tone: pending ? RideCardTone.active : RideCardTone.standard,
       statusLabel: offer.status.toUpperCase(),
+      statusKind:
+          pending ? RideCardStatusKind.active : RideCardStatusKind.neutral,
       pickupLabel: '',
       destinationLabel: '',
       showRoutePreview: false,
-      // Only attach participant when API provides a real display name.
+      showMapThumb: false,
+      showCarAccent: true,
+      carAsset: _carAssetFor(offer.offerId),
       participant: snapshotName == null
           ? null
           : RideCardParticipant(
@@ -159,6 +210,7 @@ class RideCardAdapters {
               displayName: snapshotName,
             ),
       fareLabel: amount,
+      fareCaption: 'Driver offer',
       serviceLabel: offer.type.trim().isEmpty ? null : offer.type.trim(),
       expiresLabel: offer.expiresAt.trim().isEmpty
           ? null
@@ -177,12 +229,11 @@ class RideCardAdapters {
             isPrimary: true,
           ),
       ],
-      semanticsLabel: '$driverName, $amount, ${offer.status}',
+      semanticsLabel: '${snapshotName ?? 'Driver offer'}, $amount, ${offer.status}',
     );
   }
 
-  /// Prefer short request age; fall back to compact expiry.
-  static String? _compactOpenRideAge({
+  static String? _relativeAge({
     required String createdAt,
     required String expiresAt,
   }) {
@@ -190,10 +241,10 @@ class RideCardAdapters {
     if (created != null) {
       final age = DateTime.now().difference(created.toLocal());
       if (!age.isNegative) {
-        if (age.inMinutes < 1) return '<1m';
-        if (age.inMinutes < 60) return '${age.inMinutes}m';
-        if (age.inHours < 24) return '${age.inHours}h';
-        return '${age.inDays}d';
+        if (age.inMinutes < 1) return 'just now';
+        if (age.inMinutes < 60) return '${age.inMinutes} min ago';
+        if (age.inHours < 24) return '${age.inHours}h ago';
+        return '${age.inDays}d ago';
       }
     }
     final expires = DateTime.tryParse(expiresAt);
@@ -203,6 +254,18 @@ class RideCardAdapters {
     if (delta.inMinutes < 1) return '<1m left';
     if (delta.inMinutes < 60) return '${delta.inMinutes}m left';
     return openRideExpiresLabel(expiresAt);
+  }
+
+  static String? _startedRelative(String? iso) {
+    if (iso == null || iso.trim().isEmpty) return null;
+    final parsed = DateTime.tryParse(iso);
+    if (parsed == null) return formatHistoryTimestamp(iso);
+    final age = DateTime.now().difference(parsed.toLocal());
+    if (age.isNegative) return formatHistoryTimestamp(iso);
+    if (age.inMinutes < 1) return 'Started · just now';
+    if (age.inMinutes < 60) return 'Started · ${age.inMinutes} min ago';
+    if (age.inHours < 24) return 'Started · ${age.inHours}h ago';
+    return 'Started · ${formatHistoryTimestamp(iso) ?? iso}';
   }
 
   static String? _snapshotDisplayName(Map<String, Object?>? snapshot) {
@@ -226,6 +289,34 @@ class RideCardAdapters {
     return '$whole km';
   }
 
+  /// Display-only great-circle distance from authoritative pickup/destination.
+  /// Used when history/job DTOs omit distanceKm (no invented route geometry).
+  static String? _formatDistanceFromPoints(LatLngPoint a, LatLngPoint b) {
+    final km = _haversineKm(a.lat, a.lng, b.lat, b.lng);
+    if (km.isNaN || km <= 0) return null;
+    return _formatDistanceKm(km);
+  }
+
+  static double _haversineKm(
+    double lat1,
+    double lng1,
+    double lat2,
+    double lng2,
+  ) {
+    const earthKm = 6371.0;
+    final dLat = _degToRad(lat2 - lat1);
+    final dLng = _degToRad(lng2 - lng1);
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_degToRad(lat1)) *
+            math.cos(_degToRad(lat2)) *
+            math.sin(dLng / 2) *
+            math.sin(dLng / 2);
+    final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
+    return earthKm * c;
+  }
+
+  static double _degToRad(double deg) => deg * math.pi / 180.0;
+
   static String? _formatDurationMin(int? minutes) {
     if (minutes == null) return null;
     return '$minutes min';
@@ -246,6 +337,47 @@ class RideCardAdapters {
     }
   }
 
+  static (String?, RideCardCategoryTone) _category(String raw) {
+    switch (raw.trim().toLowerCase()) {
+      case 'easy':
+        return ('Easy', RideCardCategoryTone.easy);
+      case 'medium':
+        return ('Medium', RideCardCategoryTone.medium);
+      case 'hard':
+        return ('Hard', RideCardCategoryTone.hard);
+      default:
+        final t = raw.trim();
+        if (t.isEmpty) return (null, RideCardCategoryTone.none);
+        return (
+          '${t[0].toUpperCase()}${t.substring(1)}',
+          RideCardCategoryTone.none,
+        );
+    }
+  }
+
+  static RideCardCarAsset _carAssetFor(String seed) {
+    final h = seed.hashCode.abs() % 3;
+    return switch (h) {
+      0 => RideCardCarAsset.white,
+      1 => RideCardCarAsset.silver,
+      _ => RideCardCarAsset.black,
+    };
+  }
+
+  static RideCardStatusKind _statusKind(String state) {
+    return switch (state.toUpperCase()) {
+      'RIDE_COMPLETED' || 'RIDE_CLOSED' => RideCardStatusKind.success,
+      'CANCELLED' || 'EXPIRED' || 'NO_SHOW' => RideCardStatusKind.danger,
+      'RIDE_STARTED' ||
+      'DRIVER_EN_ROUTE' ||
+      'DRIVER_ARRIVED' ||
+      'DRIVER_ASSIGNED' =>
+        RideCardStatusKind.active,
+      'SEARCHING' || 'OFFERS_AVAILABLE' => RideCardStatusKind.active,
+      _ => RideCardStatusKind.neutral,
+    };
+  }
+
   static String _statusBadge(String state) {
     return switch (state.toUpperCase()) {
       'SEARCHING' => 'Searching',
@@ -255,7 +387,7 @@ class RideCardAdapters {
       'DRIVER_ARRIVED' => 'Arrived',
       'RIDE_STARTED' => 'In progress',
       'RIDE_COMPLETED' => 'Completed',
-      'RIDE_CLOSED' => 'Closed',
+      'RIDE_CLOSED' => 'Completed',
       'CANCELLED' => 'Cancelled',
       'EXPIRED' => 'Expired',
       'NO_SHOW' => 'No-show',

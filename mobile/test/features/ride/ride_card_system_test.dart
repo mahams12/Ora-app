@@ -5,6 +5,7 @@ import 'package:ora/features/driver/presentation/open_ride_display.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';
 import 'package:ora/features/ride/domain/models/resolved_passenger_location.dart';
 import 'package:ora/features/ride/presentation/widgets/ride_card/ride_card.dart';
+import 'package:ora/features/ride/presentation/widgets/ride_card/ride_card_avatar.dart';
 
 OpenRide _openRide({
   String state = 'SEARCHING',
@@ -83,56 +84,75 @@ Future<void> _pumpCard(WidgetTester tester, RideCardModel model) async {
 
 void main() {
   group('RideCardAdapters / Open Rides', () {
-    testWidgets('compact open ride shows decision fields and Respond',
+    testWidgets('epic open ride shows map, route, Easy, earnings, Decline+Accept',
         (tester) async {
       var responded = false;
       final model = RideCardAdapters.fromOpenRide(
         _openRide(),
         offering: false,
         offerDisabled: false,
-        onRespond: () => responded = true,
+        onAccept: () => responded = true,
       );
 
       await _pumpCard(tester, model);
 
-      expect(model.showRoutePreview, isFalse);
+      expect(model.showMapThumb, isTrue);
+      expect(model.showCarAccent, isTrue);
       expect(model.participant, isNull);
-      expect(model.passengerCountLabel, isNull);
-      expect(model.secondaryFareLabel, isNull);
-      expect(model.fareCaption, isNull);
+      expect(model.categoryLabel, 'Easy');
+      expect(model.fareCaption, 'Your earnings');
 
-      expect(find.text('SEARCHING'.toUpperCase()), findsOneWidget);
+      expect(find.text('Pickup'), findsOneWidget);
       expect(find.text('Bahria Town, Phase 7'), findsOneWidget);
       expect(find.text('Liberty Market, Gulberg III'), findsOneWidget);
       expect(find.text('Rs 1140'), findsOneWidget);
+      expect(find.text('Your earnings'), findsOneWidget);
       expect(find.textContaining('24 km'), findsOneWidget);
       expect(find.textContaining('39 min'), findsOneWidget);
-      expect(find.textContaining('Cash'), findsOneWidget);
-      expect(find.text('Respond'), findsOneWidget);
+      expect(find.text('Easy'), findsOneWidget);
+      expect(find.text('Decline'), findsOneWidget);
+      expect(find.text('Accept'), findsOneWidget);
 
-      // Stripped marketplace noise.
-      expect(find.text('Ride request'), findsNothing);
-      expect(find.text('1 passenger'), findsNothing);
+      // Flutter-built empty avatar (not a photo / not fake name).
+      expect(find.byType(RideCardAvatarPlaceholder), findsOneWidget);
+      expect(find.byIcon(Icons.star_rounded), findsOneWidget);
       expect(find.text('Passenger'), findsNothing);
       expect(find.textContaining('Recommended'), findsNothing);
-      expect(find.textContaining('Passenger offer'), findsNothing);
-      expect(find.textContaining('rides'), findsNothing);
-      expect(find.byIcon(Icons.star_rounded), findsNothing);
+      expect(find.textContaining('Ayesha'), findsNothing);
+      expect(find.textContaining('4.8'), findsNothing);
 
-      await tester.tap(find.text('Respond'));
+      await tester.tap(find.text('Accept'));
       await tester.pump();
       expect(responded, isTrue);
     });
 
+    testWidgets('Decline callback fires without claiming server success',
+        (tester) async {
+      var declined = false;
+      final model = RideCardAdapters.fromOpenRide(
+        _openRide(),
+        offering: false,
+        offerDisabled: false,
+        onAccept: () {},
+        onDecline: () => declined = true,
+      );
+      await _pumpCard(tester, model);
+      await tester.tap(find.text('Decline'));
+      await tester.pump();
+      expect(declined, isTrue);
+      expect(find.textContaining('Declined'), findsNothing);
+      expect(find.textContaining('declined'), findsNothing);
+    });
+
     testWidgets('omits optional distance/duration when absent', (tester) async {
-      final ride = OpenRide(
+      const ride = OpenRide(
         rideId: 'ride_open_2',
         state: 'OFFERS_AVAILABLE',
         requestVersion: 1,
         category: 'easy',
         serviceType: 'ride',
-        pickup: const LatLngPoint(lat: 31.46, lng: 74.26),
-        destination: const LatLngPoint(lat: 31.52, lng: 74.34),
+        pickup: LatLngPoint(lat: 31.46, lng: 74.26),
+        destination: LatLngPoint(lat: 31.52, lng: 74.34),
         recommendedFareMinor: 10000,
         passengerOfferMinor: 10000,
         paymentMethod: 'CASH',
@@ -144,7 +164,7 @@ void main() {
         ride,
         offering: false,
         offerDisabled: false,
-        onRespond: () {},
+        onAccept: () {},
       );
       await _pumpCard(tester, model);
       expect(find.text('Location selected'), findsNWidgets(2));
@@ -157,7 +177,7 @@ void main() {
         _openRide(pickupAddress: 'Current location'),
         offering: false,
         offerDisabled: false,
-        onRespond: () {},
+        onAccept: () {},
       );
       expect(model.pickupLabel, 'Location selected');
       expect(model.pickupLabel.toLowerCase(), isNot(contains('current')));
@@ -167,7 +187,8 @@ void main() {
   });
 
   group('RideCardAdapters / Driver My Rides', () {
-    testWidgets('active job card shows status and agreed fare', (tester) async {
+    testWidgets('active job card shows In progress and agreed fare',
+        (tester) async {
       var tapped = false;
       final model = RideCardAdapters.fromDriverJob(
         _ride(state: 'RIDE_STARTED'),
@@ -175,47 +196,49 @@ void main() {
       );
       await _pumpCard(tester, model);
 
-      expect(find.text('IN PROGRESS'), findsOneWidget);
+      expect(find.text('In progress'), findsOneWidget);
       expect(
         find.textContaining('Bahria Town, Lahore → Liberty Market, Lahore'),
         findsOneWidget,
       );
       expect(find.textContaining('Rs 1140'), findsOneWidget);
+      expect(find.text('Agreed fare'), findsOneWidget);
       expect(model.participant, isNull);
       expect(find.text('Passenger'), findsNothing);
       expect(find.textContaining('LEA-'), findsNothing);
-      expect(find.byIcon(Icons.star_rounded), findsNothing);
+      expect(find.textContaining('Ayesha'), findsNothing);
 
       await tester.tap(find.byType(RideCard));
       await tester.pump();
       expect(tapped, isTrue);
     });
 
-    testWidgets('completed job uses standard tone fields', (tester) async {
+    testWidgets('completed job uses success status', (tester) async {
       final model = RideCardAdapters.fromDriverJob(
         _ride(state: 'RIDE_CLOSED'),
       );
       expect(model.tone, RideCardTone.standard);
-      expect(model.statusLabel, 'Closed');
+      expect(model.statusLabel, 'Completed');
+      expect(model.statusKind, RideCardStatusKind.success);
       await _pumpCard(tester, model);
-      expect(find.text('Closed'.toUpperCase()), findsOneWidget);
+      expect(find.text('Completed'), findsOneWidget);
+      expect(find.text('Your earnings'), findsOneWidget);
     });
   });
 
   group('RideCardAdapters / Passenger My Rides', () {
-    testWidgets('compact history omits driver profile placeholder', (
-      tester,
-    ) async {
+    testWidgets('history omits driver profile placeholder', (tester) async {
       final model = RideCardAdapters.fromPassengerHistory(
         _ride(state: 'RIDE_COMPLETED'),
       );
       expect(model.participant, isNull);
-      expect(model.showRoutePreview, isFalse);
+      expect(model.showMapThumb, isFalse);
       await _pumpCard(tester, model);
       expect(find.text('Driver'), findsNothing);
-      expect(find.text('Completed'.toUpperCase()), findsOneWidget);
+      expect(find.text('Completed'), findsOneWidget);
       expect(find.textContaining('Toyota'), findsNothing);
       expect(find.textContaining('4.9'), findsNothing);
+      expect(find.text('Paid (Cash)'), findsOneWidget);
     });
 
     testWidgets('omits participant when no assigned driver', (tester) async {
@@ -227,11 +250,29 @@ void main() {
       expect(find.text('Driver'), findsNothing);
       expect(find.text('Passenger'), findsNothing);
     });
+
+    testWidgets('cancelled history shows Cancelled caption, distance, em-dash duration',
+        (tester) async {
+      final model = RideCardAdapters.fromPassengerHistory(
+        _ride(state: 'CANCELLED', assignedDriverId: null),
+      );
+      expect(model.statusLabel, 'Cancelled');
+      expect(model.fareCaption, 'Cancelled');
+      expect(model.distanceLabel, isNotNull);
+      expect(model.distanceLabel!, contains('km'));
+      expect(model.durationLabel, isNull);
+      await _pumpCard(tester, model);
+      expect(find.text('Cancelled'), findsWidgets);
+      expect(find.textContaining('km'), findsOneWidget);
+      expect(find.text('—'), findsOneWidget);
+      expect(find.text('Distance'), findsOneWidget);
+      expect(find.text('Duration'), findsOneWidget);
+    });
   });
 
   group('RideCardAdapters / Offer', () {
     testWidgets('offer card has no fabricated route or identity', (tester) async {
-      final offer = RideOffer(
+      const offer = RideOffer(
         offerId: 'off_1',
         rideId: 'ride_1',
         driverId: 'd1',
@@ -242,7 +283,7 @@ void main() {
         requestVersion: 1,
         expiresAt: '2099-01-01T12:30:00.000Z',
         createdAt: '2026-01-01T00:00:00.000Z',
-        driverSnapshot: const {'displayName': null, 'role': 'driver'},
+        driverSnapshot: {'displayName': null, 'role': 'driver'},
       );
       final model = RideCardAdapters.fromOffer(
         offer,
@@ -254,13 +295,13 @@ void main() {
       expect(model.participant, isNull);
       await _pumpCard(tester, model);
       expect(find.text('Select'), findsOneWidget);
-      expect(find.text('Driver offer'), findsOneWidget);
+      expect(find.text('Driver offer'), findsWidgets);
       expect(find.text('Pickup'), findsNothing);
     });
 
     testWidgets('offer shows real driver name when API provides it',
         (tester) async {
-      final offer = RideOffer(
+      const offer = RideOffer(
         offerId: 'off_2',
         rideId: 'ride_1',
         driverId: 'd1',
@@ -271,7 +312,7 @@ void main() {
         requestVersion: 1,
         expiresAt: '2099-01-01T12:30:00.000Z',
         createdAt: '2026-01-01T00:00:00.000Z',
-        driverSnapshot: const {
+        driverSnapshot: {
           'displayName': 'Ali Raza',
           'role': 'driver',
         },

@@ -319,9 +319,53 @@ void main() {
     );
     expect(find.text('Rs 420'), findsWidgets);
     expect(find.textContaining('Offer range'), findsOneWidget);
+    expect(find.text('Your offer'), findsOneWidget);
     expect(find.textContaining('3.6 km'), findsOneWidget);
     expect(find.textContaining('12 min'), findsOneWidget);
     expect(find.textContaining('confirmed'), findsWidgets);
+  });
+
+  testWidgets('5D Your offer field; out-of-range keeps Request disabled', (
+    tester,
+  ) async {
+    final createRide = MockCreateRideUseCase();
+    await tester.pumpWidget(
+      _wrap(
+        const RideRequestView(),
+        pricing: _UiPricingSuccess(),
+        overrides: [
+          createRideUseCaseProvider.overrideWithValue(createRide),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _confirmTrip(tester);
+
+    await tester.scrollUntilVisible(
+      find.text('Your offer'),
+      100,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Your offer'), findsOneWidget);
+    expect(find.textContaining('Guidance only'), findsOneWidget);
+
+    final offerField = find.descendant(
+      of: find.byType(TextField),
+      matching: find.text('420'),
+    );
+    expect(offerField, findsOneWidget);
+    await tester.enterText(find.byType(TextField).last, '100');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('minimum'), findsOneWidget);
+
+    await tester.tap(find.text('Request Easy'));
+    await tester.pumpAndSettle();
+    verifyNever(
+      () => createRide(
+        body: any(named: 'body'),
+        operationKey: any(named: 'operationKey'),
+      ),
+    );
   });
 
   testWidgets('request CTA shows pricing unavailable — no createRide', (

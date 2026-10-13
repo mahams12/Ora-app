@@ -1,0 +1,10 @@
+{
+  "cancelled": true,
+  "km": [
+    "9.9 km"
+  ],
+  "emdash": true,
+  "distanceLabel": true,
+  "durationLabel": false,
+  "shot": "open_rides_followup_my_rides_clean.png"
+}

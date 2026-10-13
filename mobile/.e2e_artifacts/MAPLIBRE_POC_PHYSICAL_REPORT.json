@@ -1,13 +1,72 @@
 {
   "artifact": "MAPLIBRE_POC_PHYSICAL_REPORT",
-  "generatedAtUtc": "2026-10-08T12:06:00Z",
+  "generatedAtUtc": "2026-10-12T06:25:00Z",
   "finalStatus": "MAPLIBRE PoC COMPLETE — PERFORMANCE INCONCLUSIVE",
-  "finalStatusDetail": "MAPLIBRE_TILE_KEY configured locally (gitignored local.properties → dart-define). SM-A325F rebuild/install succeeded. MapTiler Cloud returns HTTP 403 'Key usage restricted' for this key, so Lahore vector tiles cannot load. PoC now fail-closes with clear MapTiler dashboard remediation. Earlier keyed run (before preflight gate) showed MapLibre surface + display-only route/markers on blank navy basemap. No production migration. Keep Google production.",
+  "finalStatusDetail": "Gate 1 licensing audit complete. MapTiler 403 root cause found (Allowed User-Agent substring 'Ora'; native OkHttp/Dart UAs rejected). PoC now sends User-Agent Ora-MapLibre-PoC/1.0 via setHttpHeaders + preflight. SM-A325F physical proof shows Lahore Gulberg vector basemap, pitched 3D building extrusions, custom markers, blue display-only route, orbit camera, pan, leave/reopen. MapLibre GL FPS still NOT_MEASURED (SurfaceView not in gfxinfo). Keep Google production. No production migration. Absolute zero third-party branding on final map is NOT satisfied by MapTiler street tiles without Sales written permission + unsuitable Planet Lite.",
+  "gates": {
+    "1_licensingAttributionAudit": {
+      "status": "COMPLETE",
+      "oraLockedRequirement": "No visible third-party branding on the final map",
+      "mapTilerRequirements": {
+        "textAttribution": "© MapTiler mandatory on every map for all plans; removal requires written Sales permission",
+        "osmAttribution": "© OpenStreetMap contributors mandatory when using MapTiler Planet (street-detail dataset)",
+        "mapTilerLogo": "Mandatory on Free; hideable on paid plans only",
+        "planetLiteNoOsm": "Max zoom 10 — unsuitable for Lahore ride street detail",
+        "sources": [
+          "https://docs.maptiler.com/guides/map-design/attribution/add-attribution/",
+          "https://docs.maptiler.com/guides/map-design/attribution/remove-attribution/",
+          "https://docs.maptiler.com/guides/credentials/api-key/"
+        ]
+      },
+      "keyRestrictionsNativeAndroid": {
+        "observed403": "HTTP 403 Key usage restricted without matching User-Agent",
+        "probe": {
+          "emptyOrCurlOrOkHttpOrDartOrComOraOra": 403,
+          "UserAgentContainingOra": 200,
+          "lahoreTileWithOraUa": "HTTP 200"
+        },
+        "configuredKeyRule": "Allowed User-Agent substring appears to be case-sensitive 'Ora'",
+        "guidance": "Use dedicated mobile PoC key with Allowed User-Agent only (do not AND with HTTP origins). PoC injects User-Agent Ora-MapLibre-PoC/1.0 before tile I/O.",
+        "keyHandling": "Remains in gitignored local.properties → dart-define; never committed/logged/printed in report"
+      },
+      "complianceVsOraFinalMapBrandlock": {
+        "discreetLegalTextAttribution": "REQUIRED and kept (attribution control + MapLibre logo enabled on PoC). Aligns with prior MAP_ENGINE_ARCHITECTURE_AUDIT principle: never hide legally required attribution.",
+        "zeroVisibleThirdPartyBranding": "FAIL for street-detail MapTiler Planet — © MapTiler always required without Sales letter; OSM required for usable Lahore streets; Free also requires MapTiler logo",
+        "decision": "Do NOT remove legally required attribution. Do NOT claim brandless final map. Disposable PoC may continue with attribution visible. Production brandless gate remains BLOCKED on MapTiler street tiles."
+      },
+      "alternativeProvidersForSeparateEvaluation": [
+        "Self-hosted / on-prem MapLibre-compatible tiles with commercial white-label contract (Sales-negotiated attribution)",
+        "Stadia Maps / other MapLibre hosts — evaluate attribution + Pakistan coverage separately",
+        "HERE / TomTom vector (white-label terms) — separate evaluation",
+        "Keep Google Maps production renderer until a provider meets Ora brand + Lahore coverage + performance gates"
+      ]
+    },
+    "2_keyConfiguration": {
+      "status": "COMPLETE",
+      "action": "Existing PoC key retained locally; app-side User-Agent aligned to key rule",
+      "hardcodedInSource": false,
+      "committed": false,
+      "printedInLogsOrReport": false
+    },
+    "3_tileAccessPhysical": {
+      "status": "PASS",
+      "device": "SM-A325F RF8R40ZQ1JH Android 13",
+      "evidenceScreenshots": [
+        "mobile/.e2e_artifacts/maplibre_ua_A_cold_screen.png",
+        "mobile/.e2e_artifacts/maplibre_ua_D_pan.png",
+        "mobile/.e2e_artifacts/maplibre_ua_K_orbit.png",
+        "mobile/.e2e_artifacts/maplibre_ua_N_warm.png"
+      ],
+      "observed": "Gulberg Lahore streets, labels (Hijaz Hospital, Askari Bank, Liberty Castle, Sir Syed Road, etc.), dark Ora style"
+    },
+    "4_physicalMatrix": {
+      "status": "COMPLETE_WITH_PERF_INCONCLUSIVE"
+    }
+  },
   "device": {
     "model": "SM-A325F",
     "serial": "RF8R40ZQ1JH",
     "androidVersion": "13",
-    "buildId": "TP1A.220624.014.A325FXXSCDYB2",
     "physicalProofExecuted": true
   },
   "build": {
@@ -16,7 +75,7 @@
     "jdkUsedForBuild": "Temurin 21",
     "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
     "mapLibreTileKeyInBuild": "PRESENT (value not logged)",
-    "keyStorage": "android/local.properties (gitignored) → scripts/build_staging_apk.sh → --dart-define=MAPLIBRE_TILE_KEY",
+    "userAgentInjected": "Ora-MapLibre-PoC/1.0 via setHttpHeaders + HttpClient preflight + setCustomHeaders filter api.maptiler.com",
     "keyHardcodedInSource": false,
     "keyPrintedInLogsOrReport": false
   },
@@ -27,97 +86,103 @@
     "iosNative": "MapLibre 6.28.0"
   },
   "maplibre": {
-    "preflight": "GET api.maptiler.com/tiles/v3/tiles.json — HTTP 403 Key usage restricted",
+    "preflight": "GET tiles/v3/tiles.json with UA Ora-MapLibre-PoC/1.0 → HTTP 200",
     "styleAsset": "assets/maps/poc/ora_maplibre_poc_style.json",
-    "attribution": "MapLibre logo + i button enabled; MapTiler/OSM attribution in style source when tiles work"
+    "attributionOnPoC": "MapLibre logo + attribution (i) visible; style source includes MapTiler/OSM attribution strings — NOT removed"
   },
   "tileProvider": {
     "candidate": "MapTiler Cloud",
     "keyConfiguredLocally": true,
-    "keyAcceptedByMapTiler": false,
-    "httpStatus": 403,
-    "error": "Key usage restricted",
-    "remediation": "MapTiler Cloud → API Keys → EDIT 'Ora MapLibre PoC' → clear Allowed HTTP origins (unrestricted for disposable PoC) or enable mobile/native usage → rebuild not required if only MapTiler-side change, but re-open PoC / reinstall if dart-define unchanged",
+    "keyAcceptedByMapTiler": true,
+    "httpStatusWithCorrectUa": 200,
+    "httpStatusWithoutMatchingUa": 403,
+    "errorPreviously": "Key usage restricted",
     "publicOsmRasterUsed": false
   },
   "style": {
-    "result": "CODE_READY_TILES_BLOCKED_403",
-    "physicallyVerifiedOraBasemap": false,
-    "note": "Style chips / Ora JSON ready; basemap tiles rejected by MapTiler"
+    "result": "PASS_PHYSICAL",
+    "physicallyVerifiedOraBasemap": true,
+    "note": "Dark navy Ora style; roads/labels/buildings visible; distinct from default Google look"
   },
   "3d": {
-    "result": "NOT_VERIFIED_NO_TILES",
-    "passFailLimited": "BLOCKED_MAPTILER_403"
+    "result": "PASS_PHYSICAL",
+    "passFailLimited": "PASS",
+    "evidence": "Pitched camera with visible building extrusions on Gulberg (maplibre_ua_D_pan.png / N_warm.png)",
+    "performanceFeel": "QUALITATIVE_ONLY — no invented FPS; extrusion visible without crash during pan/orbit"
   },
   "gestures": {
-    "result": "PARTIAL",
-    "note": "adb pan/zoom/rotate/tilt gestures exercised on MapLibre surface in matrix run; meaningful tile-backed observation blocked by 403"
+    "result": "PASS_PARTIAL_ADB",
+    "note": "adb pan/double-tap zoom/orbit animation exercised with live tiles; true two-finger pinch/rotate/tilt not fully automatable via adb",
+    "map3OwnershipLogic": false
   },
   "markers": {
-    "result": "PARTIAL_PASS",
-    "evidence": "maplibre_poc_K_orbit.png showed custom gold destination pin + blue driver vehicle on MapLibre surface (display-only) before preflight gate",
+    "result": "PASS_PHYSICAL",
+    "evidence": "Gold destination pin + blue driver vehicle with heading visible on Lahore basemap",
     "connectedToRtdb": false
   },
   "route": {
-    "result": "PARTIAL_PASS",
-    "evidence": "maplibre_poc_K_orbit.png showed blue DISPLAY-ONLY route polyline",
+    "result": "PASS_PHYSICAL",
+    "evidence": "Cyan/blue DISPLAY-ONLY polyline visible across Gulberg",
     "googleRoutesCalled": false,
     "authority": "DISPLAY-ONLY PoC geometry"
   },
   "performance": {
     "fpsMapLibreGl": "NOT_MEASURED",
-    "fpsNote": "MapLibre GL SurfaceView does not appear in Android UI toolkit gfxinfo frame counts during map gestures (0 frames). Do not invent MapLibre FPS.",
-    "flutterUiGfxinfoSample": {
-      "totalFrames": 89,
-      "jankyFrames": 14,
-      "jankyPercent": 15.73,
-      "p50Ms": 11,
-      "p90Ms": 73,
-      "p95Ms": 113,
-      "note": "Flutter chrome/UI only — not MapLibre tile/render FPS"
+    "fpsNote": "MapLibre GL SurfaceView frame time not exposed via dumpsys gfxinfo for defensible MapLibre FPS. Do not invent.",
+    "flutterUiGfxinfoSampleTileBackedSession": {
+      "totalFrames": 95,
+      "jankyFrames": 27,
+      "jankyPercent": 28.42,
+      "p50Ms": 19,
+      "p90Ms": 34,
+      "p95Ms": 85,
+      "note": "Flutter UI toolkit frames only — NOT MapLibre GL FPS"
     },
     "memory": {
-      "pssMbBeforeGestures": 485.2,
-      "pssMbAfterGestures": 488.3,
-      "pssMbWarm": 483.7,
-      "dumpsysTotalPssKbLater": 445941,
-      "graphicsMbApprox": 22.1,
-      "measured": true
+      "pssKbColdPoCApprox": 538531,
+      "pssKbWarmPoCApprox": 535133,
+      "pssMbColdApprox": 525.9,
+      "pssMbWarmApprox": 522.6,
+      "googleBaselinePssKbOnRideComposeApprox": 304432,
+      "googleBaselinePssMbApprox": 297.3,
+      "measured": true,
+      "comparisonNote": "PSS not apples-to-apples (PoC map fullscreen vs ride compose form). Do not declare memory winner."
     },
     "startupTimings": {
-      "withWorkingTiles": "NOT_RUN",
-      "preflight403Path": "fail-closed after MapTiler HTTP 403",
-      "earlierKeyedSessionLogcat": "MAPLIBRE_POC_METRIC events observed; cold metrics incomplete due to logcat rotation"
+      "coldOpenToStyleChipsWallMs": 14140,
+      "warmOpenToStyleChipsWallMs": 13660,
+      "includesNavigationDrawerAndTileSettleSleep": true,
+      "mapLibreInternalMetricsLogcat": "NOT_CAPTURED_THIS_RUN (empty METRICS scrape)"
     },
-    "gestureResponsiveness": "INCONCLUSIVE_NO_TILES",
-    "building3dPerformance": "NOT_MEASURED",
-    "markerRouteRendering": "Overlays visible in K_orbit screenshot; basemap absent",
-    "repeatedOpenClose": "PASS (leave/reopen navigation)",
-    "vsGoogle": "INCONCLUSIVE — cannot compare tile-backed MapLibre to Google without MapTiler accepting the key",
+    "gestureResponsiveness": "QUALITATIVE_PASS — pan/orbit completed without crash; stutter not instrumented at GL layer",
+    "building3dPerformance": "QUALITATIVE_PASS — extrusions visible during pitch/pan; FPS NOT_MEASURED",
+    "markerRouteRendering": "PASS — visible with live tiles",
+    "repeatedOpenClose": "PASS",
+    "vsGoogle": "INCONCLUSIVE — no matched GL FPS; Google remains production",
     "obviouslySlowerThanGoogle": null,
     "obviouslyFasterThanGoogle": null
   },
   "physicalTestMatrix": {
     "A_coldPocOpen": "PASS",
     "B_warmPocOpen": "PASS",
-    "C_lahoreMapVisible": "FAIL — MapTiler HTTP 403; no Lahore streets/buildings",
-    "D_pan": "PARTIAL — gestures sent; no tile content to judge",
-    "E_pinchZoom": "PARTIAL — adb approx",
-    "F_rotation": "PARTIAL — adb approx",
-    "G_pitchTilt": "PARTIAL — adb approx",
-    "H_3dBuildings": "FAIL — no building tiles",
-    "I_customMarkers": "PASS_PARTIAL — visible in orbit screenshot",
-    "J_blueRoute": "PASS_PARTIAL — visible in orbit screenshot",
-    "K_cameraAnimation": "PASS_TRIGGERED — orbit button",
-    "L_repeatedPanZoom": "PASS_OBSERVED — gestures completed",
+    "C_lahoreMapVisible": "PASS — Gulberg streets/labels/buildings",
+    "D_pan": "PASS_OBSERVED with live tiles",
+    "E_pinchZoom": "PASS_PARTIAL — adb double-tap approx (not true pinch)",
+    "F_rotation": "PASS_PARTIAL — compass/orbit evidence; adb cannot fully prove two-finger rotate",
+    "G_pitchTilt": "PASS — pitched 3D view in screenshots",
+    "H_3dBuildings": "PASS — fill-extrusion visible",
+    "I_customMarkers": "PASS",
+    "J_blueRoute": "PASS",
+    "K_cameraAnimation": "PASS — Orbit showcase",
+    "L_repeatedPanZoom": "PASS_OBSERVED",
     "M_leaveScreen": "PASS",
     "N_reopenScreen": "PASS"
   },
   "googleBaseline": {
     "altered": false,
     "productionMapsModified": false,
-    "surface": "Existing ride Map preview compose opened on device",
-    "comparison": "No fair tile-backed performance winner declared"
+    "surface": "Existing ride Map preview compose (unchanged)",
+    "comparison": "No fair tile-backed FPS winner declared"
   },
   "ios": {
     "physicalProof": "IOS PHYSICAL PROOF PENDING"
@@ -125,45 +190,42 @@
   "filesChanged": [
     "mobile/lib/features/maps/poc/maplibre_poc_config.dart",
     "mobile/lib/features/maps/poc/maplibre_poc_view.dart",
-    "mobile/.e2e_artifacts/MAPLIBRE_POC_PHYSICAL_REPORT.json",
-    "mobile/.e2e_artifacts/MAPLIBRE_POC_PHYSICAL_MATRIX_RUN.json",
-    "mobile/.e2e_artifacts/maplibre_poc_physical_matrix.py"
+    "mobile/.e2e_artifacts/MAPLIBRE_POC_PHYSICAL_REPORT.json"
   ],
-  "filesAdded": [],
   "localOnlyNotCommitted": [
-    "mobile/android/local.properties MAPLIBRE_TILE_KEY=… (gitignored; value not in report)"
+    "mobile/android/local.properties MAPLIBRE_TILE_KEY (gitignored; value not in report)"
   ],
   "limitations": [
-    "MapTiler key present but restricted (403) — basemap/3D/Lahore coverage not verifiable",
-    "MapLibre GL FPS not measurable via dumpsys gfxinfo on this device/path",
-    "adb cannot reliably perform true two-finger pinch/rotate/tilt",
+    "MapLibre GL FPS NOT_MEASURED",
+    "adb cannot fully automate two-finger pinch/rotate/tilt",
+    "MapTiler cannot meet absolute zero third-party branding for street-detail final map without Sales permission + non-Planet data",
+    "Free MapTiler plan requires MapTiler logo in addition to text (PoC shows MapLibre logo + attribution control; production ToS check required on paid vs free)",
     "iOS physical proof pending"
   ],
   "failedChecks": [
-    "C Lahore vector basemap",
-    "H 3D buildings",
-    "MapTiler tile preflight HTTP 403"
+    "Defensible MapLibre GL FPS (NOT_MEASURED)",
+    "Absolute zero third-party branding compliance for final production map (Gate 1 brandlock)"
   ],
   "recommendation": {
-    "1_oraVisualStyleAchievable": "PROMISING but unproven on-device until MapTiler accepts key",
-    "2_3dPitchRotation": "UNPROVEN_ON_DEVICE (blocked 403)",
-    "3_customMarkers": "YES — overlays rendered",
-    "4_customRoute": "YES — blue display-only route rendered",
-    "5_lahoreCoverageUsable": "UNKNOWN — tiles blocked",
-    "6_performAcceptablyOnSmA325F": "INCONCLUSIVE",
+    "1_oraVisualStyleAchievable": "YES on device (dark Ora style + Lahore)",
+    "2_3dPitchRotation": "YES on device (extrusions + pitch)",
+    "3_customMarkers": "YES",
+    "4_customRoute": "YES",
+    "5_lahoreCoverageUsable": "YES for Gulberg PoC view",
+    "6_performAcceptablyOnSmA325F": "INCONCLUSIVE numerically — qualitatively usable; GL FPS unknown",
     "7_obviouslySlowerThanGoogle": false,
     "8_obviouslyFasterThanGoogle": false,
     "9_performanceInconclusive": true,
-    "10_tileProviderStatus": "MapTiler key configured locally; Cloud rejects with 403 restricted — edit Allowed HTTP origins",
-    "11_licensingAttribution": "Unchanged — MapTiler+OSM+MapLibre when tiles work",
+    "10_tileProviderStatus": "MapTiler works with UA-restricted PoC key; branding/ToS limits remain for brandless final map",
+    "11_licensingAttribution": "Keep legally required © MapTiler/OSM (and MapTiler logo on Free). Do not strip. Brandless final map needs Sales letter or alternate provider evaluation.",
     "12_unknowns": [
-      "Lahore tile quality once unrestricted",
-      "SM-A325F MapLibre GL FPS/jank with real tiles",
-      "3D extrusion cost on A32"
+      "MapLibre GL FPS/jank on A32 under sustained 3D",
+      "Paid-plan logo hide + Sales © MapTiler waiver feasibility",
+      "iOS"
     ],
     "13_proceedControlledProductionMigrationPoc": false,
     "14_keepGoogleProductionUntilNextGate": true,
-    "nextGate": "Fix MapTiler key restrictions in dashboard → reopen PoC on SM-A325F → complete C/H and measure tile-backed FPS/memory → then reconsider migration gate"
+    "nextGate": "If Ora requires zero visible third-party marks: stop MapTiler as final-map candidate and evaluate white-label alternatives separately. If discreet legal text attribution is acceptable: add GL-level perf instrumentation + iOS proof before any migration PoC."
   },
   "productionMigration": false,
   "frozenArchitectureUntouched": true

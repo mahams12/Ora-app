@@ -1,0 +1,37 @@
+{
+  "artifact": "OPEN_RIDES_REDESIGN_AUDIT_REPORT",
+  "completedAt": "2026-10-13T08:05:30.647769+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora",
+    "build": "debug+ORA_ENV=staging",
+    "apiBase": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1"
+  },
+  "seededRideId": "dd736402-d7a7-48c4-b2e6-7b8d27e90fd4",
+  "passengerOfferMinor": 67000,
+  "physicalCapture": {
+    "elapsedMs": 35065,
+    "screenshots": {
+      "open_rides_seeded": ".e2e_artifacts/open_rides_audit_seeded_list.png",
+      "after_accept": ".e2e_artifacts/open_rides_audit_seeded_accept.png",
+      "counteroffer_chip": ".e2e_artifacts/open_rides_audit_seeded_counter.png",
+      "after_decline": ".e2e_artifacts/open_rides_audit_seeded_decline.png",
+      "after_refresh_restore": ".e2e_artifacts/open_rides_audit_seeded_restore.png"
+    },
+    "checks": {
+      "B_open_rides_screen": "PASS",
+      "C_accept_visible": "PASS",
+      "D_decline_visible": "PASS",
+      "E_no_fake_name": "PASS",
+      "F_fare_visible": "PASS",
+      "data_ride_seed": "dd736402-d7a7-48c4-b2e6-7b8d27e90fd4",
+      "G_accept_opens_sheet": "PASS",
+      "G2_counteroffer_chip": "PASS",
+      "H_decline_local": "PASS",
+      "I_no_decline_success_claim": "PASS",
+      "J_refresh_restores": "PASS"
+    }
+  }
+}

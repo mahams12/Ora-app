@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
 /// Presentation-only ride card view model. No business logic.
 @immutable
@@ -10,6 +10,8 @@ class RideCardModel {
     required this.destinationLabel,
     this.tone = RideCardTone.standard,
     this.statusLabel,
+    this.secondaryStatusLabel,
+    this.statusKind = RideCardStatusKind.neutral,
     this.title,
     this.participant,
     this.vehicle,
@@ -21,8 +23,11 @@ class RideCardModel {
     this.paymentLabel,
     this.passengerCountLabel,
     this.serviceLabel,
+    this.categoryLabel,
+    this.categoryTone = RideCardCategoryTone.none,
     this.timestampLabel,
     this.expiresLabel,
+    this.carAsset = RideCardCarAsset.silver,
     this.pickupLat,
     this.pickupLng,
     this.destinationLat,
@@ -31,12 +36,16 @@ class RideCardModel {
     this.onTap,
     this.semanticsLabel,
     this.showRoutePreview = true,
+    this.showMapThumb = true,
+    this.showCarAccent = true,
   });
 
   final String rideId;
   final RideCardVariant variant;
   final RideCardTone tone;
   final String? statusLabel;
+  final String? secondaryStatusLabel;
+  final RideCardStatusKind statusKind;
   final String? title;
   final String pickupLabel;
   final String destinationLabel;
@@ -50,8 +59,11 @@ class RideCardModel {
   final String? paymentLabel;
   final String? passengerCountLabel;
   final String? serviceLabel;
+  final String? categoryLabel;
+  final RideCardCategoryTone categoryTone;
   final String? timestampLabel;
   final String? expiresLabel;
+  final RideCardCarAsset carAsset;
   final double? pickupLat;
   final double? pickupLng;
   final double? destinationLat;
@@ -60,6 +72,8 @@ class RideCardModel {
   final VoidCallback? onTap;
   final String? semanticsLabel;
   final bool showRoutePreview;
+  final bool showMapThumb;
+  final bool showCarAccent;
 
   bool get hasRouteCoords =>
       pickupLat != null &&
@@ -68,6 +82,15 @@ class RideCardModel {
       destinationLng != null;
 
   bool get isActiveTone => tone == RideCardTone.active;
+
+  String get carAssetPath => switch (carAsset) {
+        RideCardCarAsset.white =>
+          'assets/branding/ride_card/car_white.png',
+        RideCardCarAsset.silver =>
+          'assets/branding/ride_card/car_silver.png',
+        RideCardCarAsset.black =>
+          'assets/branding/ride_card/car_black.png',
+      };
 }
 
 enum RideCardVariant {
@@ -79,6 +102,12 @@ enum RideCardVariant {
 
 enum RideCardTone { standard, active }
 
+enum RideCardStatusKind { neutral, active, success, danger, warning }
+
+enum RideCardCategoryTone { none, easy, medium, hard }
+
+enum RideCardCarAsset { white, silver, black }
+
 @immutable
 class RideCardParticipant {
   const RideCardParticipant({
@@ -87,6 +116,7 @@ class RideCardParticipant {
     this.photoUrl,
     this.rating,
     this.tripCount,
+    this.verified = false,
   });
 
   final String roleLabel;
@@ -94,6 +124,7 @@ class RideCardParticipant {
   final String? photoUrl;
   final double? rating;
   final int? tripCount;
+  final bool verified;
 
   bool get hasIdentity =>
       (displayName != null && displayName!.trim().isNotEmpty) ||
@@ -148,6 +179,7 @@ class RideCardActionSpec {
     this.isLoading = false,
     this.isPrimary = true,
     this.isDestructive = false,
+    this.icon,
   });
 
   final String label;
@@ -156,4 +188,5 @@ class RideCardActionSpec {
   final bool isLoading;
   final bool isPrimary;
   final bool isDestructive;
+  final IconData? icon;
 }

@@ -1,15 +1,24 @@
 {
   "artifact": "MAP3_IMPLEMENTATION_STATUS",
   "slice": "MAP-3 \u2014 User-gesture camera ownership on ActiveRideMap",
-  "capturedAt": "2026-10-08T10:00:00.000Z",
-  "status": "MAP-3 IMPLEMENTATION COMPLETE \u2014 PHYSICAL PROOF YELLOW",
+  "capturedAt": "2026-10-13T06:05:00.000Z",
+  "status": "MAP-3 IMPLEMENTATION COMPLETE \u2014 PHYSICAL FOLLOW-UP YELLOW (core PASS; soft MAP-1 smoke only)",
   "map3Implemented": true,
   "physicalProof": {
     "status": "YELLOW",
-    "report": "mobile/.e2e_artifacts/MAP3_PHYSICAL_VERIFICATION_REPORT.json",
-    "primaryRideId": "1620cc68-0e0a-4e0a-be7e-cdd8983e000d",
-    "retryRideId": "fe3141a3-fb31-4d9a-b01b-9eb5566c455b",
-    "note": "Do not claim GREEN until physical gesture ownership + Recenter reclaim proven on device."
+    "report": "mobile/.e2e_artifacts/MAP3_PHYSICAL_FOLLOWUP_REPORT.json",
+    "priorReport": "mobile/.e2e_artifacts/MAP3_PHYSICAL_VERIFICATION_REPORT.json",
+    "primaryRideId": "2ee3fa76-11d2-47af-9151-dcc9dea1980d",
+    "device": "SM-A325F / RF8R40ZQ1JH / Android 13",
+    "note": "Follow-up physical 2026-10-13: Recenter reclaim, pan path, OD1, post-Recenter tick stability PASS. Soft fail only I_map1Smoke. Product Dart unchanged (harness-only).",
+    "acceptance": {
+      "gesturesOnActiveRide": "PASS",
+      "noAccidentalSubmit": "PASS",
+      "recenter": "PASS",
+      "responsive": "PASS",
+      "pickupDestState": "PASS",
+      "halfScreenIntact": "PARTIAL"
+    }
   },
   "architectureAudit": "mobile/.e2e_artifacts/MAP3_ARCHITECTURE_AUDIT.json",
   "approvedDecisions": {
@@ -65,7 +74,9 @@
       "path": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
       "apiBase": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
       "note": "First assembleDebug failed with No space left on device in sandbox gradle cache; freed disk and rebuilt successfully."
-    }
+    },
+    "followUpFocusedSuite": "PASS \u2014 45 tests (camera/policy/gesture/progression)",
+    "followUpAnalyze": "PASS \u2014 active_ride_map.dart No issues found"
   },
   "outOfScopeConfirmed": [
     "no 3D / custom markers / Ora theme / map styling",
@@ -96,5 +107,10 @@
     "userGestureFightingSuppressedWhenOwned": true,
     "programmaticCannotAcquireOwnership": true
   },
-  "finalStatus": "MAP-3 IMPLEMENTATION COMPLETE \u2014 PHYSICAL PROOF YELLOW"
+  "finalStatus": "MAP-3 IMPLEMENTATION COMPLETE \u2014 PHYSICAL PROOF YELLOW",
+  "followUpHarness": [
+    "map2a_physical.open_passenger_active bounds tap for non-clickable cards",
+    "screencap retries + ensure_adb",
+    "Pillow .venv_map3 avg_hash fingerprints"
+  ]
 }

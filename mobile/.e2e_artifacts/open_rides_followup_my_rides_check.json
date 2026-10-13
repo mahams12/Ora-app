@@ -1,0 +1,12 @@
+{
+  "myRidesTitle": true,
+  "cancelled": true,
+  "km": [
+    "19.6 km",
+    "19.6 km"
+  ],
+  "emdash": true,
+  "distanceLabel": true,
+  "durationLabel": true,
+  "shot": "open_rides_followup_my_rides_v2.png"
+}

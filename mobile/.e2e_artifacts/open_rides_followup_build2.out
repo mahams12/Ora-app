@@ -1,0 +1,92 @@
+Running Gradle task 'assembleDebug'...                          
+
+FAILURE: Build completed with 3 failures.
+
+1: Task failed with an exception.
+-----------
+* What went wrong:
+A problem occurred configuring project ':google_maps_flutter_android'.
+> Could not resolve all artifacts for configuration 'classpath'.
+   > Could not download kotlin-gradle-plugin-2.3.20-gradle811.jar (org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.20)
+      > Could not get resource 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin/2.3.20/kotlin-gradle-plugin-2.3.20-gradle811.jar'.
+         > No space left on device
+> Failed to notify project evaluation listener.
+   > java.lang.NullPointerException (no error message)
+   > Configuration with name 'implementation' not found.
+   > Configuration with name 'implementation' not found.
+   > java.lang.NullPointerException (no error message)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Failed to stop service 'org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService_72145407'.
+> /Users/jazimsaeed/Ora-app/mobile/android/.kotlin/errors/errors-abb07c6a-0f30-4458-9e0d-96ec061267eb-1791881192524.log (No space left on device)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+3: Task failed with an exception.
+-----------
+* What went wrong:
+java.io.IOException: No space left on device
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+BUILD FAILED in 5m 6s
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Could not stop all services.
+> Failed to release lock on Build Output Cleanup Cache (/Users/jazimsaeed/Ora-app/mobile/android/.gradle/buildOutputCleanup)
+> Could not stop all services.
+   > Failed to release lock on cache directory md-supplier (/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/d93be78cc871728994195e93210c17f9/gradle/caches/8.12/md-supplier)
+   > Could not stop all services.
+      > Failed to release lock on Build Output Cleanup Cache (/Users/jazimsaeed/development/flutter/packages/flutter_tools/gradle/.gradle/buildOutputCleanup)
+      > Failed to release lock on execution history cache (/Users/jazimsaeed/development/flutter/packages/flutter_tools/gradle/.gradle/8.12/executionHistory)
+   > Failed to release lock on cache directory md-rule (/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/d93be78cc871728994195e93210c17f9/gradle/caches/8.12/md-rule)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 5m 6s
+Running Gradle task 'assembleDebug'...                            307.1s
+[!] Gradle threw an error while downloading artifacts from the network.
+Retrying Gradle Build: #1, wait time: 100ms
+Running Gradle task 'assembleDebug'...                          
+OpenJDK 64-Bit Server VM warning: Insufficient space for shared memory file:
+   83318
+Try using the -Djava.io.tmpdir= option to select an alternate temp location.
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Could not write cache value to '/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/d93be78cc871728994195e93210c17f9/gradle/daemon/8.12/registry.bin'.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+Running Gradle task 'assembleDebug'...                             697ms
+Gradle task assembleDebug failed with exit code 1

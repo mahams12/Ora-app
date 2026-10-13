@@ -1,0 +1,35 @@
+{
+  "artifact": "PASSENGER_FARE_OFFER_PHYSICAL_FOLLOWUP",
+  "verdict": "PHYSICAL PASS",
+  "endedAt": "2026-10-12T11:00:00Z",
+  "device": { "serial": "RF8R40ZQ1JH", "model": "SM-A325F" },
+  "checks": {
+    "offerFieldLocated": true,
+    "offerFieldLocateMethod": "resource-id passenger_offer_field",
+    "midBandScrollRequiredForFocus": true,
+    "oorTextApplied": true,
+    "outOfRangeRejected": true,
+    "customOfferEntered": true,
+    "customOfferMajorPkr": 860,
+    "recommendedMajorPkr": 850,
+    "submitTapped": true,
+    "postSubmitOffersOrCreated": true,
+    "durableOfferMatches": true,
+    "openListShowsOffer": true
+  },
+  "stagingVerify": {
+    "rideIdPrefix": "ccbeab0a",
+    "passengerOfferMinor": 86000,
+    "durableMatchesChosen": true,
+    "openListShowsChosenOffer": true
+  },
+  "diagnosis": {
+    "rootCause": "Offer EditText near sticky Request (cy~1944) did not receive focus; mid-band scroll enables focus+IME+typing. Semantics textField:true briefly made clickable=false — removed.",
+    "fixApplied": [
+      "Semantics(identifier + label) without textField/value",
+      "Harness mid-band scroll before edit",
+      "No KEYCODE_BACK for keyboard dismiss"
+    ]
+  },
+  "canonicalReport": "mobile/.e2e_artifacts/PASSENGER_FARE_OFFER_PHYSICAL_FOLLOWUP_REPORT.json"
+}

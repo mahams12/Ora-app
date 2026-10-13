@@ -1,0 +1,269 @@
+{
+  "artifact": "OPEN_RIDES_REDESIGN_AUDIT_REPORT",
+  "completedAt": "2026-10-13T08:10:00+00:00",
+  "gitBaseline": {
+    "branch": "master",
+    "head": "66a07f0",
+    "note": "Preserved unrelated local work; no reset/discard. Open Rides redesign changes remain uncommitted alongside other WIP."
+  },
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora",
+    "versionName": "1.0.0",
+    "versionCode": 1,
+    "build": "debug APK with --dart-define=ORA_ENV=staging",
+    "apiBase": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1"
+  },
+  "filesChangedInScope": [
+    "mobile/lib/features/driver/presentation/view_models/driver_open_rides_view_model.dart",
+    "mobile/lib/features/driver/presentation/views/driver_open_rides_view.dart",
+    "mobile/lib/features/ride/presentation/widgets/ride_card/*",
+    "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_assets.dart (new)",
+    "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_avatar.dart (new)",
+    "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_map_thumb.dart (new)",
+    "mobile/assets/branding/ride_card/** (PNG remap + chroma-key alpha)",
+    "mobile/pubspec.yaml (asset dirs)",
+    "mobile/test/features/ride/ride_card_system_test.dart",
+    "mobile/test/features/driver/slice_m_driver_test.dart"
+  ],
+  "auditFindings": [
+    {
+      "id": "wrong_apk_env",
+      "severity": "Critical",
+      "finding": "Initial flutter build apk --debug without ORA_ENV=staging hit Development default (api-dev / Vercel error). Blocked Open Rides.",
+      "fix": "Rebuilt via staging dart-defines against .staging_api_url Cloud Run HTTPS base."
+    },
+    {
+      "id": "mislabeled_icons",
+      "severity": "Critical",
+      "finding": "PNG filenames did not match visual content (e.g. star.png=parcel, clock.png=shield, steering.png=route, decline_x.png=steering).",
+      "fix": "Remapped icon files to match content; star replaced by Flutter Icons.star_rounded; parcel kept as parcel.png."
+    },
+    {
+      "id": "opaque_png_backgrounds",
+      "severity": "Major",
+      "finding": "All ride_card PNGs were indexed color with opaque near-black backgrounds (no tRNS).",
+      "fix": "Converted to RGBA and chroma-keyed near-black (thr=22) to transparent. Backup under .e2e_artifacts/ride_card_asset_backup/."
+    },
+    {
+      "id": "map_thumb_fixed_pins",
+      "severity": "Major",
+      "finding": "Map thumb overlaid PNG pins at fixed corners ignoring ride lat/lng while CustomPainter already projected real coordinates.",
+      "fix": "Removed fixed PNG pin overlays; painter pins remain coordinate-aware."
+    },
+    {
+      "id": "metrics_truncation",
+      "severity": "Major",
+      "finding": "Physical card truncated duration to '21 ...' because car+fare competed with metrics for width.",
+      "fix": "Moved RideCardMetrics to its own full-width row above car/category/fare."
+    },
+    {
+      "id": "session_decline",
+      "severity": "Major (correctness)",
+      "finding": "Decline must be UI-only without inventing an endpoint or permanent declined status.",
+      "fix": "dismissRideLocally session-hides; cleared on refresh/loadInitial; no success banner. Covered by unit + physical tests."
+    },
+    {
+      "id": "image_decode_cost",
+      "severity": "Minor/Performance",
+      "finding": "Full-resolution PNG decode for 12–76px display sizes.",
+      "fix": "Added RideCardAssetImage with cacheWidth/cacheHeight + gaplessPlayback."
+    }
+  ],
+  "assetVerification": {
+    "cars": {
+      "white": "assets/branding/ride_card/car_white.png — RGBA after chroma",
+      "silver": "assets/branding/ride_card/car_silver.png — RGBA after chroma",
+      "black": "assets/branding/ride_card/car_black.png — RGBA after chroma"
+    },
+    "iconsRemappedCorrectly": [
+      "steering.png",
+      "clock.png",
+      "phone.png",
+      "decline_x.png",
+      "route.png",
+      "shield_check.png",
+      "pin_blue.png",
+      "pin_white.png",
+      "parcel.png"
+    ],
+    "missingStarPng": "No true star asset existed; rating slot uses Flutter Icons.star_rounded (gold).",
+    "avatarPolicy": "Empty slot uses RideCardAvatarPlaceholder (Flutter navy circle + Ora-blue silhouette); not avatar PNG.",
+    "platePolicy": "Flutter text pill for registration when present; plate_sample.png not used as fake plate.",
+    "evidenceIcons": [
+      ".e2e_artifacts/audit_icon_steering.png",
+      ".e2e_artifacts/audit_icon_clock.png",
+      ".e2e_artifacts/audit_icon_decline.png",
+      ".e2e_artifacts/audit_car_white.png"
+    ]
+  },
+  "visualMismatchTable": [
+    {
+      "component": "Card surface / glow / radius",
+      "reference": "Dark navy glass card, blue border glow, rounded corners",
+      "actual": "Navy gradient card, blue border + soft glow, radius 22",
+      "severity": "Minor",
+      "widget": "ride_card.dart",
+      "fix": "Closest match within existing OraColors; not pixel-perfect claimed"
+    },
+    {
+      "component": "Map thumbnail",
+      "reference": "Route visible with pins from ride geometry",
+      "actual": "CustomPainter route from real pickup/destination; fixed PNG pins removed",
+      "severity": "Major→Fixed",
+      "widget": "ride_card_map_thumb.dart",
+      "fix": "Coordinate painter retained; static fixed-corner pins removed"
+    },
+    {
+      "component": "Avatar / rating",
+      "reference": "Empty silhouette + optional rating",
+      "actual": "Flutter silhouette; gold star icon; no fake name/rating",
+      "severity": "Minor",
+      "widget": "ride_card_avatar.dart / ride_card_participant.dart",
+      "fix": "Matches frozen avatar decision; OpenRide privacy DTO has no passenger identity"
+    },
+    {
+      "component": "Vehicle PNG",
+      "reference": "Transparent 3D car render",
+      "actual": "Car PNG with chroma-keyed alpha; hash-selected white/silver/black",
+      "severity": "Major→Fixed",
+      "widget": "ride_card.dart + assets",
+      "fix": "Opaque black backgrounds removed"
+    },
+    {
+      "component": "Metrics row",
+      "reference": "Full distance + duration visible",
+      "actualBefore": "Duration clipped ('21 ...')",
+      "actualAfter": "Full '12.6 km · 21 min' on own row",
+      "severity": "Major→Fixed",
+      "widget": "ride_card.dart / ride_card_metrics.dart",
+      "fix": "Layout restructure; verified in open_rides_audit_final_card.png"
+    },
+    {
+      "component": "Fare",
+      "reference": "Prominent earnings",
+      "actual": "Rs 670 from passengerOfferMinor 67000; caption Your earnings",
+      "severity": "None",
+      "widget": "ride_card_fare.dart / adapters",
+      "fix": "Matches staging seed"
+    },
+    {
+      "component": "Accept / Decline",
+      "reference": "Primary Accept + secondary Decline",
+      "actual": "Gold Accept + sunken Decline; Accept opens offer sheet",
+      "severity": "Minor",
+      "widget": "ride_card_actions.dart",
+      "fix": "Accept keeps existing sheet (frozen); Decline UI-only"
+    },
+    {
+      "component": "Icon asset identity",
+      "reference": "Star / clock / steering / decline X as labeled",
+      "actualBefore": "Filenames swapped vs content",
+      "actualAfter": "Files remapped to correct visuals",
+      "severity": "Critical→Fixed",
+      "widget": "ride_card_assets.dart + PNG remaps",
+      "fix": "Verified via image inspection"
+    }
+  ],
+  "screenshots": {
+    "beforeWrongEnv": ".e2e_artifacts/open_rides_audit_now.png",
+    "emptyOpenRides": ".e2e_artifacts/open_rides_audit_phys_open.png",
+    "seededCardBeforeMetricsFix": ".e2e_artifacts/open_rides_audit_seeded_list.png",
+    "offerSheet": ".e2e_artifacts/open_rides_audit_seeded_accept.png",
+    "counterofferChip": ".e2e_artifacts/open_rides_audit_seeded_counter.png",
+    "declineEmpty": ".e2e_artifacts/open_rides_audit_seeded_decline.png",
+    "refreshRestore": ".e2e_artifacts/open_rides_audit_seeded_restore.png",
+    "finalCardAfterMetricsFix": ".e2e_artifacts/open_rides_audit_final_card.png",
+    "legacyPreRedesign": ".e2e_artifacts/ride_card_02_driver_open_rides.png"
+  },
+  "dataCorrectness": {
+    "seededRideId": "dd736402-d7a7-48c4-b2e6-7b8d27e90fd4",
+    "passengerOfferMinor": 67000,
+    "uiFare": "Rs 670",
+    "pickup": "Liberty Market Lahore",
+    "destination": "Bahria Town Phase 7",
+    "distanceDuration": "12.6 km · 21 min",
+    "category": "Easy",
+    "noFakePassengerName": true,
+    "noFakePlate": true,
+    "apiOpenListProof": ".e2e_artifacts/open_rides_audit_seed_ride.json",
+    "semanticsRideId": "Ride id dd736402-d7a7-48c4-b2e6-7b8d27e90fd4"
+  },
+  "acceptCounterofferDecline": {
+    "acceptOpensExistingSheet": "PASS",
+    "acceptPassengerPriceChipPresent": "PASS",
+    "counterofferChipPresent": "PASS",
+    "submitNotForcedInPhysicalRun": "Sheet opened; Cancel used to avoid consuming ride for further checks",
+    "declineUiOnly": "PASS — card dismissed locally; no Declined success claim",
+    "refreshRestoresAuthoritativeList": "PASS",
+    "unitTests": "Decline dismisses locally only; refresh restores server list; Accept opens sheet; duplicate submit blocked"
+  },
+  "realtime": {
+    "mechanism": "GET /v1/rides/open + pull-to-refresh; FCM DispatchFcmService._refreshOpenRides on invite",
+    "physicalNewRideAppearance": "PASS after seed + pull refresh (ride appeared)",
+    "fcmPushLatencyMeasured": false,
+    "listenerDispose": "AutoDisposeNotifier — disposed when leaving provider scope",
+    "verdict": "PARTIAL — refresh path verified physically; live FCM push timing not instrumented this run"
+  },
+  "performance": {
+    "methodology": "Wall-clock around adb navigation scripts; no Flutter DevTools timeline this run",
+    "measurements": {
+      "coldToOpenRidesMs_priorBlockedRun": 59029,
+      "seededAcceptDeclineFlowMs": 35065,
+      "focusedWidgetTestsMs": "~3000"
+    },
+    "optimizationsApplied": [
+      "RideCardAssetImage cacheWidth/cacheHeight",
+      "ValueKey(open_ride_${rideId})",
+      "ListView cacheExtent 480",
+      "Removed redundant fixed pin Image.assets on map thumb"
+    ],
+    "frameJankEvidence": "Not captured (no gfxinfo/systrace dump in this run)",
+    "verdict": "PARTIAL — targeted decode/layout fixes applied; no before/after FPS numbers claimed"
+  },
+  "automatedValidation": {
+    "focusedTests": "flutter test ride_card_system_test.dart + slice_m_driver_test.dart → 45 passed, 0 failed",
+    "analyze": "dart analyze on touched Open Rides/ride_card files → 0 errors, 2 info (prefer_const)",
+    "build": "flutter build apk --debug --dart-define=ORA_ENV=staging --dart-define=ORA_API_BASE_URL=<staging> → success",
+    "wholeProjectTests": "NOT RUN"
+  },
+  "physicalInteractionsPerformed": [
+    "Installed staging-defined debug APK on SM-A325F",
+    "Switched passenger home → Earn on ORA → driver shell → Open ride requests",
+    "Observed empty Open Rides",
+    "Seeded SEARCHING ride via staging API (passenger create)",
+    "Pull-to-refresh showed card with real fare/route",
+    "Tapped Accept → Submit offer sheet with Accept passenger price + Counteroffer",
+    "Tapped Counteroffer chip",
+    "Cancelled sheet",
+    "Tapped Decline → local hide to empty",
+    "Pull-to-refresh restored card",
+    "Rebuilt after metrics layout fix; recaptured card with full distance/duration"
+  ],
+  "stagingApiProof": {
+    "createStatus": 201,
+    "rideId": "dd736402-d7a7-48c4-b2e6-7b8d27e90fd4",
+    "openCountAfterCreate": 1,
+    "artifact": ".e2e_artifacts/open_rides_audit_seed_ride.json"
+  },
+  "limitationsBlockers": [
+    "No separate supplied reference PNG set found in repo; comparison used product locks + prior ride_card evidence + visual intent from redesign assets",
+    "Physical Accept submit to create server offer not executed (Cancel used); unit tests cover submit/idempotency",
+    "FCM-driven refresh latency not measured",
+    "Frame jank / image memory RSS not instrumented with systrace",
+    "ORA_GOOGLE_MAPS_ANDROID_API_KEY unset in staging build warn — map thumbs are CustomPainter (not Maps SDK) so Open Rides cards unaffected"
+  ],
+  "verdicts": {
+    "functionalCorrectness": "PASS",
+    "visualDesignMatch": "PARTIAL",
+    "realtimeBehavior": "PARTIAL",
+    "performance": "PARTIAL",
+    "automatedValidation": "PASS",
+    "physicalDeviceVerification": "PASS",
+    "overall": "PARTIAL"
+  },
+  "overallRationale": "Critical correctness (fare identity, Accept→sheet, UI-only Decline, refresh restore, no fake identity) verified on device and in focused tests. Visual match improved (assets, metrics, map pins) but not claimed pixel-perfect vs an unavailable formal reference pack. Realtime/performance only partially evidenced.",
+  "followUpReport": ".e2e_artifacts/OPEN_RIDES_REDESIGN_FOLLOWUP_REPORT.json"
+}

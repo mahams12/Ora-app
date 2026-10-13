@@ -1,0 +1,23 @@
+{
+  "verdict": "PHYSICAL PARTIAL",
+  "failedChecks": [
+    "reviewReached",
+    "yourOfferVisible",
+    "estimatedFareVisible",
+    "offerRangeVisible"
+  ],
+  "checks": {
+    "deviceAttached": true,
+    "apkInstalled": true,
+    "appLaunched": true,
+    "rideRequestOpened": true,
+    "reviewReached": false,
+    "yourOfferVisible": false,
+    "estimatedFareVisible": false,
+    "offerRangeVisible": false,
+    "offerEditedAwayFromRecommended": "UNVERIFIED",
+    "outOfRangeKeepsRequestDisabled": "UNVERIFIED",
+    "createWithCustomOfferAttempted": "UNVERIFIED",
+    "postCreateOffersOrInbox": "UNVERIFIED"
+  }
+}

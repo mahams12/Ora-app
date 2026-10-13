@@ -135,13 +135,49 @@ def dump(tag: str) -> str:
     return last
 
 
+def ensure_adb(timeout_s: float = 45.0) -> bool:
+    """Best-effort wait for the physical device after USB flakiness."""
+    deadline = time.time() + timeout_s
+    while time.time() < deadline:
+        try:
+            out = subprocess.check_output(
+                ["adb", "devices"], text=True, stderr=subprocess.STDOUT, timeout=8
+            )
+            if f"{DEV}\tdevice" in out or f"{DEV}    device" in out:
+                # Soft wake — ignore failures.
+                subprocess.run(
+                    ["adb", "-s", DEV, "shell", "input", "keyevent", "KEYCODE_WAKEUP"],
+                    check=False,
+                    capture_output=True,
+                    timeout=8,
+                )
+                return True
+        except Exception:
+            pass
+        time.sleep(2.0)
+    return False
+
+
 def screencap(tag: str) -> None:
+    """Capture screenshot with retries — USB drops mid-MAP-3 were falsely RED."""
     remote = f"/sdcard/map2a_{tag}.png"
-    try:
-        sh("screencap", "-p", remote)
-        adb("pull", remote, str(ART / f"map2a_{tag}.png"))
-    except Exception as e:
-        print("  screencap fail", type(e).__name__)
+    local = ART / f"map2a_{tag}.png"
+    last_err = None
+    for attempt in range(1, 5):
+        try:
+            if attempt > 1 and not ensure_adb(20.0):
+                last_err = "device_offline"
+                time.sleep(1.5)
+                continue
+            sh("screencap", "-p", remote)
+            adb("pull", remote, str(local))
+            if local.exists() and local.stat().st_size > 1000:
+                return
+            last_err = "empty_or_tiny"
+        except Exception as e:
+            last_err = type(e).__name__
+            time.sleep(1.2 * attempt)
+    print("  screencap fail", last_err)
 
 
 def unescape(xml: str) -> str:
@@ -440,7 +476,23 @@ def ensure_passenger_home(xml: str) -> str:
     return ensure_ora("pax_home2")
 
 
+def _tap_bounds(bounds: tuple[int, int, int, int], label: str) -> bool:
+    x1, y1, x2, y2 = bounds
+    if x2 <= x1 or y2 <= y1:
+        return False
+    x = (x1 + x2) // 2
+    y = (y1 + y2) // 2
+    print("  TAP ride card", repr(label[:70]), f"@({x},{y})")
+    sh("input", "tap", str(x), str(y))
+    return True
+
+
 def open_passenger_active(ride_id: str) -> str:
+    """Open passenger Active Ride from My rides.
+
+    Ride list cards often expose ASSIGNED / route text as non-clickable a11y
+    nodes; tap the largest matching card bounds regardless of clickable=true.
+    """
     xml = ensure_ora("pax_cur")
     xml = ensure_passenger_home(xml)
     xml = open_drawer(xml)
@@ -453,30 +505,48 @@ def open_passenger_active(ride_id: str) -> str:
     time.sleep(3)
     xml = ensure_ora("pax_rides")
     rid_short = ride_id[:8]
-    opened = (
-        tap_contains(xml, "DRIVER_ASSIGNED", exclude=("CANCELLED", "CLOSED"))
-        or tap_contains(xml, "Assigned", exclude=("CANCELLED", "CLOSED"))
-        or tap_contains(xml, "EN_ROUTE", exclude=("CANCELLED",))
-        or tap_contains(xml, "ARRIVED", exclude=("CANCELLED",))
-        or tap_contains(xml, "STARTED", exclude=("CANCELLED", "COMPLETED"))
-        or tap_contains(xml, "Driver assigned", exclude=("CANCELLED",))
-        or tap_contains(xml, "Driver on the way", exclude=("CANCELLED",))
-        or tap_contains(xml, rid_short)
+    # Prefer exact ride id card, then ASSIGNED badge region, then route text.
+    # Do NOT require clickable — Flutter Semantics cards are often clickable=false.
+    terminal = ("CANCELLED", "CLOSED", "EXPIRED", "COMPLETED", "COMING LATER")
+    needles_priority = (
+        rid_short,
+        ride_id,
+        "DRIVER_ASSIGNED",
+        "ASSIGNED",
+        "EN_ROUTE",
+        "ARRIVED",
+        "STARTED",
+        "Driver assigned",
+        "Driver on the way",
+        "Liberty Market",
+        "Liberty",
     )
-    if not opened:
+    opened = False
+    for needle in needles_priority:
+        cands = []
         for n in nodes(xml):
-            if not n["clickable"]:
-                continue
             d = n["desc"]
-            if any(x in d for x in ("CANCELLED", "Completed", "CLOSED", "EXPIRED")):
+            # Skip terminal status chips / cards that embed terminal state in desc.
+            if any(t in d for t in terminal):
                 continue
-            if any(x in d for x in ("Liberty", "Gulberg", "Assigned", "Ride", "DRIVER_")):
-                x = (n["bounds"][0] + n["bounds"][2]) // 2
-                y = (n["bounds"][1] + n["bounds"][3]) // 2
-                print("  TAP ride row", repr(d[:70]))
-                sh("input", "tap", str(x), str(y))
-                opened = True
-                break
+            if needle.lower() not in d.lower():
+                continue
+            x1, y1, x2, y2 = n["bounds"]
+            if x2 <= x1 or y2 <= y1:
+                continue
+            area = (x2 - x1) * (y2 - y1)
+            cands.append((area, n))
+        if not cands:
+            print("  MISS (bounds)", repr(needle))
+            continue
+        # Largest matching node is usually the full ride card Semantics wrapper.
+        cands.sort(key=lambda x: -x[0])
+        n = cands[0][1]
+        opened = _tap_bounds(n["bounds"], n["desc"])
+        if opened:
+            break
+    if not opened:
+        print("  WARN could not open active ride from My rides")
     time.sleep(4)
     return ensure_ora("pax_active")
 

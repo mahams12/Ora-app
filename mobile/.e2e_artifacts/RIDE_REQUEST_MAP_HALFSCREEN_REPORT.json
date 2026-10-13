@@ -1,0 +1,205 @@
+{
+  "artifact": "RIDE_REQUEST_MAP_HALFSCREEN_REPORT",
+  "phase": "Phase 2 — Ride Request half-screen map UX",
+  "generatedAtUtc": "2026-10-12T09:42:10Z",
+  "finalStatus": "PHYSICAL PASS — slice complete",
+  "finalStatusDetail": "SM-A325F RF8R40ZQ1JH connected and authorized. Staging APK installed. Harness + supplemental Ride Request flow verified compact ~55% map, expand/collapse, Android back, keyboard, repeated toggles, and pickup+destination markers with orange route polyline preserved across expand/collapse. No app code changes this gate.",
+  "sliceComplete": true,
+  "scope": {
+    "codeChangesThisPhysicalGate": "none",
+    "harnessChangesThisGate": "ride_request_map_halfscreen_physical.py — HTML-entity-aware labels, splash/sign-in wait, Ride Request probe wait (verification only)",
+    "architecturalStopRequired": false
+  },
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora",
+    "adbState": "device",
+    "transport": "usb"
+  },
+  "build": {
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "apkBuiltAtLocal": "2026-10-12T13:56+05:00",
+    "apkSize": "210M",
+    "installedThisGate": true,
+    "installResult": "Success",
+    "containsHalfscreenImplementation": true,
+    "flutter": "3.35.6",
+    "dart": "3.9.2",
+    "stagingApi": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "mapsKeyLogged": false,
+    "placesKeyLogged": false
+  },
+  "automated": {
+    "status": "PASS (prior Phase 2 run — not rerun; no production code changes)",
+    "flutterAnalyze": {
+      "status": "PASS",
+      "issues": 0,
+      "rerunThisGate": false
+    },
+    "tests": {
+      "status": "PASS",
+      "totalPassed": 32,
+      "suites": [
+        "test/features/ride/ride_request_map_layout_test.dart",
+        "test/features/ride/ride_map_preview_test.dart",
+        "test/features/ride/ride_request_ui_test.dart"
+      ],
+      "log": "mobile/.e2e_artifacts/ride_request_map_halfscreen_tests.out",
+      "rerunThisGate": false
+    },
+    "buildPrior": {
+      "status": "PASS",
+      "log": "mobile/.e2e_artifacts/ride_request_map_halfscreen_build.out"
+    }
+  },
+  "physical": {
+    "status": "PASS",
+    "harness": "mobile/.e2e_artifacts/ride_request_map_halfscreen_physical.py",
+    "harnessInvocation": "python3 mobile/.e2e_artifacts/ride_request_map_halfscreen_physical.py",
+    "harnessCliArgs": "none",
+    "harnessRun": {
+      "log": "mobile/.e2e_artifacts/ride_request_map_halfscreen_physical_run.out",
+      "partial": "mobile/.e2e_artifacts/ride_request_map_halfscreen_physical_partial.json",
+      "verdict": "PHYSICAL PASS",
+      "failedChecks": [],
+      "metrics": {
+        "estimatedMapFraction": 0.549
+      }
+    },
+    "supplementalRouteProof": {
+      "note": "After harness PASS, completed pickup+destination confirm → review to photograph dual markers + polyline across expand/collapse/back.",
+      "trip": "Izmir Extension, Lahore → Liberty Market Gulberg III; estimate Rs 1140 / 24 km"
+    },
+    "checks": {
+      "compactDefaultVisibleWithSheet": {
+        "result": "PASS",
+        "observed": "Map + Where to?/Select a ride sheet concurrently; Continue/Request Easy visible",
+        "evidence": [
+          "hs_compact.png",
+          "hs_with_route.png",
+          "hs_f4.png",
+          "hs_g_compact_route.png"
+        ]
+      },
+      "compactHeight45to55": {
+        "result": "PASS",
+        "observed": "sheetTop/screenH proxy = 0.549 (within 0.40–0.62 physical tolerance of 45–55% target)",
+        "evidence": [
+          "ride_request_map_halfscreen_physical_partial.json",
+          "hs_compact.png",
+          "hs_f4.png"
+        ]
+      },
+      "routeMarkerVisibility": {
+        "result": "PASS",
+        "observed": "Google Map shows blue pickup pin, orange destination pin, orange route polyline; Accessibility exposes Google Map + Pickup + Destination; preserved after expand/collapse",
+        "evidence": [
+          "hs_f4.png",
+          "hs_g_compact_route.png",
+          "hs_g_expanded_route.png",
+          "hs_g_collapsed_route.png",
+          "hs_with_route.png",
+          "hs_expanded.png"
+        ]
+      },
+      "formAndPrimaryActionAccessible": {
+        "result": "PASS",
+        "observed": "Compose Where to? + Continue; review Select a ride + Request Easy accessible under compact map",
+        "evidence": [
+          "hs_compact.png",
+          "hs_f4.png",
+          "hs_g_collapsed_route.png"
+        ]
+      },
+      "fullScreenExpansion": {
+        "result": "PASS",
+        "observed": "Expand map hides sheet; Collapse map chrome shown; map full-bleed with route/markers",
+        "evidence": [
+          "hs_expanded.png",
+          "hs_expanded.xml",
+          "hs_g_expanded_route.png"
+        ]
+      },
+      "collapseRestoresForm": {
+        "result": "PASS",
+        "observed": "Collapse restores sheet; review retained Select a ride, trip summary, Rs 1140, Request Easy",
+        "evidence": [
+          "hs_collapsed.png",
+          "hs_g_collapsed_route.png"
+        ]
+      },
+      "androidBackCollapses": {
+        "result": "PASS",
+        "observed": "KEYCODE_BACK from expanded returns to compact Ride Request (Expand map present, Select a ride still present); does not exit flow",
+        "evidence": [
+          "hs_after_back.png",
+          "hs_after_back.xml",
+          "hs_g_back.png"
+        ]
+      },
+      "keyboardBehavior": {
+        "result": "PASS",
+        "observed": "Keyboard open shrinks usable column; map chrome + Where to? + Continue remain; no overflow crash",
+        "evidence": [
+          "hs_keyboard.png"
+        ]
+      },
+      "repeatedExpandCollapse": {
+        "result": "PASS",
+        "observed": "Harness completed 3 expand/collapse cycles without crash; review state retained after later toggles",
+        "evidence": [
+          "ride_request_map_halfscreen_physical_partial.json",
+          "hs_g_collapsed_route.png"
+        ]
+      },
+      "cameraJumpFlicker": {
+        "result": "PASS",
+        "observed": "No crash during repeat; route/markers still framed after expand/collapse (visual). Automated camera-jump instrumentation not available — marked PASS on observed stability.",
+        "evidence": [
+          "hs_g_compact_route.png",
+          "hs_g_expanded_route.png",
+          "hs_g_collapsed_route.png"
+        ]
+      },
+      "unexpectedApiCalls": {
+        "result": "PASS",
+        "observed": "Harness logcat: no createRide on expand/collapse toggles (NO_CREATE_RIDE_ON_TOGGLE). Expand/collapse UI-only.",
+        "evidence": [
+          "hs_physical_logcat.txt",
+          "ride_request_map_halfscreen_physical_partial.json"
+        ]
+      }
+    },
+    "evidenceFiles": [
+      "hs_boot.png",
+      "hs_compact.png",
+      "hs_compact.xml",
+      "hs_with_route.png",
+      "hs_expanded.png",
+      "hs_expanded.xml",
+      "hs_collapsed.png",
+      "hs_after_back.png",
+      "hs_keyboard.png",
+      "hs_f4.png",
+      "hs_g_compact_route.png",
+      "hs_g_expanded_route.png",
+      "hs_g_collapsed_route.png",
+      "hs_g_back.png",
+      "hs_physical_logcat.txt",
+      "ride_request_map_halfscreen_physical_partial.json",
+      "ride_request_map_halfscreen_physical_run.out"
+    ]
+  },
+  "distinction": {
+    "automatedChecks": "PASS from prior Phase 2 — unit/widget/UI regression; not re-executed this gate because no Dart/Kotlin production code changed",
+    "physicalChecks": "PASS on SM-A325F with screenshots/XML/logcat evidence listed above"
+  },
+  "remainingLimitations": [
+    "Compact height uses sheet-top/screen-height proxy (0.549), not pixel-accurate LayoutBuilder instrument on device",
+    "Camera jump judged visually from screenshots; no Map SDK camera listener dump in harness",
+    "Places/GPS used only to seed markers for visibility proof — not attributed to expand/collapse toggles"
+  ],
+  "verdict": "PHYSICAL GATE PASS. Required SM-A325F checks passed with device evidence. Half-screen Ride Request map UX slice complete."
+}

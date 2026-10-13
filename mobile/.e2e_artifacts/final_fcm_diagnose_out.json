@@ -1,0 +1,93 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+{
+  "startedAt": "2026-10-13T10:19:12.691Z",
+  "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+  "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+  "tokenDocCount": 3,
+  "tokensHaveValue": [
+    {
+      "id": "SRjL7BJgCKTduhtpjtYMRZMq5fD2_430d8246490d63f37b1ad06f344bf76ab048fe36",
+      "hasToken": true
+    },
+    {
+      "id": "SRjL7BJgCKTduhtpjtYMRZMq5fD2_936d6242fd75042abdd247fbb35babf539bba4d0",
+      "hasToken": true
+    },
+    {
+      "id": "SRjL7BJgCKTduhtpjtYMRZMq5fD2_ac8630a2247a0d15c4c5c6f419bfa2d29db92953",
+      "hasToken": true
+    }
+  ],
+  "createRide": {
+    "at": "2026-10-13T10:19:17.866Z",
+    "status": 201,
+    "rideId": "fd2b18d0-4fb3-4abf-a8bd-03aaa4dfd320"
+  },
+  "dispatchTick": {
+    "at": "2026-10-13T10:19:19.822Z",
+    "status": 200,
+    "data": {
+      "outcome": "wave_completed",
+      "rideId": "fd2b18d0-4fb3-4abf-a8bd-03aaa4dfd320",
+      "waveNumber": 1,
+      "invitedCount": 1,
+      "driverIds": [
+        "SRjL7BJgCKTduhtpjtYMRZMq5fD2"
+      ]
+    }
+  },
+  "outboxAfterTick": {
+    "scannedSample": 51,
+    "targetEventCount": 1,
+    "targetEvents": [
+      {
+        "eventId": "b78e1c16-524b-42b2-a597-640e53716a39",
+        "publishState": "PENDING",
+        "payloadRideId": "fd2b18d0-4fb3-4abf-a8bd-03aaa4dfd320",
+        "aggregateId": "fd2b18d0-4fb3-4abf-a8bd-03aaa4dfd320",
+        "createdAt": null,
+        "nextAttemptAt": "2026-10-13T10:19:20.158Z",
+        "matchesTarget": true
+      }
+    ],
+    "pendingCount": 10
+  },
+  "fcmSweepLimit100": {
+    "at": "2026-10-13T10:19:26.468Z",
+    "status": 200,
+    "data": {
+      "scanned": 51,
+      "processed": 10,
+      "delivered": 10,
+      "retryable": 0,
+      "deadLetter": 0,
+      "skipped": 41,
+      "failed": 0
+    }
+  },
+  "outboxAfterSweep": [
+    {
+      "eventId": "b78e1c16-524b-42b2-a597-640e53716a39",
+      "publishState": "DELIVERED"
+    }
+  ],
+  "openList": {
+    "status": 200,
+    "containsRide": true,
+    "count": 1
+  },
+  "finishedAt": "2026-10-13T10:19:48.278Z",
+  "ok": true,
+  "analysis": {
+    "priorSkipHypothesis": "Default sweep limit=25 with no orderBy often samples already-DELIVERED events → skipped++, never reaches new PENDING.",
+    "thisRunDelivered": 10,
+    "thisRunProcessed": 10,
+    "thisRunSkipped": 41
+  }
+}
+npm notice
+npm notice New minor version of npm available! 11.5.1 -> 11.21.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.21.0
+npm notice To update run: npm install -g npm@11.21.0
+npm notice

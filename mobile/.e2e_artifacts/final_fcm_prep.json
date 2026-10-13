@@ -1,0 +1,27 @@
+{
+  "createAt": "2026-10-13T10:36:56.928Z",
+  "rideId": "94f13454-7874-45e7-a813-e5d7e42d6dc9",
+  "createStatus": 201,
+  "tickAt": "2026-10-13T10:36:58.849Z",
+  "tickStatus": 200,
+  "tick": {
+    "outcome": "wave_completed",
+    "rideId": "94f13454-7874-45e7-a813-e5d7e42d6dc9",
+    "waveNumber": 1,
+    "invitedCount": 1,
+    "driverIds": [
+      "SRjL7BJgCKTduhtpjtYMRZMq5fD2"
+    ]
+  },
+  "sweepAt": "2026-10-13T10:37:03.691Z",
+  "sweepStatus": 200,
+  "sweep": {
+    "scanned": 54,
+    "processed": 2,
+    "delivered": 2,
+    "retryable": 0,
+    "deadLetter": 0,
+    "skipped": 52,
+    "failed": 0
+  }
+}

@@ -46,6 +46,12 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
       return;
     }
     try {
+      // Inject UA before any MapLibre network I/O (global; PoC-only).
+      await setHttpHeaders({
+        HttpHeaders.userAgentHeader: MapLibrePoCConfig.mapTilerUserAgent,
+      });
+      _metrics.mark('maplibre_http_headers_set');
+
       final preflight = await _preflightMapTiler(MapLibrePoCConfig.mapTilerApiKey);
       if (!preflight.ok) {
         if (!mounted) return;
@@ -85,9 +91,15 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
   ) async {
     final client = HttpClient();
     try {
+      // Match native tile UA so preflight and MapLibre hit the same key rule.
+      client.userAgent = MapLibrePoCConfig.mapTilerUserAgent;
       final uri = Uri.parse(MapLibrePoCConfig.tilesPreflightUrl(apiKey));
       final req = await client.getUrl(uri);
       req.headers.set(HttpHeaders.acceptHeader, 'application/json');
+      req.headers.set(
+        HttpHeaders.userAgentHeader,
+        MapLibrePoCConfig.mapTilerUserAgent,
+      );
       final res = await req.close().timeout(const Duration(seconds: 12));
       final body = await res.transform(utf8.decoder).join();
       if (res.statusCode == 200) {
@@ -120,9 +132,14 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
     }
   }
 
-  void _onMapCreated(MapLibreMapController controller) {
+  Future<void> _onMapCreated(MapLibreMapController controller) async {
     _controller = controller;
     _metrics.onMapCreated();
+    // Per-map headers as belt-and-suspenders with global setHttpHeaders.
+    await controller.setCustomHeaders(
+      {HttpHeaders.userAgentHeader: MapLibrePoCConfig.mapTilerUserAgent},
+      const [r'https://api\.maptiler\.com/.*'],
+    );
   }
 
   Future<void> _onStyleLoaded() async {
@@ -192,7 +209,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
 
     // Route casing / glow then core blue (DISPLAY-ONLY geometry).
     await c.addLine(
-      LineOptions(
+      const LineOptions(
         geometry: MapLibrePoCGeometry.displayOnlyRoute,
         lineColor: MapLibrePoCGeometry.routeGlow,
         lineWidth: 10,
@@ -201,7 +218,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
       ),
     );
     await c.addLine(
-      LineOptions(
+      const LineOptions(
         geometry: MapLibrePoCGeometry.displayOnlyRoute,
         lineColor: MapLibrePoCGeometry.routeBlue,
         lineWidth: 5.5,
@@ -210,7 +227,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
     );
 
     await c.addSymbol(
-      SymbolOptions(
+      const SymbolOptions(
         geometry: MapLibrePoCGeometry.pickup,
         iconImage: 'ora_poc_pickup',
         iconSize: 0.85,
@@ -218,7 +235,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
       ),
     );
     await c.addSymbol(
-      SymbolOptions(
+      const SymbolOptions(
         geometry: MapLibrePoCGeometry.destination,
         iconImage: 'ora_poc_dest',
         iconSize: 0.85,
@@ -226,7 +243,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
       ),
     );
     await c.addSymbol(
-      SymbolOptions(
+      const SymbolOptions(
         geometry: MapLibrePoCGeometry.driver,
         iconImage: 'ora_poc_driver',
         iconSize: 0.95,

@@ -1,0 +1,194 @@
+00:00 +0: loading /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart                                                                                                       00:01 +0: loading /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart                                                                                                       00:02 +0: loading /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart                                                                                                       00:02 +0: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides epic open ride shows map, route, Easy, earnings, Decline+Accept                00:02 +1: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides epic open ride shows map, route, Easy, earnings, Decline+Accept                00:02 +2: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides epic open ride shows map, route, Easy, earnings, Decline+Accept                00:02 +3: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides epic open ride shows map, route, Easy, earnings, Decline+Accept                00:02 +4: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides epic open ride shows map, route, Easy, earnings, Decline+Accept                00:02 +5: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides epic open ride shows map, route, Easy, earnings, Decline+Accept                00:02 +6: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: approved-driver discovery gate approved driver can access /driver                                            00:02 +7: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides Decline callback fires without claiming server success                         00:02 +8: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides Decline callback fires without claiming server success                         00:02 +9: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: approved-driver discovery gate passenger blocked from /driver                                                00:02 +10: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides omits optional distance/duration when absent                                  00:02 +11: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides omits optional distance/duration when absent                                  00:02 +12: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides omits optional distance/duration when absent                                  00:02 +13: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides omits optional distance/duration when absent                                  00:02 +14: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesViewModel empty state                                                                        00:02 +15: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Open Rides maps Current location address to Location selected                            00:02 +16: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesViewModel error state                                                                        00:02 +17: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +18: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +19: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +20: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +21: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +22: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +23: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +24: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +25: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +26: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +27: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +28: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +29: /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart: RideCardAdapters / Driver My Rides active job card shows In progress and agreed fare                        00:02 +30: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +31: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +32: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +33: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +34: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +35: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +36: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +37: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +38: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +39: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +40: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI empty copy avoids nearby language                                                    00:02 +40: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI card does not show passengerId or fabricated ETA                                     00:02 +41: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI card does not show passengerId or fabricated ETA                                     00:02 +41: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept opens offer sheet; card body does not                                         00:03 +41: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept opens offer sheet; card body does not                                         00:03 +41: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept opens offer sheet; card body does not                                         
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 5.6 pixels on the right.
+
+The relevant error-causing widget was:
+  Row
+  Row:file:///Users/jazimsaeed/Ora-app/mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_metrics.dart:54:12
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#bc0c2 relayoutBoundary=up13 OVERFLOWING:
+  creator: Row ← RideCardMetrics ← Column ← Expanded ← Row ← Column ← _OpenRideBody ← _RideCardBody ←
+    Padding ← Padding ← DecoratedBox ← Container ← ⋯
+  parentData: offset=Offset(0.0, 0.0); flex=null; fit=null (can use size)
+  constraints: BoxConstraints(0.0<=w<=40.4, 0.0<=h<=Infinity)
+  size: Size(40.4, 16.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +41 -1: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept opens offer sheet; card body does not [E]                                  
+  Test failed. See exception logs above.
+  The test description was: Accept opens offer sheet; card body does not
+  
+
+To run this test again: /Users/jazimsaeed/development/flutter/bin/cache/dart-sdk/bin/dart test /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart -p vm --plain-name 'DriverOpenRidesView UI Accept opens offer sheet; card body does not'
+00:03 +41 -1: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI offer sheet shows PKR rupees and submits minor units                              00:03 +41 -1: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI offer sheet shows PKR rupees and submits minor units                              
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 5.6 pixels on the right.
+
+The relevant error-causing widget was:
+  Row
+  Row:file:///Users/jazimsaeed/Ora-app/mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_metrics.dart:54:12
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#8a30a relayoutBoundary=up13 OVERFLOWING:
+  creator: Row ← RideCardMetrics ← Column ← Expanded ← Row ← Column ← _OpenRideBody ← _RideCardBody ←
+    Padding ← Padding ← DecoratedBox ← Container ← ⋯
+  parentData: offset=Offset(0.0, 0.0); flex=null; fit=null (can use size)
+  constraints: BoxConstraints(0.0<=w<=40.4, 0.0<=h<=Infinity)
+  size: Size(40.4, 16.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +41 -2: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI offer sheet shows PKR rupees and submits minor units [E]                          
+  Test failed. See exception logs above.
+  The test description was: offer sheet shows PKR rupees and submits minor units
+  
+
+To run this test again: /Users/jazimsaeed/development/flutter/bin/cache/dart-sdk/bin/dart test /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart -p vm --plain-name 'DriverOpenRidesView UI offer sheet shows PKR rupees and submits minor units'
+00:03 +41 -2: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept semantics bounds match button not full card                                00:03 +41 -2: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept semantics bounds match button not full card                                
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 5.6 pixels on the right.
+
+The relevant error-causing widget was:
+  Row
+  Row:file:///Users/jazimsaeed/Ora-app/mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_metrics.dart:54:12
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#51627 relayoutBoundary=up13 OVERFLOWING:
+  creator: Row ← RideCardMetrics ← Column ← Expanded ← Row ← Column ← _OpenRideBody ← _RideCardBody ←
+    Padding ← Padding ← DecoratedBox ← Container ← ⋯
+  parentData: offset=Offset(0.0, 0.0); flex=null; fit=null (can use size)
+  constraints: BoxConstraints(0.0<=w<=40.4, 0.0<=h<=Infinity)
+  size: Size(40.4, 16.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +41 -3: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept semantics bounds match button not full card [E]                            
+  Test failed. See exception logs above.
+  The test description was: Accept semantics bounds match button not full card
+  
+
+To run this test again: /Users/jazimsaeed/development/flutter/bin/cache/dart-sdk/bin/dart test /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart -p vm --plain-name 'DriverOpenRidesView UI Accept semantics bounds match button not full card'
+00:03 +41 -3: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept disabled while offer submit in flight                                      00:03 +41 -3: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept disabled while offer submit in flight                                      
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 5.6 pixels on the right.
+
+The relevant error-causing widget was:
+  Row
+  Row:file:///Users/jazimsaeed/Ora-app/mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_metrics.dart:54:12
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#d1305 relayoutBoundary=up13 OVERFLOWING:
+  creator: Row ← RideCardMetrics ← Column ← Expanded ← Row ← Column ← _OpenRideBody ← _RideCardBody ←
+    Padding ← Padding ← DecoratedBox ← Container ← ⋯
+  parentData: offset=Offset(0.0, 0.0); flex=null; fit=null (can use size)
+  constraints: BoxConstraints(0.0<=w<=40.4, 0.0<=h<=Infinity)
+  size: Size(40.4, 16.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 5.6 pixels on the right.
+
+The relevant error-causing widget was:
+  Row
+  Row:file:///Users/jazimsaeed/Ora-app/mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_metrics.dart:54:12
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#56340 relayoutBoundary=up13 OVERFLOWING:
+  creator: Row ← RideCardMetrics ← Column ← Expanded ← Row ← Column ← _OpenRideBody ← _RideCardBody ←
+    Padding ← Padding ← DecoratedBox ← Container ← ⋯
+  parentData: offset=Offset(0.0, 0.0); flex=null; fit=null (can use size)
+  constraints: BoxConstraints(0.0<=w<=40.4, 0.0<=h<=Infinity)
+  size: Size(40.4, 16.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +41 -4: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: DriverOpenRidesView UI Accept disabled while offer submit in flight [E]                                  
+  Test failed. See exception logs above.
+  The test description was: Accept disabled while offer submit in flight
+  
+
+To run this test again: /Users/jazimsaeed/development/flutter/bin/cache/dart-sdk/bin/dart test /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart -p vm --plain-name 'DriverOpenRidesView UI Accept disabled while offer submit in flight'
+00:03 +41 -4: /Users/jazimsaeed/Ora-app/mobile/test/features/driver/slice_m_driver_test.dart: (tearDownAll)                                                                                            00:03 +41 -4: Some tests failed.                                                                                                                                                                       

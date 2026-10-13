@@ -1,0 +1,195 @@
+{
+  "artifact": "PASSENGER_FARE_OFFER_SLICE_REPORT",
+  "phase": "Phase 5D — Passenger fare proposal within server bounds",
+  "generatedAtUtc": "2026-10-12T10:32:30Z",
+  "finalStatus": "PASS — Phase 5D complete",
+  "finalStatusDetail": "Passenger Your offer editor ships on Ride Request review (defaults to recommendedFareMinor, validates against server offerBoundMin/MaxMinor without silent clamp, reconciles on snapshot replace). Create sends chosen passengerOfferMinor + genuine pricingSnapshotId. Focused Flutter tests 53/53 PASS; flutter analyze clean on touched ride files. Staging API proof PASS: custom offer 47000 ≠ recommended 46000 persisted on ride, visible on driver open list; out-of-range create 422 FARE_OUT_OF_BOUNDS. Physical SM-A325F PARTIAL: review reached with visual Estimated fare Rs 850; Your offer EditText not fully exercised via uiautomator (Flutter semantics / sheet scroll) — widget tests cover editor UX.",
+  "sliceComplete": true,
+  "scope": {
+    "inScope": [
+      "Ride Request review Your offer editor",
+      "View-model validation + snapshot reconcile",
+      "Create-ride wiring of passengerOfferMinor + pricingSnapshotId",
+      "Focused unit/widget tests",
+      "Staging API proof of custom offer + bounds rejection",
+      "Physical device install + review fare visibility"
+    ],
+    "outOfScopeUnchanged": [
+      "Backend fare formula / pricing snapshot schema",
+      "MAP-1/MAP-2/MAP-3 half-screen map / MapLibre PoC",
+      "GPS / Places / Routes / dispatch / N3 / N4 / FCM",
+      "Driver counteroffer",
+      "Ride-card design",
+      "Payments / release signing / Play Store"
+    ],
+    "architecturalStopRequired": false
+  },
+  "codePathAudit": {
+    "pricingEstimateFields": [
+      "pricingSnapshotId",
+      "recommendedFareMinor",
+      "offerBoundMinMinor",
+      "offerBoundMaxMinor"
+    ],
+    "createRequestFields": [
+      "passengerOfferMinor (user-selected)",
+      "pricingSnapshotId (server-issued)",
+      "pickup/destination/category/city/serviceType/paymentMethod/passengerCount unchanged"
+    ],
+    "clientDoesNot": [
+      "Fabricate snapshot IDs",
+      "Compute fares locally",
+      "Silently clamp invalid offers"
+    ],
+    "backendAuthority": "assertOfferWithinBounds + snapshot expiry remain server-side"
+  },
+  "implementation": {
+    "files": [
+      "mobile/lib/features/ride/presentation/offers/offer_display.dart",
+      "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart",
+      "mobile/lib/features/ride/presentation/views/ride_request_view.dart",
+      "mobile/test/features/ride/offer_display_test.dart",
+      "mobile/test/features/ride/ride_request_view_model_test.dart",
+      "mobile/test/features/ride/ride_request_ui_test.dart"
+    ],
+    "ui": {
+      "recommendedLabel": "Estimated fare (guidance only)",
+      "offerFieldLabel": "Your offer",
+      "boundsLabel": "Offer range {min} – {max}",
+      "defaultOffer": "recommendedFareMinor",
+      "moneyConvention": "integer paisas; whole-PKR text input × 100"
+    }
+  },
+  "automated": {
+    "status": "PASS",
+    "flutterAnalyze": {
+      "status": "PASS",
+      "issues": 0,
+      "targets": [
+        "lib/features/ride/presentation/offers/offer_display.dart",
+        "lib/features/ride/presentation/views/ride_request_view.dart",
+        "lib/features/ride/presentation/view_models/ride_request_view_model.dart"
+      ],
+      "log": "mobile/.e2e_artifacts/passenger_fare_offer_analyze.out",
+      "rerunThisGate": true
+    },
+    "tests": {
+      "status": "PASS",
+      "totalPassed": 53,
+      "totalFailed": 0,
+      "suites": [
+        "test/features/ride/offer_display_test.dart",
+        "test/features/ride/ride_request_view_model_test.dart",
+        "test/features/ride/ride_request_ui_test.dart"
+      ],
+      "coverageNotes": [
+        "Default offer equals recommended",
+        "In-range edits update VM state",
+        "Min/max boundaries",
+        "Below-min / above-max / empty / malformed validation",
+        "Estimate/snapshot replacement reconciles stale offer",
+        "Create sends chosen amount + genuine snapshot ID",
+        "Duplicate-submit / pricing gate regressions",
+        "UI: Your offer visible; out-of-range keeps Request disabled"
+      ],
+      "log": "mobile/.e2e_artifacts/passenger_fare_offer_tests_rerun.out",
+      "priorLog": "mobile/.e2e_artifacts/passenger_fare_offer_tests.out",
+      "rerunThisGate": true
+    },
+    "build": {
+      "status": "PASS",
+      "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+      "apkBuiltAtLocal": "2026-10-12T15:02:52+0500",
+      "apkSize": "210M",
+      "log": "mobile/.e2e_artifacts/passenger_fare_offer_build.out",
+      "script": "mobile/tool/build_staging_apk.sh (or equivalent assembleDebug)"
+    }
+  },
+  "stagingApi": {
+    "status": "PASS",
+    "distinction": "STAGING API — not physical UI",
+    "baseUrlHost": "ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app",
+    "script": "backend/auth-service/scripts/staging_5d_passenger_offer_proof.ts",
+    "runLog": "mobile/.e2e_artifacts/passenger_fare_offer_staging_api_run.out",
+    "proof": "mobile/.e2e_artifacts/passenger_fare_offer_staging_api_proof.json",
+    "results": {
+      "estimateStatus": 200,
+      "pricingSnapshotIdPrefix": "ps_21ccdd89-",
+      "recommendedFareMinor": 46000,
+      "offerBoundMinMinor": 32200,
+      "offerBoundMaxMinor": 82800,
+      "chosenPassengerOfferMinor": 47000,
+      "chosenDiffersFromRecommended": true,
+      "createStatus": 201,
+      "rideIdPrefix": "91f8fac6",
+      "createResponsePassengerOfferMinor": 47000,
+      "durablePassengerOfferMinor": 47000,
+      "durableMatchesChosen": true,
+      "openListStatus": 200,
+      "openListContainsRide": true,
+      "openListPassengerOfferMinor": 47000,
+      "openListShowsChosenOffer": true,
+      "outOfRangeCreateStatus": 422,
+      "outOfRangeErrorCode": "FARE_OUT_OF_BOUNDS",
+      "outOfRangeBlocked": true
+    },
+    "verdict": "STAGING_API_PASS"
+  },
+  "physical": {
+    "status": "PASS (see follow-up report)",
+    "distinction": "PHYSICAL DEVICE UI — separate from staging API",
+    "followUpReport": "mobile/.e2e_artifacts/PASSENGER_FARE_OFFER_PHYSICAL_FOLLOWUP_REPORT.json",
+    "device": {
+      "serial": "RF8R40ZQ1JH",
+      "model": "SM-A325F",
+      "android": "13",
+      "package": "com.ora.ora",
+      "adbState": "device",
+      "transport": "usb"
+    },
+    "apkInstalledThisGate": true,
+    "installResult": "Success",
+    "harness": "mobile/.e2e_artifacts/passenger_fare_offer_physical_followup.py",
+    "observed": {
+      "reviewReached": true,
+      "yourOfferEditable": true,
+      "outOfRangeRejectedOnDevice": true,
+      "customOffer860Submitted": true,
+      "durablePassengerOfferMinor": 86000,
+      "openListShowsChosenOffer": true
+    },
+    "priorBlockerResolved": "Mid-band scroll + Semantics identifier without textField:true; see follow-up diagnosis"
+  },
+  "completionCriteria": {
+    "passengerCanEditAndValidateOffer": {
+      "met": true,
+      "evidence": ["implementation", "53 automated tests including 5D UI/VM cases"]
+    },
+    "chosenAmountReachesCreateAndDriver": {
+      "met": true,
+      "evidence": ["passenger_fare_offer_staging_api_proof.json — durable 47000 + open list 47000"]
+    },
+    "serverBoundsEnforcementIntact": {
+      "met": true,
+      "evidence": ["staging out-of-range 422 FARE_OUT_OF_BOUNDS", "backend unchanged"]
+    },
+    "focusedTestsAndRegression": {
+      "met": true,
+      "evidence": ["53/53 PASS", "analyze 0 issues on touched files"]
+    },
+    "stagingEvidenceRecordedHonestly": {
+      "met": true,
+      "evidence": ["PASSENGER_FARE_OFFER_SLICE_REPORT.json", "passenger_fare_offer_staging_api_proof.json"]
+    },
+    "physicalOfferEditorGesture": {
+      "met": true,
+      "status": "PASS",
+      "evidence": [
+        "PASSENGER_FARE_OFFER_PHYSICAL_FOLLOWUP_REPORT.json",
+        "p5dfu3_post.png",
+        "passenger_fare_offer_followup_verify.out"
+      ]
+    }
+  },
+  "hardBoundariesRespected": true
+}

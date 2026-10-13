@@ -1,0 +1,3 @@
+Waiting for another flutter command to release the startup lock...
+Running Gradle task 'assembleDebug'...                             13.2s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk

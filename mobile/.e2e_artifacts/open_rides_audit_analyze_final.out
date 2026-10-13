@@ -1,0 +1,6 @@
+Analyzing ride_card, driver_open_rides_view.dart, driver_open_rides_view_model.dart...
+
+   info - lib/features/ride/presentation/widgets/ride_card/ride_card_participant.dart:258:11 - Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation. - prefer_const_constructors
+   info - lib/features/ride/presentation/widgets/ride_card/ride_card_participant.dart:261:20 - Use 'const' with the constructor to improve performance. Try adding the 'const' keyword to the constructor invocation. - prefer_const_constructors
+
+2 issues found.

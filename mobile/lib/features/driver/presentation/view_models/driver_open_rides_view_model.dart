@@ -117,6 +117,10 @@ class DriverOpenRidesViewModel
   int _offerGen = 0;
   String? _createOpKey;
 
+  /// Session-local Decline hides only — never a server decline.
+  /// Cleared on full refresh / loadInitial so authoritative list returns.
+  final Set<String> _sessionDismissedRideIds = <String>{};
+
   @override
   DriverOpenRidesUiState build() {
     _listOpenRides = ref.read(listOpenRidesUseCaseProvider);
@@ -128,6 +132,7 @@ class DriverOpenRidesViewModel
 
   Future<void> loadInitial() async {
     final seq = ++_requestSeq;
+    _sessionDismissedRideIds.clear();
     state = state.copyWith(
       phase: DriverOpenRidesPhase.initialLoading,
       rides: const [],
@@ -150,6 +155,8 @@ class DriverOpenRidesViewModel
     }
     _refreshInFlight = true;
     final seq = ++_requestSeq;
+    // Refresh restores server truth — clear temporary Decline hides.
+    _sessionDismissedRideIds.clear();
     state = state.copyWith(
       isRefreshing: true,
       clearError: true,
@@ -160,6 +167,23 @@ class DriverOpenRidesViewModel
     } finally {
       _refreshInFlight = false;
     }
+  }
+
+  /// UI-only Decline: hide from this session's list. Not a server decline.
+  void dismissRideLocally(String rideId) {
+    final id = rideId.trim();
+    if (id.isEmpty) return;
+    _sessionDismissedRideIds.add(id);
+    final remaining =
+        state.rides.where((r) => r.rideId != id).toList(growable: false);
+    state = state.copyWith(
+      rides: remaining,
+      phase: remaining.isEmpty
+          ? DriverOpenRidesPhase.empty
+          : DriverOpenRidesPhase.ready,
+      // No success banner — Decline is not a confirmed server action.
+      clearOfferInfo: true,
+    );
   }
 
   Future<void> loadMore() async {
@@ -305,9 +329,12 @@ class DriverOpenRidesViewModel
       );
       if (seq != _requestSeq) return;
 
-      final merged = append
+      final raw = append
           ? _dedupeAppend(state.rides, page.rides)
           : List<OpenRide>.from(page.rides);
+      final merged = raw
+          .where((r) => !_sessionDismissedRideIds.contains(r.rideId))
+          .toList(growable: false);
       final next = page.nextCursor;
       final hasNext = next != null && next.isNotEmpty;
 

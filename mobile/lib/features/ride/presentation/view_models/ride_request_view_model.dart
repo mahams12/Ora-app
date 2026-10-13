@@ -13,6 +13,7 @@ import '../../domain/ports/device_location_port.dart';
 import '../../domain/ports/place_search_port.dart';
 import '../../domain/ports/pricing_estimate_port.dart';
 import '../../domain/use_cases/ride_use_cases.dart';
+import '../offers/offer_display.dart';
 
 /// Pricing fields come from POST /v1/pricing/estimate (Phase 5C).
 /// Coordinates come from passenger-confirmed locations (Phase 4A).
@@ -102,6 +103,8 @@ class RideRequestUiState {
     this.pricingFailureKind,
     this.pricingFailureMessage,
     this.passengerOfferMinor,
+    this.passengerOfferDraftText = '',
+    this.passengerOfferError,
   });
 
   final RideRequestPhase phase;
@@ -129,7 +132,15 @@ class RideRequestUiState {
   final PricingEstimate? pricingEstimate;
   final PricingFailureKind? pricingFailureKind;
   final String? pricingFailureMessage;
+
+  /// Last **valid** passenger offer in paisas (server bounds). Null if draft invalid.
   final int? passengerOfferMinor;
+
+  /// Editable draft (whole PKR rupees text). Synced from estimate; not clamped.
+  final String passengerOfferDraftText;
+
+  /// Validation message for the draft; null when draft is valid.
+  final String? passengerOfferError;
 
   bool get hasPickupText => pickupText.trim().isNotEmpty;
   bool get hasDestinationText => destinationText.trim().isNotEmpty;
@@ -148,6 +159,16 @@ class RideRequestUiState {
     }
     if (estimate.pricingSnapshotId.trim().isEmpty) return false;
     return !estimate.isExpiredAt(DateTime.now().toUtc());
+  }
+
+  /// True when draft parses to an in-bound offer for the current snapshot.
+  bool get hasValidPassengerOffer {
+    if (!hasUsablePricing || pricingEstimate == null) return false;
+    if (passengerOfferMinor == null || passengerOfferMinor! <= 0) return false;
+    if (passengerOfferError != null) return false;
+    final estimate = pricingEstimate!;
+    return passengerOfferMinor! >= estimate.offerBoundMinMinor &&
+        passengerOfferMinor! <= estimate.offerBoundMaxMinor;
   }
 
   String? get pricingDisplayError {
@@ -188,6 +209,8 @@ class RideRequestUiState {
     PricingFailureKind? pricingFailureKind,
     String? pricingFailureMessage,
     int? passengerOfferMinor,
+    String? passengerOfferDraftText,
+    String? passengerOfferError,
     bool clearBlock = false,
     bool clearError = false,
     bool clearCreated = false,
@@ -202,6 +225,7 @@ class RideRequestUiState {
     bool clearCitySlug = false,
     bool clearPricing = false,
     bool clearPassengerOffer = false,
+    bool clearPassengerOfferError = false,
   }) {
     return RideRequestUiState(
       phase: phase ?? this.phase,
@@ -253,6 +277,11 @@ class RideRequestUiState {
       passengerOfferMinor: clearPassengerOffer
           ? null
           : (passengerOfferMinor ?? this.passengerOfferMinor),
+      passengerOfferDraftText:
+          passengerOfferDraftText ?? this.passengerOfferDraftText,
+      passengerOfferError: clearPassengerOfferError
+          ? null
+          : (passengerOfferError ?? this.passengerOfferError),
     );
   }
 }
@@ -707,6 +736,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     state = state.copyWith(
       clearPricing: true,
       clearPassengerOffer: true,
+      passengerOfferDraftText: '',
+      clearPassengerOfferError: true,
     );
   }
 
@@ -716,6 +747,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     PricingFailureKind? pricingFailureKind,
     String? pricingFailureMessage,
     int? passengerOfferMinor,
+    String? passengerOfferDraftText,
+    String? passengerOfferError,
   }) {
     return RideRequestUiState(
       phase: state.phase,
@@ -742,6 +775,57 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       pricingFailureKind: pricingFailureKind,
       pricingFailureMessage: pricingFailureMessage,
       passengerOfferMinor: passengerOfferMinor,
+      passengerOfferDraftText: passengerOfferDraftText ?? '',
+      passengerOfferError: passengerOfferError,
+    );
+  }
+
+  /// Reconcile a prior offer against a **new** snapshot (never silent clamp).
+  ///
+  /// Keeps the previous offer only when it still lies within the new bounds;
+  /// otherwise resets to [estimate.recommendedFareMinor].
+  ({int offerMinor, String draft}) _reconcileOfferForEstimate(
+    PricingEstimate estimate,
+  ) {
+    final previous = state.passengerOfferMinor;
+    if (previous != null &&
+        previous >= estimate.offerBoundMinMinor &&
+        previous <= estimate.offerBoundMaxMinor) {
+      return (
+        offerMinor: previous,
+        draft: offerRupeesFieldText(previous),
+      );
+    }
+    return (
+      offerMinor: estimate.recommendedFareMinor,
+      draft: offerRupeesFieldText(estimate.recommendedFareMinor),
+    );
+  }
+
+  /// Passenger edited the offer field (whole PKR). Does not clamp out-of-range.
+  void setPassengerOfferDraft(String text) {
+    final estimate = state.pricingEstimate;
+    if (!state.hasUsablePricing || estimate == null) return;
+
+    final result = validatePassengerOfferRupees(
+      text: text,
+      offerBoundMinMinor: estimate.offerBoundMinMinor,
+      offerBoundMaxMinor: estimate.offerBoundMaxMinor,
+    );
+    if (result.isValid) {
+      state = state.copyWith(
+        passengerOfferDraftText: text,
+        passengerOfferMinor: result.amountMinor,
+        clearPassengerOfferError: true,
+        clearBlock: true,
+      );
+      return;
+    }
+    state = state.copyWith(
+      passengerOfferDraftText: text,
+      clearPassengerOffer: true,
+      passengerOfferError: result.message,
+      clearBlock: true,
     );
   }
 
@@ -771,7 +855,13 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     }
 
     final generation = ++_pricingGen;
-    state = _withPricingSurface(pricingStatus: PricingStatus.loading);
+    // Keep prior offer through loading so success can reconcile vs new bounds.
+    state = _withPricingSurface(
+      pricingStatus: PricingStatus.loading,
+      passengerOfferMinor: state.passengerOfferMinor,
+      passengerOfferDraftText: state.passengerOfferDraftText,
+      passengerOfferError: state.passengerOfferError,
+    );
 
     try {
       final estimate = await _pricing.estimate(
@@ -787,10 +877,13 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
         ),
       );
       if (generation != _pricingGen) return;
+      // New snapshot: keep prior offer only if still in-bounds; else recommended.
+      final reconciled = _reconcileOfferForEstimate(estimate);
       state = _withPricingSurface(
         pricingStatus: PricingStatus.success,
         pricingEstimate: estimate,
-        passengerOfferMinor: estimate.recommendedFareMinor,
+        passengerOfferMinor: reconciled.offerMinor,
+        passengerOfferDraftText: reconciled.draft,
       );
     } on PricingClientException catch (error) {
       if (generation != _pricingGen) return;
@@ -825,6 +918,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     if (!state.canAdvanceToReview) return false;
     if (state.citySlug == null || state.citySlug!.isEmpty) return false;
     if (state.pricingStatus == PricingStatus.loading) return false;
+    if (!_usesInjectedPricing && !state.hasValidPassengerOffer) return false;
     return capabilities.canCreateRide;
   }
 
@@ -839,6 +933,9 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       return RideRequestBlockReason.pricingUnavailable;
     }
     if (!_usesInjectedPricing && !state.hasUsablePricing) {
+      return RideRequestBlockReason.pricingUnavailable;
+    }
+    if (!_usesInjectedPricing && !state.hasValidPassengerOffer) {
       return RideRequestBlockReason.pricingUnavailable;
     }
     final caps = capabilities;
@@ -856,7 +953,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       RideRequestBlockReason.incomplete =>
         'Confirm both a pickup and a destination to continue.',
       RideRequestBlockReason.pricingUnavailable =>
-        state.pricingDisplayError ??
+        state.passengerOfferError ??
+            state.pricingDisplayError ??
             'Pricing isn\'t available right now. Please try again later.',
       RideRequestBlockReason.locationUnavailable =>
         'Location isn\'t available yet. Ora will not invent pickup or '
@@ -916,6 +1014,30 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       return;
     }
 
+    // Re-validate draft against current snapshot before create.
+    if (!_usesInjectedPricing && state.hasUsablePricing) {
+      final estimate = state.pricingEstimate!;
+      final result = validatePassengerOfferRupees(
+        text: state.passengerOfferDraftText,
+        offerBoundMinMinor: estimate.offerBoundMinMinor,
+        offerBoundMaxMinor: estimate.offerBoundMaxMinor,
+      );
+      if (!result.isValid) {
+        state = state.copyWith(
+          clearPassengerOffer: true,
+          passengerOfferDraftText: state.passengerOfferDraftText,
+          passengerOfferError: result.message,
+          phase: RideRequestPhase.blocked,
+          blockReason: RideRequestBlockReason.pricingUnavailable,
+          clearError: true,
+        );
+        return;
+      }
+      if (state.passengerOfferMinor != result.amountMinor) {
+        state = state.copyWith(passengerOfferMinor: result.amountMinor);
+      }
+    }
+
     final block = submitBlockReason;
     if (block != null) {
       state = state.copyWith(
@@ -930,7 +1052,10 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     final pickup = caps.resolvedPickup!;
     final destination = caps.resolvedDestination!;
     final snapshotId = caps.pricingSnapshotId!;
-    final offerMinor = caps.passengerOfferMinor!;
+    // Prefer the validated draft amount over any stale capability fallback.
+    final offerMinor = (!_usesInjectedPricing && state.passengerOfferMinor != null)
+        ? state.passengerOfferMinor!
+        : caps.passengerOfferMinor!;
     final city = state.citySlug!;
 
     _createOperationKey ??= 'ride:create:${const Uuid().v4()}';

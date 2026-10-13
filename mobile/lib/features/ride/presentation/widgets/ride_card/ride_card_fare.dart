@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../app/theme/ora_colors.dart';
 import '../../../../../app/theme/ora_typography.dart';
 
-/// Compact fare — single numeric emphasis, optional muted caption.
+/// Fare block — large white number + muted caption (Your earnings / Agreed fare).
 class RideCardFare extends StatelessWidget {
   const RideCardFare({
     super.key,
@@ -12,6 +12,7 @@ class RideCardFare extends StatelessWidget {
     this.secondaryFareLabel,
     this.emphasized = false,
     this.inline = false,
+    this.alignEnd = true,
   });
 
   final String? fareLabel;
@@ -19,6 +20,7 @@ class RideCardFare extends StatelessWidget {
   final String? secondaryFareLabel;
   final bool emphasized;
   final bool inline;
+  final bool alignEnd;
 
   @override
   Widget build(BuildContext context) {
@@ -27,22 +29,30 @@ class RideCardFare extends StatelessWidget {
     }
 
     final fareStyle = OraTypography.numeric(
-      emphasized ? OraColors.info : OraColors.textPrimary,
-    ).copyWith(fontSize: inline ? 16 : 18, height: 1.1);
+      OraColors.textPrimary,
+    ).copyWith(
+      fontSize: inline ? 18 : 20,
+      height: 1.1,
+      fontWeight: FontWeight.w700,
+      color: emphasized ? Colors.white : OraColors.textPrimary,
+    );
 
-    if (inline) {
+    if (inline && fareCaption == null && secondaryFareLabel == null) {
       return Text(fareLabel ?? secondaryFareLabel!, style: fareStyle);
     }
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment:
+          alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        if (fareCaption != null)
+        if (fareLabel != null) Text(fareLabel!, style: fareStyle),
+        if (fareCaption != null) ...[
+          const SizedBox(height: 2),
           Text(
             fareCaption!,
             style: OraTypography.caption(OraColors.textMuted),
           ),
-        if (fareLabel != null) Text(fareLabel!, style: fareStyle),
+        ],
         if (secondaryFareLabel != null)
           Text(
             secondaryFareLabel!,

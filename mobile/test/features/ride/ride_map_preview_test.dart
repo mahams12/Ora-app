@@ -1,12 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:maplibre_gl/maplibre_gl.dart' as ml;
+import 'package:ora/features/maps/preview/map_preview_camera_policy.dart';
 import 'package:ora/features/ride/domain/models/resolved_passenger_location.dart';
 import 'package:ora/features/ride/domain/ports/pricing_estimate_port.dart';
 import 'package:ora/features/ride/presentation/models/ride_map_preview_model.dart';
 import 'package:ora/features/ride/presentation/utils/encoded_polyline_decoder.dart';
 import 'package:ora/features/ride/presentation/utils/ride_map_camera_policy.dart';
 import 'package:ora/features/ride/presentation/widgets/ride_map_preview.dart';
-import 'package:flutter/material.dart';
 
 void main() {
   const pickup = ResolvedPassengerLocation(
@@ -189,6 +191,41 @@ void main() {
       expect(model.hasDestination, isTrue);
       expect(model.hasRouteLine, isFalse);
     });
+
+    test('exposes endpoint labels and trip metrics for callouts', () {
+      final model = RideMapPreviewModel.fromRideRequest(
+        confirmedPickup: pickup,
+        confirmedDestination: destination,
+        proposedPickup: null,
+        proposedDestination: null,
+        pricingStatus: PricingStatus.success,
+        pricingEstimate: estimate(polyline: samplePolyline),
+        hasUsablePricing: true,
+      );
+      expect(model.pickupLabel, 'Pickup');
+      expect(model.destinationLabel, 'Liberty');
+      expect(model.hasTripMetrics, isTrue);
+      expect(model.tripMetricsLabel, '3.6 km • 12 min');
+    });
+  });
+
+  group('MapPreviewCameraPolicy', () {
+    test('fits bounds for distant points', () {
+      const a = ml.LatLng(31.52, 74.35);
+      const b = ml.LatLng(31.51, 74.34);
+      expect(MapPreviewCameraPolicy.areExtremelyClose(a, b), isFalse);
+      expect(
+        MapPreviewCameraPolicy.cameraUpdate(pickup: a, destination: b),
+        isNotNull,
+      );
+    });
+
+    test('no points returns null', () {
+      expect(
+        MapPreviewCameraPolicy.cameraUpdate(pickup: null, destination: null),
+        isNull,
+      );
+    });
   });
 
   group('RideMapPreview widget', () {
@@ -230,7 +267,54 @@ void main() {
       );
       expect(find.text('Map preview'), findsOneWidget);
       expect(find.textContaining('confirmed'), findsOneWidget);
-      expect(find.byType(GoogleMap), findsNothing);
+      // Callouts only mount with a live MapLibre surface — not on soft shell.
+      expect(find.byType(ml.MapLibreMap), findsNothing);
+    });
+
+    testWidgets('shows expand chrome when compact; collapse when expanded',
+        (tester) async {
+      final model = RideMapPreviewModel.fromRideRequest(
+        confirmedPickup: pickup,
+        confirmedDestination: destination,
+        proposedPickup: null,
+        proposedDestination: null,
+        pricingStatus: PricingStatus.idle,
+        pricingEstimate: null,
+        hasUsablePricing: false,
+      );
+
+      var expanded = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) {
+                return RideMapPreview(
+                  model: model,
+                  height: expanded ? 600 : 300,
+                  enableMaps: false,
+                  isExpanded: expanded,
+                  onExpand: () => setState(() => expanded = true),
+                  onCollapse: () => setState(() => expanded = false),
+                  onBack: () {},
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byTooltip('Expand map'), findsOneWidget);
+      expect(find.byTooltip('Collapse map'), findsNothing);
+
+      await tester.tap(find.byTooltip('Expand map'));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Collapse map'), findsOneWidget);
+      expect(find.byTooltip('Expand map'), findsNothing);
+
+      await tester.tap(find.byTooltip('Collapse map'));
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Expand map'), findsOneWidget);
     });
   });
 

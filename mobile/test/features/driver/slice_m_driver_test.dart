@@ -113,7 +113,7 @@ Future<void> _pumpDriverOpenRidesView(
   required MockListOpenRidesUseCase listOpen,
   MockCreateOfferUseCase? createOffer,
 }) async {
-  // Compact marketplace cards — phone surface keeps Respond hittable.
+  // Compact marketplace cards — phone surface keeps Accept hittable.
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.resetPhysicalSize);
@@ -141,8 +141,8 @@ Future<void> _pumpDriverOpenRidesView(
   await tester.pumpAndSettle();
 }
 
-Future<void> _tapRespond(WidgetTester tester, {Finder? finder}) async {
-  final target = finder ?? find.text('Respond');
+Future<void> _tapAccept(WidgetTester tester, {Finder? finder}) async {
+  final target = finder ?? find.text('Accept');
   await tester.ensureVisible(target.first);
   await tester.pumpAndSettle();
   await tester.tap(target.first);
@@ -404,6 +404,43 @@ void main() {
       expect(ride.passengerOfferMinor, 25000);
       // OpenRide has no passengerId field — compile-time + runtime shape check.
       expect(ride.toString(), isNot(contains('passengerId')));
+    });
+
+    test('Decline dismisses locally only; refresh restores server list',
+        () async {
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+        ),
+      ).thenAnswer(
+        (_) async => OpenRideListPage(
+          rides: [
+            _openRide(id: 'open-a'),
+            _openRide(id: 'open-b', pickupAddress: 'Pickup B'),
+          ],
+          nextCursor: null,
+        ),
+      );
+
+      final c = container();
+      addTearDown(c.dispose);
+      c.listen(driverOpenRidesViewModelProvider, (_, __) {});
+      final vm = c.read(driverOpenRidesViewModelProvider.notifier);
+      await vm.loadInitial();
+      expect(c.read(driverOpenRidesViewModelProvider).rides, hasLength(2));
+
+      vm.dismissRideLocally('open-a');
+      var state = c.read(driverOpenRidesViewModelProvider);
+      expect(state.rides.map((r) => r.rideId), ['open-b']);
+      expect(state.offerInfoMessage, isNull);
+
+      await vm.refresh();
+      state = c.read(driverOpenRidesViewModelProvider);
+      expect(state.rides.map((r) => r.rideId).toSet(), {'open-a', 'open-b'});
+      verify(
+        () => listOpen(limit: openRidesDefaultLimit, cursor: null),
+      ).called(2);
     });
 
     test('empty state', () async {
@@ -976,10 +1013,10 @@ void main() {
       expect(find.textContaining('passengerId'), findsNothing);
       expect(find.textContaining('ETA'), findsNothing);
       expect(find.textContaining('Pickup A'), findsOneWidget);
-      expect(find.textContaining('Respond'), findsOneWidget);
+      expect(find.textContaining('Accept'), findsOneWidget);
     });
 
-    testWidgets('Respond opens offer sheet; card body does not', (tester) async {
+    testWidgets('Accept opens offer sheet; card body does not', (tester) async {
       final listOpen = MockListOpenRidesUseCase();
       when(
         () => listOpen(
@@ -996,7 +1033,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Submit offer'), findsNothing);
 
-      await _tapRespond(tester);
+      await _tapAccept(tester);
       await tester.pumpAndSettle();
 
       expect(find.text('Accept passenger price'), findsOneWidget);
@@ -1034,7 +1071,7 @@ void main() {
         listOpen: listOpen,
         createOffer: createOffer,
       );
-      await _tapRespond(tester);
+      await _tapAccept(tester);
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Passenger offer: Rs 310'), findsOneWidget);
@@ -1055,7 +1092,7 @@ void main() {
       expect(body['type'], 'PASSENGER_PRICE_ACCEPTED');
     });
 
-    testWidgets('Respond semantics bounds match button not full card',
+    testWidgets('Accept semantics bounds match button not full card',
         (tester) async {
       final listOpen = MockListOpenRidesUseCase();
       when(
@@ -1071,17 +1108,17 @@ void main() {
       final semanticsHandle = tester.ensureSemantics();
       await tester.pump();
 
-      final respondSemantics = tester.getSemantics(find.text('Respond'));
+      final acceptSemantics = tester.getSemantics(find.text('Accept'));
       final cardSpan =
-          tester.getBottomLeft(find.text('Respond')).dy -
+          tester.getBottomLeft(find.text('Accept')).dy -
           tester.getTopLeft(find.textContaining('Pickup A')).dy;
-      expect(respondSemantics.hasFlag(SemanticsFlag.isButton), isTrue);
+      expect(acceptSemantics.hasFlag(SemanticsFlag.isButton), isTrue);
       expect(cardSpan, greaterThan(40));
-      expect(respondSemantics.rect.height, lessThan(cardSpan * 0.9));
+      expect(acceptSemantics.rect.height, lessThan(cardSpan * 0.9));
       semanticsHandle.dispose();
     });
 
-    testWidgets('Respond disabled while offer submit in flight', (tester) async {
+    testWidgets('Accept disabled while offer submit in flight', (tester) async {
       final listOpen = MockListOpenRidesUseCase();
       final createOffer = MockCreateOfferUseCase();
       final gate = Completer<RideOffer>();
@@ -1114,7 +1151,7 @@ void main() {
         createOffer: createOffer,
       );
 
-      await _tapRespond(tester, finder: find.text('Respond').first);
+      await _tapAccept(tester, finder: find.text('Accept').first);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Submit offer').last);
       await tester.pump();
@@ -1125,11 +1162,11 @@ void main() {
 
       final semanticsHandle = tester.ensureSemantics();
       await tester.pump();
-      final secondRespond = tester.getSemantics(find.text('Respond').last);
-      expect(secondRespond.hasFlag(SemanticsFlag.isEnabled), isFalse);
+      final secondAccept = tester.getSemantics(find.text('Accept').last);
+      expect(secondAccept.hasFlag(SemanticsFlag.isEnabled), isFalse);
 
       final sheetCount = find.text('Submit offer').evaluate().length;
-      await tester.tap(find.text('Respond').last, warnIfMissed: false);
+      await tester.tap(find.text('Accept').last, warnIfMissed: false);
       await tester.pump();
       expect(find.text('Submit offer'), findsNWidgets(sheetCount));
 

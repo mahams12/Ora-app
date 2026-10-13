@@ -1,0 +1,7 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+{"driverUid":"SRjL7BJgCKTduhtpjtYMRZMq5fD2","tokenDocCount":3,"docs":[{"tokenId":"SRjL7BJgCKTduhtpjtYMRZMq5fD2_430d8246490d63f37b1ad06f344bf76ab048fe36","driverId":"SRjL7BJgCKTduhtpjtYMRZMq5fD2","hasToken":true},{"tokenId":"SRjL7BJgCKTduhtpjtYMRZMq5fD2_936d6242fd75042abdd247fbb35babf539bba4d0","driverId":"SRjL7BJgCKTduhtpjtYMRZMq5fD2","hasToken":true},{"tokenId":"SRjL7BJgCKTduhtpjtYMRZMq5fD2_ac8630a2247a0d15c4c5c6f419bfa2d29db92953","driverId":"SRjL7BJgCKTduhtpjtYMRZMq5fD2","hasToken":true}]}
+npm notice
+npm notice New minor version of npm available! 11.5.1 -> 11.21.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.21.0
+npm notice To update run: npm install -g npm@11.21.0
+npm notice

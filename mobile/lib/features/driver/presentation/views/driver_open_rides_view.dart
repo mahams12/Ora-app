@@ -192,13 +192,15 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
             final ride = state.rides[rideIndex];
             final offering = state.offeringRideId == ride.rideId;
             return Padding(
+              key: ValueKey('open_ride_${ride.rideId}'),
               padding: const EdgeInsets.only(bottom: OraSpacing.sm),
               child: RideCard(
                 model: RideCardAdapters.fromOpenRide(
                   ride,
                   offering: offering,
                   offerDisabled: state.isOffering,
-                  onRespond: () => _openOfferSheet(ride),
+                  onAccept: () => _openOfferSheet(ride),
+                  onDecline: () => vm.dismissRideLocally(ride.rideId),
                 ),
               ),
             );

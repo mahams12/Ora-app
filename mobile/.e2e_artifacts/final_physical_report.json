@@ -1,0 +1,86 @@
+{
+  "startedAt": "2026-10-13T10:32:31.989719+00:00",
+  "device": "RF8R40ZQ1JH",
+  "package": "com.ora.ora",
+  "rideRequest": {
+    "shot": "final_ride_request.png",
+    "hasWhereTo": true,
+    "hasMapPreview": true,
+    "attributionHint": false
+  },
+  "routeSeed": {
+    "attempted": true,
+    "gps": true
+  },
+  "expandCollapse": {
+    "expanded": true,
+    "collapsed": true
+  },
+  "mapControls": {
+    "threeD": true,
+    "layers": true
+  },
+  "fcm": {
+    "watchStartedAt": "2026-10-13T10:36:48.447669+00:00",
+    "prep": {
+      "createAt": "2026-10-13T10:36:56.928Z",
+      "rideId": "94f13454-7874-45e7-a813-e5d7e42d6dc9",
+      "createStatus": 201,
+      "tickAt": "2026-10-13T10:36:58.849Z",
+      "tickStatus": 200,
+      "tick": {
+        "outcome": "wave_completed",
+        "rideId": "94f13454-7874-45e7-a813-e5d7e42d6dc9",
+        "waveNumber": 1,
+        "invitedCount": 1,
+        "driverIds": [
+          "SRjL7BJgCKTduhtpjtYMRZMq5fD2"
+        ]
+      },
+      "sweepAt": "2026-10-13T10:37:03.691Z",
+      "sweepStatus": 200,
+      "sweep": {
+        "scanned": 54,
+        "processed": 2,
+        "delivered": 2,
+        "retryable": 0,
+        "deadLetter": 0,
+        "skipped": 52,
+        "failed": 0
+      }
+    },
+    "appeared": true,
+    "appear": {
+      "appearedAt": "2026-10-13T10:37:11.493588+00:00",
+      "pollIndex": 0,
+      "latencyFromSweepAtMs": null
+    },
+    "frames": {
+      "oraFrameSampleCount": 0,
+      "slowFramesOver16ms": 0,
+      "jankyFramesOver33ms": 0,
+      "maxTotalMs": null,
+      "p50TotalMs": null,
+      "d1FcmLines": [
+        "10-13 15:37:06.594  9940  9940 I flutter : [D1_FCM] local notification eventId=6ac27d60-fa8a-4afb-92ed-ddc99f97a79d rideId=94f13454-7874-45e7-a813-e5d7e42d6dc9"
+      ],
+      "artifact": ".e2e_artifacts/final_frame_d1_logcat.txt"
+    },
+    "manualRefreshUsed": false
+  },
+  "acceptSheet": {
+    "opened": true
+  },
+  "frameTiming": {
+    "oraFrameSampleCount": 0,
+    "slowFramesOver16ms": 0,
+    "jankyFramesOver33ms": 0,
+    "maxTotalMs": null,
+    "p50TotalMs": null,
+    "d1FcmLines": [
+      "10-13 15:37:06.594  9940  9940 I flutter : [D1_FCM] local notification eventId=6ac27d60-fa8a-4afb-92ed-ddc99f97a79d rideId=94f13454-7874-45e7-a813-e5d7e42d6dc9"
+    ],
+    "artifact": ".e2e_artifacts/final_frame_d1_logcat.txt"
+  },
+  "finishedAt": "2026-10-13T10:38:54.756149+00:00"
+}

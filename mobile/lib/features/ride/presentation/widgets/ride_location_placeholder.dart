@@ -5,7 +5,10 @@ import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 
-/// Location surface header — not a live map (Maps SDK deferred past 4A).
+/// Deprecated soft-fail shell — ride request uses [RideMapPreview] instead.
+///
+/// Kept only so older imports compile; do not mount in new UI.
+@Deprecated('Use RideMapPreview — live MapLibre preview with soft-fail shell')
 class RideLocationPlaceholder extends StatelessWidget {
   const RideLocationPlaceholder({
     super.key,
@@ -43,24 +46,6 @@ class RideLocationPlaceholder extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            Positioned(
-              top: 48,
-              left: 0,
-              right: 0,
-              child: Container(height: 3, color: OraColors.border.withValues(alpha: 0.45)),
-            ),
-            Positioned(
-              top: 0,
-              bottom: 0,
-              left: 110,
-              child: Container(width: 3, color: OraColors.border.withValues(alpha: 0.35)),
-            ),
-            Positioned(
-              top: 110,
-              left: 0,
-              right: 0,
-              child: Container(height: 2, color: OraColors.border.withValues(alpha: 0.3)),
-            ),
             Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: OraSpacing.xl),
@@ -69,7 +54,7 @@ class RideLocationPlaceholder extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.map_outlined,
-                      color: OraColors.primary.withValues(alpha: 0.85),
+                      color: OraColors.info.withValues(alpha: 0.9),
                       size: 28,
                     ),
                     const SizedBox(height: OraSpacing.xs),
@@ -79,8 +64,8 @@ class RideLocationPlaceholder extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Interactive map pins open in a later build. '
-                      'Search and GPS resolve your coordinates now.',
+                      'Live map loads when the tile style is ready. '
+                      'Search and GPS still resolve your coordinates.',
                       textAlign: TextAlign.center,
                       style: OraTypography.caption(OraColors.textMuted),
                     ),

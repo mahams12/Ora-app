@@ -1,0 +1,114 @@
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (10547 bytes in 0.003s)
+/sdcard/open_rides_followup_boot.png: 1 file pulled, 0 skipped. 8.8 MB/s (103563 bytes in 0.011s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (5283 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (11597 bytes in 0.004s)
+  MISS ('My rides',)
+  MISS ('My trips',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (8607 bytes in 0.004s)
+/sdcard/open_rides_followup_my_rides.png: 1 file pulled, 0 skipped. 19.0 MB/s (521494 bytes in 0.026s)
+  login as driver (03012345677)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=48ms (0ms mobile, 0ms wifi, 48ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (5283 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (11597 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (8189 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (8195 bytes in 0.003s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5998 bytes in 0.003s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6003 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (5282 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (11596 bytes in 0.005s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (11596 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (8188 bytes in 0.004s)
+  TAP 'Switch to driver mode\nEarn with the same account'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.4 MB/s (10490 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (10490 bytes in 0.003s)
+  MISS ('Open rides',)
+  TAP 'Open ride requests\nServer open-ride list for approved drivers'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (10546 bytes in 0.004s)
+/sdcard/open_rides_followup_open_rides.png: 1 file pulled, 0 skipped. 19.7 MB/s (570213 bytes in 0.028s)
+/sdcard/open_rides_followup_open_rides_after_scroll.png: 1 file pulled, 0 skipped. 20.2 MB/s (569647 bytes in 0.027s)
+  TAP 'Accept ride request\nAccept'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (6310 bytes in 0.005s)
+/sdcard/open_rides_followup_accept_sheet.png: 1 file pulled, 0 skipped. 20.1 MB/s (459952 bytes in 0.022s)
+  TAP 'Counteroffer\nCounteroffer'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6310 bytes in 0.003s)
+/sdcard/open_rides_followup_counteroffer.png: 1 file pulled, 0 skipped. 17.9 MB/s (460375 bytes in 0.025s)
+  TAP 'Cancel\nCancel'
+{
+  "startedAt": "2026-10-13T08:23:36.162638+00:00",
+  "device": "RF8R40ZQ1JH",
+  "package": "com.ora.ora",
+  "checks": {
+    "login": "ALREADY",
+    "my_rides_screen": "FAIL",
+    "my_rides_cancelled_visible": "PARTIAL",
+    "my_rides_distance_value": "FAIL",
+    "my_rides_duration_placeholder": "PASS",
+    "my_rides_distance_label": "FAIL",
+    "my_rides_duration_label": "FAIL",
+    "open_rides_screen": "PASS"
+  },
+  "shots": {
+    "boot": "open_rides_followup_boot.png",
+    "my_rides": "open_rides_followup_my_rides.png",
+    "open_rides": "open_rides_followup_open_rides.png",
+    "open_rides_after_scroll": "open_rides_followup_open_rides_after_scroll.png",
+    "accept_sheet": "open_rides_followup_accept_sheet.png",
+    "counteroffer": "open_rides_followup_counteroffer.png"
+  },
+  "gfx": {
+    "scroll": {
+      "tag": "scroll",
+      "rawPath": ".e2e_artifacts/open_rides_followup_gfxinfo_scroll.txt",
+      "totalFramesRendered": 0,
+      "jankyFrames": 0,
+      "jankyPercent": 0.0,
+      "p50Ms": 4950,
+      "p90Ms": 4950,
+      "p95Ms": 4950,
+      "p99Ms": 4950,
+      "hasProfileData": true,
+      "sampleDurationMs": 6390
+    },
+    "method": "adb shell dumpsys gfxinfo com.ora.ora after ListView swipes"
+  },
+  "acceptLifecycle": {
+    "sheetOpened": "PASS",
+    "counterofferChip": "PASS",
+    "sheetCancelledWithoutSubmit": true
+  },
+  "myRidesTextSample": {
+    "hasKm": false,
+    "hasEmdash": true,
+    "hasCancelled": false,
+    "kmMatches": []
+  },
+  "elapsedMs": 142607,
+  "finishedAt": "2026-10-13T08:25:58.622513+00:00"
+}

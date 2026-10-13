@@ -1,0 +1,223 @@
+{
+  "artifact": "ORA_RIDE_UI_MAP_FINAL_AUDIT_REPORT",
+  "completedAt": "2026-10-13T10:45:00+00:00",
+  "parentReports": [
+    ".e2e_artifacts/OPEN_RIDES_REDESIGN_AUDIT_REPORT.json",
+    ".e2e_artifacts/OPEN_RIDES_REDESIGN_FOLLOWUP_REPORT.json",
+    ".e2e_artifacts/RIDE_REQUEST_MAP_HALFSCREEN_REPORT.json",
+    ".e2e_artifacts/MAPLIBRE_POC_PHYSICAL_REPORT.json"
+  ],
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora",
+    "build": "debug staging APK with MAPLIBRE_TILE_KEY + ORA_FRAME_TIMING=1",
+    "apiBase": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "apkBuiltAtLocal": "2026-10-13T15:29+05:00",
+    "apkPath": "mobile/build/app/outputs/flutter-apk/app-debug.apk"
+  },
+  "scopePreserved": {
+    "noBackendStateMachineDispatchOfferSemanticsChanges": true,
+    "noPricingAuthSchemaMapProviderSwitch": true,
+    "unrelatedWorkingTreePreserved": true,
+    "acceptOpensExistingOfferSheet": true,
+    "declineUiOnly": true,
+    "fcmSweepDefaultLimitUnchanged": true,
+    "note": "FCM verification used worker sweep ?limit=100 only as an authorized ops workaround; production default batch size not modified."
+  },
+  "codeChangesThisClosure": [
+    {
+      "file": "mobile/lib/main.dart",
+      "why": "Opt-in Flutter FrameTiming logger via --dart-define=ORA_FRAME_TIMING=1 for measurable jank evidence (no invented FPS)."
+    },
+    {
+      "file": "mobile/lib/features/ride/presentation/widgets/ride_card/* (prior follow-up)",
+      "why": "Preserved: history haversine distance, em-dash duration, Cancelled caption contrast, caption clip fix."
+    },
+    {
+      "file": "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart (pre-existing MapLibre)",
+      "why": "Audited only — no MapLibre→Google switch; glowing route, callouts, 3D/layers controls, attribution button already present."
+    }
+  ],
+  "mapConceptsUsed": [
+    ".e2e_artifacts/final_map_concept_01_request.jpg",
+    ".e2e_artifacts/final_map_concept_02_driver_on_way.png",
+    ".e2e_artifacts/final_map_concept_03_in_progress.png",
+    ".e2e_artifacts/final_map_concept_04_3d_landmarks.jpg",
+    ".e2e_artifacts/final_map_concept_05_elements.png"
+  ],
+  "verdicts": {
+    "mapVisualMatch": {
+      "verdict": "PARTIAL",
+      "evidence": [
+        ".e2e_artifacts/final_map_side_by_side.png",
+        ".e2e_artifacts/final_map_expanded.png",
+        ".e2e_artifacts/final_ride_request.png"
+      ],
+      "notes": "Dark Ora style + controls match concept direction. Cinematic neon route glow / destination callouts / 3D landmark richness from concept not claimed as pixel-perfect. Compact sheet shows branded Map preview shell until pickup/destination confirmed."
+    },
+    "realTileStyleLoading": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/final_map_expanded.png",
+        ".e2e_artifacts/final_map_collapsed.png"
+      ],
+      "notes": "MapTiler vector tiles loaded on SM-A325F (Lahore labels: Izmir Town, Bahria Town, Jubilee Town Main Boulevard). MAPLIBRE_TILE_KEY present in build; value not logged."
+    },
+    "routePinsCallouts": {
+      "verdict": "PARTIAL",
+      "evidence": [
+        ".e2e_artifacts/final_map_expanded.png",
+        ".e2e_artifacts/final_physical_report.json"
+      ],
+      "notes": "Pickup pin visible after GPS. Dual pins + glowing polyline + destination callout with trip metrics not re-photographed this run (destination seed incomplete in harness). Implementation supports them when model has coords/polyline (unit tests cover model)."
+    },
+    "cameraPitch3dCapability": {
+      "verdict": "PARTIAL",
+      "evidence": [
+        ".e2e_artifacts/final_map_3d_toggle.png",
+        ".e2e_artifacts/final_map_layers_toggle.png"
+      ],
+      "notes": "3D and layers controls physically toggled. Pitched camera policy exists (tilt 52°). Cinematic extruded landmarks like concept Faisal Mosque not verified as present in MapTiler street tiles for Lahore."
+    },
+    "controlsAndExpandCollapse": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/final_physical_report.json",
+        ".e2e_artifacts/final_map_expanded.png",
+        ".e2e_artifacts/final_map_collapsed.png"
+      ],
+      "notes": "Expand/collapse PASS; compass/3D/layers controls present and tappable."
+    },
+    "attributionAndFallback": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/final_map_expanded.png",
+        ".e2e_artifacts/final_ride_request.png"
+      ],
+      "notes": "MapLibre attribution info control visible (bottom-left i). logoEnabled=false but attribution retained. Missing-key / pre-location branded Map preview shell verified. Required MapTiler/OSM attribution not removed."
+    },
+    "rideRequestRegression": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/final_focused_tests.out",
+        ".e2e_artifacts/final_ride_request.png"
+      ],
+      "notes": "Where to? sheet, expand/collapse, Continue disabled until confirm — unchanged. Pricing/submit not altered."
+    },
+    "openRidesMyRidesVisual": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/final_fcm_card_visible.png",
+        ".e2e_artifacts/final_my_rides.png",
+        ".e2e_artifacts/final_open_rides_side_by_side.png",
+        ".e2e_artifacts/open_rides_followup_my_rides_before_after.png"
+      ],
+      "notes": "Open Rides card shows 24.0 km · 39 min, Rs 1140, Accept/Decline. My Rides shows Distance 19.6 km and em-dash Est. time. Remaining concept mismatches are cosmetic (not pixel-perfect); no fabricated identity."
+    },
+    "fcmDeliveryToRenderRefresh": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/final_fcm_diagnose_out.json",
+        ".e2e_artifacts/final_physical_report.json",
+        ".e2e_artifacts/final_fcm_card_visible.png",
+        ".e2e_artifacts/final_frame_d1_logcat.txt"
+      ],
+      "rootCausePriorPartial": "Default dispatch-fcm-sweep limit=25 with no orderBy often returns already-DELIVERED events → skipped++ and never processes new PENDING (prior delivered=0).",
+      "fixUsed": "Authorized worker sweep with ?limit=100 (max batch). No polling added to app. No dispatch rule change.",
+      "timestamps": {
+        "rideCreatedAt": "2026-10-13T10:36:56.928Z",
+        "dispatchTickAt": "2026-10-13T10:36:58.849Z",
+        "invitedCount": 1,
+        "fcmSweepAt": "2026-10-13T10:37:03.691Z",
+        "fcmSweepDelivered": 2,
+        "d1FcmHandlerLog": "2026-10-13T10:37:06.594Z (+05:00 device clock 15:37:06.594)",
+        "d1FcmLine": "[D1_FCM] local notification eventId=6ac27d60-… rideId=94f13454-…",
+        "cardVisibleAt": "2026-10-13T10:37:11.493588+00:00",
+        "manualRefreshUsed": false,
+        "latenciesMs": {
+          "createToTick": 1921,
+          "tickToSweep": 4842,
+          "sweepToUiCard": 7802,
+          "createToUiCard": 14565,
+          "approxFcmHandlerAfterSweep": 2903
+        }
+      },
+      "layers": {
+        "tokenRegistration": "PASS — 3 driverDeviceTokens docs with hasToken=true",
+        "outboxPendingCreated": "PASS — diagnose run event PENDING then DELIVERED after limit=100 sweep",
+        "fcmDelivery": "PASS — delivered≥1 with limit=100",
+        "clientHandler": "PASS — [D1_FCM] local notification observed",
+        "openRidesRefreshUi": "PASS — card appeared without pull-to-refresh"
+      },
+      "remainingOpsNote": "Scheduler/ops should sweep with sufficient limit or query PENDING-first; default limit=25 remains a starvation risk under backlog (infrastructure/projector layer)."
+    },
+    "flutterFramePerformance": {
+      "verdict": "PARTIAL",
+      "method": "WidgetsBinding.addTimingsCallback gated by ORA_FRAME_TIMING=1; logcat scrape during map expand/collapse, Open Rides scroll, Accept sheet, My Rides scroll",
+      "deviceBuild": "SM-A325F debug staging APK",
+      "results": {
+        "oraFrameSampleCount": 0,
+        "note": "No ORA_FRAME lines observed in debug logcat. Flutter often emits FrameTiming reliably in profile mode; debug build yielded 0 samples. Prior HWUI gfxinfo also returned 0 frames. No FPS/jank % invented."
+      },
+      "qualitative": "UI remained responsive during expand/collapse, Accept sheet, and list scrolls; no crash.",
+      "nextStep": "Rebuild --profile with ORA_FRAME_TIMING=1 or capture DevTools Performance Timeline for numeric build/raster totals."
+    },
+    "automatedTests": {
+      "verdict": "PASS",
+      "command": "flutter test ride_map_preview_test + ride_request_map_layout_test + ride_request_ui_test + ride_card_system_test + slice_m_driver_test",
+      "result": "82 passed, 0 failed",
+      "log": ".e2e_artifacts/final_focused_tests.out"
+    },
+    "physicalDeviceVerification": {
+      "verdict": "PASS",
+      "report": ".e2e_artifacts/final_physical_report.json",
+      "checks": {
+        "stagingInstall": "PASS",
+        "mapTilesLahore": "PASS",
+        "expandCollapse": "PASS",
+        "mapControls3dLayers": "PASS",
+        "fcmCardWithoutManualRefresh": "PASS",
+        "acceptSheet": "PASS",
+        "myRidesMetricsVisible": "PASS"
+      }
+    },
+    "overall": "PARTIAL"
+  },
+  "overallRationale": "FCM delivery→handler→Open Rides card without manual refresh is now evidenced (PASS) using limit=100 sweep. MapLibre tiles/controls/expand-collapse pass on device. Overall remains PARTIAL because (1) numeric Flutter frame timings still unavailable in debug, (2) map visual/route/3D landmark parity vs cinematic concept is not pixel-perfect / not fully re-proven for dual-pin glowing route this run, (3) default FCM sweep limit=25 starvation risk remains an ops/infra note without code change to dispatch.",
+  "remainingBlockers": [
+    {
+      "id": "frame_timing_numeric",
+      "layer": "client tooling",
+      "blocker": "ORA_FRAME_TIMING produced 0 samples in debug; need profile/DevTools for numeric jank",
+      "nextAction": "flutter build apk --profile with ORA_FRAME_TIMING=1 and repeat scroll/expand scenarios"
+    },
+    {
+      "id": "fcm_sweep_default_limit",
+      "layer": "backend outbox projector / ops scheduler",
+      "blocker": "Default limit=25 without PENDING-first ordering can starve new events under backlog",
+      "nextAction": "Ops: schedule sweep with limit=100; optional future projector query improvement (out of this closure scope)"
+    },
+    {
+      "id": "map_concept_cinematic_parity",
+      "layer": "MapLibre + MapTiler tile data / style",
+      "blocker": "Concept-level neon route/landmark extrusions not claimed; dual-pin route photo incomplete this harness run",
+      "nextAction": "Physical trip with confirmed pickup+destination → photograph glowing polyline + callouts; evaluate style building-3d layers against Lahore tiles"
+    }
+  ],
+  "evidenceIndex": {
+    "thisReport": ".e2e_artifacts/ORA_RIDE_UI_MAP_FINAL_AUDIT_REPORT.json",
+    "physical": ".e2e_artifacts/final_physical_report.json",
+    "fcmDiagnose": ".e2e_artifacts/final_fcm_diagnose_out.json",
+    "tests": ".e2e_artifacts/final_focused_tests.out",
+    "build": ".e2e_artifacts/final_staging_build2.out",
+    "mapSideBySide": ".e2e_artifacts/final_map_side_by_side.png",
+    "openRidesSideBySide": ".e2e_artifacts/final_open_rides_side_by_side.png",
+    "mapExpanded": ".e2e_artifacts/final_map_expanded.png",
+    "fcmCard": ".e2e_artifacts/final_fcm_card_visible.png",
+    "acceptSheet": ".e2e_artifacts/final_accept_sheet.png",
+    "myRides": ".e2e_artifacts/final_my_rides.png",
+    "d1Log": ".e2e_artifacts/final_frame_d1_logcat.txt"
+  }
+}

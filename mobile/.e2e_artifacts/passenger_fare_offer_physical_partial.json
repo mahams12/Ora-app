@@ -1,0 +1,43 @@
+{
+  "artifact": "PASSENGER_FARE_OFFER_PHYSICAL_PARTIAL",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora",
+    "adbState": "device"
+  },
+  "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+  "installedThisGate": true,
+  "verdict": "PHYSICAL PARTIAL",
+  "checks": {
+    "deviceAttached": true,
+    "apkInstalled": true,
+    "appLaunched": true,
+    "rideRequestOpened": true,
+    "pickupConfirmedViaGpsAndScroll": true,
+    "destinationConfirmedViaPlacesSuggestion": true,
+    "categoryReviewReached": true,
+    "visualEstimatedFareOnReview": true,
+    "visualEstimatedFareAmountMajorPkr": 850,
+    "a11yNumericFareExposed": true,
+    "yourOfferEditTextViaUiautomator": false,
+    "outOfRangeEditOnDevice": "UNVERIFIED",
+    "deviceCreateWithCustomOffer": "NOT_ATTEMPTED_ON_DEVICE — covered by staging API proof"
+  },
+  "evidenceFiles": [
+    "p5d5_0.png",
+    "p5d4_review.png",
+    "p5d4_review.xml",
+    "p5d3_sugg.png",
+    "passenger_fare_offer_physical_retry.json",
+    "passenger_fare_offer_physical_run.out"
+  ],
+  "notes": [
+    "Compose→review navigation requires: Use current location → swipe sheet → Confirm pickup → focus empty destination EditText (last) → type with adb shell 'input text X%sY' → tap suggestion by content-desc (skip EditText) → Continue.",
+    "On review, screenshot p5d5_0.png shows Estimated fare Rs 850 above Request Easy; Flutter semantics often omit 'Estimated fare' / 'Your offer' labels (numeric 850 exposed).",
+    "Sheet scroll for full Your offer EditText was unreliable via uiautomator; widget tests cover editor validation.",
+    "Authoritative custom-offer create + durable ride + driver open-list visibility proven by staging API (passenger_fare_offer_staging_api_proof.json)."
+  ],
+  "endedAt": "2026-10-12T10:31:26.205763+00:00"
+}

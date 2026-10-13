@@ -1,0 +1,16 @@
+{
+  "sampleDurationMs": 8329,
+  "method": "dumpsys gfxinfo framestats + gfxinfo after Open Rides swipes",
+  "device": "RF8R40ZQ1JH",
+  "totalFrames": "0",
+  "jankyLine": "0 (0.00%)",
+  "p50": "4950ms",
+  "p90": "4950ms",
+  "p95": "4950ms",
+  "p99": "4950ms",
+  "framestatsRows": 0,
+  "hasFlags": true,
+  "jankyFrames": 0,
+  "jankyPercent": 0.0,
+  "totalFramesRendered": 0
+}

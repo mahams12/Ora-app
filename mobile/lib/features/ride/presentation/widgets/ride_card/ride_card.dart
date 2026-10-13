@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 
 import '../../../../../app/theme/ora_colors.dart';
 import '../../../../../app/theme/ora_motion.dart';
-import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
 import 'ride_card_actions.dart';
+import 'ride_card_assets.dart';
+import 'ride_card_category.dart';
 import 'ride_card_fare.dart';
 import 'ride_card_header.dart';
+import 'ride_card_map_thumb.dart';
 import 'ride_card_metrics.dart';
 import 'ride_card_model.dart';
 import 'ride_card_participant.dart';
 import 'ride_card_route_compact.dart';
-import 'ride_card_route_preview.dart';
 import 'ride_card_vehicle.dart';
 
 export 'ride_card_adapters.dart';
 export 'ride_card_location_label.dart';
 export 'ride_card_model.dart';
 
-/// Shared premium Ora ride card — compact marketplace density by variant.
+/// Shared premium Ora ride card — epic layout with empty slots when data absent.
 class RideCard extends StatefulWidget {
   const RideCard({
     required this.model,
@@ -46,49 +47,54 @@ class _RideCardState extends State<RideCard> {
       duration: OraMotion.select,
       curve: OraMotion.standard,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(OraRadius.card),
+        borderRadius: BorderRadius.circular(22),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: active
               ? const [
                   Color(0xFF1A2748),
-                  Color(0xFF152040),
-                  Color(0xFF12182B),
+                  Color(0xFF141E36),
+                  Color(0xFF0F1628),
                 ]
               : const [
-                  Color(0xFF1B2340),
-                  Color(0xFF161E36),
-                  Color(0xFF12182B),
+                  Color(0xFF181F36),
+                  Color(0xFF141A2E),
+                  Color(0xFF101624),
                 ],
         ),
         border: Border.all(
           color: active
-              ? OraColors.info.withValues(alpha: 0.4)
-              : OraColors.border,
-          width: active ? 1.2 : 1,
+              ? OraColors.info.withValues(alpha: 0.55)
+              : OraColors.border.withValues(alpha: 0.9),
+          width: active ? 1.4 : 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-            spreadRadius: -8,
+            color: Colors.black.withValues(alpha: 0.55),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+            spreadRadius: -10,
+          ),
+          BoxShadow(
+            color: Colors.white.withValues(alpha: 0.04),
+            blurRadius: 0,
+            offset: const Offset(0, 1),
           ),
           if (active)
             BoxShadow(
-              color: OraColors.info.withValues(alpha: 0.12),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: OraColors.info.withValues(alpha: 0.22),
+              blurRadius: 18,
+              offset: const Offset(0, 6),
             ),
         ],
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           OraSpacing.md,
-          OraSpacing.sm + 2,
           OraSpacing.md,
-          OraSpacing.sm + 2,
+          OraSpacing.md,
+          OraSpacing.md,
         ),
         child: _RideCardBody(model: model),
       ),
@@ -132,15 +138,30 @@ class _RideCardBody extends StatelessWidget {
       case RideCardVariant.openRequest:
         return _OpenRideBody(model: model);
       case RideCardVariant.driverJob:
+        return model.isActiveTone
+            ? _ActiveDriverJobBody(model: model)
+            : _HistoryBody(
+                model: model,
+                fareCaptionFallback: 'Your earnings',
+                showPhoneSlot: true,
+              );
       case RideCardVariant.passengerHistory:
-        return _HistoryBody(model: model);
+        return _HistoryBody(
+          model: model,
+          fareCaptionFallback: model.statusKind == RideCardStatusKind.danger
+              ? 'Cancelled'
+              : (model.paymentLabel == null
+                  ? null
+                  : 'Paid (${model.paymentLabel})'),
+          showPhoneSlot: true,
+        );
       case RideCardVariant.offer:
         return _OfferBody(model: model);
     }
   }
 }
 
-/// Driver Open Rides — ultra compact decision card.
+/// Open rides — epic request card with empty profile slots when unknown.
 class _OpenRideBody extends StatelessWidget {
   const _OpenRideBody({required this.model});
 
@@ -151,112 +172,251 @@ class _OpenRideBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        RideCardHeader(
-          statusLabel: model.statusLabel,
-          emphasized: model.isActiveTone,
-          trailing: model.expiresLabel == null
-              ? null
-              : Text(
-                  model.expiresLabel!,
-                  style: OraTypography.caption(OraColors.textMuted),
-                ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (model.showMapThumb)
+              RideCardMapThumb(
+                pickupLat: model.pickupLat,
+                pickupLng: model.pickupLng,
+                destinationLat: model.destinationLat,
+                destinationLng: model.destinationLng,
+                width: 84,
+                height: 124,
+              ),
+            if (model.showMapThumb) const SizedBox(width: OraSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      const Spacer(),
+                      if (model.expiresLabel != null)
+                        Text(
+                          model.expiresLabel!,
+                          style: OraTypography.caption(OraColors.textMuted),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                    ],
+                  ),
+                  // Always show profile slot (empty avatar / blank name / star slot).
+                  RideCardParticipantRow(
+                    participant: model.participant,
+                    compact: true,
+                    showRatingSlot: true,
+                  ),
+                  const SizedBox(height: OraSpacing.sm),
+                  RideCardRouteCompact(
+                    pickupLabel: model.pickupLabel,
+                    destinationLabel: model.destinationLabel,
+                    showPickupCaption: true,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: OraSpacing.sm),
-        RideCardRouteCompact(
-          pickupLabel: model.pickupLabel,
-          destinationLabel: model.destinationLabel,
+        const SizedBox(height: OraSpacing.md),
+        // Metrics on their own row so distance/duration are not clipped by
+        // the car + fare competition for horizontal space.
+        RideCardMetrics(
+          distanceLabel: model.distanceLabel,
+          durationLabel: model.durationLabel,
+          withIcons: true,
         ),
         const SizedBox(height: OraSpacing.sm),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            if (model.showCarAccent) ...[
+              RideCardAssetImage(
+                assetPath: model.carAssetPath,
+                width: 76,
+                height: 44,
+              ),
+              const SizedBox(width: OraSpacing.sm),
+            ],
             Expanded(
-              child: RideCardMetrics(
-                distanceLabel: model.distanceLabel,
-                durationLabel: model.durationLabel,
-                paymentLabel: model.paymentLabel,
-              ),
+              child: model.categoryLabel != null
+                  ? Align(
+                      alignment: Alignment.centerLeft,
+                      child: RideCardCategoryBadge(
+                        label: model.categoryLabel!,
+                        tone: model.categoryTone,
+                      ),
+                    )
+                  : const SizedBox(height: 22),
             ),
-            if (model.fareLabel != null)
-              RideCardFare(
-                fareLabel: model.fareLabel,
-                emphasized: model.isActiveTone,
-                inline: true,
-              ),
+            const SizedBox(width: OraSpacing.sm),
+            RideCardFare(
+              fareLabel: model.fareLabel,
+              fareCaption: model.fareCaption ?? 'Your earnings',
+              emphasized: true,
+            ),
           ],
         ),
         if (model.actions.isNotEmpty) ...[
-          const SizedBox(height: OraSpacing.sm),
-          RideCardActions(actions: model.actions, compact: true),
+          const SizedBox(height: OraSpacing.md),
+          RideCardActions(actions: model.actions),
         ],
       ],
     );
   }
 }
 
-/// Driver / passenger my-rides — compact history density.
-class _HistoryBody extends StatelessWidget {
-  const _HistoryBody({required this.model});
+/// Active driver job — map banner + empty passenger/vehicle slots.
+class _ActiveDriverJobBody extends StatelessWidget {
+  const _ActiveDriverJobBody({required this.model});
 
   final RideCardModel model;
 
   @override
   Widget build(BuildContext context) {
-    final meta = <String>[
-      if (model.fareLabel != null) model.fareLabel!,
-      if (model.distanceLabel != null) model.distanceLabel!,
-      if (model.durationLabel != null) model.durationLabel!,
-      if (model.paymentLabel != null) model.paymentLabel!,
-      if (model.timestampLabel != null) model.timestampLabel!,
-    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Stack(
+          children: [
+            RideCardMapBanner(
+              pickupLat: model.pickupLat,
+              pickupLng: model.pickupLng,
+              destinationLat: model.destinationLat,
+              destinationLng: model.destinationLng,
+              carAssetPath: model.showCarAccent ? model.carAssetPath : null,
+            ),
+            Positioned(
+              top: OraSpacing.sm,
+              left: OraSpacing.sm,
+              right: OraSpacing.sm,
+              child: RideCardHeader(
+                statusLabel: model.statusLabel,
+                statusKind: model.statusKind,
+                emphasized: true,
+                secondaryStatusLabel: model.secondaryStatusLabel,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: OraSpacing.sm),
+        Text(
+          '${model.pickupLabel} → ${model.destinationLabel}',
+          style: OraTypography.bodyEmphasis(OraColors.textPrimary),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        if (model.timestampLabel != null) ...[
+          const SizedBox(height: 2),
+          Text(
+            model.timestampLabel!,
+            style: OraTypography.caption(OraColors.info),
+          ),
+        ],
+        const SizedBox(height: OraSpacing.sm),
+        RideCardParticipantRow(
+          participant: model.participant,
+          showRatingSlot: true,
+          showPhoneSlot: true,
+          showChatSlot: true,
+        ),
+        const SizedBox(height: OraSpacing.sm),
+        RideCardVehicleRow(
+          vehicle: model.vehicle,
+          fallbackAssetPath: model.showCarAccent ? model.carAssetPath : null,
+          showPlateSlot: model.vehicle?.registration?.trim().isNotEmpty == true,
+        ),
+        const SizedBox(height: OraSpacing.md),
+        RideCardMetricsGrid(
+          fareLabel: model.fareLabel,
+          fareCaption: model.fareCaption ?? 'Agreed fare',
+          distanceLabel: model.distanceLabel,
+          distanceCaption: 'Total distance',
+          durationLabel: model.durationLabel,
+          durationCaption: 'Est. time',
+          forceThreeSlots: true,
+        ),
+        if (model.actions.isNotEmpty) ...[
+          const SizedBox(height: OraSpacing.md),
+          RideCardActions(actions: model.actions),
+        ],
+      ],
+    );
+  }
+}
 
+/// History cards — status, route, empty person/vehicle slots, 3 metrics.
+class _HistoryBody extends StatelessWidget {
+  const _HistoryBody({
+    required this.model,
+    this.fareCaptionFallback,
+    this.showPhoneSlot = false,
+  });
+
+  final RideCardModel model;
+  final String? fareCaptionFallback;
+  final bool showPhoneSlot;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RideCardHeader(
           statusLabel: model.statusLabel,
+          statusKind: model.statusKind,
           emphasized: model.isActiveTone,
-          trailing: model.timestampLabel == null || model.fareLabel != null
+          trailing: model.timestampLabel == null
               ? null
               : Text(
                   model.timestampLabel!,
                   style: OraTypography.caption(OraColors.textMuted),
                 ),
         ),
-        const SizedBox(height: OraSpacing.xs + 2),
+        const SizedBox(height: OraSpacing.sm),
         RideCardRouteCompact(
           pickupLabel: model.pickupLabel,
           destinationLabel: model.destinationLabel,
           inline: true,
+          showChevron: model.onTap != null,
         ),
-        if (meta.isNotEmpty) ...[
-          const SizedBox(height: OraSpacing.xs + 2),
-          Text(
-            meta.join('  ·  '),
-            style: OraTypography.caption(OraColors.textSecondary),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-        if (model.participant != null &&
-            (model.participant!.hasIdentity || model.participant!.hasStats)) ...[
-          const SizedBox(height: OraSpacing.xs),
-          RideCardParticipantRow(participant: model.participant!),
-        ],
-        if (model.vehicle != null && model.vehicle!.hasAnyField) ...[
-          const SizedBox(height: OraSpacing.xs),
-          RideCardVehicleRow(vehicle: model.vehicle!),
-        ],
+        const SizedBox(height: OraSpacing.sm),
+        RideCardParticipantRow(
+          participant: model.participant,
+          compact: true,
+          showRatingSlot: true,
+          showPhoneSlot: showPhoneSlot,
+        ),
+        const SizedBox(height: OraSpacing.sm),
+        RideCardVehicleRow(
+          vehicle: model.vehicle,
+          fallbackAssetPath:
+              model.showCarAccent ? model.carAssetPath : model.carAssetPath,
+          // Empty plate outline looked like hidden registration — only when real.
+          showPlateSlot: model.vehicle?.registration?.trim().isNotEmpty == true,
+        ),
+        const SizedBox(height: OraSpacing.md),
+        RideCardMetricsGrid(
+          fareLabel: model.fareLabel,
+          fareCaption: model.fareCaption ?? fareCaptionFallback,
+          distanceLabel: model.distanceLabel,
+          durationLabel: model.durationLabel,
+          durationCaption: model.isActiveTone ? 'Est. time' : 'Duration',
+          forceThreeSlots: true,
+          fareCaptionColor: model.statusKind == RideCardStatusKind.danger
+              ? OraColors.dangerForeground
+              : null,
+        ),
         if (model.actions.isNotEmpty) ...[
-          const SizedBox(height: OraSpacing.sm),
-          RideCardActions(actions: model.actions, compact: true),
+          const SizedBox(height: OraSpacing.md),
+          RideCardActions(actions: model.actions),
         ],
       ],
     );
   }
 }
 
-/// Offers inbox — fare-forward; identity only when API supplies it.
+/// Offers inbox — empty driver slot when snapshot has no name.
 class _OfferBody extends StatelessWidget {
   const _OfferBody({required this.model});
 
@@ -268,8 +428,8 @@ class _OfferBody extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         RideCardHeader(
-          title: model.title,
           statusLabel: model.statusLabel,
+          statusKind: model.statusKind,
           emphasized: model.isActiveTone,
           trailing: model.expiresLabel == null
               ? null
@@ -278,45 +438,38 @@ class _OfferBody extends StatelessWidget {
                   style: OraTypography.caption(OraColors.textMuted),
                 ),
         ),
-        if (model.participant != null && model.participant!.hasIdentity) ...[
-          const SizedBox(height: OraSpacing.xs),
-          RideCardParticipantRow(participant: model.participant!),
-        ],
-        if (model.showRoutePreview &&
-            model.pickupLabel.isNotEmpty &&
-            model.destinationLabel.isNotEmpty) ...[
-          const SizedBox(height: OraSpacing.xs),
-          RideCardRoutePreview(
-            pickupLabel: model.pickupLabel,
-            destinationLabel: model.destinationLabel,
-            pickupLat: model.pickupLat,
-            pickupLng: model.pickupLng,
-            destinationLat: model.destinationLat,
-            destinationLng: model.destinationLng,
-            compact: true,
-          ),
-        ],
         const SizedBox(height: OraSpacing.sm),
+        RideCardParticipantRow(
+          participant: model.participant,
+          showRatingSlot: true,
+        ),
+        const SizedBox(height: OraSpacing.md),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            if (model.showCarAccent)
+              RideCardAssetImage(
+                assetPath: model.carAssetPath,
+                width: 80,
+                height: 44,
+              ),
+            if (model.showCarAccent) const SizedBox(width: OraSpacing.sm),
             Expanded(
               child: RideCardMetrics(
                 paymentLabel: model.paymentLabel,
                 serviceLabel: model.serviceLabel,
               ),
             ),
-            if (model.fareLabel != null)
-              RideCardFare(
-                fareLabel: model.fareLabel,
-                emphasized: model.isActiveTone,
-                inline: true,
-              ),
+            RideCardFare(
+              fareLabel: model.fareLabel,
+              fareCaption: model.fareCaption ?? 'Driver offer',
+              emphasized: true,
+            ),
           ],
         ),
         if (model.actions.isNotEmpty) ...[
-          const SizedBox(height: OraSpacing.sm),
-          RideCardActions(actions: model.actions, compact: true),
+          const SizedBox(height: OraSpacing.md),
+          RideCardActions(actions: model.actions),
         ],
       ],
     );

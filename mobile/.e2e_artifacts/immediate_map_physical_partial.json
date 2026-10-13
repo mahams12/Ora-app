@@ -1,0 +1,78 @@
+{
+  "artifact": "immediate_map_physical_partial",
+  "startedAtUtc": "2026-10-13T11:02:12.063565+00:00",
+  "completedAtUtc": "2026-10-13T11:07:04.828898+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "package": "com.ora.ora"
+  },
+  "checks": {
+    "rideRequestOpened": true,
+    "idleMapShellAbsent": true,
+    "idleHasExpandChrome": true,
+    "idleStatusChip": true,
+    "pickupResolved": true,
+    "pickupLabels": [
+      "Expand map",
+      "3D",
+      "Pickup set \u00b7 destination needed",
+      "Where to?",
+      "Search a place or use your current location. Confirm each point before continuing \u2014 text alone is not enough.",
+      "Pickup\nIzmir Extension, Lahore\nCurrent location\nDestination",
+      "Izmir Extension, Lahore",
+      "Continue\nContinue"
+    ],
+    "destinationSuggestionTapped": true,
+    "compactRouteLabels": [
+      "3D",
+      "Confirm pickup & destination to continue",
+      "Expand map",
+      "Where to?",
+      "Search a place or use your current location. Confirm each point before continuing \u2014 text alone is not enough.",
+      "Pickup\nDestination",
+      "Liberty Marke5\u2075\u215a\u2075\u2075\u2075\u2075\u2075\u215a\u215at Lahore",
+      "Continue\nContinue"
+    ],
+    "expanded": true,
+    "toggled3d": true,
+    "toggledLayers": true,
+    "collapsedBackToSheet": true,
+    "reviewFareLabels": [
+      "Expand map",
+      "3D",
+      "Confirm pickup & destination to continue",
+      "Where to?",
+      "Search a place or use your current location. Confirm each point before continuing \u2014 text alone is not enough.",
+      "Pickup\nDestination",
+      "Liberty Marke5\u2075\u215a\u2075\u2075\u2075\u2075\u2075\u215a\u215at Lahore",
+      "Continue\nContinue"
+    ],
+    "fareVisible": false,
+    "reviewChrome": false,
+    "notes": [
+      "Confirm destination not found"
+    ]
+  },
+  "evidence": [
+    "imm_boot.png",
+    "imm_01_idle_compose.png",
+    "imm_01_idle_compose.xml",
+    "imm_02_pickup.png",
+    "imm_02_pickup.xml",
+    "imm_sugg.png",
+    "imm_sugg.xml",
+    "imm_03_compact_route.png",
+    "imm_03_compact_route.xml",
+    "imm_04_expanded.png",
+    "imm_04_expanded.xml",
+    "imm_05_3d_toggle.png",
+    "imm_06_layers_toggle.png",
+    "imm_07_collapsed.png",
+    "imm_07_collapsed.xml",
+    "imm_08_review_fare.png",
+    "imm_08_review_fare.xml"
+  ],
+  "notes": [
+    "Confirm destination not found"
+  ]
+}

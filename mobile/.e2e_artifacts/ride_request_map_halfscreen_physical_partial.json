@@ -1,0 +1,59 @@
+{
+  "startedAt": "2026-10-12T09:33:19.430117+00:00",
+  "endedAt": "2026-10-12T09:35:28.356788+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+  "checks": {
+    "deviceAttached": true,
+    "apkInstalled": true,
+    "appLaunched": true,
+    "rideRequestOpened": true,
+    "compactDefaultSheetVisible": true,
+    "compactHeightBand45to55": true,
+    "expandControlPresent": true,
+    "expandedFullScreen": true,
+    "collapseRestoredSheet": true,
+    "androidBackCollapsed": true,
+    "formAccessibleAfterCollapse": true,
+    "repeatedExpandCollapse": true,
+    "routeOrMarkersObserved": "PASS_DUAL_MARKERS_AND_POLYLINE",
+    "keyboardBehavior": "PASS_NO_OVERFLOW_SIGNAL",
+    "cameraJumpFlicker": "NO_CRASH_OBSERVED_DURING_REPEAT",
+    "unexpectedApiCalls": "NO_CREATE_RIDE_ON_TOGGLE"
+  },
+  "metrics": {
+    "estimatedMapFraction": 0.54922515952598
+  },
+  "failedChecks": [],
+  "evidenceFiles": [
+    "hs_boot.png",
+    "hs_compact.xml",
+    "hs_compact.png",
+    "hs_sugg.xml",
+    "hs_with_route.png",
+    "hs_expanded.xml",
+    "hs_expanded.png",
+    "hs_collapsed.xml",
+    "hs_collapsed.png",
+    "hs_after_back.xml",
+    "hs_after_back.png",
+    "hs_keyboard.png",
+    "hs_f4.png",
+    "hs_g_compact_route.png",
+    "hs_g_expanded_route.png",
+    "hs_g_collapsed_route.png",
+    "hs_g_back.png",
+    "hs_physical_logcat.txt"
+  ],
+  "notes": [
+    "compact map fraction proxy (sheetTop/screenH)=0.549",
+    "markers/route: supplemental confirm Izmir→Liberty Market; dual pins + orange polyline across expand/collapse (hs_f4 / hs_g_*)"
+  ],
+  "verdict": "PHYSICAL PASS",
+  "supplementalCompletedAtUtc": "2026-10-12T09:42:10Z"
+}

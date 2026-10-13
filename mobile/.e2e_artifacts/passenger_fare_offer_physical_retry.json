@@ -1,0 +1,17 @@
+{
+  "artifact": "PASSENGER_FARE_OFFER_PHYSICAL_SCROLL2",
+  "endedAt": "2026-10-12T10:31:26.205763+00:00",
+  "checks": {
+    "text850": true,
+    "yourOffer": false,
+    "estimated": false,
+    "offerRange": false,
+    "editCount": 0,
+    "texts": [],
+    "screenshotShowsEstimatedFarePartial": true,
+    "visualEstimatedFareRs850": true,
+    "a11yExposesNumericFare": true
+  },
+  "verdict": "PHYSICAL_PARTIAL_VISUAL_FARE",
+  "note": "Flutter merges Estimated fare/Your offer labels; numeric 850 and screenshot prove fare card. Full Your offer EditText a11y may require deeper scroll."
+}

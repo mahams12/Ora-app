@@ -1,0 +1,43 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+{
+  "ok": true,
+  "rideId": "5e2a2cf2-d093-4acf-992f-e4b8d00e81a4",
+  "createAt": "2026-10-13T09:25:31.125Z",
+  "createStatus": 201,
+  "passengerOfferMinor": 67000,
+  "counterofferAmountMinor": 72000,
+  "submitAt": "2026-10-13T09:25:35.535Z",
+  "submitStatus": 201,
+  "offer": {
+    "offerId": "5e2a2cf2-d093-4acf-992f-e4b8d00e81a4_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+    "rideId": "5e2a2cf2-d093-4acf-992f-e4b8d00e81a4",
+    "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "amountMinor": 72000,
+    "currency": "PKR",
+    "type": "DRIVER_COUNTEROFFER",
+    "status": "PENDING",
+    "requestVersion": 1,
+    "expiresAt": "2026-10-13T09:28:38.114Z",
+    "driverSnapshot": {
+      "displayName": null,
+      "role": "driver"
+    },
+    "createdAt": "2026-10-13T09:25:38.114Z",
+    "selectedAt": null,
+    "withdrawnAt": null,
+    "rideState": "OFFERS_AVAILABLE",
+    "rideVersion": 2
+  },
+  "listStatus": 200,
+  "offerCount": 1,
+  "counterofferPresent": true,
+  "listedOfferIds": [
+    "5e2a2cf2-d093-4acf-992f-e4b8d00e81a4_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1"
+  ],
+  "openStillContainsRide": true
+}
+npm notice
+npm notice New minor version of npm available! 11.5.1 -> 11.21.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.21.0
+npm notice To update run: npm install -g npm@11.21.0
+npm notice

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../app/theme/ora_colors.dart';
+import '../../../../../app/theme/ora_elevation.dart';
 import '../../../../../app/theme/ora_motion.dart';
 import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
@@ -11,7 +12,7 @@ class RideCardActions extends StatelessWidget {
   const RideCardActions({
     required this.actions,
     super.key,
-    this.compact = true,
+    this.compact = false,
   });
 
   final List<RideCardActionSpec> actions;
@@ -32,7 +33,7 @@ class RideCardActions extends StatelessWidget {
     return Row(
       children: [
         for (var i = 0; i < actions.length; i++) ...[
-          if (i > 0) const SizedBox(width: OraSpacing.xs),
+          if (i > 0) const SizedBox(width: OraSpacing.sm),
           Expanded(
             child: _ActionButton(
               action: actions[i],
@@ -49,7 +50,7 @@ class _ActionButton extends StatefulWidget {
   const _ActionButton({
     required this.action,
     this.expand = false,
-    this.compact = true,
+    this.compact = false,
   });
 
   final RideCardActionSpec action;
@@ -68,23 +69,41 @@ class _ActionButtonState extends State<_ActionButton> {
     final action = widget.action;
     final enabled = action.onPressed != null && !action.isLoading;
     final isPrimary = action.isPrimary && !action.isDestructive;
-    final height = widget.compact ? 40.0 : 44.0;
+    final height = widget.compact ? 44.0 : 48.0;
 
-    final bg = action.isDestructive
-        ? OraColors.dangerMuted
-        : isPrimary
-            ? OraColors.info
-            : Colors.transparent;
-    final fg = action.isDestructive
-        ? OraColors.dangerForeground
-        : isPrimary
-            ? Colors.white
-            : OraColors.textSecondary;
-    final border = action.isDestructive
-        ? OraColors.danger.withValues(alpha: 0.5)
-        : isPrimary
-            ? OraColors.info
-            : OraColors.border;
+    final Color fg;
+    final Color border;
+    Gradient? gradient;
+    Color? bg;
+    List<BoxShadow>? shadows;
+
+    if (action.isDestructive) {
+      bg = const Color(0xFF1A1520);
+      fg = OraColors.dangerForeground;
+      border = OraColors.danger.withValues(alpha: 0.45);
+    } else if (isPrimary) {
+      // Match OraButton primary — app gold/yellow.
+      gradient = const LinearGradient(
+        colors: [OraColors.gold, OraColors.goldDeep, OraColors.gold],
+        stops: [0, 0.5, 1],
+      );
+      fg = OraColors.primaryForeground;
+      border = OraColors.goldDeep;
+      shadows = OraElevation.primaryButtonShadow;
+    } else {
+      // Sunken secondary (Decline / Navigate).
+      bg = const Color(0xFF151A28);
+      fg = OraColors.textPrimary;
+      border = OraColors.border;
+      shadows = [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.55),
+          blurRadius: 8,
+          offset: const Offset(0, 3),
+          spreadRadius: -2,
+        ),
+      ];
+    }
 
     return Semantics(
       button: true,
@@ -106,31 +125,37 @@ class _ActionButtonState extends State<_ActionButton> {
               width: widget.expand ? double.infinity : null,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: bg,
+                gradient: enabled ? gradient : null,
+                color: enabled
+                    ? bg
+                    : OraColors.disabled.withValues(alpha: 0.35),
                 borderRadius: BorderRadius.circular(OraRadius.button),
                 border: Border.all(color: border),
-                boxShadow: isPrimary && enabled
-                    ? [
-                        BoxShadow(
-                          color: OraColors.info.withValues(alpha: 0.28),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : null,
+                boxShadow: enabled ? shadows : null,
               ),
               child: action.isLoading
                   ? SizedBox(
-                      width: 16,
-                      height: 16,
+                      width: 18,
+                      height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         color: fg,
                       ),
                     )
-                  : Text(
-                      action.label,
-                      style: OraTypography.button(fg).copyWith(fontSize: 13),
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (action.icon != null) ...[
+                          Icon(action.icon, size: 16, color: fg),
+                          const SizedBox(width: 6),
+                        ],
+                        Text(
+                          action.label,
+                          style:
+                              OraTypography.button(fg).copyWith(fontSize: 14),
+                        ),
+                      ],
                     ),
             ),
           ),

@@ -47,6 +47,10 @@ flutter:
     - assets/branding/services/intercity.jpg
     - assets/branding/services/courier.jpg
     - assets/branding/services/move.jpg
+    - assets/branding/ride_card/
+    - assets/branding/ride_card/icons/
+    # Ride Request half-screen MapLibre preview (Ora dark style + markers).
+    - assets/maps/preview/
     # Disposable MapLibre PoC only — safe to delete with the PoC feature.
     - assets/maps/poc/
   fonts:

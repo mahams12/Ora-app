@@ -1,0 +1,52 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+{
+  "status": 200,
+  "count": 5,
+  "sample": [
+    "rideId",
+    "passengerId",
+    "assignedDriverId",
+    "state",
+    "version",
+    "requestVersion",
+    "category",
+    "serviceType",
+    "city",
+    "pickup",
+    "destination",
+    "pricingSnapshotId",
+    "recommendedFareMinor",
+    "passengerOfferMinor",
+    "agreedFareMinor",
+    "agreedOfferId",
+    "agreedFareCurrency",
+    "paymentMethod",
+    "passengerCount",
+    "expiresAt",
+    "assignedAt",
+    "arrivedAt",
+    "startedAt",
+    "completedAt",
+    "closedAt",
+    "cancelledBy",
+    "cancellationReason",
+    "createdAt",
+    "updatedAt"
+  ],
+  "first": {
+    "rideId": "2ee3fa76-11d2-47af-9151-dcc9dea1980d",
+    "state": "CANCELLED",
+    "pickup": {
+      "lat": 31.4127578,
+      "lng": 74.1725224,
+      "address": "Liberty Market Lahore"
+    },
+    "destination": {
+      "lat": 31.51058,
+      "lng": 74.34445,
+      "address": "Gulberg Lahore"
+    },
+    "passengerOfferMinor": 114000,
+    "agreedFareMinor": 114000
+  }
+}

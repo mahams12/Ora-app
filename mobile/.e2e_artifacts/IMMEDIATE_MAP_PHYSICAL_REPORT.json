@@ -1,0 +1,183 @@
+{
+  "artifact": "IMMEDIATE_MAP_PHYSICAL_REPORT",
+  "completedAtLocal": "2026-10-13T16:20+05:00",
+  "scope": "Focused physical verification of immediate MapLibre loading on Where to? + route/pins/controls/fare. Not a full prior-audit rewrite. No performance profiling.",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "build": {
+    "apk": "mobile/build/app/outputs/flutter-apk/app-debug.apk",
+    "flavor": "debug staging",
+    "apiBase": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "maplibreTileKey": "present (value not logged)",
+    "installedAtLocal": "2026-10-13T16:15+05:00",
+    "immediateMapFixConfirmedInApk": true,
+    "calloutClampFixInstalled": true
+  },
+  "codeChangesThisTask": [
+    {
+      "file": "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart",
+      "why": "Clamp endpoint callouts inside map bounds so destination callout + trip metrics stay visible when the pin sits near screen edges (demonstrable defect vs concept callouts)."
+    },
+    {
+      "file": "mobile/.e2e_artifacts/immediate_map_physical_verify.py",
+      "why": "Harness for focused physical capture (first pass; destination confirm required swipe + exact Confirm* semantics)."
+    }
+  ],
+  "preserved": {
+    "maplibreProvider": true,
+    "attributionControl": true,
+    "pricingBackendSemanticsUnchanged": true,
+    "unrelatedWorkingTreePreserved": true
+  },
+  "tripEvidence": {
+    "pickup": "Izmir Extension, Lahore (GPS → Confirm pickup)",
+    "destination": "Liberty Market Gulberg III, Lahore, Pakistan (Places → Confirm destination)",
+    "offerFieldMinorVisible": "1140 (passenger_offer_field)",
+    "estimatedFareOnReviewShot": "Rs 1140",
+    "routeMetricsOnExpandedCallout": "24 km • 39 min",
+    "requestCta": "Request Easy (enabled)",
+    "note": "No invented coords/ETA/landmarks. Metrics came from live pricing estimate after both points confirmed."
+  },
+  "checks": {
+    "installedBuildHasImmediateMapFix": {
+      "verdict": "PASS",
+      "evidence": [
+        "Kernel strings: Loading map…, inDrive-like comment; old later-build placeholder absent",
+        "Physical idle compose shows Lahore tiles without Map preview shell"
+      ]
+    },
+    "idleComposeShowsLiveTiles": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/immediate_map_01_idle_compose.png",
+        ".e2e_artifacts/immr_01_idle.png"
+      ],
+      "notes": "Dark MapLibre tiles + expand/3D/layers chrome before any location resolve. Status chip: Confirm pickup & destination to continue."
+    },
+    "gpsPickupPin": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/immediate_map_02_pickup_pin.png",
+        ".e2e_artifacts/immr_03_pickup.png"
+      ],
+      "notes": "Teal pickup pin at Izmir Town after Use current location + Confirm pickup. Status: Pickup confirmed · destination needed."
+    },
+    "dualPinsRouteGlow": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/immediate_map_03_dual_pins_route.png",
+        ".e2e_artifacts/immediate_map_04_review_fare.png",
+        ".e2e_artifacts/immediate_map_05_expanded.png",
+        ".e2e_artifacts/immediate_map_09_expanded_callouts.png"
+      ],
+      "notes": "Green pickup + gold destination pins with blue route polyline (subtle glow). Not claimed pixel-identical to concept neon."
+    },
+    "destinationCalloutAndMetrics": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/immediate_map_09_expanded_callouts.png",
+        ".e2e_artifacts/immediate_map_09_expanded_callouts.xml"
+      ],
+      "notes": "After callout clamp fix: Destination | Liberty Market Gulberg III | 24 km • 39 min; Pickup | Izmir Extension. Pre-fix expanded shot (immediate_map_05_expanded.png) showed pickup callout only — destination card was edge-clipped."
+    },
+    "halfScreenExpandCollapseControls": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/immediate_map_04_review_fare.png",
+        ".e2e_artifacts/immediate_map_05_expanded.png",
+        ".e2e_artifacts/immediate_map_06_3d.png",
+        ".e2e_artifacts/immediate_map_07_layers.png",
+        ".e2e_artifacts/immediate_map_08_collapsed.png",
+        ".e2e_artifacts/immediate_map_09_expanded_callouts.png"
+      ],
+      "notes": "Compact ~half map + sheet; Expand/Collapse; Reset north; 3D toggle; Hide buildings (layers). Attribution i retained bottom-left."
+    },
+    "cameraPitch3d": {
+      "verdict": "PARTIAL",
+      "evidence": [
+        ".e2e_artifacts/immediate_map_06_3d.png",
+        ".e2e_artifacts/immediate_map_09_expanded_callouts.png"
+      ],
+      "notes": "3D control present and tappable; pitched camera policy exists. Cinematic extruded landmarks like concept Faisal Mosque not available in MapTiler street tiles for this Lahore viewport — not faked."
+    },
+    "fareAndContinueSubmissionChrome": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/immediate_map_04_review_fare.png",
+        ".e2e_artifacts/immediate_map_08_collapsed.png",
+        ".e2e_artifacts/immr_06_review.xml"
+      ],
+      "notes": "Continue enabled after both confirms → Select a ride / Estimated fare Rs 1140 / offer field 1140 / Request Easy enabled. Did not submit a live ride (CTA correctness verified without mutating staging order book)."
+    },
+    "conceptVisualCompare": {
+      "verdict": "PARTIAL",
+      "concepts": [
+        ".e2e_artifacts/final_map_concept_01_request.jpg",
+        ".e2e_artifacts/final_map_concept_02_driver_on_way.png",
+        ".e2e_artifacts/final_map_concept_03_in_progress.png",
+        ".e2e_artifacts/final_map_concept_04_3d_landmarks.jpg",
+        ".e2e_artifacts/final_map_concept_05_elements.png"
+      ],
+      "matches": [
+        "Dark Ora map surface",
+        "Right-side compass / 3D / layers controls",
+        "Dual endpoint pins + blue route",
+        "Floating pickup/destination callouts with metrics (post-fix)",
+        "Attribution retained"
+      ],
+      "gapsNotClaimed": [
+        "Concept neon route bloom / concentric pin halos",
+        "Concept-grade 3D landmark richness (tile data limit)",
+        "Concept vehicle card / Confirm Ride sheet chrome (product uses Select a ride + Request Easy)",
+        "Driver-on-way / in-progress concept frames are out of this Where-to compose scope"
+      ],
+      "fixesApplied": [
+        "Destination callout edge-clamp so metrics remain on-canvas"
+      ]
+    },
+    "regressionTests": {
+      "verdict": "PASS",
+      "suites": [
+        "test/features/ride/ride_map_preview_test.dart",
+        "test/features/ride/ride_request_map_layout_test.dart",
+        "test/features/ride/ride_request_ui_test.dart"
+      ],
+      "results": {
+        "combinedFirstPass": "36 passed",
+        "calloutFixRerun": "18 passed (ride_map_preview_test.dart)",
+        "logs": [
+          ".e2e_artifacts/immediate_map_regression_tests.out",
+          ".e2e_artifacts/immediate_map_callout_fix_tests.out"
+        ]
+      }
+    }
+  },
+  "overallVerdict": "PASS (with documented PARTIAL gaps vs concept richness / 3D landmarks)",
+  "screenshots": [
+    ".e2e_artifacts/immediate_map_01_idle_compose.png",
+    ".e2e_artifacts/immediate_map_02_pickup_pin.png",
+    ".e2e_artifacts/immediate_map_03_dual_pins_route.png",
+    ".e2e_artifacts/immediate_map_04_review_fare.png",
+    ".e2e_artifacts/immediate_map_05_expanded.png",
+    ".e2e_artifacts/immediate_map_06_3d.png",
+    ".e2e_artifacts/immediate_map_07_layers.png",
+    ".e2e_artifacts/immediate_map_08_collapsed.png",
+    ".e2e_artifacts/immediate_map_09_expanded_callouts.png"
+  ],
+  "harness": {
+    "script": ".e2e_artifacts/immediate_map_physical_verify.py",
+    "partial": ".e2e_artifacts/immediate_map_physical_partial.json",
+    "runLog": ".e2e_artifacts/immediate_map_physical_run.out",
+    "note": "First harness pass missed Confirm pickup (off-screen) and mangled destination text; supplemental immr/immf interactive flows produced the PASS evidence above."
+  },
+  "remainingVisualGaps": [
+    "Concept-level neon glow / pin halo rings not matched",
+    "MapTiler street tiles lack concept 3D landmark density for Lahore",
+    "Review sheet shows Estimated fare + offer field; concept Confirm Ride vehicle card not in product",
+    "Device disconnected after final capture — no further on-device sampling this run"
+  ]
+}

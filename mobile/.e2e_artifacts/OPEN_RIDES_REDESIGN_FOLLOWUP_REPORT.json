@@ -1,0 +1,190 @@
+{
+  "artifact": "OPEN_RIDES_REDESIGN_FOLLOWUP_REPORT",
+  "parentAudit": ".e2e_artifacts/OPEN_RIDES_REDESIGN_AUDIT_REPORT.json",
+  "completedAt": "2026-10-13T09:30:00+00:00",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora",
+    "build": "debug APK --dart-define=ORA_ENV=staging",
+    "apiBase": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1"
+  },
+  "scopePreserved": {
+    "noPricingDispatchSchemaMapAuthChanges": true,
+    "acceptOpensExistingOfferSheet": true,
+    "counterofferSupported": true,
+    "declineUiOnly": true,
+    "noArbitraryPollingAdded": true,
+    "unrelatedWorkingTreePreserved": true
+  },
+  "codeChangesThisFollowup": [
+    {
+      "file": "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_adapters.dart",
+      "why": "History/job DTOs omit distanceKm — derive display-only haversine km from pickup/destination; Cancelled fareCaption on danger; duration stays null (grid shows em dash)."
+    },
+    {
+      "file": "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card_metrics.dart",
+      "why": "Missing metric values render as visible em dash (—); Cancelled caption uses danger color; remove fixed caption height that clipped Distance/Duration/Cancelled labels."
+    },
+    {
+      "file": "mobile/lib/features/ride/presentation/widgets/ride_card/ride_card.dart",
+      "why": "History plate slot only when registration present; danger caption color wiring for cancelled metrics."
+    },
+    {
+      "file": "mobile/test/features/ride/ride_card_system_test.dart",
+      "why": "Unit coverage for cancelled history: Cancelled caption + km + em-dash duration."
+    }
+  ],
+  "automatedValidation": {
+    "focusedTests": "flutter test ride_card_system_test.dart + slice_m_driver_test.dart → 46 passed (45 prior + 1 cancelled-metrics)",
+    "parentFunctional": "PASS (unchanged from parent audit; 45/45 then)"
+  },
+  "1_visualReferenceAndParity": {
+    "referenceLocated": true,
+    "referenceSource": "Cursor conversation asset (not in git repo)",
+    "referencePath": ".e2e_artifacts/open_rides_followup_reference_concept.jpg",
+    "referenceOriginal": "/Users/jazimsaeed/.cursor/projects/Users-jazimsaeed-Ora-app/assets/Ora_Ride-Hailing_App_UI_Concept-276dcf3b-056c-4de3-988e-23f2b690bccf.jpg",
+    "freshPhysicalOpenRides": ".e2e_artifacts/open_rides_followup_open_rides.png",
+    "labelledSideBySide": ".e2e_artifacts/open_rides_followup_side_by_side.png",
+    "myRidesBeforeUserShot": ".e2e_artifacts/open_rides_followup_my_rides_before.png",
+    "myRidesAfter": ".e2e_artifacts/open_rides_followup_my_rides_clean.png",
+    "myRidesBeforeAfter": ".e2e_artifacts/open_rides_followup_my_rides_before_after.png",
+    "demonstrableMismatchesFixed": [
+      "History metrics blank Distance/Duration → haversine km + em dash",
+      "Cancelled fare caption low-contrast/clipped → danger color + unclipped caption layout",
+      "Empty plate outline when no registration → plate slot gated on real registration"
+    ],
+    "notClaimed": "Pixel-perfect parity vs concept JPG (composition/layout differ; concept used as labelled reference only)",
+    "verdict": "PARTIAL"
+  },
+  "2_realtimeFcmOpenRidesRefresh": {
+    "method": "Driver on Open Rides → staging_d1_dispatch_prep (go-online, location, create ride, dispatch-tick, fcm-sweep) → poll UI dumps without pull-to-refresh → logcat filter",
+    "prepArtifact": ".e2e_artifacts/open_rides_followup_fcm_prep.json",
+    "runArtifact": ".e2e_artifacts/open_rides_followup_fcm_jank_lifecycle.json",
+    "timestamps": {
+      "rideCreatedAt": "2026-10-13T08:59:31.411Z",
+      "rideId": "f8aadc89-e0c3-4798-ac9e-7eb68b6adec5",
+      "prepStartedAt": "2026-10-13T08:59:20.829469+00:00",
+      "prepFinishedAt": "2026-10-13T08:59:42.942224+00:00",
+      "dispatchTick": {
+        "status": 200,
+        "outcome": "wave_completed",
+        "invitedCount": 1,
+        "waveNumber": 1
+      },
+      "fcmSweep": {
+        "status": 200,
+        "delivered": 0,
+        "processed": 0,
+        "skipped": 25,
+        "note": "Sweep returned delivered=0; cannot separate FCM delivery latency from API/UI because delivery did not complete in this run"
+      },
+      "uiCardPoll": {
+        "appearedWithoutManualRefresh": false,
+        "pollStartedAt": "2026-10-13T08:59:42.947752+00:00",
+        "timeoutShot": ".e2e_artifacts/open_rides_followup_fcm_timeout.png"
+      },
+      "logcat": {
+        "filtered": ".e2e_artifacts/open_rides_followup_fcm_logcat_filtered.txt",
+        "note": "Only FlutterFirebaseMessagingBackgroundService started lines; no [D1_FCM] invite handling line observed"
+      }
+    },
+    "manualRefreshSubstituted": false,
+    "verdict": "PARTIAL",
+    "blocker": "N4 invited driver (invitedCount=1) but D1 FCM sweep delivered=0 (skipped=25); card did not appear via FCM-driven refresh within poll window"
+  },
+  "3_performanceFrameJank": {
+    "method": "adb shell dumpsys gfxinfo com.ora.ora [framestats] after Open Rides list swipes; debug.hwui.profile enabled",
+    "deviceBuild": "SM-A325F / debug staging APK",
+    "sampleDurationMs": 8329,
+    "rawArtifacts": [
+      ".e2e_artifacts/open_rides_followup_gfxinfo_scroll.txt",
+      ".e2e_artifacts/open_rides_followup_gfxinfo_scroll2.txt",
+      ".e2e_artifacts/open_rides_followup_gfxinfo_framestats.txt",
+      ".e2e_artifacts/open_rides_followup_gfxinfo_scroll3.txt",
+      ".e2e_artifacts/open_rides_followup_jank_summary.json"
+    ],
+    "results": {
+      "totalFramesRendered": 0,
+      "jankyFrames": 0,
+      "jankyPercent": 0.0,
+      "framestatsRows": 0,
+      "interpretation": "HWUI gfxinfo/framestats reported 0 frames on this Flutter build (Skia/Impeller path does not populate Android HWUI frame histograms). No FPS or memory RSS invented."
+    },
+    "qualitativeOverlayEvidence": {
+      "path": ".e2e_artifacts/open_rides_followup_my_rides_v3.png",
+      "note": "With debug.hwui.profile=visual_bars briefly enabled, orange/red profile bars overlaid during My Rides list render — treated as qualitative only, not as measured FPS"
+    },
+    "verdict": "PARTIAL"
+  },
+  "4_physicalLifecycleAcceptCounteroffer": {
+    "uiAcceptSheet": {
+      "verdict": "PASS",
+      "evidence": [
+        ".e2e_artifacts/open_rides_followup_accept_sheet.png",
+        ".e2e_artifacts/open_rides_followup_counteroffer.png"
+      ],
+      "notes": "Physical Accept opened existing offer sheet; Counteroffer chip present; sheet Cancel used so disposable server proof could be isolated"
+    },
+    "serverAuthoritativeCounteroffer": {
+      "verdict": "PASS",
+      "rideId": "5e2a2cf2-d093-4acf-992f-e4b8d00e81a4",
+      "createAt": "2026-10-13T09:25:31.125Z",
+      "submitAt": "2026-10-13T09:25:35.535Z",
+      "submitStatus": 201,
+      "type": "DRIVER_COUNTEROFFER",
+      "amountMinor": 72000,
+      "passengerOfferMinor": 67000,
+      "offerId": "5e2a2cf2-d093-4acf-992f-e4b8d00e81a4_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+      "rideStateAfter": "OFFERS_AVAILABLE",
+      "passengerListStatus": 200,
+      "counterofferPresent": true,
+      "artifact": ".e2e_artifacts/open_rides_followup_lifecycle_proof.json",
+      "notes": "Disposable staging ride; body uses expectedRequestVersion (matches app CreateOfferUseCase). Unrelated rides not consumed."
+    },
+    "verdict": "PASS"
+  },
+  "5_myRidesHiddenInfoFix": {
+    "userDefectShot": ".e2e_artifacts/open_rides_followup_my_rides_before.png",
+    "afterPhysical": ".e2e_artifacts/open_rides_followup_my_rides_clean.png",
+    "afterCancelledCards": ".e2e_artifacts/open_rides_followup_my_rides_v2.png",
+    "a11yProof": {
+      "cancelledVisible": true,
+      "distanceValues": ["19.6 km", "9.9 km"],
+      "durationPlaceholder": "—",
+      "labelsObserved": ["Distance", "Duration", "Est. time", "Cancelled"]
+    },
+    "checks": [
+      ".e2e_artifacts/open_rides_followup_my_rides_check.json",
+      ".e2e_artifacts/open_rides_followup_my_rides_clean_check.json"
+    ],
+    "verdict": "PASS"
+  },
+  "verdicts": {
+    "visualDesignMatch": "PARTIAL",
+    "realtimeFcmRefresh": "PARTIAL",
+    "performanceFrameJank": "PARTIAL",
+    "physicalLifecycle": "PASS",
+    "myRidesMetricsVisibility": "PASS",
+    "functionalCorrectnessParent": "PASS",
+    "overall": "PARTIAL"
+  },
+  "remainingBlockers": [
+    "FCM sweep delivered=0 despite dispatch invite — live FCM→_refreshOpenRides latency not measured",
+    "Android HWUI gfxinfo returns 0 frames for Flutter; need Flutter timeline/DevTools for numeric jank if required",
+    "Visual match vs concept JPG not pixel-perfect (labelled comparison only)"
+  ],
+  "evidenceIndex": {
+    "parentAudit": ".e2e_artifacts/OPEN_RIDES_REDESIGN_AUDIT_REPORT.json",
+    "thisReport": ".e2e_artifacts/OPEN_RIDES_REDESIGN_FOLLOWUP_REPORT.json",
+    "reference": ".e2e_artifacts/open_rides_followup_reference_concept.jpg",
+    "sideBySide": ".e2e_artifacts/open_rides_followup_side_by_side.png",
+    "myRidesBeforeAfter": ".e2e_artifacts/open_rides_followup_my_rides_before_after.png",
+    "openRidesPhysical": ".e2e_artifacts/open_rides_followup_open_rides.png",
+    "fcmPrep": ".e2e_artifacts/open_rides_followup_fcm_prep.json",
+    "fcmRun": ".e2e_artifacts/open_rides_followup_fcm_jank_lifecycle.json",
+    "lifecycleProof": ".e2e_artifacts/open_rides_followup_lifecycle_proof.json",
+    "jankSummary": ".e2e_artifacts/open_rides_followup_jank_summary.json"
+  }
+}

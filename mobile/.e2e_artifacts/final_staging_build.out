@@ -1,0 +1,140 @@
+WARN: ORA_GOOGLE_MAPS_ANDROID_API_KEY unset — map tiles may fail until configured
+MapLibre PoC MapTiler key: present (value not logged)
+Running Gradle task 'assembleDebug'...                          
+Failed to execute org.gradle.cache.internal.AsyncCacheAccessDecoratedCache$$Lambda$502/0x00000070014bb698@36c42b42.
+org.gradle.api.UncheckedIOException: Could not add entry '/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/8.12/transforms/0375bfcdcb2e64c6f5f1ec71f89cabec' to cache file-access.bin (/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/journal-1/file-access.bin).
+	at org.gradle.cache.internal.btree.BTreePersistentIndexedCache.put(BTreePersistentIndexedCache.java:162)
+	at org.gradle.cache.internal.DefaultMultiProcessSafeIndexedCache.lambda$put$1(DefaultMultiProcessSafeIndexedCache.java:67)
+	at org.gradle.cache.internal.DefaultFileLockManager$DefaultFileLock.doWriteAction(DefaultFileLockManager.java:231)
+	at org.gradle.cache.internal.DefaultFileLockManager$DefaultFileLock.writeFile(DefaultFileLockManager.java:221)
+	at org.gradle.cache.internal.DefaultCacheCoordinator$UnitOfWorkFileAccess.writeFile(DefaultCacheCoordinator.java:475)
+	at org.gradle.cache.internal.DefaultMultiProcessSafeIndexedCache.put(DefaultMultiProcessSafeIndexedCache.java:67)
+	at org.gradle.cache.internal.AsyncCacheAccessDecoratedCache.lambda$putLater$1(AsyncCacheAccessDecoratedCache.java:56)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.cache.internal.ExclusiveCacheAccessingWorker$1.run(ExclusiveCacheAccessingWorker.java:179)
+	at org.gradle.cache.internal.DefaultCacheCoordinator.lambda$toSupplier$2(DefaultCacheCoordinator.java:228)
+	at org.gradle.cache.internal.DefaultCacheCoordinator.useCache(DefaultCacheCoordinator.java:249)
+	at org.gradle.cache.internal.DefaultCacheCoordinator.useCache(DefaultCacheCoordinator.java:223)
+	at org.gradle.cache.internal.ExclusiveCacheAccessingWorker.flushOperations(ExclusiveCacheAccessingWorker.java:169)
+	at org.gradle.cache.internal.ExclusiveCacheAccessingWorker.run(ExclusiveCacheAccessingWorker.java:139)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: org.gradle.api.UncheckedIOException: java.io.IOException: No space left on device
+	at org.gradle.cache.internal.btree.FileBackedBlockStore.write(FileBackedBlockStore.java:140)
+	at org.gradle.cache.internal.btree.CachingBlockStore.flush(CachingBlockStore.java:64)
+	at org.gradle.cache.internal.btree.FreeListBlockStore.flush(FreeListBlockStore.java:103)
+	at org.gradle.cache.internal.btree.StateCheckBlockStore.flush(StateCheckBlockStore.java:85)
+	at org.gradle.cache.internal.btree.BTreePersistentIndexedCache.put(BTreePersistentIndexedCache.java:160)
+	... 18 more
+Caused by: java.io.IOException: No space left on device
+	at java.base/java.io.RandomAccessFile.writeBytes(Native Method)
+	at java.base/java.io.RandomAccessFile.write(RandomAccessFile.java:558)
+	at org.gradle.internal.file.RandomAccessFileOutputStream.write(RandomAccessFileOutputStream.java:47)
+	at java.base/java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:81)
+	at java.base/java.io.BufferedOutputStream.flush(BufferedOutputStream.java:142)
+	at java.base/java.io.FilterOutputStream.flush(FilterOutputStream.java:153)
+	at org.gradle.cache.internal.btree.ByteOutput.done(ByteOutput.java:62)
+	at org.gradle.cache.internal.btree.FileBackedBlockStore$BlockImpl.write(FileBackedBlockStore.java:223)
+	at org.gradle.cache.internal.btree.BTreePersistentIndexedCache.put(BTreePersistentIndexedCache.java:160)
+	... 18 more
+Caused by: java.io.IOException: No space left on device
+	at java.base/java.io.RandomAccessFile.writeBytes(Native Method)
+	at java.base/java.io.RandomAccessFile.write(RandomAccessFile.java:558)
+	at org.gradle.internal.file.RandomAccessFileOutputStream.write(RandomAccessFileOutputStream.java:47)
+	at java.base/java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:81)
+	at java.base/java.io.BufferedOutputStream.flush(BufferedOutputStream.java:142)
+	at java.base/java.io.FilterOutputStream.flush(FilterOutputStream.java:153)
+	at org.gradle.cache.internal.btree.ByteOutput.done(ByteOutput.java:62)
+	at org.gradle.cache.internal.btree.FileBackedBlockStore$BlockImpl.write(FileBackedBlockStore.java:223)
+	at org.gradle.cache.internal.btree.FileBackedBlockStore.write(FileBackedBlockStore.java:136)
+	... 22 more
+Failed to execute org.gradle.cache.internal.AsyncCacheAccessDecoratedCache$$Lambda$502/0x00000070014bb698@73e9558.
+org.gradle.api.UncheckedIOException: Could not add entry '/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/8.12/transforms/1d2db0662c78c010a3245316f15c4e96' to cache file-access.bin (/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/journal-1/file-access.bin).
+	at org.gradle.cache.internal.btree.BTreePersistentIndexedCache.put(BTreePersistentIndexedCache.java:162)
+	at org.gradle.cache.internal.DefaultMultiProcessSafeIndexedCache.lambda$put$1(DefaultMultiProcessSafeIndexedCache.java:67)
+	at org.gradle.cache.internal.DefaultFileLockManager$DefaultFileLock.doWriteAction(DefaultFileLockManager.java:231)
+	at org.gradle.cache.internal.DefaultFileLockManager$DefaultFileLock.writeFile(DefaultFileLockManager.java:221)
+	at org.gradle.cache.internal.DefaultCacheCoordinator$UnitOfWorkFileAccess.writeFile(DefaultCacheCoordinator.java:475)
+	at org.gradle.cache.internal.DefaultMultiProcessSafeIndexedCache.put(DefaultMultiProcessSafeIndexedCache.java:67)
+	at org.gradle.cache.internal.AsyncCacheAccessDecoratedCache.lambda$putLater$1(AsyncCacheAccessDecoratedCache.java:56)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.cache.internal.ExclusiveCacheAccessingWorker$1.run(ExclusiveCacheAccessingWorker.java:179)
+	at org.gradle.cache.internal.DefaultCacheCoordinator.lambda$toSupplier$2(DefaultCacheCoordinator.java:228)
+	at org.gradle.cache.internal.DefaultCacheCoordinator.useCache(DefaultCacheCoordinator.java:249)
+	at org.gradle.cache.internal.DefaultCacheCoordinator.useCache(DefaultCacheCoordinator.java:223)
+	at org.gradle.cache.internal.ExclusiveCacheAccessingWorker.flushOperations(ExclusiveCacheAccessingWorker.java:169)
+	at org.gradle.cache.internal.ExclusiveCacheAccessingWorker.run(ExclusiveCacheAccessingWorker.java:139)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:48)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: org.gradle.api.UncheckedIOException: java.io.IOException: No space left on device
+	at org.gradle.cache.internal.btree.FileBackedBlockStore.write(FileBackedBlockStore.java:140)
+	at org.gradle.cache.internal.btree.CachingBlockStore.flush(CachingBlockStore.java:64)
+	at org.gradle.cache.internal.btree.FreeListBlockStore.flush(FreeListBlockStore.java:103)
+	at org.gradle.cache.internal.btree.StateCheckBlockStore.flush(StateCheckBlockStore.java:85)
+	at org.gradle.cache.internal.btree.BTreePersistentIndexedCache.put(BTreePersistentIndexedCache.java:160)
+	... 18 more
+Caused by: java.io.IOException: No space left on device
+	at java.base/java.io.RandomAccessFile.writeBytes(Native Method)
+	at java.base/java.io.RandomAccessFile.write(RandomAccessFile.java:558)
+	at org.gradle.internal.file.RandomAccessFileOutputStream.write(RandomAccessFileOutputStream.java:47)
+	at java.base/java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:81)
+	at java.base/java.io.BufferedOutputStream.flush(BufferedOutputStream.java:142)
+	at java.base/java.io.FilterOutputStream.flush(FilterOutputStream.java:153)
+	at org.gradle.cache.internal.btree.ByteOutput.done(ByteOutput.java:62)
+	at org.gradle.cache.internal.btree.FileBackedBlockStore$BlockImpl.write(FileBackedBlockStore.java:223)
+	at org.gradle.cache.internal.btree.FileBackedBlockStore.write(FileBackedBlockStore.java:136)
+	... 22 more
+	... 22 more
+Failed to execute org.gradle.cache.internal.AsyncCacheAccessDecoratedCache$$Lambda$502/0x00000070014bb698@7d02c305.
+org.gradle.api.UncheckedIOException: Could not add entry '/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/8.12/transforms/8d467919991ddd1982463e11f43bc6db' to cache file-access.bin (/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/journal-1/file-access.bin).
+	at org.gradle.cache.internal.DefaultMultiProcessSafeIndexedCache.lambda$put$1(DefaultMultiProcessSafeIndexedCache.java:67)
+	at org.gradle.cache.internal.DefaultFileLockManager$DefaultFileLock.doWriteAction(DefaultFileLockManager.java:231)
+	at org.gradle.cache.internal.DefaultFileLockManager$DefaultFileLock.writeFile(DefaultFileLockManager.java:221)
+	at org.gradle.cache.internal.DefaultCacheCoordinator$UnitOfWorkFileAccess.writeFile(DefaultCacheCoordinator.java:475)
+	at org.gradle.cache.internal.DefaultMultiProcessSafeIndexedCache.put(DefaultMultiProcessSafeIndexedCache.java:67)
+	at org.gradle.cache.internal.AsyncCacheAccessDecoratedCache.lambda$putLater$1(AsyncCacheAccessDecoratedCache.java:56)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.cache.internal.ExclusiveCacheAccessingWorker$1.run(ExclusiveCacheAccessingWorker.java:179)
+	at org.gradle.cache.internal.btree.FileBackedBlockStore.write(FileBackedBlockStore.java:136)
+	... 22 more
+Failed to execute org.gradle.cache.internal.AsyncCacheAccessDecoratedCache$$Lambda$502/0x00000070014bb698@37a8f7fb.
+org.gradle.api.UncheckedIOException: Could not add entry '/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/8.12/transforms/aabc90e4d3ed80bbaafa14d5ce5c84e8' to cache file-access.bin (/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/journal-1/file-access.bin).
+	at org.gradle.cache.internal.btree.BTreePersistentIndexedCache.put(BTreePersistentIndexedCache.java:162)
+	at org.gradle.cache.internal.DefaultMultiProcessSafeIndexedCache.lambda$put$1(DefaultMultiProcessSafeIndexedCache.java:67)
+	at org.gradle.cache.internal.DefaultFileLockManager$DefaultFileLock.doWriteAction(DefaultFileLockManager.java:231)
+	at org.gradle.cache.internal.DefaultFileLockManager$DefaultFileLock.writeFile(DefaultFileLockManager.java:221)
+	at org.gradle.cache.internal.DefaultCacheCoordinator$UnitOfWorkFileAccess.writeFile(DefaultCacheCoordinator.java:475)
+	at org.gradle.cache.internal.DefaultMultiProcessSafeIndexedCache.put(DefaultMultiProcessSafeIndexedCache.java:67)
+	at org.gradle.cache.internal.AsyncCacheAccessDecoratedCache.lambda$putLater$1(AsyncCacheAccessDecoratedCache.java:56)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.cache.internal.ExclusiveCacheAccessingWorker$1.run(ExclusiveCacheAccessingWorker.java:179)
+	at org.gradle.cache.internal.DefaultCacheCoordinator.lambda$toSupplier$2(DefaultCacheCoordinator.java:228)
+	at org.gradle.cache.internal.DefaultCacheCoordinator.useCache(DefaultCacheCoordinator.java:249)
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Could not stop all services.
+> Failed to release lock on Build Output Cleanup Cache (/Users/jazimsaeed/Ora-app/mobile/android/.gradle/buildOutputCleanup)
+> Could not stop all services.
+   > Failed to release lock on cache directory md-supplier (/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/8.12/md-supplier)
+   > Could not stop all services.
+      > Failed to release lock on Build Output Cleanup Cache (/Users/jazimsaeed/development/flutter/packages/flutter_tools/gradle/.gradle/buildOutputCleanup)
+      > Failed to release lock on execution history cache (/Users/jazimsaeed/development/flutter/packages/flutter_tools/gradle/.gradle/8.12/executionHistory)
+   > Failed to release lock on cache directory md-rule (/private/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/cursor-sandbox-cache/287ce0d6964028d68d8c01bfbb1d1503/gradle/caches/8.12/md-rule)
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 4m 10s
+Running Gradle task 'assembleDebug'...                            251.5s
+Gradle task assembleDebug failed with exit code 1

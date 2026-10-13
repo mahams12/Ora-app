@@ -1,0 +1,52 @@
+{
+  "startedAt": "2026-10-13T08:23:36.162638+00:00",
+  "device": "RF8R40ZQ1JH",
+  "package": "com.ora.ora",
+  "checks": {
+    "login": "ALREADY",
+    "my_rides_screen": "FAIL",
+    "my_rides_cancelled_visible": "PARTIAL",
+    "my_rides_distance_value": "FAIL",
+    "my_rides_duration_placeholder": "PASS",
+    "my_rides_distance_label": "FAIL",
+    "my_rides_duration_label": "FAIL",
+    "open_rides_screen": "PASS"
+  },
+  "shots": {
+    "boot": "open_rides_followup_boot.png",
+    "my_rides": "open_rides_followup_my_rides.png",
+    "open_rides": "open_rides_followup_open_rides.png",
+    "open_rides_after_scroll": "open_rides_followup_open_rides_after_scroll.png",
+    "accept_sheet": "open_rides_followup_accept_sheet.png",
+    "counteroffer": "open_rides_followup_counteroffer.png"
+  },
+  "gfx": {
+    "scroll": {
+      "tag": "scroll",
+      "rawPath": ".e2e_artifacts/open_rides_followup_gfxinfo_scroll.txt",
+      "totalFramesRendered": 0,
+      "jankyFrames": 0,
+      "jankyPercent": 0.0,
+      "p50Ms": 4950,
+      "p90Ms": 4950,
+      "p95Ms": 4950,
+      "p99Ms": 4950,
+      "hasProfileData": true,
+      "sampleDurationMs": 6390
+    },
+    "method": "adb shell dumpsys gfxinfo com.ora.ora after ListView swipes"
+  },
+  "acceptLifecycle": {
+    "sheetOpened": "PASS",
+    "counterofferChip": "PASS",
+    "sheetCancelledWithoutSubmit": true
+  },
+  "myRidesTextSample": {
+    "hasKm": false,
+    "hasEmdash": true,
+    "hasCancelled": false,
+    "kmMatches": []
+  },
+  "elapsedMs": 142607,
+  "finishedAt": "2026-10-13T08:25:58.622513+00:00"
+}

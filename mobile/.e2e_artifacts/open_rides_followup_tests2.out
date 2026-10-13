@@ -1,0 +1,13 @@
+00:00 +0: loading /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart                                                                                                       00:01 +0: loading /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart                                                                                                       00:01 +0 -1: loading /Users/jazimsaeed/Ora-app/mobile/test/features/ride/ride_card_system_test.dart [E]                                                                                                
+  FileSystemException: Cannot copy file to '/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/flutter_tools.fB4moC/flutter_test_listener.32ruPl/listener.dart.dill', path = '/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/flutter_tools.fB4moC/flutter_test_compiler.AgfBB8/output.dill' (OS Error: No space left on device, errno = 28)
+  dart:io/common.dart 58:9                                  _checkForErrorResponse
+  dart:io/file_impl.dart 410:7                              _File.copy.<fn>
+  dart:async/zone.dart 1538:47                              _rootRunUnary
+  dart:async/zone.dart 1429:19                              _CustomZone.runUnary
+  ===== asynchronous gap ===========================
+  package:file/src/forwarding/forwarding_file.dart 29:51    ForwardingFile.copy
+  ===== asynchronous gap ===========================
+  package:file/src/forwarding/forwarding_file.dart 29:51    ForwardingFile.copy
+  ===== asynchronous gap ===========================
+  package:flutter_tools/src/test/test_compiler.dart 265:41  TestCompiler._onCompilationRequest
+  

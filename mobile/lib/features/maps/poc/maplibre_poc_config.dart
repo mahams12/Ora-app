@@ -49,11 +49,20 @@ class MapLibrePoCConfig {
   static String tilesPreflightUrl(String apiKey) =>
       'https://api.maptiler.com/tiles/v3/tiles.json?key=$apiKey';
 
+  /// Must match MapTiler Cloud → API Keys → Allowed User-Agent (case-sensitive
+  /// substring). Dedicated PoC key accepts requests containing "Ora".
+  /// Native MapLibre/OkHttp defaults do NOT match and get HTTP 403.
+  static const String mapTilerUserAgent = 'Ora-MapLibre-PoC/1.0';
+
   static const String keyRestrictedMessage =
       'MapTiler rejected this API key (HTTP 403 — key usage restricted).\n\n'
+      'Native MapLibre tile requests must send User-Agent containing the '
+      'Allowed User-Agent substring configured on the PoC key '
+      '(currently expected: "Ora").\n\n'
       'In MapTiler Cloud → API Keys → EDIT "Ora MapLibre PoC":\n'
-      '• Clear Allowed HTTP origins (leave unrestricted for this disposable PoC), or\n'
-      '• Allow mobile/native usage if your plan exposes that control.\n\n'
-      'Then rebuild/reinstall. The key itself is present locally; tiles cannot load until MapTiler accepts it.';
+      '• Prefer Allowed User-Agent = Ora (mobile) — do NOT combine with HTTP '
+      'origins on the same key (AND logic blocks native requests), or\n'
+      '• Clear both restrictions only for local disposable testing.\n\n'
+      'Key stays local/gitignored; never commit or log it.';
 }
 
