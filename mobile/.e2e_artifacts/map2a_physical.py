@@ -644,7 +644,62 @@ def get_ride(bearer: str, ride_id: str) -> dict:
     return body.get("data") or body
 
 
+def _tap_desc_contains(xml: str, needle: str, exclude: str = "") -> bool:
+    """Tap first clickable node whose desc contains needle (merged Semantics
+    parents may prefix the label — `startswith` misses those)."""
+    for n in nodes(xml):
+        if not n["clickable"]:
+            continue
+        x1, y1, x2, y2 = n["bounds"]
+        if x2 <= x1 or y2 <= y1:
+            continue
+        if needle in n["desc"] and (not exclude or exclude not in n["desc"]):
+            sh("input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
+            print("  TAP*", repr(n["desc"][:70]))
+            return True
+    print("  MISS*", repr(needle))
+    return False
+
+
+def _edit_nodes(xml: str) -> list[dict]:
+    """EditText nodes with text + bounds (dump order = field order)."""
+    out = []
+    for m in re.finditer(r'<node\b[^>]*class="android\.widget\.EditText"[^>]*>', xml):
+        n = m.group(0)
+        t = re.search(r'text="([^"]*)"', n)
+        b = re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', n)
+        if b:
+            out.append(
+                {
+                    "text": html.unescape(t.group(1)) if t else "",
+                    "bounds": tuple(map(int, b.groups())),
+                }
+            )
+    return out
+
+
+def _screen_size() -> tuple[int, int]:
+    m = re.search(r"(\d+)x(\d+)", sh("wm", "size"))
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2194)
+
+
+def _scroll_sheet() -> None:
+    _, h = _screen_size()
+    sh("input", "swipe", "540", str(int(h * 0.68)), "540", str(int(h * 0.45)), "400")
+
+
 def map1_smoke() -> dict:
+    """MAP-1 compose smoke: GPS pickup → Places destination → review.
+
+    Run6 miss root cause: single-shot dumps raced the Places reverse-geocode
+    (~>4s); the rendered 'Confirm pickup' proposal card sits below the
+    uiautomator viewport clip (visible on screen, absent from the a11y tree)
+    so it was never tapped; the still-open card then pushed the destination
+    EditText out of the dump, `edits[1]` never existed, and `input text` was
+    dropped with no focused field. 'Liberty%20Market' was also a wrong escape
+    (`input text` unescapes `%s`, not `%20`). Poll + scroll instead of fixed
+    sleeps; semantics of returned keys unchanged.
+    """
     xml = force_login(PASSENGER_PHONE_UI, PASSENGER_OTP, want_passenger=True)
     xml = ensure_passenger_home(xml)
     tap_contains(xml, "Where are you headed") or sh("input", "tap", "540", "375")
@@ -652,50 +707,97 @@ def map1_smoke() -> dict:
     xml = ensure_ora("map1_req")
     ok_req = "Map preview" in unescape(xml) or "Use current location" in unescape(xml)
     tap_contains(xml, "Use current location")
-    time.sleep(4)
-    xml = ensure_ora("map1_gps")
-    for n in nodes(xml):
-        if n["clickable"] and n["desc"].strip().startswith("Confirm pickup") and "to continue" not in n["desc"]:
-            x = (n["bounds"][0] + n["bounds"][2]) // 2
-            y = (n["bounds"][1] + n["bounds"][3]) // 2
-            sh("input", "tap", str(x), str(y))
+
+    # GPS fix + Places searchNearby can exceed 4s, and the rendered proposal
+    # card can sit below the a11y fold — poll, scrolling the sheet to expose it.
+    for i in range(12):
+        xml = ensure_ora("map1_gps")
+        u = unescape(xml)
+        if "Pickup confirmed" in u:
             break
-    time.sleep(2)
-    xml = ensure_ora("map1_dest")
-    edits = re.findall(
-        r'class="android.widget.EditText"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',
-        xml,
-    )
-    if len(edits) >= 2:
-        x1, y1, x2, y2 = map(int, edits[1])
+        if _tap_desc_contains(xml, "Confirm pickup", exclude="to continue"):
+            time.sleep(1.5)
+            continue
+        time.sleep(1.5)
+        if i in (3, 7):  # proposal likely below the a11y clip — scroll to it
+            _scroll_sheet()
+
+    # Destination EditText: last EditText when both fields are in the tree; once
+    # scrolled, pickup leaves the tree and the lone EMPTY field is destination
+    # (pickup already holds the resolved label). Distinguish by empty text +
+    # pickup state strip rather than a fixed index.
+    dest = None
+    for _ in range(6):
+        xml = ensure_ora("map1_dest")
+        edits = _edit_nodes(xml)
+        u = unescape(xml)
+        pickup_has_value = (
+            "Pickup confirmed" in u
+            or "Pickup set" in u
+            or "Pickup selected" in u
+        )
+        if len(edits) >= 2:
+            dest = edits[-1]["bounds"]
+            break
+        if len(edits) == 1 and not edits[0]["text"].strip() and pickup_has_value:
+            dest = edits[0]["bounds"]
+            break
+        _scroll_sheet()
+        time.sleep(1.0)
+    if dest:
+        x1, y1, x2, y2 = dest
         sh("input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
     time.sleep(0.4)
     for _ in range(40):
         sh("input", "keyevent", "67")
-    sh("input", "text", "Liberty%20Market")
-    time.sleep(4)
-    xml = ensure_ora("map1_sug")
-    places = "Liberty" in unescape(xml)
-    tap_contains(xml, "Liberty Market") or tap_contains(xml, "Liberty")
-    time.sleep(2)
-    xml = ensure_ora("map1_prop")
-    for n in nodes(xml):
-        if n["clickable"] and n["desc"].strip().startswith("Confirm destination"):
-            x = (n["bounds"][0] + n["bounds"][2]) // 2
-            y = (n["bounds"][1] + n["bounds"][3]) // 2
-            sh("input", "tap", str(x), str(y))
-            break
-    time.sleep(2)
-    xml = ensure_ora("map1_ready")
-    conts = [n for n in nodes(xml) if n["clickable"] and "Continue" in n["desc"]]
-    if conts:
-        n = sorted(conts, key=lambda n: -(n["bounds"][3] - n["bounds"][1]))[0]
-        sh(
-            "input",
-            "tap",
-            str((n["bounds"][0] + n["bounds"][2]) // 2),
-            str((n["bounds"][1] + n["bounds"][3]) // 2),
+    sh("input", "text", "Liberty%sMarket")  # `input text` unescapes %s → space
+
+    # Poll for a real suggestion row — EditText desc is "" so typed text can't
+    # false-positive this; suggestion rows are clickable.
+    places = False
+    for _ in range(12):
+        xml = ensure_ora("map1_sug")
+        clickables = [n for n in nodes(xml) if n["clickable"] and "Liberty" in n["desc"]]
+        # Prefer the row's own label (desc starts with primaryText) over a
+        # merged ancestor whose desc merely embeds it mid-string.
+        sug = next(
+            (n for n in clickables if n["desc"].strip().startswith("Liberty")),
+            clickables[0] if clickables else None,
         )
+        if sug:
+            places = True
+            x1, y1, x2, y2 = sug["bounds"]
+            sh("input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
+            print("  TAP*", repr(sug["desc"][:70]))
+            break
+        time.sleep(1.5)
+
+    # Place resolve → proposal card → confirm. Poll for it; the card can sit
+    # below the a11y fold like the pickup one — scroll to expose it.
+    for i in range(8):
+        xml = ensure_ora("map1_prop")
+        if "Destination confirmed" in unescape(xml):
+            break
+        if _tap_desc_contains(xml, "Confirm destination"):
+            break
+        time.sleep(1.5)
+        if i in (2, 5):
+            _scroll_sheet()
+
+    # Continue enables only when both points are confirmed — poll it.
+    for _ in range(8):
+        xml = ensure_ora("map1_ready")
+        conts = [n for n in nodes(xml) if n["clickable"] and "Continue" in n["desc"]]
+        if conts:
+            n = sorted(conts, key=lambda n: -(n["bounds"][3] - n["bounds"][1]))[0]
+            sh(
+                "input",
+                "tap",
+                str((n["bounds"][0] + n["bounds"][2]) // 2),
+                str((n["bounds"][1] + n["bounds"][3]) // 2),
+            )
+            break
+        time.sleep(1.5)
     time.sleep(5)
     xml = ensure_ora("map1_review")
     screencap("map1_smoke_review")
@@ -703,7 +805,15 @@ def map1_smoke() -> dict:
     return {
         "rideRequestOpened": ok_req,
         "placesSuggestions": places,
-        "reviewReached": "Request" in u and ("Google Map" in u or "Map preview" in u),
+        # Review pane exposes 'Select a ride'/'Trip summary' — 'Google Map'/
+        # 'Map preview' a11y labels only exist on the compose pane.
+        "reviewReached": "Request" in u
+        and (
+            "Google Map" in u
+            or "Map preview" in u
+            or "Select a ride" in u
+            or "Trip summary" in u
+        ),
         "pricingVisible": "Rs" in u,
         "pickupDestMarkers": "Pickup" in u and "Destination" in u,
         "polylineLikely": "Pickup & destination confirmed" in u or "Google Map" in u,

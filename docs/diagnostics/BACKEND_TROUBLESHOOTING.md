@@ -22,12 +22,29 @@ Expect **`503 DEPENDENCY_ERROR`**, not `200` with empty candidates.
 
 ## Symptom: ride never “dispatched” / no push to drivers
 
-N4 is **NOT IMPLEMENTED**. Architecture **FROZEN** (coordinate-primary): `docs/implementation/n-series/N4-dispatch-planning.md`.
+N4 is **IMPLEMENTED (MVP)** — invite ledger + internal dispatch sweep; FCM wake is delivered by **D1** (`src/delivery/`). Drivers can also discover via **M0** pull (`GET /v1/rides/open`).
 
-1. Drivers discover via **M0** pull today — expected
-2. N4 MVP (when built) persists invite decisions only — **no FCM wake** in N4
-3. Matching input will be **pickup lat/lng → N3 `geo:drivers`** — **not** `rides.city` / homeCity
-4. Do not implement until an explicit N4 implementation prompt is issued
+1. Check `outboxEvents` in Firestore — pending invite events should be `PENDING`, not silently stuck
+2. Run the sweep: `POST /v1/internal/outbox/dispatch-fcm-sweep` (worker token)
+3. Confirm device tokens registered: `POST .../device-tokens`
+4. Matching input is **pickup lat/lng → N3 `geo:drivers`** — **not** `rides.city` / homeCity
+5. Planning: `docs/implementation/n-series/N4-dispatch-planning.md`, `D1-dispatch-delivery-planning.md`
+
+## Symptom: outbox events pile up / new dispatch notifications starved (FIXED 2026-10-14)
+
+**Root cause:** the FCM projector's default scan could be filled by terminal `DELIVERED`/`DEAD_LETTER` backlog, starving fresh `PENDING` events.
+
+**Fix (in `src/delivery/dispatch_fcm_projector.ts`):** scan `PENDING` events first, then spend only the leftover sweep budget reclaiming expired-lease `CLAIMED` events.
+
+**Diagnosis / verification:**
+
+```bash
+cd backend/auth-service
+npx vitest run src/__tests__/delivery_d1.test.ts   # ordering tests S1–S8
+```
+
+Evidence: `mobile/.e2e_artifacts/FCM_ORDERING_FIX_PHYSICAL_VERIFY_REPORT.json` (staging physical verify). If notifications still stall, check `delivery` sweep logs and Firestore `outboxEvents` state distribution.
+
 ---
 
 ## Symptom: location update returns 403

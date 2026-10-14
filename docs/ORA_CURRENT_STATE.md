@@ -1,9 +1,11 @@
 # Ora — Current State (Authoritative Snapshot)
 
 **Status:** CURRENT  
-**Evidence date:** 2026-09-21  
-**Git tip at documentation:** `master` @ `4fb0a6b` (verify with `git log -1`)  
+**Evidence date:** 2026-10-14 (reconciled; see note below)  
+**Git tip at documentation:** `master` @ `dd91013` (verify with `git log -1`)  
 **Rule:** Code + executable proofs outrank historical markdown. If this file conflicts with older docs, **this file wins** until updated with new code evidence.
+
+> **2026-10-14 reconciliation:** statements that said "5C device pending", "5D+ deferred", "N2B/RTDB not implemented", or "no outbox projector/FCM consumer" were stale and are corrected below. Verified 2026-10-14 evidence: `MAP3_I_MAP1SMOKE_CLOSEOUT_REPORT.json`, `FCM_ORDERING_FIX_PHYSICAL_VERIFY_REPORT.json`, `passenger_fare_offer_physical_followup_report.json`, `TWO_ACTOR_LIFECYCLE_RATINGS_CLOSEOUT.json` (all under `mobile/.e2e_artifacts/`).
 
 Read this first in any new Cursor/engineering session. Then follow links to phase docs, architecture maps, and diagnostics.
 
@@ -19,8 +21,8 @@ Read this first in any new Cursor/engineering session. Then follow links to phas
 | Identity | Firebase Auth ID tokens verified by Admin SDK |
 | Durable SoT | **Firestore** (`firestore.rules`, `firestore.indexes.json`, emulator port **8181**) |
 | Redis | **Optional** via `REDIS_URL` — N2C GEO projection only (`ioredis`) |
-| RTDB | **Not implemented** (documented target; no Admin `databaseURL`, no client SDK) |
-| Outbox | Firestore `outboxEvents` writes `PENDING` — **no projector / Pub/Sub / FCM consumer yet** |
+| RTDB | **Implemented** — `src/rtdb/` (`admin_trip_location_rtdb.ts`, `memory_trip_location_rtdb.ts`); `firebase_database` client SDK in `mobile/pubspec.yaml`; tripLocations projection + ACL physically verified (L2 reports) |
+| Outbox | Firestore `outboxEvents` + **FCM dispatch projector** (`src/delivery/dispatch_fcm_projector.ts`) — PENDING-first scan, leftover-budget CLAIMED reclaim (fix verified 2026-10-14) |
 
 **Start here for diagnosis:**
 
@@ -28,7 +30,7 @@ Read this first in any new Cursor/engineering session. Then follow links to phas
 | ---- | -------- |
 | Location pipeline | [`docs/architecture/N_LOCATION_FLOW.md`](architecture/N_LOCATION_FLOW.md) |
 | Request traces | [`docs/architecture/N_REQUEST_FLOWS.md`](architecture/N_REQUEST_FLOWS.md) |
-| Symptom → fix | [`docs/diagnostics/BACKEND_TROUBLESHOOTING.md`](diagnostics/BACKEND_TROUBLESHOOTING.md) |
+| Symptom → fix | [`docs/diagnostics/BACKEND_TROUBLESHOOTING.md`](diagnostics/BACKEND_TROUBLESHOOTING.md) · [`MOBILE_E2E_TROUBLESHOOTING.md`](diagnostics/MOBILE_E2E_TROUBLESHOOTING.md) |
 | Error codes | [`docs/diagnostics/BACKEND_ERROR_INDEX.md`](diagnostics/BACKEND_ERROR_INDEX.md) |
 | Data ownership | [`docs/architecture/DATA_OWNERSHIP.md`](architecture/DATA_OWNERSHIP.md) |
 | API surface | [`docs/architecture/API_CONTRACT_INDEX.md`](architecture/API_CONTRACT_INDEX.md) |
@@ -65,16 +67,16 @@ Live proof column: **PASS** (claimed in phase closure docs on disk), **SCRIPT EX
 | 2K | Offer expire sweeper | IMPLEMENTED | `POST /v1/internal/rides/offer-expire-sweep` | `run_phase_2k_unit_proof` | SCRIPT EXISTS | 2L |
 | 2L | Durable `arrivedAt` | IMPLEMENTED | arrive path sets `arrivedAt` once | `run_phase_2l_unit_proof` | SCRIPT EXISTS | 2M |
 | 2M | NO_SHOW sweeper | IMPLEMENTED | `POST /v1/internal/rides/no-show-sweep` | `run_phase_2m_unit_proof` | SCRIPT EXISTS | 2N |
-| 2N | Ratings (stars) | IMPLEMENTED | `POST/GET .../ratings` | `run_phase_2n_unit_proof` | SCRIPT EXISTS | N-series |
+| 2N | Ratings (stars) | IMPLEMENTED | `POST/GET .../ratings` | `run_phase_2n_unit_proof` | **PASS** — two-actor physical (`TWO_ACTOR_LIFECYCLE_RATINGS_CLOSEOUT.json`, both directions persisted) | N-series |
 | M0 | Open-ride discovery | IMPLEMENTED | `GET /v1/rides/open` chronological | `open_discovery.test.ts`, `run_phase_m0_unit_proof` | SCRIPT EXISTS | N3 ≠ M0 |
 | N1 | Driver go-online/offline | IMPLEMENTED | `drivers/*` | `driver_availability.test.ts`, `run_phase_n1_unit_proof` | SCRIPT EXISTS (`test:driver-availability-firestore`) | N2A |
 | N2A | Location accept + cursor | IMPLEMENTED | `location/*` | `run_phase_n2a_unit_proof` | SCRIPT EXISTS (`test:location-update-firestore`) | N2C |
-| N2B | RTDB tripLocations projection | **DEFERRED / NOT IMPLEMENTED** | none | none | NONE | Optional before trip UX |
+| N2B | RTDB tripLocations projection | **IMPLEMENTED** | `src/rtdb/*` Admin projection; mobile `firebase_database` client | L2 step reports | PASS (`L2_STEP4_PHYSICAL_VERIFICATION_REPORT.json`) | — |
 | N2C | Redis GEO projection | IMPLEMENTED — **coordinate-primary** `geo:drivers` (+ legacy dual-write) | `redis/*`, hooked from location + go-offline | `run_phase_n2c_unit_proof`, `geo_projection.test.ts` | SCRIPT EXISTS (`test:redis-geo-proof`) | N3 |
 | N3 | Nearby drivers query | **IMPLEMENTED** — lat/lng on `geo:drivers` (city not required) | `GET /v1/internal/drivers/nearby`, `drivers/nearby_service.ts` | `nearby.test.ts`, `run_phase_n3_unit_proof` | SCRIPT EXISTS (`test:nearby-redis-proof`) | N4 |
 | N4 | Dispatch / matching waves | **IMPLEMENTED** (MVP) — invite ledger 5/10/15; pickup lat/lng → N3; no auto-assign | `dispatch_wave_service.ts`, internal dispatch-sweep/tick | `dispatch.test.ts`, `run_phase_n4_unit_proof` | SCRIPT EXISTS (`test:dispatch-live-proof`) | **D1** delivery freeze |
-| D1 | Dispatch invite delivery (FCM wake) | **IMPLEMENTED (YELLOW)** — minimal projector + tokens; real FCM send optional/not default-proven | `delivery/*`, `POST .../device-tokens`, `POST .../outbox/dispatch-fcm-sweep` | `delivery_d1.test.ts`, `run_phase_d1_unit_proof` | SCRIPT EXISTS (`test:dispatch-fcm-live-proof`; FCM stubbed unless `ORA_D1_REAL_FCM=1`) | D2 / N2B / product priority |
-| Ph 4–5 | Location resolve + pricing estimate | **4A GREEN**; **5A+4B/5B GREEN**; **5C CODE GREEN / DEVICE PENDING** | Flutter GPS+Places+estimate UI; server Routes+estimate+snapshot | fare/routes/estimate + Flutter 5C tests; `test:phase-5b-*` | 4A DEVICE GREEN; 5B live Routes GREEN; **5C device pending** | Device proof then audit; next slice TBD after accept |
+| D1 | Dispatch invite delivery (FCM wake) | **IMPLEMENTED (VERIFIED 2026-10-14)** — projector scans `PENDING` first, reclaims expired-lease `CLAIMED` in leftover budget (terminal backlog starvation fix) | `delivery/*`, `POST .../device-tokens`, `POST .../outbox/dispatch-fcm-sweep` | `delivery_d1.test.ts` (incl. ordering tests S1–S8), `run_phase_d1_unit_proof` | PASS — `FCM_ORDERING_FIX_PHYSICAL_VERIFY_REPORT.json` (staging physical) | Continuous ops only |
+| Ph 4–5 | Location resolve + pricing estimate + **passenger fare edit (5D)** | **GREEN incl. 5C device + 5D physical** | Flutter GPS+Places+estimate UI + editable offer within bounds; server Routes+estimate+snapshot+offer validation | fare/routes/estimate + Flutter tests | 4A DEVICE GREEN; 5B live Routes GREEN; **5C device PASS** (`p5c_device_proof_report.json`); **5D physical PASS** (`passenger_fare_offer_physical_followup_report.json`, custom Rs 860 vs rec 850) | — |
 | Ph 3, 6–15 | Remaining product (payments, safety, etc.) | **PLANNED** | stubs / docs | mobile stubs | NONE | After Ph 4–5 / product priority |
 
 Phase documentation for N1/N2A/N2C/N3/N4/D1: [`docs/implementation/n-series/`](implementation/n-series/).  
@@ -89,18 +91,20 @@ D1 freeze (next): [`implementation/n-series/D1-dispatch-delivery-planning.md`](i
 CURRENT FRONTIER
 ```
 
-1. **Last completed backend slice (code evidence):** **Phase 4B/5B** — Google `RoutingProvider` + `POST /v1/pricing/estimate` + snapshot writer. Prior: **5A**, **4A**, **D1**, **N4**, N2C/N3, **2E–2N**, **M0**, **N1**, **N2A**.
+1. **Last completed verification milestone (2026-10-14):** **two-actor staging lifecycle + both-actor ratings — GREEN_SEGMENTED** (`TWO_ACTOR_LIFECYCLE_RATINGS_CLOSEOUT.json`; ride `5e1a8232-c4ee-45dd-8972-3d2170558aba` closed with passenger 5★ / driver 4★ persisted). Also closed in the same window: **FCM outbox ordering fix** (PENDING-first scan), **MAP-3 `I_map1Smoke`** (harness flake → GREEN), **Phase 5D passenger fare edit** (physical PASS, custom Rs 860 vs recommended 850).
 2. **Passenger device auth baseline:** VERIFIED (OTP → onboarding → Home → relaunch).
-3. **Passenger Ride Request:** **Phase 4A GREEN** + **Phase 5C CODE** — Flutter calls estimate, shows PKR, sends `pricingSnapshotId` + `city` on create. **Physical-device proof pending** (Samsung disconnected at 5C close).
-4. **Next implementation slice:** Reconnect device → **5C physical proof** → audit/accept → then propose next (not auto-start 5D).
+3. **Passenger Ride Request:** **Phase 4A GREEN + 5C device PASS + 5D physical PASS** — Flutter calls estimate, shows PKR, passenger can edit offer within server bounds, sends `pricingSnapshotId` + `city` + `passengerOfferMinor` on create.
+4. **Next implementation slice:** TBD — roadmap §5/§6 ranks executed; see updated audit addendum.
 5. **4B/5B:** **IMPLEMENTED / VERIFIED** — live Google Routes proof passed; MemoryDb estimate + snapshot proofs passed.
 6. **5A:** **IMPLEMENTED** — `calculateFare` + `PricingRulesRepository`.
-7. **5C:** **IMPLEMENTED (code)** — `PricingRemoteDataSource`, review UI, city suggestion/picker, capabilities from live estimate.
-8. **D1:** **IMPLEMENTED (YELLOW)** — FCM wake path.
+7. **5C:** **IMPLEMENTED + DEVICE PASS** — `PricingRemoteDataSource`, review UI, city suggestion/picker, capabilities from live estimate (`p5c_device_proof_report.json`).
+8. **D1:** **IMPLEMENTED / VERIFIED** — FCM wake path + outbox ordering fix (`FCM_ORDERING_FIX_PHYSICAL_VERIFY_REPORT.json`).
 9. **N4:** **IMPLEMENTED**.
-10. **City / coverage:** `rides.city` + `pricingRules/{city}_{category}` metadata (not matching gate); Flutter sends suggested/selected city slug.
-11. **Still deferred:** **N2B**; RTDB cards; invite-poll; Redis demandMult; surge/tolls; Phase 5D+.
-12. **Must NOT be touched without a new freeze:** ride/offer SM; fabricating pricing snapshots; N3/N4 matching redesign; N2A/N2C write semantics.
+10. **N2B / RTDB:** **IMPLEMENTED** — `src/rtdb/` projection + `firebase_database` client; L2 physical verified.
+11. **City / coverage:** `rides.city` + `pricingRules/{city}_{category}` metadata (not matching gate); Flutter sends suggested/selected city slug.
+12. **Still deferred:** invite-poll; Redis demandMult; surge/tolls; payments/safety/intercity phases; release signing (owner keystore).
+13. **Outstanding evidence gap:** profile-mode frame timing (numeric FPS/jank) — no profile build has emitted `FrameTiming` samples yet.
+14. **Must NOT be touched without a new freeze:** ride/offer SM; fabricating pricing snapshots; N3/N4 matching redesign; N2A/N2C write semantics.
 
 ### Nearby meaning (frozen product intent in architecture docs)
 
@@ -164,10 +168,11 @@ These are **historical** and must not be used as live status:
 ## Flutter / client gaps (evidence)
 
 - Phase **4A** adds `geolocator` + Places HTTP (requires `ORA_GOOGLE_PLACES_API_KEY`)
-- Phase **5C** adds `POST /v1/pricing/estimate` client + review fare UI + `city` on create (device proof pending)
-- No Maps SDK / map-pin (deferred); no Routes client (Routes remain server-only)
-- Driver UI uses **open rides** (M0), not GEO nearby
-- No `firebase_database` / N2B in pubspec
+- Phase **5C** adds `POST /v1/pricing/estimate` client + review fare UI + `city` on create (device PASS)
+- Phase **5D** adds editable passenger offer within server bounds (physical PASS 2026-10-14)
+- Maps SDK integrated — MAP-1…MAP-3 + half-screen compose map physically verified; no Routes client (Routes remain server-only)
+- Driver UI uses **open rides** (M0), not GEO nearby; driver progression lives under drawer → **My trips** → assigned ride detail
+- `firebase_database` + `firebase_messaging` are in `pubspec.yaml` (N2B/L2 + D1)
 
 ---
 

@@ -1,0 +1,82 @@
+{
+  "artifact": "MAP3_I_MAP1SMOKE_CLOSEOUT_REPORT",
+  "slice": "MAP-3 residual — I_map1Smoke Places smoke miss",
+  "capturedAt": "2026-10-14T14:25:00Z",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora"
+  },
+  "priorReport": "mobile/.e2e_artifacts/MAP3_PHYSICAL_FOLLOWUP_REPORT.json",
+  "productCodeModified": false,
+  "harnessChanged": [
+    "mobile/.e2e_artifacts/map2a_physical.py — map1_smoke + helpers only"
+  ],
+  "classification": "HARNESS FLAKE — not an app defect",
+  "rootCause": {
+    "summary": "map1_smoke missed Places because the a11y-driven harness could not reach the 'Confirm pickup' proposal card or the destination EditText — both were visually rendered but sat below the uiautomator viewport clip — and the typed query used a wrong input-text escape.",
+    "details": [
+      "Single-shot dumps raced Places reverse-geocode: 'Use current location' resolved 'Izmir Extension, Lahore' via Places searchNearby, but the 'Confirm pickup' proposal card was below the uiautomator-reported viewport at every fixed-sleep dump (visually rendered, absent from a11y tree) → confirm never tapped → strip stayed 'Pickup set · destination needed' (ride_map_preview_model.dart hasPickup branch).",
+      "With the proposal card open, the destination EditText never appeared in the dump → `len(edits) >= 2` was false → no tap → `input text` dropped with no focused editable → 'Liberty' absent from all dumps → placesSuggestions=false.",
+      "`input text 'Liberty%20Market'` used %20; Android Input.java only unescapes %s→space, so the literal string 'Liberty%20Market' would be sent to Places even when typed (map1_physical.py already used %s).",
+      "`reviewReached` additionally required 'Google Map'/'Map preview' a11y labels which the REVIEW pane does not emit (compose pane only) — even a fully reached review would still miss on that predicate.",
+      "Run6 screenshot (map2a_map1_smoke_review.png @11:01) shows the proposal card rendered + pickup resolved — same APK, same Places key/endpoints as the working searchNearby reverse-geocode → app-side Places pipeline functional."
+    ],
+    "placesApiFunctional": "YES — pickup proposal 'Izmir Extension, Lahore' is a Places v1:searchNearby result (same ORA_GOOGLE_PLACES_API_KEY + host as autocomplete); autocomplete then returned 'Liberty Market Gulberg III, Lahore, Pakistan' and place resolve + confirm worked on-device."
+  },
+  "fix": {
+    "file": "mobile/.e2e_artifacts/map2a_physical.py",
+    "scope": "map1_smoke() + 3 module helpers (_tap_desc_contains, _edit_nodes, _screen_size, _scroll_sheet) — harness only; no product code",
+    "changes": [
+      "Poll 'Confirm pickup'/'Confirm destination' proposal cards (12×/8× ~1.5s) instead of single-shot sleep(4); scroll the compose sheet when the card is below the a11y fold.",
+      "Destination field selected as last EditText, or the lone EMPTY EditText when pickup already holds the resolved label (post-scroll only one field stays in the tree).",
+      "Typed query 'Liberty%sMarket' — correct input-text space escape.",
+      "Suggestion detection = clickable node whose desc starts with 'Liberty' (EditText desc is empty — typed text can no longer false-positive the check).",
+      "Continue polled until clickable (enabled only when both points confirmed).",
+      "reviewReached accepts review-pane markers 'Select a ride'/'Trip summary' in addition to 'Google Map'/'Map preview'."
+    ]
+  },
+  "rerun": {
+    "command": "cd mobile/.e2e_artifacts && python3 -c \"import json; import map2a_physical as M; print(json.dumps(M.map1_smoke()))\"",
+    "log": "mobile/.e2e_artifacts/map1_smoke_rerun4.out",
+    "result": {
+      "rideRequestOpened": true,
+      "placesSuggestions": true,
+      "reviewReached": true,
+      "pricingVisible": false,
+      "pickupDestMarkers": true,
+      "polylineLikely": true
+    },
+    "placesSuggestionTapped": "Liberty Market Gulberg III, Lahore, Pakistan",
+    "reviewEvidence": {
+      "tripSummary": "Izmir Extension, Lahore → Liberty Market Gulberg III, Lahore, Pakistan",
+      "status": "Pickup & destination confirmed",
+      "routeChip": "24 km • 39 min",
+      "fare": "Estimated fare Rs 1140 (visible in screenshot; a11y 'Rs' text below dump fold at capture — offer EditText '1140' was dumped)",
+      "cta": "Request Easy (enabled)"
+    },
+    "elapsedSeconds": 135,
+    "note": "No ride submitted — smoke stops at review; nothing created server-side."
+  },
+  "checkIEvaluation": "I_map1Smoke = rideRequestOpened && reviewReached && pickupDestMarkers → PASS (all true). Combined with run6 core checks (Recenter/OD1/G-tick/H all PASS), MAP-3 physical gap is closed on this build.",
+  "verdict": "GREEN",
+  "verdictLabel": "I_map1Smoke CLOSEOUT — PASS on SM-A325F (harness flake corrected; Places path verified end-to-end)",
+  "evidenceFiles": [
+    "map3_map1smoke_closeout_review.png",
+    "map3_map1smoke_closeout_live.png",
+    "map3_map1smoke_closeout_review_ui.xml",
+    "map1_smoke_rerun4.out",
+    "map2a_map1_sug.xml",
+    "map2a_map1_prop.xml",
+    "map2a_map1_ready.xml",
+    "map2a_map1_review.xml"
+  ],
+  "knownLimitations": [
+    "OTP 'Verify' taps still MISS — debug build auto-verifies; unrelated to this gap.",
+    "A11y viewport clip remains a device quirk: harness now scrolls to expose below-fold nodes rather than assuming they dump.",
+    "pricingVisible key still string-matches 'Rs' which sits below the review fold in uiautomator; fare presence proven visually + by offer EditText '1140'.",
+    "Interim rerun2 failed at login (transient 'Network error' on OTP send) — environment flake, not app/harness logic; rerun3/4 passed login deterministically."
+  ],
+  "scopeDiscipline": "No product Dart/backend/RTDB/provider changes; no deploy; no live ride submitted; previous MAP-3 reports untouched."
+}

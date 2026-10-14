@@ -1,0 +1,144 @@
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=64ms (0ms mobile, 0ms wifi, 64ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.7 MB/s (5283 bytes in 0.007s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.4 MB/s (11597 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11597 bytes in 0.003s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (8189 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (8195 bytes in 0.004s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (5998 bytes in 0.003s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6347 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6351 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.6 MB/s (6351 bytes in 0.011s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.0 MB/s (6351 bytes in 0.006s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.5 MB/s (6351 bytes in 0.011s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (6351 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6351 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6351 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+  MISS ('Menu',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+  MISS ('Switch to passenger',)
+  MISS ('passenger mode',)
+  MISS ('Home',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.1 MB/s (6351 bytes in 0.006s)
+  MISS ('Menu',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6351 bytes in 0.003s)
+  MISS ('Switch to passenger',)
+  MISS ('passenger mode',)
+  MISS ('Home',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (6351 bytes in 0.002s)
+  MISS ('Where are you headed',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6351 bytes in 0.003s)
+  MISS ('Use current location',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (6351 bytes in 0.003s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6351 bytes in 0.003s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6351 bytes in 0.004s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6351 bytes in 0.004s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (6351 bytes in 0.003s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6351 bytes in 0.003s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6351 bytes in 0.003s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6351 bytes in 0.003s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6351 bytes in 0.004s)
+  MISS* 'Confirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6351 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6352 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6353 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6354 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6355 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6356 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6348 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6348 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (6348 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.8 MB/s (6348 bytes in 0.007s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6348 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (6348 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6348 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (6348 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6348 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6348 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.9 MB/s (6348 bytes in 0.007s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6348 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6348 bytes in 0.004s)
+  MISS* 'Confirm destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6348 bytes in 0.003s)
+  MISS* 'Confirm destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (6348 bytes in 0.003s)
+  MISS* 'Confirm destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6348 bytes in 0.004s)
+  MISS* 'Confirm destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (6348 bytes in 0.003s)
+  MISS* 'Confirm destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6348 bytes in 0.003s)
+  MISS* 'Confirm destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6348 bytes in 0.004s)
+  MISS* 'Confirm destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6348 bytes in 0.003s)
+  MISS* 'Confirm destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6348 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6348 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6348 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (6348 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (6348 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6348 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (6348 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6348 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (6348 bytes in 0.003s)
+/sdcard/map2a_map1_smoke_review.png: 1 file pulled, 0 skipped. 21.7 MB/s (755986 bytes in 0.033s)
+RESULT {"rideRequestOpened": false, "placesSuggestions": false, "reviewReached": false, "pricingVisible": false, "pickupDestMarkers": false, "polylineLikely": false}
+elapsed_s 428

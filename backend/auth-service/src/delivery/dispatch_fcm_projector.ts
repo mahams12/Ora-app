@@ -106,14 +106,31 @@ export class DispatchFcmProjector {
     const nowMs = input.nowMs ?? Date.now();
     const workerId = input.workerId ?? input.correlationId;
 
-    const snap = await this.db
+    // Scan only states that can make progress. An unfiltered scan re-reads the
+    // same DELIVERED/DEAD_LETTER prefix every sweep (doc-id ordering), starving
+    // new PENDING events behind backlog. Equality-only filters need no new index.
+    const pendingSnap = await this.db
       .collection(OUTBOX_EVENTS)
       .where('eventType', '==', D1_EVENT_TYPE)
+      .where('publishState', '==', 'PENDING')
       .limit(limit)
       .get();
 
+    const docs = [...pendingSnap.docs];
+    // Expired-lease CLAIMED reclaim gets whatever scan budget PENDING left over.
+    const claimedBudget = limit - pendingSnap.docs.length;
+    if (claimedBudget > 0) {
+      const claimedSnap = await this.db
+        .collection(OUTBOX_EVENTS)
+        .where('eventType', '==', D1_EVENT_TYPE)
+        .where('publishState', '==', 'CLAIMED')
+        .limit(claimedBudget)
+        .get();
+      docs.push(...claimedSnap.docs);
+    }
+
     const result: DispatchFcmSweepResult = {
-      scanned: snap.docs.length,
+      scanned: docs.length,
       processed: 0,
       delivered: 0,
       retryable: 0,
@@ -122,7 +139,7 @@ export class DispatchFcmProjector {
       failed: 0,
     };
 
-    for (const doc of snap.docs) {
+    for (const doc of docs) {
       const event = doc.data() as OutboxEventDoc & {
         publishState: OutboxPublishState;
         leaseExpiresAt?: string | null;

@@ -1,0 +1,35 @@
+{
+  "gates": {
+    "auth_driver": "GREEN",
+    "driver_ready": "PASS",
+    "auth_passenger": "GREEN",
+    "passenger_pricing": "PASS",
+    "ride_creation": "PASS",
+    "driver_discovery": "PASS",
+    "respond_sheet": "PASS"
+  },
+  "transitions": {
+    "REQUESTED": {
+      "state": "SEARCHING",
+      "at": "2026-10-14T10:56:45.937Z"
+    }
+  },
+  "ratings": {},
+  "started": "2026-10-14T10:54:39.697648+00:00",
+  "passenger_device": "RF8R40ZQ1JH",
+  "driver_device": "emulator-5554",
+  "remote_api": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+  "passenger_uid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+  "driver_uid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "rideId": "51d9da83-4b3c-4bbd-a16b-dd834daa34fe",
+  "backend_create": {
+    "state": "SEARCHING",
+    "pricingSnapshotId": "ps_14e1af91-70ab-455a-be48-954faf8a922c",
+    "passengerOfferMinor": 114000,
+    "requestVersion": 1
+  },
+  "offers_after_driver": [],
+  "error": "expected 1 offer got 0",
+  "finished": "2026-10-14T10:57:43.516478+00:00",
+  "verdict": "NOT GREEN"
+}

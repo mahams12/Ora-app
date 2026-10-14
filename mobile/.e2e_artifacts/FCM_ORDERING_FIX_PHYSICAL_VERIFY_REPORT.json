@@ -1,0 +1,90 @@
+{
+  "report": "FCM_ORDERING_FIX_PHYSICAL_VERIFY",
+  "date": "2026-10-14",
+  "scope": "End-to-end verification of the dispatch_fcm_projector PENDING-first sweep ordering fix (fcm_sweep_default_limit blocker). Backend automated revalidation + physical staging proof on Samsung SM-A325F.",
+  "git": {
+    "branch": "master",
+    "baseCommit": "dd910138552d89f58c76bae726890a80162de0c4",
+    "modifiedFiles": [
+      "backend/auth-service/src/delivery/dispatch_fcm_projector.ts",
+      "backend/auth-service/src/__tests__/delivery_d1.test.ts"
+    ],
+    "committed": false,
+    "pushed": false
+  },
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "api": 33,
+    "connection": "usb"
+  },
+  "automatedResults": {
+    "focusedD1Tests": { "command": "npx vitest run src/__tests__/delivery_d1.test.ts", "result": "PASS", "detail": "27/27 (19 existing + 8 new ordering regression tests)" },
+    "typecheckBuild": { "command": "npm run build (tsc -p tsconfig.json)", "result": "PASS" },
+    "d1UnitProof": { "command": "npm run test:phase-d1-unit-proof", "result": "PASS", "detail": "4/4" },
+    "fullBackendSuite": { "command": "npx vitest run", "result": "PASS", "detail": "440/440 tests, 31 files" },
+    "flutterAnalyze": { "command": "flutter analyze", "result": "PASS_WITH_PREEXISTING_LINTS", "detail": "5 info/warning items, all in test files, all pre-existing" },
+    "flutterRideDriverTests": { "command": "flutter test test/features/ride/ test/features/driver/", "result": "410_PASS_2_FAIL_PREEXISTING", "detail": "2 failures in ride_history_ui_test.dart are Row-render overflows in ride_card_header.dart; unrelated to this backend-only change and reproducible without it" }
+  },
+  "stagingStarvationProof": {
+    "result": "PASS",
+    "method": "Fixed-code sweep run locally against staging Firestore via service account (no deploy).",
+    "before": { "outboxEvents": 56, "delivered": 55, "pending": 1, "note": "The 1 PENDING event sat behind 55 terminal docs in document-ID order — the exact starvation condition." },
+    "fixedSweep": { "scanned": 1, "processed": 1, "delivered": 1, "retryable": 0, "deadLetter": 0, "skipped": 0, "failed": 0 },
+    "after": { "eventPublishState": "DELIVERED", "attemptCount": 1 },
+    "conclusion": "Pending-first query bypassed the 55-doc terminal backlog and delivered the starved event on the first sweep."
+  },
+  "physicalD1Flow": {
+    "result": "PASS",
+    "driverAccount": "established test driver +923012345677 (OTP 000000)",
+    "passengerAccount": "established test passenger +923012345678",
+    "apkBuild": "mobile/scripts/build_staging_apk.sh (debug, ORA_ENV=staging), installed via adb",
+    "timelineUtc": [
+      { "t": "07:56:04", "event": "driver app login + driver mode; [D1_FCM] device token registered (logcat)" },
+      { "t": "~07:59", "event": "Open rides screen opened — empty state 'No open ride requests'" },
+      { "t": "08:00:19.806", "event": "ride created via staging API (HTTP 201), rideId 80d6256b-a7c4-4671-b921-15f3939f2e14" },
+      { "t": "08:00:20.229", "event": "outbox event 63a750ce-72e8-4a1c-8542-bd3194994f32 written PENDING (dispatch tick wave_completed, 1 invited driver)" },
+      { "t": "08:00:28.0", "event": "fixed-code sweep ran; new event was concurrently claimed by the deployed staging sweep — local sweep correctly skipped it as lease_held (CAS fencing verified live)" },
+      { "t": "08:00:28.298", "event": "event committed DELIVERED attemptCount=1; delivery record ACKED (driver status SENT)" },
+      { "t": "08:00:28.024", "event": "device logcat: FLTFireMsgReceiver broadcast received for message" },
+      { "t": "08:00:28.107", "event": "app log: [D1_FCM] local notification eventId=63a750ce rideId=80d6256b" },
+      { "t": "08:00:28.125", "event": "app issued GET /v1/rides/open?limit=10 — automatic refresh, no manual pull-to-refresh" },
+      { "t": "08:00:28.3xx", "event": "system notification posted, channel ora_dispatch_invite" },
+      { "t": "~08:01", "event": "Open rides UI showing the new ride card 'just now': Liberty Market Lahore -> Gulberg Lahore, 24.0 km / 39 min, Easy, Rs 1140, Accept/Decline" },
+      { "t": "~08:02", "event": "second fixed-code sweep: scanned=0 — zero PENDING remain; idempotent empty sweep" }
+    ],
+    "fcmSendToReceiptLatencyMs": "<= 300 (send committed 08:00:28.2-28.3, device broadcast 28.024 — same wall-clock second)",
+    "attributionNote": "The FCM send for the NEW event was performed by the deployed staging sweep which won the claim race; the local fixed-code sweep is proven directly by the starvation-recovery run and by its correct lease_held skip of a concurrently claimed event."
+  },
+  "logcatFindings": {
+    "crashes": 0,
+    "fcmReceipt": "FLTFireMsgReceiver broadcast received at 13:00:28.024 local (UTC+5)",
+    "appHandler": "[D1_FCM] local notification eventId=63a750ce... rideId=80d6256b...",
+    "autoRefresh": "HTTP GET /v1/rides/open?limit=10 issued by app at receipt time",
+    "notificationPosted": "Notification(channel=ora_dispatch_invite) posted; NotificationListener onNotificationPosted com.ora.ora",
+    "noise": "Samsung WifiVendorHal ERROR_NOT_SUPPORTED entries are system noise, unrelated"
+  },
+  "evidence": {
+    "screenshot_card": "mobile/.e2e_artifacts/fcm_ordering_verify_openrides_card.png",
+    "screenshot_driver_shell": "mobile/.e2e_artifacts/fcm_ordering_verify_driver_shell.png",
+    "uidump_empty": "mobile/.e2e_artifacts/fcm_ordering_verify_openrides_empty_ui.xml",
+    "uidump_card": "mobile/.e2e_artifacts/fcm_ordering_verify_openrides_card_ui.xml",
+    "logcat_filtered": "mobile/.e2e_artifacts/fcm_ordering_verify_logcat_filtered.log"
+  },
+  "classification": {
+    "backendAutomated": "PASS",
+    "stagingStarvationRecovery": "PASS",
+    "physicalAppLaunchDriverFlow": "PASS",
+    "fcmDeviceReceipt": "PASS",
+    "openRidesNoManualRefresh": "PASS",
+    "partial": "FCM send for the new event attributed to staging sweep (claim race), not the local fixed-code run; latency measured at second granularity",
+    "blocked": "none"
+  },
+  "regressions": "none observed",
+  "remainingLimitations": [
+    "PENDING ordering within same state remains document-ID order (unchanged by design); not-yet-due retries self-heal via bounded backoff",
+    "CLAIMED reclaim uses leftover scan budget only — worst case one extra sweep under a full PENDING batch",
+    "Staging Cloud Scheduler sweep runs concurrently; production behavior identical since fix is query-shape only"
+  ]
+}

@@ -8,9 +8,11 @@ import { memoryDb } from './helpers/memory_db';
 import type { FcmSender, FcmSendResult } from '../delivery/fcm_sender';
 import { classifyFcmAdminError } from '../delivery/fcm_sender';
 import {
+  D1_DEFAULT_SWEEP_BATCH,
   D1_EVENT_TYPE,
   D1_FCM_TYPE,
   D1_LEASE_MS,
+  D1_MAX_SWEEP_BATCH,
   D1_SUBSCRIBER,
   DRIVER_DEVICE_TOKENS,
   OUTBOX_DELIVERIES,
@@ -729,5 +731,215 @@ describe('D1 hardening H2/H4/H5', () => {
     expect(
       delivery.driverResults.d1.tokenResults?.[tokenResultKey(bad)]?.status,
     ).toBe('INVALID_TOKEN_REMOVED');
+  });
+});
+
+describe('D1 sweep ordering — backlog starvation', () => {
+  function seedOutbox(
+    db: ReturnType<typeof memoryDb>,
+    eventId: string,
+    publishState: 'PENDING' | 'CLAIMED' | 'DELIVERED' | 'DEAD_LETTER',
+    extra: Record<string, unknown> = {},
+  ) {
+    db.seed(OUTBOX_EVENTS, eventId, {
+      eventId,
+      eventType: D1_EVENT_TYPE,
+      aggregateType: 'ride',
+      aggregateId: `r-${eventId}`,
+      aggregateVersion: 1,
+      schemaVersion: 1,
+      occurredAt: new Date().toISOString(),
+      correlationId: 'c',
+      causationId: null,
+      payload: {
+        rideId: `r-${eventId}`,
+        waveNumber: 1,
+        driverIds: ['d1'],
+        invitedCount: 1,
+        radiusKm: 10,
+      },
+      publishState,
+      attemptCount: 0,
+      nextAttemptAt: new Date(0).toISOString(),
+      ...extra,
+    });
+  }
+
+  it('S1. DELIVERED/DEAD_LETTER backlog beyond default batch does not starve PENDING', async () => {
+    const db = memoryDb();
+    const { sender } = recordingFcm();
+    // Dead docs precede the pending event in scan order (the starvation case).
+    for (let i = 0; i < 30; i += 1) {
+      seedOutbox(
+        db,
+        `evt-dead-${String(i).padStart(2, '0')}`,
+        i % 2 === 0 ? 'DELIVERED' : 'DEAD_LETTER',
+      );
+    }
+    seedOutbox(db, 'evt-starved', 'PENDING');
+
+    const projector = new DispatchFcmProjector(db as never, sender);
+    const res = await projector.sweep({ correlationId: 'c' });
+    expect(res.scanned).toBe(1);
+    expect(res.processed).toBe(1);
+    expect(res.delivered).toBe(1);
+    expect(res.skipped).toBe(0);
+    expect(db.getDoc(OUTBOX_EVENTS, 'evt-starved')!.publishState).toBe(
+      'DELIVERED',
+    );
+  });
+
+  it('S2. PENDING beyond default batch drains deterministically across sweeps', async () => {
+    const db = memoryDb();
+    const { sender } = recordingFcm();
+    const ids: string[] = [];
+    for (let i = 0; i < D1_DEFAULT_SWEEP_BATCH + 5; i += 1) {
+      const id = `evt-p-${String(i).padStart(2, '0')}`;
+      ids.push(id);
+      seedOutbox(db, id, 'PENDING');
+    }
+    const projector = new DispatchFcmProjector(db as never, sender);
+
+    const first = await projector.sweep({ correlationId: 'c1' });
+    expect(first.scanned).toBe(D1_DEFAULT_SWEEP_BATCH);
+    expect(first.processed).toBe(D1_DEFAULT_SWEEP_BATCH);
+    for (const id of ids.slice(0, D1_DEFAULT_SWEEP_BATCH)) {
+      expect(db.getDoc(OUTBOX_EVENTS, id)!.publishState).toBe('DELIVERED');
+    }
+    for (const id of ids.slice(D1_DEFAULT_SWEEP_BATCH)) {
+      expect(db.getDoc(OUTBOX_EVENTS, id)!.publishState).toBe('PENDING');
+    }
+
+    const second = await projector.sweep({ correlationId: 'c2' });
+    expect(second.processed).toBe(5);
+    for (const id of ids) {
+      expect(db.getDoc(OUTBOX_EVENTS, id)!.publishState).toBe('DELIVERED');
+    }
+
+    // Idempotent: a third sweep has nothing left to scan.
+    const third = await projector.sweep({ correlationId: 'c3' });
+    expect(third.scanned).toBe(0);
+    expect(third.processed).toBe(0);
+  });
+
+  it('S3. not-yet-due PENDING is skipped and retried once due', async () => {
+    const db = memoryDb();
+    const { sender } = recordingFcm();
+    for (let i = 0; i < 30; i += 1) {
+      seedOutbox(db, `evt-old-${String(i).padStart(2, '0')}`, 'DELIVERED');
+    }
+    const nowMs = 5_000_000;
+    seedOutbox(db, 'evt-backoff', 'PENDING', {
+      nextAttemptAt: new Date(nowMs + 60_000).toISOString(),
+    });
+
+    const projector = new DispatchFcmProjector(db as never, sender);
+    const res = await projector.sweep({ correlationId: 'c', nowMs });
+    expect(res.scanned).toBe(1);
+    expect(res.skipped).toBe(1);
+    expect(res.processed).toBe(0);
+    expect(db.getDoc(OUTBOX_EVENTS, 'evt-backoff')!.publishState).toBe(
+      'PENDING',
+    );
+
+    const later = await projector.sweep({
+      correlationId: 'c2',
+      nowMs: nowMs + 120_000,
+    });
+    expect(later.processed).toBe(1);
+    expect(db.getDoc(OUTBOX_EVENTS, 'evt-backoff')!.publishState).toBe(
+      'DELIVERED',
+    );
+  });
+
+  it('S4. expired-lease CLAIMED is reclaimed; active lease skipped', async () => {
+    const db = memoryDb();
+    const { sender } = recordingFcm();
+    const nowMs = 5_000_000;
+    seedOutbox(db, 'evt-expired', 'CLAIMED', {
+      leaseOwner: 'dead-worker',
+      leaseExpiresAt: new Date(nowMs - 1_000).toISOString(),
+      attemptCount: 1,
+    });
+    seedOutbox(db, 'evt-active', 'CLAIMED', {
+      leaseOwner: 'live-worker',
+      leaseExpiresAt: new Date(nowMs + D1_LEASE_MS).toISOString(),
+      attemptCount: 1,
+    });
+
+    const projector = new DispatchFcmProjector(db as never, sender);
+    const res = await projector.sweep({ correlationId: 'c', nowMs });
+    expect(res.scanned).toBe(2);
+    expect(res.processed).toBe(1);
+    expect(res.skipped).toBe(1);
+    expect(db.getDoc(OUTBOX_EVENTS, 'evt-expired')!.publishState).toBe(
+      'DELIVERED',
+    );
+    expect(db.getDoc(OUTBOX_EVENTS, 'evt-active')!.publishState).toBe('CLAIMED');
+  });
+
+  it('S5. PENDING gets scan priority over CLAIMED reclaim', async () => {
+    const db = memoryDb();
+    const { sender } = recordingFcm();
+    const nowMs = 5_000_000;
+    seedOutbox(db, 'evt-claimed', 'CLAIMED', {
+      leaseOwner: 'dead-worker',
+      leaseExpiresAt: new Date(nowMs - 1_000).toISOString(),
+      attemptCount: 1,
+    });
+    seedOutbox(db, 'evt-p1', 'PENDING');
+    seedOutbox(db, 'evt-p2', 'PENDING');
+
+    const projector = new DispatchFcmProjector(db as never, sender);
+    const res = await projector.sweep({ correlationId: 'c', limit: 2, nowMs });
+    expect(res.scanned).toBe(2);
+    expect(res.processed).toBe(2);
+    expect(db.getDoc(OUTBOX_EVENTS, 'evt-p1')!.publishState).toBe('DELIVERED');
+    expect(db.getDoc(OUTBOX_EVENTS, 'evt-p2')!.publishState).toBe('DELIVERED');
+    // Expired CLAIMED waits for a sweep with leftover budget.
+    expect(db.getDoc(OUTBOX_EVENTS, 'evt-claimed')!.publishState).toBe(
+      'CLAIMED',
+    );
+
+    const res2 = await projector.sweep({ correlationId: 'c2', nowMs });
+    expect(res2.processed).toBe(1);
+    expect(db.getDoc(OUTBOX_EVENTS, 'evt-claimed')!.publishState).toBe(
+      'DELIVERED',
+    );
+  });
+
+  it('S6. explicit limit bounds the scan', async () => {
+    const db = memoryDb();
+    const { sender } = recordingFcm();
+    for (let i = 0; i < 5; i += 1) {
+      seedOutbox(db, `evt-l-${i}`, 'PENDING');
+    }
+    const projector = new DispatchFcmProjector(db as never, sender);
+    const res = await projector.sweep({ correlationId: 'c', limit: 2 });
+    expect(res.scanned).toBe(2);
+    expect(res.processed).toBe(2);
+  });
+
+  it('S7. limit above max is clamped to D1_MAX_SWEEP_BATCH', async () => {
+    const db = memoryDb();
+    const { sender } = recordingFcm();
+    for (let i = 0; i < D1_MAX_SWEEP_BATCH + 20; i += 1) {
+      seedOutbox(db, `evt-m-${String(i).padStart(3, '0')}`, 'PENDING');
+    }
+    const projector = new DispatchFcmProjector(db as never, sender);
+    const res = await projector.sweep({ correlationId: 'c', limit: 500 });
+    expect(res.scanned).toBe(D1_MAX_SWEEP_BATCH);
+    expect(res.processed).toBe(D1_MAX_SWEEP_BATCH);
+  });
+
+  it('S8. route rejects non-integer / non-positive limit', async () => {
+    const db = memoryDb();
+    const app = appFor(db, 'x');
+    for (const bad of ['abc', '0', '-3', '1.5']) {
+      await request(app)
+        .post(`/v1/internal/outbox/dispatch-fcm-sweep?limit=${bad}`)
+        .set('X-Ora-Worker-Token', WORKER)
+        .expect(400);
+    }
   });
 });

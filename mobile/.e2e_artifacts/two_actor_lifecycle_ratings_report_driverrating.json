@@ -1,0 +1,45 @@
+{
+  "gates": {},
+  "transitions": {},
+  "ratings": {
+    "driver_ui": "PASS",
+    "driver_rates_passenger": {
+      "ratingId": "5e1a8232-c4ee-45dd-8972-3d2170558aba_driver_rates_passenger",
+      "raterId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "ratedId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+      "stars": 4,
+      "verified": "firestore"
+    },
+    "firestore_final": [
+      {
+        "ratingId": "5e1a8232-c4ee-45dd-8972-3d2170558aba_driver_rates_passenger",
+        "rideId": "5e1a8232-c4ee-45dd-8972-3d2170558aba",
+        "raterId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "ratedId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+        "ratingType": "driver_rates_passenger",
+        "stars": 4,
+        "createdAt": "2026-10-14T11:49:20.541Z"
+      },
+      {
+        "ratingId": "5e1a8232-c4ee-45dd-8972-3d2170558aba_passenger_rates_driver",
+        "rideId": "5e1a8232-c4ee-45dd-8972-3d2170558aba",
+        "raterId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+        "ratedId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "ratingType": "passenger_rates_driver",
+        "stars": 5,
+        "createdAt": "2026-10-14T11:37:10.687Z"
+      }
+    ]
+  },
+  "started": "2026-10-14T11:48:04.328691+00:00",
+  "passenger_device": "RF8R40ZQ1JH",
+  "driver_device": "emulator-5554",
+  "remote_api": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+  "passenger_uid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+  "driver_uid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "resume": true,
+  "resumeNote": "Driver-rating segment only; lifecycle proven by prior segments.",
+  "rideId": "5e1a8232-c4ee-45dd-8972-3d2170558aba",
+  "verdict": "GREEN_DRIVER_RATING",
+  "finished": "2026-10-14T11:49:36.700694+00:00"
+}

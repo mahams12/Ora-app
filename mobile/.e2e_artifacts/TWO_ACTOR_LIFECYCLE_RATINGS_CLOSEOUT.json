@@ -1,0 +1,72 @@
+{
+  "title": "Two-actor staging ride lifecycle + both-actor ratings — physical verification closeout",
+  "date": "2026-10-14",
+  "verdict": "GREEN (segmented across 3 runs on one ride; every transition + both ratings verified in Firestore)",
+  "environment": {
+    "api": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "firebaseProject": "ora-app-d8112",
+    "passenger": {"device": "Samsung SM-A325F", "serial": "RF8R40ZQ1JH", "uid": "AQLQjCfBw3W17kfgzziM6po1Nh33"},
+    "driver": {"device": "Pixel_9_Pro emulator", "serial": "emulator-5554", "uid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2"}
+  },
+  "ride": {
+    "rideId": "5e1a8232-c4ee-45dd-8972-3d2170558aba",
+    "finalState": "RIDE_CLOSED",
+    "agreedFareMinor": 114000,
+    "passengerOfferMinor": 114000,
+    "pricingSnapshotId": "ps_24e7baeb-b8ca-4ce4-9a77-894544e79fa4"
+  },
+  "transitions": [
+    {"leg": "REQUESTED", "backendState": "SEARCHING", "evidence": "createdAt 2026-10-14T11:00:44.487Z (lr_final_ride_snapshot.json); passenger request UI lr_p_req_ui.xml / lr_p_waiting.png; offer sheet lr_d_sheet_ui.xml 'Passenger offer: Rs 1140'", "run": "run9"},
+    {"leg": "driver offer", "backendState": "offer PASSENGER_PRICE_ACCEPTED SELECTED amountMinor 114000", "evidence": "offerId 5e1a8232..._SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1 createdAt 11:01:35.875Z; driver taps on lr_d_sheet_ui.xml -> lr_d_submit_ui.xml", "run": "run9"},
+    {"leg": "ACCEPTED", "backendState": "DRIVER_ASSIGNED", "evidence": "assignedAt 11:01:56.454Z, assignedDriverId SRjL7BJgCKTduhtpjtYMRZMq5fD2; passenger UI lr_p_assigned_ui.xml shows 'DRIVER_ASSIGNED' + 'Agreed fare Rs 1140'", "run": "run9"},
+    {"leg": "EN_ROUTE", "backendState": "DRIVER_EN_ROUTE", "evidence": "wait_state firestore verify; UI lr_d_EN_ROUTE_ui.xml / lr_d_en_route.png", "run": "resume"},
+    {"leg": "ARRIVED", "backendState": "DRIVER_ARRIVED", "evidence": "arrivedAt 11:33:54.025Z; UI lr_d_ARRIVED_ui.xml / lr_d_arrived.png", "run": "resume"},
+    {"leg": "STARTED", "backendState": "RIDE_STARTED", "evidence": "startedAt 11:34:07.119Z; UI lr_d_STARTED_ui.xml / lr_d_started.png", "run": "resume"},
+    {"leg": "COMPLETED", "backendState": "RIDE_COMPLETED", "evidence": "completedAt 11:34:19.658Z; UI lr_d_COMPLETED_ui.xml / lr_d_completed.png", "run": "resume"},
+    {"leg": "CLOSED", "backendState": "RIDE_CLOSED", "evidence": "closedAt 11:34:32.928Z; UI lr_d_close_ui.xml", "run": "resume"}
+  ],
+  "ratings": {
+    "passenger_rates_driver": {
+      "ratingId": "5e1a8232-c4ee-45dd-8972-3d2170558aba_passenger_rates_driver",
+      "raterId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+      "ratedId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "stars": 5,
+      "createdAt": "2026-10-14T11:37:10.687Z",
+      "verified": "firestore",
+      "evidence": ["lr_p_rate_form_ui.xml", "lr_p_rate_stars_ui.xml", "lr_p_rate_pre_submit_ui.xml", "lr_p_rate_done_ui.xml", "lr_p_rate_result.png"]
+    },
+    "driver_rates_passenger": {
+      "ratingId": "5e1a8232-c4ee-45dd-8972-3d2170558aba_driver_rates_passenger",
+      "raterId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "ratedId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+      "stars": 4,
+      "createdAt": "2026-10-14T11:49:20.541Z",
+      "verified": "firestore",
+      "evidence": ["lr_d_rate_nav_drawer_ui.xml", "lr_d_rate_nav_trips_ui.xml", "lr_d_rate_nav_trips_closed.xml (trips list w/ 'Ride closed | RIDE_CLOSED | Izmir Extension → Liberty Market' card)", "lr_d_rate_form_ui.xml", "lr_d_rate_stars_ui.xml", "lr_d_rate_pre_submit_ui.xml", "lr_d_rate_done_ui.xml", "lr_d_rate_result.png"]
+    }
+  },
+  "segmentation": {
+    "run9": "fresh ride REQUESTED->ACCEPTED proven; harness died mid-run (adb exit 137 during concurrent uiautomator dump) before writing a report — legs re-verified server-side",
+    "resume": "driver progression EN_ROUTE->RIDE_CLOSED + passenger rating (report two_actor_lifecycle_ratings_report_resume.json)",
+    "driverrating": "driver rating only (report two_actor_lifecycle_ratings_report_driverrating.json, verdict GREEN_DRIVER_RATING)"
+  },
+  "harnessChanges": [
+    "tap_button() helper — taps only clickable nodes (fixes 'Submit offer' static-text-heading trap)",
+    "dump() retries transient uiautomator failures (exit 137)",
+    "open_driver_assigned_detail() rewritten: 'My trips' is a drawer item, not a top-level button; card a11y merges to '<jobTitle> | <STATE> | <route>' — match pickup locality or any driverJobTitle prefix",
+    "rate_ride_on() recovers from app cold-restart (splash/sign-in) between taps",
+    "resume modes ORA_RESUME_RIDE_ID (progression) and ORA_RESUME_DRIVER_RATING (driver rating) — verdicts labeled GREEN_SEGMENTED / GREEN_DRIVER_RATING, never plain GREEN",
+    "all taps for sheet/CTA actions now prefer tap_button"
+  ],
+  "rootCauses": {
+    "septDRIVER_ASSIGNEDStall": "automation tapped 'My trips' expecting a top-level button; it is a drawer item (driver_shell_view.dart) — the harness never opened the drawer",
+    "offerSubmitMiss": "'Submit offer' heading is a non-clickable View sibling of the real Button; generic tap hit the heading",
+    "driverRatingColdStart": "emulator app cold-restarted during rate navigation; form dump showed 'Signing you in…' splash — recovered via reauth + re-nav",
+    "run9Crash": "adb 'uiautomator dump' exit 137 when the running harness and a manual dump collided on the same device — driver-progression relaunch already races it; fixed with dump retries + fewer concurrent polls"
+  },
+  "limitations": [
+    "proof is segmented across 3 runs of one ride, not one uninterrupted run — harness infrastructure (adb/uiautomator races) remains fragile; app code untouched",
+    "driver discovery asserted via visible 'Respond' action (open-ride cards merge a11y to 'Respond to ride request' only); backend offer snapshot ties it to the fresh rideId",
+    "no production data, deploys, or cloud config touched; all rides are staging test data left in terminal RIDE_CLOSED state"
+  ]
+}

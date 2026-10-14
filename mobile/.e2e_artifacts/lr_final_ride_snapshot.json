@@ -1,0 +1,25 @@
+{
+ "rideId": "5e1a8232-c4ee-45dd-8972-3d2170558aba",
+ "state": "RIDE_CLOSED",
+ "passengerId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+ "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+ "assignedAt": "2026-10-14T11:01:56.454Z",
+ "arrivedAt": "2026-10-14T11:33:54.025Z",
+ "startedAt": "2026-10-14T11:34:07.119Z",
+ "completedAt": "2026-10-14T11:34:19.658Z",
+ "closedAt": "2026-10-14T11:34:32.928Z",
+ "createdAt": "2026-10-14T11:00:44.487Z",
+ "agreedFareMinor": 114000,
+ "passengerOfferMinor": 114000,
+ "pricingSnapshotId": "ps_24e7baeb-b8ca-4ce4-9a77-894544e79fa4"
+}
+offers: [
+ {
+  "offerId": "5e1a8232-c4ee-45dd-8972-3d2170558aba_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+  "type": "PASSENGER_PRICE_ACCEPTED",
+  "status": "SELECTED",
+  "amountMinor": 114000,
+  "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "createdAt": "2026-10-14T11:01:35.875Z"
+ }
+]

@@ -1,0 +1,84 @@
+{
+  "gates": {
+    "EN_ROUTE": "PASS",
+    "ARRIVED": "PASS",
+    "STARTED": "PASS",
+    "COMPLETED": "PASS",
+    "RIDE_CLOSED": "PASS"
+  },
+  "transitions": {
+    "REQUESTED": {
+      "state": "SEGMENTED",
+      "carriedFrom": "prior run"
+    },
+    "ACCEPTED": {
+      "state": "DRIVER_ASSIGNED",
+      "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "at": "2026-10-14T11:01:56.454Z",
+      "carriedFrom": "prior run"
+    },
+    "EN_ROUTE": {
+      "state": "DRIVER_EN_ROUTE",
+      "verified": "firestore"
+    },
+    "ARRIVED": {
+      "state": "DRIVER_ARRIVED",
+      "verified": "firestore"
+    },
+    "STARTED": {
+      "state": "RIDE_STARTED",
+      "verified": "firestore"
+    },
+    "COMPLETED": {
+      "state": "RIDE_COMPLETED",
+      "verified": "firestore"
+    },
+    "RIDE_CLOSED": {
+      "state": "RIDE_CLOSED",
+      "verified": "firestore"
+    }
+  },
+  "ratings": {
+    "driver_ui": "FAIL",
+    "passenger_ui": "PASS",
+    "passenger_rates_driver": {
+      "ratingId": "5e1a8232-c4ee-45dd-8972-3d2170558aba_passenger_rates_driver",
+      "raterId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+      "ratedId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+      "stars": 5,
+      "verified": "firestore"
+    },
+    "firestore_final": [
+      {
+        "ratingId": "5e1a8232-c4ee-45dd-8972-3d2170558aba_passenger_rates_driver",
+        "rideId": "5e1a8232-c4ee-45dd-8972-3d2170558aba",
+        "raterId": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+        "ratedId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "ratingType": "passenger_rates_driver",
+        "stars": 5,
+        "createdAt": "2026-10-14T11:37:10.687Z"
+      }
+    ]
+  },
+  "started": "2026-10-14T11:33:26.484274+00:00",
+  "passenger_device": "RF8R40ZQ1JH",
+  "driver_device": "emulator-5554",
+  "remote_api": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+  "passenger_uid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+  "driver_uid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+  "resume": true,
+  "resumeNote": "REQUESTED/offer/ACCEPTED proven by prior run artifacts; this segment proves driver progression + ratings.",
+  "backend_proof": {
+    "rideId": "5e1a8232-c4ee-45dd-8972-3d2170558aba",
+    "state": "RIDE_CLOSED",
+    "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "assignedAt": "2026-10-14T11:01:56.454Z",
+    "arrivedAt": "2026-10-14T11:33:54.025Z",
+    "startedAt": "2026-10-14T11:34:07.119Z",
+    "completedAt": "2026-10-14T11:34:19.658Z",
+    "closedAt": "2026-10-14T11:34:32.928Z",
+    "agreedFareMinor": 114000
+  },
+  "verdict": "NOT GREEN",
+  "finished": "2026-10-14T11:37:27.340210+00:00"
+}
