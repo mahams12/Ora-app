@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui' show SemanticsFlag;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -1336,7 +1335,7 @@ void main() {
       final cardSpan =
           tester.getBottomLeft(find.text('Accept')).dy -
           tester.getTopLeft(find.textContaining('Pickup A')).dy;
-      expect(acceptSemantics.hasFlag(SemanticsFlag.isButton), isTrue);
+      expect(acceptSemantics.flagsCollection.isButton, isTrue);
       expect(cardSpan, greaterThan(40));
       expect(acceptSemantics.rect.height, lessThan(cardSpan * 0.9));
       semanticsHandle.dispose();
@@ -1389,7 +1388,7 @@ void main() {
       final semanticsHandle = tester.ensureSemantics();
       await tester.pump();
       final secondAccept = tester.getSemantics(find.text('Accept').last);
-      expect(secondAccept.hasFlag(SemanticsFlag.isEnabled), isFalse);
+      expect(secondAccept.flagsCollection.isEnabled, isFalse);
 
       final sheetCount = find.text('Submit offer').evaluate().length;
       await tester.tap(find.text('Accept').last, warnIfMissed: false);

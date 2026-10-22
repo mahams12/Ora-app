@@ -750,10 +750,19 @@ void main() {
       final vm = c.read(rideRequestViewModelProvider.notifier);
       await confirmBoth(vm, places: places);
       final json = pricing.requests.last.toJson();
-      expect(json['pickup'], isA<Map>());
-      expect((json['pickup'] as Map)['lat'], 31.5204);
-      expect((json['pickup'] as Map)['lng'], 74.3587);
-      expect((json['destination'] as Map)['lat'], 31.5497);
+      expect(json['pickup'], isA<Map<String, Object?>>());
+      expect(
+        (json['pickup'] as Map<String, Object?>)['lat'],
+        31.5204,
+      );
+      expect(
+        (json['pickup'] as Map<String, Object?>)['lng'],
+        74.3587,
+      );
+      expect(
+        (json['destination'] as Map<String, Object?>)['lat'],
+        31.5497,
+      );
       expect(json['category'], 'easy');
       expect(json['city'], 'lahore');
       expect(json.containsKey('distanceKm'), isFalse);

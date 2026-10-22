@@ -42,7 +42,9 @@ class _DraftStore implements RideComposeDraftStore {
   @override
   Future<RideComposeDraft?> loadDraft({required String uid}) async {
     loads++;
-    if (loadDelay > Duration.zero) await Future.delayed(loadDelay);
+    if (loadDelay > Duration.zero) {
+      await Future<void>.delayed(loadDelay);
+    }
     return stored;
   }
 

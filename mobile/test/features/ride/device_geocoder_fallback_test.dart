@@ -19,7 +19,7 @@ void main() {
     test('street + locality compose and dedupe', () {
       expect(
         devicePlacemarkLabel(
-          geo.Placemark(
+          const geo.Placemark(
             name: '12 Main Boulevard',
             thoroughfare: 'Main Boulevard',
             subLocality: 'Gulberg III',
@@ -31,7 +31,7 @@ void main() {
       // Cap at 3 parts.
       expect(
         devicePlacemarkLabel(
-          geo.Placemark(
+          const geo.Placemark(
             name: 'n',
             thoroughfare: 't',
             subLocality: 's',
@@ -45,22 +45,22 @@ void main() {
 
     test('locality-only placemark still yields a name', () {
       expect(
-        devicePlacemarkLabel(geo.Placemark(locality: 'Islamabad')),
+        devicePlacemarkLabel(const geo.Placemark(locality: 'Islamabad')),
         'Islamabad',
       );
     });
 
     test('empty placemark returns null — never invents a label', () {
-      expect(devicePlacemarkLabel(geo.Placemark()), isNull);
+      expect(devicePlacemarkLabel(const geo.Placemark()), isNull);
       expect(
-        devicePlacemarkLabel(geo.Placemark(name: '  ', locality: '')),
+        devicePlacemarkLabel(const geo.Placemark(name: '  ', locality: '')),
         isNull,
       );
     });
   });
 
   group('FallbackPlaceSearch', () {
-    final namedResult = const ResolvedPassengerLocation(
+    const namedResult = ResolvedPassengerLocation(
       lat: 31.5,
       lng: 74.3,
       address: 'Gulberg III, Lahore',
