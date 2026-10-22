@@ -100,13 +100,13 @@ void main() {
       expect(model.showCarAccent, isTrue);
       expect(model.participant, isNull);
       expect(model.categoryLabel, 'Easy');
-      expect(model.fareCaption, 'Your earnings');
+      expect(model.fareCaption, 'Trip fare');
 
       expect(find.text('Pickup'), findsOneWidget);
       expect(find.text('Bahria Town, Phase 7'), findsOneWidget);
       expect(find.text('Liberty Market, Gulberg III'), findsOneWidget);
       expect(find.text('Rs 1140'), findsOneWidget);
-      expect(find.text('Your earnings'), findsOneWidget);
+      expect(find.text('Trip fare'), findsOneWidget);
       expect(find.textContaining('24 km'), findsOneWidget);
       expect(find.textContaining('39 min'), findsOneWidget);
       expect(find.text('Easy'), findsOneWidget);
@@ -222,7 +222,7 @@ void main() {
       expect(model.statusKind, RideCardStatusKind.success);
       await _pumpCard(tester, model);
       expect(find.text('Completed'), findsOneWidget);
-      expect(find.text('Your earnings'), findsOneWidget);
+      expect(find.text('Trip fare'), findsOneWidget);
     });
   });
 

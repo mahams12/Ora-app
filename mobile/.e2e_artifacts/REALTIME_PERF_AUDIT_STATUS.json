@@ -1,0 +1,39 @@
+{
+  "report": "Realtime performance audit + current-location naming verification",
+  "date": "2026-10-19",
+  "scope": "read-only audit; no app code changed; no cloud changes",
+  "part1_naming": {
+    "verified_on": "Samsung SM-A325F, profile APK (correct Places key AIzaSyCdEpWc…)",
+    "result": "STILL 'Location selected' — reverseGeocode soft-fails: network (HTTP 403). Root cause: project billing disabled (closed billing account 01F8D7-D18C5B-…), not key config. UI shows unresolved caption + 'Retry name lookup' + 'Confirm pickup'; GPS coords authoritative.",
+    "offline_fallback": "NONE — geolocator provides position only; no geocoding package / Android native Geocoder; no backend geocode proxy exists.",
+    "blocker": "billingEnabled:false on ora-app-d8112 — owner must relink an open billing account. Places API itself is enabled and the key allows it."
+  },
+  "part2_confirmed_good": [
+    "Driver publish throttle: 4s min interval + 15m min movement, 10s heartbeat, 15/min cap, coalescing, 429/5xx backoff — driver_trip_location_publisher.dart",
+    "GPS watch scoped: assignedRide surface + DRIVER_ASSIGNED→RIDE_STARTED + foreground only; classifier rejects stale/future/duplicate/impossible-speed/poor-accuracy — driver_location_lifecycle.dart",
+    "Passenger RTDB: single onValue listener per rideId, state+foreground gated, auto-dispose, seq monotonicity, 20s/45s/120s freshness bands — trip_location_session.dart",
+    "Camera policy tick-stable: fitIdentity excludes driver lat/lng; user-ownership suppresses auto-animate — active_ride_map_camera_policy.dart",
+    "No Places/Routes calls per location update — Routes only inside POST /pricing/estimate (event-driven, deduped, generation-guarded); autocomplete 350ms debounced + per-field session tokens; reverseGeocode only on tap/retry",
+    "Progression guides are pure geometry — no ETA/route calls (active_ride_map_progression_policy.dart)",
+    "Poll dedup: isRideUiEquivalent prevents state churn on unchanged polls",
+    "Backend publish path: driver+ride auth reads → single locationStreams tx → RTDB projection (+optional Redis GEO); no paid API calls per fix"
+  ],
+  "part2_confirmed_bottlenecks": [
+    "3D tilt + building extrusions raster tail — already measured (raster p95 18.84→14.82ms A/B) and scoped to expanded mode",
+    "Ride-state latency: HTTP poll 3s→5s→8s (active ride) and 2/3/5s (offers inbox) — up to ~8s stale between transitions; FCM exists for dispatch but screens still poll",
+    "Driver marker teleports — Marker position set per RTDB tick (~4s/15m); no interpolation → jumpy vs smooth tracking UX",
+    "Two map engines in APK: MapLibreMap (compose preview) + GoogleMap (active ride) — double native map init/memory",
+    "Per-publish backend cost: 2 Firestore reads (driver doc + ride doc) per location update at ≤15/min/driver"
+  ],
+  "hypotheses_unconfirmed": [
+    "Steady-state tile rendering dominates raster median (~7-9ms) — not isolated",
+    "RTDB write→client fan-out latency on Pakistan networks — unmeasured",
+    "GoogleMap tile loading cost on active-ride screen — only MapLibre preview measured"
+  ],
+  "prioritized_low_risk_optimizations_for_approval": [
+    "1. Client-side driver-marker interpolation between fixes (animate over ~publish interval) — smoothness without backend change",
+    "2. FCM data-push → immediate ride poll refresh (keep poll as fallback) — cuts perceived state latency to <1s",
+    "3. Short-TTL cache of driver/ride auth docs on the location-publish path — cuts 2 Firestore reads per fix",
+    "4. (larger) Consolidate active-ride map onto one engine — deferred"
+  ]
+}

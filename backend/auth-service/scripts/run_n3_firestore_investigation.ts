@@ -3,7 +3,7 @@
  * Same NearbyDriversService + real Firestore + Memorystore as VPC benchmark;
  * does NOT change production code paths.
  *
- * Env: FIREBASE_PROJECT_ID, REDIS_URL, BENCH_PREFIX (seeded bench drivers).
+ * Env: FIREBASE_PROJECT_ID, BENCH_PREFIX (seeded bench drivers).
  */
 import { initializeApp, applicationDefault, getApps } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
@@ -13,7 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NearbyDriversService } from '../src/drivers/nearby_service';
 import type { N3NearbyDiagnostics } from '../src/drivers/nearby_service';
-import { createRedisGeoClientFromEnv } from '../src/redis/client';
+import { createFirestoreGeoClient } from '../src/redis/firestore_geo_client';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
@@ -198,11 +198,7 @@ async function main() {
     initializeApp({ credential: applicationDefault() });
   }
   const rawDb = getFirestore();
-  const redisBase = await createRedisGeoClientFromEnv(process.env);
-  if (!redisBase) {
-    console.error(JSON.stringify({ ok: false, error: 'REDIS_URL missing' }));
-    process.exit(2);
-  }
+  const redisBase = createFirestoreGeoClient(rawDb);
   if (!PREFIX) {
     console.error(JSON.stringify({ ok: false, error: 'BENCH_PREFIX missing' }));
     process.exit(2);

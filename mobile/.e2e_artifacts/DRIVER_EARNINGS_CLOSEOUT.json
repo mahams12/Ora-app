@@ -1,0 +1,59 @@
+{
+  "slice": "phase-3-driver-earnings-ride-history",
+  "date": "2026-10-19",
+  "status": "IMPLEMENTED + unit-tested + on-device stub-verified",
+  "authoritative_data": {
+    "endpoint": "GET /v1/rides?status=completed (server filters assignedDriverId == caller uid for approved drivers; completedStates() = RIDE_COMPLETED + RIDE_CLOSED)",
+    "verified_money_field": "agreedFareMinor + agreedFareCurrency (gross trip fare on the selected offer)",
+    "not_available": [
+      "driver payout / take-home",
+      "platform commission or fees",
+      "net earnings",
+      "date-range query parameters (list API supports limit/cursor/status/serviceType only)"
+    ],
+    "note": "No fare==payout assumption anywhere. UI labels totals 'Trip fares' and shows an explicit 'Payouts, commission and net earnings aren't recorded by Ora yet' disclosure."
+  },
+  "files": {
+    "new": [
+      "lib/features/driver/domain/driver_earnings_summary.dart",
+      "lib/features/driver/presentation/view_models/driver_earnings_view_model.dart",
+      "lib/features/driver/presentation/views/driver_earnings_view.dart",
+      "test/features/driver/driver_earnings_summary_test.dart",
+      "test/features/driver/driver_earnings_view_model_test.dart"
+    ],
+    "modified": [
+      "lib/features/driver/presentation/views/driver_shell_view.dart (DriverShellPage.earnings + IndexedStack child + drawer item wiring)",
+      "lib/features/driver/presentation/views/driver_home_view.dart (onOpenEarnings callback; hero + quick-tile now navigate; hero copy honest)",
+      "lib/features/ride/presentation/widgets/ride_card/ride_card_adapters.dart (fareCaption 'Your earnings'->'Trip fare' on driverJob + openRide)",
+      "lib/features/ride/presentation/widgets/ride_card/ride_card.dart (fareCaption fallbacks -> 'Trip fare')",
+      "test/features/ride/ride_card_system_test.dart (assertions updated for honest captions)",
+      ".e2e_artifacts/stub_auth_api.py (driver mode: approved-driver profile + completed rides; correct {data:{}} envelope)"
+    ]
+  },
+  "behaviour": {
+    "scan": "auto-follows list cursor up to 200 rides (50/page, <=4 sequential requests, no N+1); scanCapped labels partial totals; 'Load more' continues past cap and clears the flag when exhausted",
+    "periods": "Today (local calendar day) / Last 7 days (rolling 7x24h) / Completed count — computed client-side over loaded rides; timestamp = completedAt ?? closedAt ?? updatedAt ?? createdAt",
+    "missing_fare": "completed rides with null agreedFareMinor counted and excluded; visible note",
+    "mixed_currency": "uniform currency only when all fares share a code; else per-card labels only",
+    "states": "loading / empty / fatalError+retry / soft refresh error / pagination error+retry all implemented",
+    "authz": "no client-side scoping logic needed — endpoint is owner-scoped server-side; VM asserts status='completed' only"
+  },
+  "tests": {
+    "focused_new": 13,
+    "names": [
+      "aggregate completed-only, missing-fare, today/7d buckets, mixed currency, timestamp fallback, unparseable ts, empty",
+      "VM: completed-status-only query, totals+missing, empty phase, error+retry, scan-cap+loadMore, refresh replaces"
+    ],
+    "analyze": "flutter analyze lib/ -> No issues found",
+    "suite": "693 pass / 4 fail — ALL 4 pre-existing at pristine HEAD (worktree-verified): ride_history_ui_test x2 (duplicate 'Completed' label), home_shell_driver_gate_test x1 + mvvm_layer_test x1 (FirebaseMessaging no-app in DriverShellView._syncDispatchFcmToken, unmocked at HEAD)"
+  },
+  "physical_verification": {
+    "device": "Samsung SM-A325F (RF8R40ZQ1JH), debug APK",
+    "method": "local stub_auth_api.py driver mode + adb reverse tcp:8081 (staging remains down: GCP billing closed)",
+    "observed": "Drawer -> Earnings renders Trip fares Rs 1130; Today Rs 650 / 1 trip; Last 7 days Rs 1130 / 2 trips; Completed trips 3; '1 completed trip has no recorded fare' note; payout-gap disclosure; completed-trip cards with real route labels + 'Trip fare' caption; error state 'Couldn't load earnings' + Try again verified on first run (stub envelope bug); pull-to-refresh re-scans",
+    "evidence": "mobile/.e2e_artifacts/p3_driver_earnings.png, p3_driver_earnings_ui.xml",
+    "limitation": "stub data only — no staging/prod rides exercised; totals verified against stub payload arithmetic"
+  },
+  "fcm_backend_scope": "estimate appended to docs/design/FCM_RIDE_STATE_PROJECTOR_DESIGN.md (~3-4 dev-days + staging redeploy; hard dependency on billing re-link). NOT implemented.",
+  "constraints_honored": "no billing/cloud changes, no deploys, no commits/pushes, no state-machine or pricing changes, no new dependencies"
+}

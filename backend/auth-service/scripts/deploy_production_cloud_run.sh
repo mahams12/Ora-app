@@ -34,8 +34,7 @@ gcloud config set project "$PROJECT" >/dev/null
 
 gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com --project="$PROJECT"
 
-chmod +x scripts/wire_production_redis.sh scripts/wire_production_server_secrets.sh
-./scripts/wire_production_redis.sh
+chmod +x scripts/wire_production_server_secrets.sh
 ./scripts/wire_production_server_secrets.sh
 
 ENV_VARS="FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID},REQUIRE_APP_CHECK=true,ORA_ENV=production,NODE_ENV=production"
@@ -44,19 +43,11 @@ if [[ -n "${FIREBASE_DATABASE_URL:-}" ]]; then
   ENV_VARS="${ENV_VARS},FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL}"
 fi
 
-VPC_CONNECTOR="${PRODUCTION_VPC_CONNECTOR:-ora-staging-vpc}"
-REDIS_SECRET_NAME="${PRODUCTION_REDIS_SECRET_NAME:-ora-production-redis-url}"
 MAPS_SECRET_NAME="${PRODUCTION_MAPS_SECRET_NAME:-ora-production-google-maps-server-key}"
 WORKER_SECRET_NAME="${PRODUCTION_WORKER_SECRET_NAME:-ora-production-internal-worker-token}"
-
+# Geo store is Firestore-native — no Memorystore, no VPC connector, no
+# REDIS_URL secret. Clear stale annotations/secrets from older revisions.
 SECRETS_LIST="GOOGLE_MAPS_SERVER_KEY=${MAPS_SECRET_NAME}:latest,ORA_INTERNAL_WORKER_TOKEN=${WORKER_SECRET_NAME}:latest"
-
-if ! gcloud secrets describe "$REDIS_SECRET_NAME" --project="$PROJECT" >/dev/null 2>&1; then
-  echo "ERROR: missing Redis secret $REDIS_SECRET_NAME" >&2
-  exit 2
-fi
-
-SECRETS_LIST="REDIS_URL=${REDIS_SECRET_NAME}:latest,${SECRETS_LIST}"
 
 DEPLOY_ARGS=(
   --project="$PROJECT"
@@ -65,10 +56,14 @@ DEPLOY_ARGS=(
   --platform=managed
   --allow-unauthenticated
   --service-account="$SA_EMAIL"
+  --clear-vpc-connector
+  --remove-secrets=REDIS_URL
+)
+
+DEPLOY_ARGS=(
+  "${DEPLOY_ARGS[@]}"
   --set-env-vars="$ENV_VARS"
   --set-secrets="$SECRETS_LIST"
-  --vpc-connector="$VPC_CONNECTOR"
-  --vpc-egress=private-ranges-only
   --min-instances=0
   --max-instances=10
   --memory=512Mi

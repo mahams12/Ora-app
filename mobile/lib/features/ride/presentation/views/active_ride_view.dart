@@ -13,6 +13,7 @@ import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../domain/entities/ride.dart';
 import '../active_ride/active_ride_display.dart';
+import '../history/ride_history_display.dart';
 import '../location/trip_location_session.dart';
 import '../view_models/active_ride_view_model.dart';
 import '../widgets/active_ride_map.dart';
@@ -309,6 +310,7 @@ class _ActiveBody extends ConsumerWidget {
                     style: OraTypography.bodyEmphasis(OraColors.textPrimary),
                   ),
                   Text(
+                    '${historyServiceTypeLabel(ride.serviceType)} · '
                     'Category ${ride.category}',
                     style: OraTypography.caption(OraColors.textMuted),
                   ),

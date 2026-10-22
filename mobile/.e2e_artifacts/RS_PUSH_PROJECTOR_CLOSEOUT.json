@@ -1,0 +1,68 @@
+{
+  "task": "NOTIF-RS-PUSH — backend ride-state FCM projector + passenger token path",
+  "date": "2026-10-19",
+  "status": "implemented_unit_tested_not_deployed",
+  "live_fcm_e2e_verified": false,
+  "blockers": [
+    "Staging down: GCP project ora-app-d8112 billingEnabled=false — no deploy, no scheduler run, no live push observed"
+  ],
+  "implemented": {
+    "backend": [
+      "src/delivery/ride_state_types.ts — RS_EVENT_TYPES closed set (13), PASSENGER_DEVICE_TOKENS, RS_SUBSCRIBER, rsDeliveryDocId, passengerTokenDocId",
+      "src/delivery/ride_state_fcm_projector.ts — RideStateFcmProjector mirroring D1: PENDING-first scan (eventType in allowlist), expired-lease reclaim, (leaseOwner,attemptCount) CAS fencing, per-uid/per-token durable results, backoff retry, dead-letter @10, invalid-token removal",
+      "src/delivery/device_token_service.ts — passenger register/clear/list/delete (role=='passenger' gate, caller-uid only); driver methods unchanged",
+      "src/routes/device_tokens.ts — POST/DELETE /v1/device-tokens (requireAuth + rate limit)",
+      "src/routes/internal.ts — POST /v1/internal/outbox/ride-state-fcm-sweep (X-Ora-Worker-Token)",
+      "src/app.ts — mounted /v1/device-tokens",
+      "scripts/wire_staging_cloud_scheduler.sh — added ride-state-fcm run job + */1 scheduler entry (edited, NOT executed)"
+    ],
+    "client": [
+      "driver_device_token_remote_data_source.dart — registerPassengerToken/clearPassengerToken hitting /device-tokens",
+      "dispatch_fcm_service.dart — syncPassengerTokenRegistration + per-role last-registration tracking (token refresh re-uses correct path)",
+      "home_shell_view.dart — post-frame passenger token sync for role=='passenger'; cleared on sign-out",
+      "ride_fcm_nudge_test.dart — +1 test for canonical {type:RIDE_UPDATE, rideId, eventId} payload"
+    ],
+    "payload_contract": "identifiers-only {type: RIDE_UPDATE, rideId, eventId} — client already parses this",
+    "recipient_resolution": "server-side rides/{aggregateId} passengerId/assignedDriverId; ride.offer.selected falls back to rideOffers/{offerId}.driverId then payload.driverId; tokens = union(driverDeviceTokens, passengerDeviceTokens) tagged by store",
+    "allowlist": [
+      "ride.assigned", "ride.driver.en_route", "ride.driver.arrived",
+      "ride.started", "ride.completed", "ride.closed", "ride.cancelled",
+      "ride.no_show", "ride.expired", "ride.offer.received",
+      "ride.offer.withdrawn", "ride.offer.expired", "ride.offer.selected"
+    ],
+    "excluded": ["ride.created", "ride.rating.submitted", "ride.dispatch.wave_completed", "all unlisted"]
+  },
+  "tests": {
+    "backend_new": "delivery_ride_state.test.ts — 17 cases all pass",
+    "backend_suite": "457/457 pass (32 files)",
+    "typecheck": "tsc --noEmit clean",
+    "flutter_analyze": "lib/ clean",
+    "client_nudge_tests": "6/6 pass",
+    "mobile_regression": "passenger+notification suites pass except pre-existing FirebaseMessaging-unmocked failure (reproduced at HEAD)",
+    "coverage": [
+      "passenger token register/clear/role-gates/spoof-rejection",
+      "assigned->both, arrived->passenger, completed+cancelled->both",
+      "offer.selected offer-doc fallback",
+      "non-allowlisted skipped (created/rating/wave)",
+      "missing token -> SKIPPED_NO_TOKEN terminal",
+      "duplicate -> already_done, no resend",
+      "non-recipient uid never sent",
+      "invalid_token -> stored token deleted",
+      "transient -> PENDING retry, successful token not resent",
+      "dead_letter at max attempts",
+      "active-lease skip, PENDING-first scan",
+      "worker endpoint 403 without token / 200 with"
+    ]
+  },
+  "constraints_honored": [
+    "no deploy/cloud/billing changes", "no commits/pushes",
+    "ride/offer state machines, pricing, matching, location limits untouched",
+    "push payload identifiers-only; HTTP remains source of truth"
+  ],
+  "remaining_to_go_live": [
+    "re-enable billing, redeploy auth-service",
+    "run wire_staging_cloud_scheduler.sh (now wires 7 jobs)",
+    "physical verify: real push arrives on SM-A325F and refreshes active-ride screen"
+  ],
+  "next_product_feature": "server-derived driverPayoutMinor/commissionMinor at completion (unlocks real earnings labels), or live E2E push verification once billing restored"
+}

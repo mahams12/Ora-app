@@ -111,6 +111,15 @@ export interface RideDoc {
   agreedOfferId: string | null;
   agreedFareCurrency: string | null;
   feePolicySnapshot: Record<string, unknown> | null;
+  /**
+   * Payout snapshot — derived once inside the offer-select transaction;
+   * immutable thereafter (same immutability class as the assignment snapshot).
+   * Null on rides selected before the payout model (no backfill) and whenever
+   * the policy resolution was UNAVAILABLE.
+   */
+  driverPayoutMinor: number | null;
+  platformFeeMinor: number | null;
+  payoutCurrency: string | null;
   paymentMethod: PaymentMethod;
   paymentIntentId: string | null;
   passengerCount: number;

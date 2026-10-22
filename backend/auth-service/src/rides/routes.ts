@@ -4,6 +4,7 @@ import type { AuthedRequest } from '../middleware/auth';
 import { getRequestId } from '../http/request_id';
 import { sendApiError, logSafe } from '../http/errors';
 import { RideService } from './ride_service';
+import { InviteService } from './invite_service';
 import { sendRideData, sendRideDomainError } from './http';
 import { RideDomainError } from './types';
 import type { TripLocationRtdb } from '../rtdb/types';
@@ -14,6 +15,7 @@ export function createRidesRouter(
 ): Router {
   const router = Router();
   const rides = new RideService(db, tripLocationRtdb);
+  const invites = new InviteService(db, rides);
 
   router.post('/', async (req: AuthedRequest, res) => {
     if (!req.caller) {
@@ -122,6 +124,97 @@ export function createRidesRouter(
       sendRideDomainError(req, res, err);
     }
   });
+
+  // Driver invitations — registered before GET /:rideId so "invited" is not
+  // captured as a rideId.
+  router.get('/invited', async (req: AuthedRequest, res) => {
+    if (!req.caller) {
+      sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');
+      return;
+    }
+    const started = Date.now();
+    try {
+      const result = await invites.listInvited({ caller: req.caller });
+      logSafe('RIDE_INVITED_LIST', {
+        operation: 'RIDE_INVITED_LIST',
+        requestId: getRequestId(req),
+        actorId: req.caller.uid,
+        durationMs: Date.now() - started,
+      });
+      sendRideData(req, res, result.httpStatus, (result.body as { data: unknown }).data);
+    } catch (err) {
+      logSafe('RIDE_INVITED_LIST', {
+        operation: 'RIDE_INVITED_LIST',
+        requestId: getRequestId(req),
+        actorId: req.caller.uid,
+        durationMs: Date.now() - started,
+        errorCode: err instanceof RideDomainError ? err.code : 'INTERNAL',
+      });
+      sendRideDomainError(req, res, err);
+    }
+  });
+
+  router.post(
+    '/:rideId/invites/:waveId/accept',
+    async (req: AuthedRequest, res) => {
+      if (!req.caller) {
+        sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');
+        return;
+      }
+      try {
+        const result = await invites.acceptInvite({
+          caller: req.caller,
+          rideId: req.params.rideId,
+          waveId: req.params.waveId,
+          correlationId: getRequestId(req),
+        });
+        sendRideData(
+          req,
+          res,
+          result.httpStatus,
+          (result.body as { data: unknown }).data,
+        );
+      } catch (err) {
+        logSafe('invite_accept_failed', {
+          requestId: getRequestId(req),
+          errorType: err instanceof Error ? err.name : 'unknown',
+          code: err instanceof RideDomainError ? err.code : undefined,
+        });
+        sendRideDomainError(req, res, err);
+      }
+    },
+  );
+
+  router.post(
+    '/:rideId/invites/:waveId/decline',
+    async (req: AuthedRequest, res) => {
+      if (!req.caller) {
+        sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');
+        return;
+      }
+      try {
+        const result = await invites.declineInvite({
+          caller: req.caller,
+          rideId: req.params.rideId,
+          waveId: req.params.waveId,
+          correlationId: getRequestId(req),
+        });
+        sendRideData(
+          req,
+          res,
+          result.httpStatus,
+          (result.body as { data: unknown }).data,
+        );
+      } catch (err) {
+        logSafe('invite_decline_failed', {
+          requestId: getRequestId(req),
+          errorType: err instanceof Error ? err.name : 'unknown',
+          code: err instanceof RideDomainError ? err.code : undefined,
+        });
+        sendRideDomainError(req, res, err);
+      }
+    },
+  );
 
   router.get('/:rideId', async (req: AuthedRequest, res) => {
     if (!req.caller) {

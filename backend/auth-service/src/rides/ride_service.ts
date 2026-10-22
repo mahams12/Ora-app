@@ -40,6 +40,13 @@ import {
   effectiveOfferStatus,
 } from './offer_lifecycle';
 import {
+  FEE_POLICIES_COLLECTION,
+  GLOBAL_FEE_POLICY_ID,
+  derivePayoutSnapshot,
+  parseFeePolicyDoc,
+  type FeePolicyDoc,
+} from '../pricing/fee_policy';
+import {
   IDEMPOTENCY_TTL_MS,
   IdempotencyReplay,
   MAX_OFFERS_SUPERSEDE_IN_TXN,
@@ -62,6 +69,7 @@ import {
   encodeListCursor,
   ownerBinding,
   parseRideListQuery,
+  RIDE_LIST_SERVICE_TYPES,
   type RideListQueryRole,
 } from './list_query';
 import {
@@ -276,7 +284,15 @@ function compareOpenDiscovery(a: RideDoc, b: RideDoc): number {
   return a.rideId > b.rideId ? -1 : 1;
 }
 
-function publicRide(ride: RideDoc) {
+/**
+ * Ride serializer. `viewer` gates payout internals — driverPayoutMinor /
+ * platformFeeMinor / payoutCurrency / feePolicyResolution are driver-only:
+ * passengers see the agreed fare they pay, never platform-fee internals.
+ * (viewer is derived server-side from the caller's uid, never client input.)
+ */
+type RideViewer = 'driver' | 'passenger';
+
+function publicRide(ride: RideDoc, viewer: RideViewer) {
   return {
     rideId: ride.rideId,
     passengerId: ride.passengerId,
@@ -295,6 +311,16 @@ function publicRide(ride: RideDoc) {
     agreedFareMinor: ride.agreedFareMinor,
     agreedOfferId: ride.agreedOfferId,
     agreedFareCurrency: ride.agreedFareCurrency,
+    ...(viewer === 'driver'
+      ? {
+          driverPayoutMinor: ride.driverPayoutMinor ?? null,
+          platformFeeMinor: ride.platformFeeMinor ?? null,
+          payoutCurrency: ride.payoutCurrency ?? null,
+          feePolicyResolution:
+            (ride.feePolicySnapshot as { resolution?: unknown } | null)
+              ?.resolution ?? null,
+        }
+      : {}),
     paymentMethod: ride.paymentMethod,
     passengerCount: ride.passengerCount,
     expiresAt: ride.expiresAt,
@@ -616,6 +642,13 @@ export class RideService {
       typeof body.serviceType === 'string' && body.serviceType.trim()
         ? body.serviceType.trim()
         : 'ride';
+    if (!(RIDE_LIST_SERVICE_TYPES as readonly string[]).includes(serviceType)) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        'serviceType must be one of: ride, courier, intercity, move.',
+      );
+    }
     const paymentMethod = body.paymentMethod;
     if (
       typeof paymentMethod !== 'string' ||
@@ -655,6 +688,35 @@ export class RideService {
     );
     assertOfferWithinBounds(passengerOfferMinor, snapshot);
 
+    // Snapshot↔request consistency: the offer bounds were computed for the
+    // category/serviceType stored in snapshot.inputs — a create that disagrees
+    // would bind a stale price to different semantics. Fields absent on older
+    // snapshots skip the check (backward compatible).
+    const snapServiceType = snapshot.inputs?.serviceType;
+    if (
+      typeof snapServiceType === 'string' &&
+      snapServiceType.trim() !== '' &&
+      snapServiceType !== serviceType
+    ) {
+      throw new RideDomainError(
+        'PRICING_SNAPSHOT_MISMATCH',
+        422,
+        'serviceType does not match the pricing snapshot.',
+      );
+    }
+    const snapCategory = snapshot.inputs?.category;
+    if (
+      typeof snapCategory === 'string' &&
+      snapCategory.trim() !== '' &&
+      snapCategory !== category.trim().toLowerCase()
+    ) {
+      throw new RideDomainError(
+        'PRICING_SNAPSHOT_MISMATCH',
+        422,
+        'category does not match the pricing snapshot.',
+      );
+    }
+
     const rideId = randomUUID();
     const nowIso = now.toISOString();
     const ride: RideDoc = {
@@ -685,6 +747,9 @@ export class RideService {
       agreedOfferId: null,
       agreedFareCurrency: null,
       feePolicySnapshot: null,
+      driverPayoutMinor: null,
+      platformFeeMinor: null,
+      payoutCurrency: null,
       paymentMethod: paymentMethod as PaymentMethod,
       paymentIntentId: null,
       passengerCount,
@@ -701,7 +766,7 @@ export class RideService {
       updatedAt: nowIso,
     };
 
-    const responseBody = { data: publicRide(ride) };
+    const responseBody = { data: publicRide(ride, 'passenger') };
 
     try {
       await this.db.runTransaction(async (tx) => {
@@ -782,7 +847,12 @@ export class RideService {
     }
     return {
       httpStatus: 200,
-      body: { data: publicRide(ride) },
+      body: {
+        data: publicRide(
+          ride,
+          ride.assignedDriverId === uid ? 'driver' : 'passenger',
+        ),
+      },
     };
   }
 
@@ -843,7 +913,8 @@ export class RideService {
     const snap = await q.get();
     const rides = snap.docs.map(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (doc: any) => publicRide(doc.data() as RideDoc),
+      (doc: any) =>
+        publicRide(doc.data() as RideDoc, queryRole === 'driver' ? 'driver' : 'passenger'),
     );
 
     let nextCursor: string | null = null;
@@ -901,7 +972,10 @@ export class RideService {
     assertDriverEligible(actor);
 
     const parsed = parseOpenDiscoveryQuery(input.query);
-    const binding = discoveryBinding();
+    const binding = discoveryBinding({
+      serviceType: parsed.serviceType,
+      category: parsed.category,
+    });
     const cursor = parsed.cursor
       ? decodeListCursor(parsed.cursor, binding)
       : null;
@@ -925,6 +999,17 @@ export class RideService {
     for (const doc of snap.docs) {
       const ride = doc.data() as RideDoc;
       if (!isOpenDiscoverable(ride, nowMs)) continue;
+      // Browse filters — exact match on stored fields; narrows the list the
+      // driver sees, never what the driver is eligible for.
+      if (
+        parsed.serviceType !== undefined &&
+        ride.serviceType !== parsed.serviceType
+      ) {
+        continue;
+      }
+      if (parsed.category !== undefined && ride.category !== parsed.category) {
+        continue;
+      }
       eligible.push(ride);
     }
     eligible.sort(compareOpenDiscovery);
@@ -1625,6 +1710,40 @@ export class RideService {
             .limit(MAX_OFFERS_SUPERSEDE_IN_TXN),
         );
 
+        // Payout snapshot — read the fee policy INSIDE this transaction (all
+        // reads precede writes) so derivation is atomic with assignment and
+        // immune to policy changes between check and write.
+        const citySlug =
+          typeof ride.city === 'string' ? ride.city.trim().toLowerCase() : '';
+        const scopedPolicyId = citySlug
+          ? `${citySlug}_${ride.category}`
+          : null;
+        let policyDoc: FeePolicyDoc | null = null;
+        if (scopedPolicyId) {
+          const snap = await tx.get(
+            this.db.collection(FEE_POLICIES_COLLECTION).doc(scopedPolicyId),
+          );
+          if (snap.exists) {
+            policyDoc = parseFeePolicyDoc(scopedPolicyId, snap.data());
+          }
+        }
+        if (policyDoc == null) {
+          const snap = await tx.get(
+            this.db
+              .collection(FEE_POLICIES_COLLECTION)
+              .doc(GLOBAL_FEE_POLICY_ID),
+          );
+          if (snap.exists) {
+            policyDoc = parseFeePolicyDoc(GLOBAL_FEE_POLICY_ID, snap.data());
+          }
+        }
+        const payout = derivePayoutSnapshot({
+          fareMinor: offer.amountMinor,
+          currency: offer.currency,
+          policy: policyDoc,
+          capturedAt: nowIso,
+        });
+
         const nextVersion = ride.version + 1;
         tx.update(rideRef, {
           state: 'DRIVER_ASSIGNED',
@@ -1632,11 +1751,10 @@ export class RideService {
           agreedOfferId: offer.offerId,
           agreedFareMinor: offer.amountMinor,
           agreedFareCurrency: offer.currency,
-          feePolicySnapshot: {
-            platformFeeType: 'NONE',
-            currency: 'PKR',
-            capturedAt: nowIso,
-          },
+          feePolicySnapshot: payout.feePolicySnapshot,
+          driverPayoutMinor: payout.driverPayoutMinor,
+          platformFeeMinor: payout.platformFeeMinor,
+          payoutCurrency: payout.payoutCurrency,
           assignedAt: nowIso,
           version: nextVersion,
           updatedAt: nowIso,
@@ -1811,7 +1929,14 @@ export class RideService {
               'Not allowed to cancel this ride.',
             );
           }
-          responseBody = { data: publicRide(ride) };
+          responseBody = {
+            data: publicRide(
+              ride,
+              ride.assignedDriverId === input.caller.uid
+                ? 'driver'
+                : 'passenger',
+            ),
+          };
           tx.set(idemRef, {
             idempotencyKey,
             requestHash,
@@ -1939,7 +2064,14 @@ export class RideService {
           cancellationFeeMinor: 0,
           updatedAt: nowIso,
         };
-        responseBody = { data: publicRide(updated) };
+        responseBody = {
+          data: publicRide(
+            updated,
+            updated.assignedDriverId === input.caller.uid
+              ? 'driver'
+              : 'passenger',
+          ),
+        };
 
         tx.set(idemRef, {
           idempotencyKey,
@@ -2145,7 +2277,7 @@ export class RideService {
 
         // Idempotent success if already at target (same logical transition done).
         if (ride.state === input.toState) {
-          responseBody = { data: publicRide(ride) };
+          responseBody = { data: publicRide(ride, 'driver') };
           tx.set(idemRef, {
             idempotencyKey,
             requestHash,
@@ -2216,7 +2348,7 @@ export class RideService {
           startedAt: input.setStartedAt ? nowIso : ride.startedAt,
           completedAt: input.setCompletedAt ? nowIso : ride.completedAt,
         };
-        responseBody = { data: publicRide(updated) };
+        responseBody = { data: publicRide(updated, 'driver') };
 
         tx.set(idemRef, {
           idempotencyKey,
@@ -2359,7 +2491,9 @@ export class RideService {
 
         // Already CLOSED: deterministic success snapshot, no second mutation/event.
         if (ride.state === 'RIDE_CLOSED') {
-          responseBody = { data: publicRide(ride) };
+          responseBody = {
+            data: publicRide(ride, isAssignedDriver ? 'driver' : 'passenger'),
+          };
           tx.set(idemRef, {
             idempotencyKey,
             requestHash,
@@ -2399,7 +2533,9 @@ export class RideService {
           closedAt: nowIso,
           updatedAt: nowIso,
         };
-        responseBody = { data: publicRide(updated) };
+        responseBody = {
+          data: publicRide(updated, isAssignedDriver ? 'driver' : 'passenger'),
+        };
 
         tx.set(idemRef, {
           idempotencyKey,

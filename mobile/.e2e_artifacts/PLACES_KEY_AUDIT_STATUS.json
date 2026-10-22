@@ -1,0 +1,32 @@
+{
+  "report": "Places API configuration audit + fix status",
+  "date": "2026-10-19",
+  "project": "ora-app-d8112 (498169438285)",
+  "key_inventory": {
+    "AIzaSyCdEpWc… (\"API key \", uid c86457a2)": "ora mobile Places key in android/local.properties. apiTargets include places.googleapis.com; no app restrictions; CORRECT key.",
+    "AIzaSyD7c36I… (\"Android key (auto created by Firebase)\", uid 1dda0eb6)": "Firebase Android key — apiTargets are Firebase services only. Was embedded as ORA_GOOGLE_PLACES_API_KEY in old builds (l1_build_ux.out) → API_KEY_SERVICE_BLOCKED. WRONG key for Places.",
+    "AIzaSyAMZa8V… (\"Maps APi\", uid 0195c1ac)": "ORA_GOOGLE_MAPS_ANDROID_API_KEY — Maps SDK services only.",
+    "AIzaSyAlWOwM… (\"Ora Routes Server\", uid 8c91dd59)": "backend routes.googleapis.com key.",
+    "Firebase iOS/Browser keys": "firebase services only."
+  },
+  "verified_facts": {
+    "places_api_enabled": true,
+    "places_in_correct_key_apiTargets": true,
+    "correct_key_android_restrictions": "none",
+    "billing_enabled": false,
+    "billing_account": "01F8D7-D18C5B-52F1F4 (My Billing Account) — open: false (CLOSED)",
+    "cross_api_check": "routes.googleapis.com via Ora Routes Server key also returns bare 403 PERMISSION_DENIED → project-wide billing denial, not key config",
+    "geocoding_api": "not enabled on project (not needed — Places New covers reverse geocode); key has recent geocoding-backend usage (GCP refused apiTargets narrowing: APIKEYS_RESTRICTION_INCOMPATIBLE_WITH_USAGE)"
+  },
+  "changes_made": [
+    "Installed profile APK rebuilt with correct ORA_GOOGLE_PLACES_API_KEY (AIzaSyCdEpWc… from android/local.properties) — prior session's profile builds embedded the stale Firebase Android key.",
+    "No key restriction changes applied (none needed; narrowing refused by GCP due to active geocoding-backend usage — left as-is)."
+  ],
+  "on_device_verification": {
+    "device": "SM-A325F RF8R40ZQ1JH",
+    "result": "BLOCKED by billing — 403 PERMISSION_DENIED persists with correct key (expected while billingEnabled=false). UX verified intact: 'Location selected' + unresolved caption + 'Retry name lookup' + 'Confirm pickup'; GPS coords preserved.",
+    "logcat": "reverseGeocode soft-fail: PlaceSearchFailureKind.network — status code of 403"
+  },
+  "owner_action_required": "GCP Console → Billing: link ora-app-d8112 to an OPEN billing account (current linked account 01F8D7-D18C5B-52F1F4 is closed). This also unblocks staging Cloud Run and backend Routes calls. Places API (New) needs no enablement — already enabled. After billing is restored, rebuild with ORA_GOOGLE_PLACES_API_KEY from android/local.properties and re-test 'Use current location'.",
+  "recommended_not_applied": "Add Android app restriction (package + signing SHA-1) to AIzaSyCdEpWc… — requires the app to send X-Android-Package/X-Android-Cert headers on Places calls first (provider currently sends only X-Goog headers); would break calls if applied alone. Needs owner approval + app change."
+}

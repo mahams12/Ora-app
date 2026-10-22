@@ -22,7 +22,7 @@ export PORT="${PORT:-8080}"
 export FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-ora-app-d8112}"
 export REQUIRE_APP_CHECK="${REQUIRE_APP_CHECK:-false}"
 export ORA_INTERNAL_WORKER_TOKEN="${ORA_INTERNAL_WORKER_TOKEN:-local-dev-worker-token-xx}"
-export REDIS_URL="${REDIS_URL:-redis://127.0.0.1:6379}"
+# Geo store is Firestore-native (geoDrivers) — no REDIS_URL needed.
 export GOOGLE_APPLICATION_CREDENTIALS="$SA"
 
 exec ./node_modules/.bin/tsx src/index.ts

@@ -80,7 +80,8 @@ class PassengerHomeView extends StatefulWidget {
   final HomeUiState state;
   final VoidCallback onOpenDrawer;
   final VoidCallback onRetryProfile;
-  final ValueChanged<String?> onRequestRideEntry;
+  final void Function(String? categoryId, {String? serviceType})
+      onRequestRideEntry;
   final VoidCallback onOpenProfile;
   final VoidCallback onOpenRides;
   final VoidCallback onSwitchToDriver;
@@ -134,7 +135,10 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               _PromoCard(
-                onTap: () => widget.onUnavailableFeature('Intercity'),
+                onTap: () => widget.onRequestRideEntry(
+                  null,
+                  serviceType: 'intercity',
+                ),
               ),
               const SizedBox(height: OraSpacing.md),
               OraCard(
@@ -185,6 +189,10 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
               const SizedBox(height: OraSpacing.sm),
               _ServicesGrid(
                 onCityRides: () => widget.onRequestRideEntry(null),
+                onIntercity: () => widget.onRequestRideEntry(
+                  null,
+                  serviceType: 'intercity',
+                ),
                 onUnavailable: widget.onUnavailableFeature,
               ),
               const SizedBox(height: OraSpacing.lg),
@@ -470,7 +478,7 @@ class _PromoCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'COMING LATER',
+                'NOW AVAILABLE',
                 style: OraTypography.sectionTitle(OraColors.goldSoft),
               ),
               const SizedBox(height: 4),
@@ -487,9 +495,14 @@ class _PromoCard extends StatelessWidget {
 }
 
 class _ServicesGrid extends StatelessWidget {
-  const _ServicesGrid({required this.onCityRides, required this.onUnavailable});
+  const _ServicesGrid({
+    required this.onCityRides,
+    required this.onIntercity,
+    required this.onUnavailable,
+  });
 
   final VoidCallback onCityRides;
+  final VoidCallback onIntercity;
   final ValueChanged<String> onUnavailable;
 
   @override
@@ -522,7 +535,7 @@ class _ServicesGrid extends StatelessWidget {
             imageAsset: AppConstants.serviceIntercityAsset,
             icon: Icons.alt_route_rounded,
             badgeColor: OraColors.info,
-            onTap: () => onUnavailable('Intercity'),
+            onTap: onIntercity,
           ),
         ),
         const SizedBox(height: OraSpacing.sm),

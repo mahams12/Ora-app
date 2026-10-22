@@ -33,6 +33,22 @@ export class DriverAvailabilityService {
     return { httpStatus: 200, body: { data: snapshot } };
   }
 
+  /** Read current durable availability (app restart state restore). */
+  async getStatus(input: {
+    caller: AuthenticatedCaller;
+  }): Promise<{ httpStatus: number; body: { data: DriverAvailabilitySnapshot } }> {
+    const actor = await this.loadApprovedDriver(input.caller.uid);
+    const snap = await this.db.collection(DRIVERS).doc(actor.uid).get();
+    const state: AvailabilityState =
+      snap.exists && snap.data()?.availabilityState === 'online'
+        ? 'online'
+        : 'offline';
+    return {
+      httpStatus: 200,
+      body: { data: { driverId: actor.uid, availabilityState: state } },
+    };
+  }
+
   async goOffline(input: {
     caller: AuthenticatedCaller;
     requestId?: string;

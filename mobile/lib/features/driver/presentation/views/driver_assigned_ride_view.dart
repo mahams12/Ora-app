@@ -11,6 +11,7 @@ import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../ride/presentation/active_ride/active_ride_display.dart';
+import '../../../ride/presentation/history/ride_history_display.dart';
 import '../driver_display.dart';
 import '../location/driver_location_session.dart';
 import '../view_models/driver_assigned_ride_view_model.dart';
@@ -320,6 +321,7 @@ class _JobBody extends ConsumerWidget {
                     style: OraTypography.bodyEmphasis(OraColors.textPrimary),
                   ),
                   Text(
+                    '${historyServiceTypeLabel(ride.serviceType)} · '
                     'Category ${ride.category}',
                     style: OraTypography.caption(OraColors.textMuted),
                   ),

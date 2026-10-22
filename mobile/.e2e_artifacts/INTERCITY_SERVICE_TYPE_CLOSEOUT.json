@@ -1,0 +1,62 @@
+{
+  "feature": "INTERCITY-ENTRY — passenger service-type selection (City ride / Intercity)",
+  "date": "2026-10-19",
+  "status": "IMPLEMENTED + unit/widget-tested (local); no staging/device verification (billing down)",
+  "why_this_feature": "Audit §3 'Known failures' listed 'Home Intercity / Courier / Move → NOT STARTED (placeholders)'. Backend contract already existed end-to-end (estimate validates ride|courier|intercity|move; createRide persists serviceType; listRides filters it; open rides display it) — the gap was pure client wiring, implementable offline with zero backend/staging/billing dependency. Courier/Move deliberately left 'Coming later' — parcel/moving product semantics differ and would be faked by a label alone.",
+  "changes": {
+    "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart": [
+      "RideRequestUiState.serviceType field (default 'ride') + copyWith + _withPricingSurface carry",
+      "kRideRequestServiceTypes = {ride, intercity} — UI-exposed subset of the server's 4-value enum",
+      "rideRequestServiceTypeLabel() — 'City ride'/'Intercity'",
+      "seedServiceType() — deep-link seeding, validates + ignores junk",
+      "selectServiceType() — invalidates pricing (_invalidatePricing) + refetches estimate",
+      "_estimateServiceType tracking — estimate response does not echo serviceType, so stale-guard compares it alongside category",
+      "estimate request sends serviceType; create body sends state.serviceType (was hardcoded 'ride')"
+    ],
+    "mobile/lib/features/ride/presentation/views/ride_request_view.dart": [
+      "initialServiceType ctor param, seeded post-frame alongside category",
+      "_ServiceTypeSelector chips (OraChip selected/onTap) in compose + review panes"
+    ],
+    "mobile/lib/app/router/app_router.dart": "?service= query param → RideRequestView.initialServiceType",
+    "mobile/lib/features/passenger/presentation/views/home_shell_view.dart": "_openRideRequest(categoryId, {serviceType}) emits ?service=",
+    "mobile/lib/features/passenger/presentation/views/passenger_home_view.dart": [
+      "onRequestRideEntry signature → (String? categoryId, {String? serviceType})",
+      "Intercity promo card → compose with serviceType=intercity (eyebrow COMING LATER → NOW AVAILABLE)",
+      "Services-grid Intercity tile → compose; Courier/Move still onUnavailable"
+    ]
+  },
+  "backend_changes": "NONE — contract pre-existed (estimate_service.ts enum validation, createRide storage, list filter, publicRide/publicOpenRide serialization, driver open-ride + history display via historyServiceTypeLabel)",
+  "tests": {
+    "new_vm_cases": 5,
+    "new_widget_cases": 2,
+    "ride_request_view_model_test": "42/42 pass",
+    "ride_request_ui_test": "14/14 pass",
+    "flutter_analyze_lib": "clean",
+    "passenger_suite": "15 pass / 1 fail — home_shell_driver_gate FirebaseMessaging unmocked, verified pre-existing at pristine HEAD",
+    "test_harness_note": "autoDispose c.read(provider) recreates a fresh instance across awaits; tests asserting state after awaits must hold c.listen() — consistent with existing test at line ~430"
+  },
+  "verification_round_2026_10_19": {
+    "flow_trace": "Home promo/grid → ?service=intercity → seedServiceType → _ServiceTypeSelector (compose+review) → estimate request.serviceType → stale-guard (_estimateServiceType) → create body.serviceType → publicRide.serviceType → historyServiceTypeLabel on passenger history/detail + driver open rides + both active-ride trip cards",
+    "gaps_fixed": [
+      "backend createRide: serviceType was any non-empty string — now enum-validated (ride|courier|intercity|move), same as estimate",
+      "backend createRide: new PRICING_SNAPSHOT_MISMATCH (422) when body.serviceType or body.category disagree with snapshot.inputs — closes stale/mismatched-snapshot submission server-side; absent inputs on old snapshots skip the check",
+      "active_ride_view + driver_assigned_ride_view trip cards now show '<service> · Category <cat>' (was category only)"
+    ],
+    "stale_estimate_proof": "client: selectServiceType → _invalidatePricing synchronously blocks canSubmitRideRequest (pricingUnavailable) until refetch lands; failed refetch stays blocked (2 new tests). server: PRICING_SNAPSHOT_MISMATCH rejects any mismatched create regardless of client state (2 new backend tests)",
+    "no_gap": "RideRequestCreatedView carries no service label but is unreachable — submit path navigates straight to offers inbox"
+  },
+  "tests_after_verification": {
+    "backend_suite": "471/471",
+    "rides_test": "89/89 incl. 2 new (enum rejection+intercity accept, snapshot mismatch+match)",
+    "ride_request_view_model_test": "44/44 (2 new stale-estimate/submit tests)",
+    "active_ride_ui + driver suite": "all pass"
+  },
+  "limitations": [
+    "No staging/device verification — staging down (billing disabled); driver-visible intercity label relies on existing verified display path",
+    "Intercity pricing = same per-city category rules (server-authoritative); no intercity-specific fare model invented",
+    "Courier/Move remain unavailable placeholders",
+    "Ride created intercity rides are filterable via GET /v1/rides?serviceType=intercity and display 'Intercity' in history/open-rides"
+  ],
+  "next_feature": "Courier/Move product definition (needs owner semantics), or live push verification once billing restores",
+  "safety": "No backend edits, no cloud/billing/deploy/commit/push, frozen state machines untouched, payout fields unchanged"
+}

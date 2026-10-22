@@ -24,10 +24,33 @@ export function memoryDb() {
       data: () => Record<string, unknown> | undefined;
       ref: DocRef;
     }>;
-    set: (value: Record<string, unknown>) => Promise<void>;
+    set: (
+      value: Record<string, unknown>,
+      options?: { merge?: boolean },
+    ) => Promise<void>;
     update: (value: Record<string, unknown>) => Promise<void>;
     delete: () => Promise<void>;
   };
+
+  /**
+   * Models FieldValue.delete(). The Admin SDK exposes the marker via the
+   * `methodName` getter (DeleteTransform); older fakes used `_methodName`.
+   */
+  function isDeleteSentinel(v: unknown): boolean {
+    if (typeof v !== 'object' || v === null) return false;
+    const rec = v as { methodName?: string; _methodName?: string };
+    return (
+      rec.methodName === 'FieldValue.delete' ||
+      rec._methodName === 'FieldValue.delete'
+    );
+  }
+
+  function applyDeletes(data: Record<string, unknown>) {
+    for (const [k, v] of Object.entries(data)) {
+      if (isDeleteSentinel(v)) delete data[k];
+    }
+    return data;
+  }
 
   function makeDoc(collection: string, id: string): DocRef {
     const path = `${collection}/${id}`;
@@ -44,13 +67,17 @@ export function memoryDb() {
           ref,
         };
       },
-      async set(value: Record<string, unknown>) {
-        store.set(path, { ...value });
+      async set(
+        value: Record<string, unknown>,
+        options?: { merge?: boolean },
+      ) {
+        const base = options?.merge ? (store.get(path) ?? {}) : {};
+        store.set(path, applyDeletes({ ...base, ...value }));
       },
       async update(value: Record<string, unknown>) {
         const existing = store.get(path);
         if (!existing) throw new Error('NOT_FOUND');
-        store.set(path, { ...existing, ...value });
+        store.set(path, applyDeletes({ ...existing, ...value }));
       },
       async delete() {
         store.delete(path);
@@ -97,6 +124,13 @@ export function memoryDb() {
         if (compareValues(data[f.field], f.value) > 0) return false;
       } else if (f.op === '>=') {
         if (compareValues(data[f.field], f.value) < 0) return false;
+      } else if (f.op === '<') {
+        if (compareValues(data[f.field], f.value) >= 0) return false;
+      } else if (f.op === '>') {
+        if (compareValues(data[f.field], f.value) <= 0) return false;
+      } else if (f.op === 'array-contains') {
+        const arr = data[f.field];
+        if (!Array.isArray(arr) || !arr.includes(f.value)) return false;
       } else {
         return false;
       }

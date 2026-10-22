@@ -1,0 +1,52 @@
+{
+  "closeout": "COMPOSE-DRAFT",
+  "title": "Passenger ride-compose draft persistence",
+  "date": "2026-10-19",
+  "status": "IMPLEMENTED — local automated tests green; physical/staging verification not performed",
+
+  "gap": "Mid-compose passenger work (pickup/destination points, search text, category, service type, offer draft) was lost on process death or navigation away. No roadmap item covered compose resilience.",
+
+  "implementation": {
+    "model": "mobile/lib/features/ride/domain/models/ride_compose_draft.dart — JSON round-trip, corruption-tolerant tryFromJson (returns null on malformed/missing fields), 24h staleness rule (isStaleAt). Stores: endpoint points {lat,lng,address,source,confirmed}, endpoint text, categoryId, serviceType, passengerOfferDraftText, savedAt.",
+    "port": "mobile/lib/features/ride/domain/ports/ride_compose_draft_store.dart — loadDraft/saveDraft/clearDraft keyed by uid.",
+    "store": "mobile/lib/features/ride/data/secure_ride_compose_draft_store.dart — SecureStorage-backed, uid-scoped key, malformed payload → null + clears corrupt entry. Mirrors the saved-places persistence pattern.",
+    "di": "mobile/lib/app/di/providers.dart — rideComposeDraftStoreProvider.",
+    "vm": "ride_request_view_model.dart — (1) _restoreComposeDraft fires async at build; applies ONLY while compose is pristine (any passenger input or deep-link seed wins); bumps all search/resolve generations; refetches pricing when the restored draft is already submittable; stale drafts discarded + cleared. (2) _scheduleDraftPersist — 600ms debounced writes across all mutation paths (location select, map-pin, text, confirm, category/service, offer draft, retries). (3) Draft cleared on emptied compose and on successful createRide. (4) No authenticated uid → zero store interaction."
+  },
+
+  "invariants": [
+    "Pricing snapshots are never persisted nor trusted — estimates always refetch fresh after restore.",
+    "Restored confirmed endpoints restore as confirmed; a fresh estimate is still required before submit (existing pricing-invalidated guard).",
+    "Draft restores into pristine compose only — user input and deep-link seeds always take precedence.",
+    "uid read fresh at write time — a mid-session account switch cannot persist under the previous uid.",
+    "Corrupt/stale drafts decode to null and are cleared, never partially applied.",
+    "Coordinates persisted verbatim; naming state rides on the stored address string only."
+  ],
+
+  "self_audit_fixes": [
+    "Restore built next-state from a snapshot taken before _invalidatePricing() — rebuilt on post-invalidation state to avoid resurrecting cleared pricing fields.",
+    "Uid was cached in _draftUid — replaced with a fresh ref.read at each write/clear so account switches cannot leak drafts across keys."
+  ],
+
+  "tests_run": {
+    "test/features/ride/ride_compose_draft_test.dart": "9/9 PASS — model round-trip, corrupt/partial decode, staleness boundary; store round-trip, uid isolation, corrupt tolerance, clear; VM restore, stale discard, non-pristine precedence, debounced persist shape, no-uid no-op",
+    "focused_regression": "76/76 PASS — ride_compose_draft_test + ride_request_view_model_test + ride_request_ui_test",
+    "flutter_analyze_lib": "clean (0 issues)",
+    "backend": "unchanged — no backend code touched"
+  },
+
+  "verification_boundary": {
+    "local_automated": "PASS (76/76 focused, analyzer clean)",
+    "physical_device": "NOT RUN — no process-death smoke performed; SM-A325F adb link unstable in prior session",
+    "staging": "NOT APPLICABLE — pure client/secure-storage feature; staging still down (GCP billing disabled)",
+    "cloud_cost": "zero — no billing changes, no paid services, no deployments"
+  },
+
+  "limitations": [
+    "Draft restore requires an authenticated uid at VM build — signed-out compose is not persisted.",
+    "24h TTL is a fixed freshness policy; no user-visible 'resume draft' affordance distinction (restore is silent).",
+    "Physical process-death round-trip on the Samsung device not yet demonstrated."
+  ],
+
+  "next_step": "Optional: bounded on-device process-death smoke (kill app mid-compose, relaunch, confirm restore) once the SM-A325F adb link is stable; then live ride-state push verification once billing restores."
+}

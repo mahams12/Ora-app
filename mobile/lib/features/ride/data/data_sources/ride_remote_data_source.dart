@@ -67,6 +67,8 @@ class RideRemoteDataSource {
   Future<OpenRideListPage> listOpenRides({
     int? limit,
     String? cursor,
+    String? serviceType,
+    String? category,
     required RequestContext context,
   }) async {
     final response = await _apiClient.get<Map<String, dynamic>>(
@@ -74,6 +76,8 @@ class RideRemoteDataSource {
       queryParameters: {
         if (limit != null) 'limit': limit,
         if (cursor != null) 'cursor': cursor,
+        if (serviceType != null) 'serviceType': serviceType,
+        if (category != null) 'category': category,
       },
       context: context,
     );
@@ -89,6 +93,60 @@ class RideRemoteDataSource {
     return OpenRideListPage(
       rides: rides,
       nextCursor: next is String ? next : null,
+    );
+  }
+
+  /// GET /v1/rides/invited — dispatch-wave invitations for this driver.
+  Future<DriverInvitePage> listInvited({
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.get<Map<String, dynamic>>(
+      '/rides/invited',
+      context: context,
+    );
+    final data = _unwrapData(response.data);
+    final raw = data['items'];
+    final items = raw is List
+        ? raw
+            .whereType<Map<Object?, Object?>>()
+            .map((e) => _parseDriverInvite(Map<String, dynamic>.from(e)))
+            .toList()
+        : const <DriverInvite>[];
+    final serverNow = data['serverNowMs'];
+    return DriverInvitePage(
+      items: items,
+      serverNowMs: serverNow is num ? serverNow.toInt() : 0,
+    );
+  }
+
+  /// POST /v1/rides/:rideId/invites/:waveId/accept — server creates the
+  /// PASSENGER_PRICE_ACCEPTED offer. Returns the offer id (works for both
+  /// the 201 created body and the idempotent replay shape).
+  Future<String> acceptInvite({
+    required String rideId,
+    required String waveId,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/invites/$waveId/accept',
+      context: context,
+      idempotent: true,
+    );
+    final data = _unwrapData(response.data);
+    final offerId = data['offerId'];
+    return offerId is String ? offerId : '';
+  }
+
+  /// POST /v1/rides/:rideId/invites/:waveId/decline — durable, idempotent.
+  Future<void> declineInvite({
+    required String rideId,
+    required String waveId,
+    required RequestContext context,
+  }) async {
+    await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/invites/$waveId/decline',
+      context: context,
+      idempotent: true,
     );
   }
 
@@ -307,6 +365,32 @@ class RideRemoteDataSource {
     );
   }
 
+  DriverInvite _parseDriverInvite(Map<String, dynamic> json) {
+    final rawExpiry = json['inviteExpiresAt'];
+    return DriverInvite(
+      rideId: json['rideId'] as String,
+      waveId: json['waveId'] as String,
+      waveNumber: (json['waveNumber'] as num).toInt(),
+      status: json['status'] as String,
+      pickup: _parseLatLng(Map<Object?, Object?>.from(json['pickup'] as Map)),
+      destination: _parseLatLng(
+        Map<Object?, Object?>.from(json['destination'] as Map),
+      ),
+      passengerOfferMinor: json['passengerOfferMinor'] as int,
+      currency: json['currency'] as String? ?? 'PKR',
+      serviceType: json['serviceType'] as String,
+      category: json['category'] as String,
+      passengerCount: json['passengerCount'] as int,
+      inviteExpiresAt:
+          rawExpiry is String ? DateTime.tryParse(rawExpiry) : null,
+      respondedAt: json['respondedAt'] as String?,
+      offerId: json['offerId'] as String?,
+      distanceKm: json['distanceKm'] == null
+          ? null
+          : (json['distanceKm'] as num).toDouble(),
+    );
+  }
+
   Ride _parseRide(Map<String, dynamic> json) {
     return Ride(
       rideId: json['rideId'] as String,
@@ -327,6 +411,10 @@ class RideRemoteDataSource {
       agreedFareMinor: json['agreedFareMinor'] as int?,
       agreedOfferId: json['agreedOfferId'] as String?,
       agreedFareCurrency: json['agreedFareCurrency'] as String?,
+      driverPayoutMinor: json['driverPayoutMinor'] as int?,
+      platformFeeMinor: json['platformFeeMinor'] as int?,
+      payoutCurrency: json['payoutCurrency'] as String?,
+      feePolicyResolution: json['feePolicyResolution'] as String?,
       paymentMethod: json['paymentMethod'] as String,
       passengerCount: json['passengerCount'] as int,
       expiresAt: json['expiresAt'] as String,

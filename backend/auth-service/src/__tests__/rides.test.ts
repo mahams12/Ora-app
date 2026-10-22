@@ -747,6 +747,83 @@ describe('ride HTTP vertical slice', () => {
     expect(expired.status).toBe(422);
     expect(expired.body.error.code).toBe('PRICING_SNAPSHOT_EXPIRED');
   });
+
+  it('rejects an unknown serviceType and accepts intercity', async () => {
+    const db = memoryDb();
+    seedPassenger(db, 'p1');
+    seedPricing(db);
+    const app = appFor(db, 'p1');
+
+    const bad = await request(app)
+      .post('/v1/rides')
+      .set('Authorization', 'Bearer t')
+      .set('Idempotency-Key', 'svc-bad-1')
+      .send({ ...createBody, serviceType: 'hoverboard' });
+    expect(bad.status).toBe(400);
+    expect(bad.body.error.code).toBe('VALIDATION_ERROR');
+
+    const ok = await request(app)
+      .post('/v1/rides')
+      .set('Authorization', 'Bearer t')
+      .set('Idempotency-Key', 'svc-ic-1')
+      .send({ ...createBody, serviceType: 'intercity' });
+    expect(ok.status).toBe(201);
+    expect(ok.body.data.serviceType).toBe('intercity');
+  });
+
+  it('rejects create when serviceType/category disagree with the snapshot', async () => {
+    const db = memoryDb();
+    seedPassenger(db, 'p1');
+    seedPricing(db, 'snap-ic', {
+      inputs: {
+        distanceKm: 5.2,
+        durationMin: 18,
+        category: 'economy',
+        serviceType: 'intercity',
+      },
+    });
+    const app = appFor(db, 'p1');
+
+    // Snapshot priced for intercity, create claims 'ride' → stale/mismatched.
+    const svcMismatch = await request(app)
+      .post('/v1/rides')
+      .set('Authorization', 'Bearer t')
+      .set('Idempotency-Key', 'snap-svc-mismatch')
+      .send({
+        ...createBody,
+        pricingSnapshotId: 'snap-ic',
+        serviceType: 'ride',
+      });
+    expect(svcMismatch.status).toBe(422);
+    expect(svcMismatch.body.error.code).toBe('PRICING_SNAPSHOT_MISMATCH');
+
+    const catMismatch = await request(app)
+      .post('/v1/rides')
+      .set('Authorization', 'Bearer t')
+      .set('Idempotency-Key', 'snap-cat-mismatch')
+      .send({
+        ...createBody,
+        pricingSnapshotId: 'snap-ic',
+        serviceType: 'intercity',
+        category: 'xl',
+      });
+    expect(catMismatch.status).toBe(422);
+    expect(catMismatch.body.error.code).toBe('PRICING_SNAPSHOT_MISMATCH');
+
+    // Matching snapshot inputs succeed.
+    const ok = await request(app)
+      .post('/v1/rides')
+      .set('Authorization', 'Bearer t')
+      .set('Idempotency-Key', 'snap-match-ok')
+      .send({
+        ...createBody,
+        pricingSnapshotId: 'snap-ic',
+        serviceType: 'intercity',
+        category: 'economy',
+      });
+    expect(ok.status).toBe(201);
+    expect(ok.body.data.serviceType).toBe('intercity');
+  });
 });
 
 describe('ride assignment concurrency', () => {

@@ -304,6 +304,8 @@ export class DispatchFcmProjector {
     const driverIds = parseDriverIds(event.payload);
     const rideId = String(event.payload.rideId ?? event.aggregateId);
     const waveNumber = String(event.payload.waveNumber ?? '');
+    // Authoritative countdown deadline for the client timer (data-only FCM).
+    const inviteExpiresAt = String(event.payload.inviteExpiresAt ?? '');
     const driverResults: Record<string, DriverDeliveryResult> = {
       ...delivery.driverResults,
     };
@@ -356,6 +358,7 @@ export class DispatchFcmProjector {
             rideId,
             waveNumber,
             eventId: input.eventId,
+            inviteExpiresAt,
           },
         });
 

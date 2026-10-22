@@ -28,4 +28,27 @@ class DriverDeviceTokenRemoteDataSource {
       context: context,
     );
   }
+
+  /// NOTIF-RS-PUSH — passenger token registration (role-gated server-side).
+  Future<void> registerPassengerToken({
+    required String token,
+    required RequestContext context,
+  }) async {
+    await _apiClient.post<Map<String, dynamic>>(
+      '/device-tokens',
+      data: {'token': token},
+      context: context,
+    );
+  }
+
+  Future<void> clearPassengerToken({
+    required String token,
+    required RequestContext context,
+  }) async {
+    await _apiClient.delete<Map<String, dynamic>>(
+      '/device-tokens',
+      data: {'token': token},
+      context: context,
+    );
+  }
 }

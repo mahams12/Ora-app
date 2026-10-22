@@ -6,6 +6,23 @@
 
 ---
 
+## Symptom: staging API returns 503/500 on every request (app shows "Something went wrong")
+
+**Diagnosed 2026-10-19:** Cloud Run 503 "service not available yet" / 500 on `GET /v1/health`; `gcloud run services describe` shows `Ready: True` but zero instances can start. Cause: **GCP billing disabled on the project** — Cloud Logging shows `The request failed because billing is disabled for this project.` All API traffic AND scheduled sweeps (expire/offer/dispatch/FCM/no-show) stop. Firestore direct access (admin SDK, `e2e_ride_snapshot.ts`) may still work — a stale "live" snapshot does not mean the API is up.
+
+Check:
+
+```bash
+curl -s https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1/health
+gcloud logging read "resource.type=cloud_run_revision \
+  AND resource.labels.service_name=ora-auth-service-staging" \
+  --limit=10 --freshness=30m
+```
+
+Resolution is a GCP Console billing action — not a code/config fix, do not redeploy blindly.
+
+---
+
 ## Symptom: N3 / nearby empty or 503
 
 N3 is **IMPLEMENTED**: `GET /v1/internal/drivers/nearby` + `X-Ora-Worker-Token`.
@@ -45,7 +62,19 @@ npx vitest run src/__tests__/delivery_d1.test.ts   # ordering tests S1–S8
 
 Evidence: `mobile/.e2e_artifacts/FCM_ORDERING_FIX_PHYSICAL_VERIFY_REPORT.json` (staging physical verify). If notifications still stall, check `delivery` sweep logs and Firestore `outboxEvents` state distribution.
 
+## Symptom: passenger/driver not nudged on ride-state changes (NOTIF-RS-PUSH, added 2026-10-19)
+
+The ride-state projector is implemented but **requires a redeploy + scheduler run** (staging billing still disabled at implementation time).
+
+1. Sweep: `POST /v1/internal/outbox/ride-state-fcm-sweep` (worker token) — expect `delivered`/`retryable`/`skipped` counts; check `RS_RIDE_FCM*` logs.
+2. Non-allowlisted events (`ride.created`, `ride.rating.submitted`, `ride.dispatch.wave_completed`, anything else) are deliberately skipped — verify the event type is in `RS_EVENT_TYPES` (`ride_state_types.ts`).
+3. Passengers need a token on the NEW route `POST /v1/device-tokens` (role-gated `passenger`); driver tokens still live at `/v1/drivers/device-tokens`. No registered token → `SKIPPED_NO_TOKEN` (terminal, by design — pushes are best-effort hints).
+4. `outboxDeliveries/{eventId}_fcm_ride_state` holds per-uid/per-token results; `DEAD_LETTER` after 10 attempts; `invalid_token` deletes the stored token.
+5. If a user has BOTH passenger and driver tokens, both are sent to (union), and invalid cleanup targets the collection the token came from.
+
 ---
+
+
 
 ## Symptom: location update returns 403
 

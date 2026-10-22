@@ -72,7 +72,7 @@ export interface DriverDeliveryResult {
 export interface OutboxDeliveryDoc {
   deliveryId: string;
   eventId: string;
-  subscriber: typeof D1_SUBSCRIBER;
+  subscriber: string;
   status: OutboxDeliveryStatus;
   attemptCount: number;
   leaseOwner: string | null;

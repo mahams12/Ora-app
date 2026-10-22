@@ -51,11 +51,10 @@ if [[ -n "${FIREBASE_DATABASE_URL:-}" ]]; then
   ENV_VARS="${ENV_VARS},FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL}"
 fi
 
-VPC_CONNECTOR="${VPC_CONNECTOR:-ora-staging-vpc}"
-REDIS_SECRET_NAME="${REDIS_SECRET_NAME:-ora-staging-redis-url}"
 MAPS_SECRET_NAME="${MAPS_SECRET_NAME:-ora-staging-google-maps-server-key}"
 WORKER_SECRET_NAME="${WORKER_SECRET_NAME:-ora-staging-internal-worker-token}"
-
+# Geo store is Firestore-native — no Memorystore, no VPC connector, no
+# REDIS_URL secret. Clear stale annotations/secrets from older revisions.
 SECRETS_LIST="GOOGLE_MAPS_SERVER_KEY=${MAPS_SECRET_NAME}:latest,ORA_INTERNAL_WORKER_TOKEN=${WORKER_SECRET_NAME}:latest"
 
 DEPLOY_ARGS=(
@@ -65,28 +64,17 @@ DEPLOY_ARGS=(
   --platform=managed
   --allow-unauthenticated
   --service-account="$SA_EMAIL"
-  --set-env-vars="$ENV_VARS"
   --min-instances=0
   --max-instances=3
   --memory=512Mi
   --cpu=1
   --timeout=300
   --port=8080
+  --clear-vpc-connector
+  --remove-secrets=REDIS_URL
 )
 
-# Memorystore + server secrets (never plain env for these values).
-if gcloud secrets describe "$REDIS_SECRET_NAME" --project="$PROJECT" >/dev/null 2>&1; then
-  SECRETS_LIST="REDIS_URL=${REDIS_SECRET_NAME}:latest,${SECRETS_LIST}"
-  DEPLOY_ARGS+=(
-    --vpc-connector="$VPC_CONNECTOR"
-    --vpc-egress=private-ranges-only
-  )
-else
-  echo "ERROR: Redis secret $REDIS_SECRET_NAME missing — run scripts/wire_staging_redis.sh first" >&2
-  exit 2
-fi
-
-DEPLOY_ARGS+=(--set-secrets="$SECRETS_LIST")
+DEPLOY_ARGS+=(--set-env-vars="$ENV_VARS" --set-secrets="$SECRETS_LIST")
 
 echo "== deploy Cloud Run from source (Dockerfile) =="
 gcloud run deploy "$SERVICE" "${DEPLOY_ARGS[@]}"

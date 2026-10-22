@@ -7,6 +7,8 @@ class DispatchFcmConstants {
   static const dataKeyRideId = 'rideId';
   static const dataKeyWaveNumber = 'waveNumber';
   static const dataKeyEventId = 'eventId';
+  /// Authoritative server deadline for the invite countdown (ISO-8601).
+  static const dataKeyInviteExpiresAt = 'inviteExpiresAt';
 
   static const notificationChannelId = 'ora_dispatch_invite';
   static const notificationChannelName = 'Ride requests';

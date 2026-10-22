@@ -200,6 +200,7 @@ describe('D1 dispatch invite delivery', () => {
         driverIds: ['d1', 'd2'],
         invitedCount: 2,
         radiusKm: 10,
+        inviteExpiresAt: new Date(Date.now() + 20_000).toISOString(),
       },
     });
 
@@ -215,8 +216,11 @@ describe('D1 dispatch invite delivery', () => {
     expect(sent[0]!.data.rideId).toBe('ride1');
     expect(sent[0]!.data.waveNumber).toBe('1');
     expect(sent[0]!.data.eventId).toBe('evt1');
+    expect(Date.parse(String(sent[0]!.data.inviteExpiresAt))).toBeGreaterThan(
+      Date.now(),
+    );
     expect(Object.keys(sent[0]!.data).sort()).toEqual(
-      ['eventId', 'rideId', 'type', 'waveNumber'].sort(),
+      ['eventId', 'inviteExpiresAt', 'rideId', 'type', 'waveNumber'].sort(),
     );
     expect(db.getDoc(OUTBOX_EVENTS, 'evt1')!.publishState).toBe('DELIVERED');
   });

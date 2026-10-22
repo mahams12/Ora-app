@@ -44,6 +44,27 @@ export function createDriversRouter(
     }
   });
 
+  router.get('/availability', async (req: AuthedRequest, res) => {
+    if (!req.caller) {
+      sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');
+      return;
+    }
+    const started = Date.now();
+    try {
+      const result = await availability.getStatus({ caller: req.caller });
+      logSafe('DRIVER_AVAILABILITY_GET', {
+        operation: 'DRIVER_AVAILABILITY_GET',
+        requestId: getRequestId(req),
+        actorId: req.caller.uid,
+        availabilityState: result.body.data.availabilityState,
+        durationMs: Date.now() - started,
+      });
+      sendDriverData(req, res, result.httpStatus, result.body.data);
+    } catch (err) {
+      sendDriverDomainError(req, res, err);
+    }
+  });
+
   router.post('/go-offline', async (req: AuthedRequest, res) => {
     if (!req.caller) {
       sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');

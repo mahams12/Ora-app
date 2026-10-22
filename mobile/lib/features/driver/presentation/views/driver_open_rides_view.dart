@@ -7,10 +7,13 @@ import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../ride/domain/entities/ride.dart';
+import '../../../ride/domain/models/ride_category_option.dart';
+import '../../../ride/presentation/history/ride_history_display.dart';
 import '../../../ride/presentation/widgets/ride_card/ride_card.dart';
 import '../open_ride_display.dart';
 import '../view_models/driver_direct_offer_view_model.dart';
 import '../view_models/driver_open_rides_view_model.dart';
+import '../widgets/driver_invites_section.dart';
 
 /// Open ride requests — GET /v1/rides/open. Not nearby / GEO.
 class DriverOpenRidesView extends ConsumerStatefulWidget {
@@ -113,6 +116,42 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
                     style: OraTypography.caption(OraColors.dangerForeground),
                   ),
                 ],
+                if (state.phase != DriverOpenRidesPhase.initialLoading) ...[
+                  const SizedBox(height: OraSpacing.sm),
+                  _OpenRidesFilterRow(
+                    label: 'Service',
+                    children: [
+                      OraChip(
+                        label: 'Any',
+                        selected: state.serviceTypeFilter == null,
+                        onTap: () => vm.setServiceTypeFilter(null),
+                      ),
+                      for (final type in rideHistoryServiceTypes)
+                        OraChip(
+                          label: historyServiceTypeLabel(type),
+                          selected: state.serviceTypeFilter == type,
+                          onTap: () => vm.setServiceTypeFilter(type),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: OraSpacing.sm),
+                  _OpenRidesFilterRow(
+                    label: 'Category',
+                    children: [
+                      OraChip(
+                        label: 'Any',
+                        selected: state.categoryFilter == null,
+                        onTap: () => vm.setCategoryFilter(null),
+                      ),
+                      for (final c in kRideCategoryOptions)
+                        OraChip(
+                          label: c.name,
+                          selected: state.categoryFilter == c.id,
+                          onTap: () => vm.setCategoryFilter(c.id),
+                        ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -141,20 +180,35 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
     }
 
     if (state.phase == DriverOpenRidesPhase.empty) {
+      final filtered = state.hasActiveFilters;
       return RefreshIndicator(
         color: OraColors.primary,
         onRefresh: vm.refresh,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: padding),
-          children: const [
-            SizedBox(height: OraSpacing.xxl),
+          children: [
+            const DriverInvitesSection(),
+            const SizedBox(height: OraSpacing.xxl),
             OraEmptyState(
-              title: 'No open ride requests',
-              message:
-                  'There are currently no open ride requests available. '
-                  'Pull to refresh when you want to check again.',
+              title:
+                  filtered ? 'No open rides match' : 'No open ride requests',
+              message: filtered
+                  ? 'No open ride requests match the selected filters. '
+                      'Clear them or pull to refresh.'
+                  : 'There are currently no open ride requests available. '
+                      'Pull to refresh when you want to check again.',
             ),
+            if (filtered) ...[
+              const SizedBox(height: OraSpacing.md),
+              Center(
+                child: OraButton(
+                  label: 'Clear filters',
+                  variant: OraButtonVariant.outline,
+                  onPressed: vm.clearFilters,
+                ),
+              ),
+            ],
           ],
         ),
       );
@@ -174,11 +228,19 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
           padding,
           OraSpacing.xxl,
         ),
-        itemCount:
-            state.rides.length + 1 + (state.errorMessage != null ? 1 : 0),
+        itemCount: state.rides.length +
+            2 +
+            (state.errorMessage != null ? 1 : 0),
         itemBuilder: (context, index) {
+          if (index == 0) {
+            return const Padding(
+              padding: EdgeInsets.only(bottom: OraSpacing.sm),
+              child: DriverInvitesSection(),
+            );
+          }
+          final shifted = index - 1;
           final hasSoftError = state.errorMessage != null;
-          if (hasSoftError && index == 0) {
+          if (hasSoftError && shifted == 0) {
             return Padding(
               padding: const EdgeInsets.only(bottom: OraSpacing.sm),
               child: Text(
@@ -187,7 +249,7 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
               ),
             );
           }
-          final rideIndex = hasSoftError ? index - 1 : index;
+          final rideIndex = hasSoftError ? shifted - 1 : shifted;
           if (rideIndex < state.rides.length) {
             final ride = state.rides[rideIndex];
             final offering = state.offeringRideId == ride.rideId;
@@ -208,6 +270,36 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
           return _OpenPaginationFooter(state: state, onLoadMore: vm.loadMore);
         },
       ),
+    );
+  }
+}
+
+/// Labelled horizontal chip row — mirrors the ride-history filter rows.
+class _OpenRidesFilterRow extends StatelessWidget {
+  const _OpenRidesFilterRow({required this.label, required this.children});
+
+  final String label;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: OraTypography.label(OraColors.textSecondary)),
+        const SizedBox(height: OraSpacing.xs),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0) const SizedBox(width: OraSpacing.xs),
+                children[i],
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,12 +11,14 @@ import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../auth/presentation/view_models/session_user_profile.dart';
+import '../view_models/driver_availability_view_model.dart';
 import 'driver_assigned_rides_view.dart';
 import 'driver_direct_offer_view.dart';
+import 'driver_earnings_view.dart';
 import 'driver_home_view.dart';
 import 'driver_open_rides_view.dart';
 
-enum DriverShellPage { home, open, assigned, offer }
+enum DriverShellPage { home, open, assigned, offer, earnings }
 
 /// Driver shell — prototype drawer navigation (no bottom bar).
 class DriverShellView extends ConsumerStatefulWidget {
@@ -27,7 +31,8 @@ class DriverShellView extends ConsumerStatefulWidget {
   ConsumerState<DriverShellView> createState() => _DriverShellViewState();
 }
 
-class _DriverShellViewState extends ConsumerState<DriverShellView> {
+class _DriverShellViewState extends ConsumerState<DriverShellView>
+    with WidgetsBindingObserver {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late DriverShellPage _page;
   bool _signingOut = false;
@@ -36,7 +41,24 @@ class _DriverShellViewState extends ConsumerState<DriverShellView> {
   void initState() {
     super.initState();
     _page = widget.initialTab;
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) => _syncDispatchFcmToken());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Presence publisher only runs in foreground (no background location).
+    if (ref.exists(driverPresenceProvider)) {
+      ref
+          .read(driverPresenceProvider.notifier)
+          .onAppLifecycle(state == AppLifecycleState.resumed);
+    }
   }
 
   Future<void> _syncDispatchFcmToken() async {
@@ -100,6 +122,9 @@ class _DriverShellViewState extends ConsumerState<DriverShellView> {
     if (_signingOut) return;
     setState(() => _signingOut = true);
     try {
+      if (ref.exists(driverPresenceProvider)) {
+        ref.read(driverPresenceProvider.notifier).onSignedOut();
+      }
       await ref.read(dispatchFcmServiceProvider).clearRegisteredToken();
       await ref.read(logoutUseCaseProvider)();
     } finally {
@@ -127,6 +152,10 @@ class _DriverShellViewState extends ConsumerState<DriverShellView> {
         ? profile!.displayName!.trim()
         : 'ORA driver';
     final initials = _initials(profile?.displayName);
+    // Watching keeps the shell-scoped presence publisher alive; its gates are
+    // driven by the availability provider + app lifecycle.
+    ref.watch(driverPresenceProvider);
+    final availability = ref.watch(driverAvailabilityProvider);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -171,7 +200,7 @@ class _DriverShellViewState extends ConsumerState<DriverShellView> {
             icon: Icons.show_chart_rounded,
             iconBackground: OraColors.secondaryMuted,
             iconColor: OraColors.tealBright,
-            onTap: () => _showUnavailable('Earnings'),
+            onTap: () => _selectPage(DriverShellPage.earnings),
           ),
           OraDrawerItem(
             title: 'Payouts',
@@ -243,7 +272,14 @@ class _DriverShellViewState extends ConsumerState<DriverShellView> {
             onOpenRideRequests: () => _selectPage(DriverShellPage.open),
             onOpenAssignedTrips: () => _selectPage(DriverShellPage.assigned),
             onOpenDirectOffer: () => _selectPage(DriverShellPage.offer),
+            onOpenEarnings: () => _selectPage(DriverShellPage.earnings),
             onUnavailable: _showUnavailable,
+            availabilityOnline: availability.isOnline,
+            availabilityBusy: availability.busy,
+            availabilityLoaded: availability.loaded,
+            onToggleAvailability: () => unawaited(
+              ref.read(driverAvailabilityProvider.notifier).toggle(),
+            ),
           ),
           _DriverSubpage(
             title: 'Open rides',
@@ -261,6 +297,13 @@ class _DriverShellViewState extends ConsumerState<DriverShellView> {
             title: 'Direct offer',
             onOpenDrawer: _openDrawer,
             child: const DriverDirectOfferView(),
+          ),
+          _DriverSubpage(
+            title: 'Earnings',
+            onOpenDrawer: _openDrawer,
+            child: DriverEarningsView(
+              active: _page == DriverShellPage.earnings,
+            ),
           ),
         ],
       ),

@@ -8,6 +8,7 @@ import { createAuthRouter } from './routes/auth';
 import { createInternalRouter } from './routes/internal';
 import { createRidesRouter } from './rides/routes';
 import { createDriversRouter } from './drivers/routes';
+import { createDeviceTokensRouter } from './routes/device_tokens';
 import { createLocationRouter } from './location/routes';
 import { createInternalWorkerMiddleware } from './middleware/internal_worker';
 import { sendApiError } from './http/errors';
@@ -107,6 +108,14 @@ export function createApp(options: CreateAppOptions) {
     requireAuth,
     rateLimit,
     createDriversRouter(options.db, geo),
+  );
+
+  // NOTIF-RS-PUSH — passenger FCM device-token registration (role-gated).
+  app.use(
+    '/v1/device-tokens',
+    requireAuth,
+    rateLimit,
+    createDeviceTokensRouter(options.db),
   );
 
   // N2A location cursor + L2 Step 3 RTDB projection + N2C Redis GEO.

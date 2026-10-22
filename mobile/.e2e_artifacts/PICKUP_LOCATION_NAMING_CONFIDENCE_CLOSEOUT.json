@@ -1,0 +1,64 @@
+{
+  "feature": "LOCN-NAME-UX — Pickup Location Naming and Confidence UX",
+  "date": "2026-10-19",
+  "status": "IMPLEMENTED + unit/widget-tested + on-device geocoder verified; staging still billing-blocked (unchanged)",
+  "problem": "GPS pickups displayed 'Location selected' because Places reverse-geocoding was the sole name source and project billing blocks paid Maps calls — passengers could not judge pickup correctness.",
+  "changes": {
+    "mobile/pubspec.yaml": [
+      "geocoding: ^5.0.0 — wraps native Android Geocoder; no API key, no GCP billing",
+      "dev: integration_test (flutter SDK) — on-device smoke harness"
+    ],
+    "mobile/lib/features/ride/domain/ports/device_geocoder_port.dart": [
+      "NEW — device-side reverse-geocoder abstraction (localityLabel, null = unsupported/empty)"
+    ],
+    "mobile/lib/features/ride/data/location/geocoding_device_geocoder.dart": [
+      "NEW — Geocoding v5 instance API (Geocoding().placemarkFromCoordinates/isPresent())",
+      "devicePlacemarkLabel() composes label from real placemark fields only (name/thoroughfare/subLocality/locality/adminArea/country), deduped, max 3 parts, null when empty — never invents"
+    ],
+    "mobile/lib/features/ride/data/location/fallback_place_search.dart": [
+      "NEW — decorates PlaceSearchPort: Places result wins when it has a usable address; device geocoder on throw OR unlabeled success; rethrows the PRIMARY error on total failure (honest unresolved state preserved)"
+    ],
+    "mobile/lib/app/di/providers.dart": [
+      "placeSearchPortProvider now returns FallbackPlaceSearch(GooglePlacesHttpSearch, GeocodingDeviceGeocoder)"
+    ],
+    "mobile/lib/features/ride/domain/models/resolved_passenger_location.dart": [
+      "horizontalAccuracyMeters (nullable) — GPS fix quality metadata; excluded from ==/hashCode (not location identity)"
+    ],
+    "mobile/lib/features/ride/data/location/geolocator_device_location.dart": [
+      "threads Position.accuracy into horizontalAccuracyMeters"
+    ],
+    "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart": [
+      "resolved address attaches to ORIGINAL GPS coords; total failure returns unnamed GPS location (named=false, honest fallback); retryPickupNameLookup reuses existing coords — no GPS re-acquire"
+    ],
+    "mobile/lib/features/ride/presentation/views/ride_request_view.dart": [
+      "proposal card: 'GPS fix accuracy ±N m' shown only when provider reported accuracy; kept distinct from address confidence",
+      "unresolved copy states honest adjustment path (search/pick suggestion) — map preview is display-only, no pin-drag claimed"
+    ]
+  },
+  "invariants": [
+    "coordinates are authoritative — naming never moves the pin",
+    "no fabricated locality/address/accuracy values",
+    "no backend, pricing, matching, lifecycle, or payout changes"
+  ],
+  "tests": {
+    "new_unit_cases": 10,
+    "new_widget_cases": 1,
+    "device_geocoder_fallback_test": "10/10 pass (label composer x3, decorator x4, VM accuracy/coords/retry x3)",
+    "ride_request_view_model_test": "44/44 pass",
+    "ride_request_ui_test": "15/15 pass",
+    "flutter_analyze_lib": "clean"
+  },
+  "physical_verification": {
+    "device": "Samsung SM-A325F, Android 13, serial RF8R40ZQ1JH",
+    "method": "integration_test/device_geocoder_smoke_test.dart run via flutter test -d — exercises the REAL GeocodingDeviceGeocoder on-device",
+    "result": "PASS — DEVICE_GEOCODER_RESULT='Plot n, Sher Ali Road, Aitchison Society' for lat 31.46, lng 74.26",
+    "scope": "native geocoder path only; full ride-request E2E still requires staging (billing-blocked) — no live compose-flow claim"
+  },
+  "limitations": [
+    "Places API calls remain 403 until owner re-links billing — device geocoder is the working name path",
+    "no pin-drag on the map preview; adjustment path is search/suggestions or re-run current location",
+    "device geocoder availability varies by OEM/region — isPresent() checked; unsupported → honest fallback"
+  ],
+  "next_recommended_feature": "Courier/Move service types (needs owner product semantics) or live ride-state push verification once billing restores",
+  "safety": "No billing/cloud/deploy/commit/push; all prior working-tree changes preserved"
+}

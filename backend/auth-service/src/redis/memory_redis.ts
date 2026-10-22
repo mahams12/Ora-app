@@ -115,6 +115,21 @@ export function createMemoryRedis(): RedisGeoClient & {
       }
       return n;
     },
+    async projectLocation(input) {
+      let set = geos.get(input.key);
+      if (!set) {
+        set = new Map();
+        geos.set(input.key, set);
+      }
+      set.set(input.member, { lng: input.longitude, lat: input.latitude });
+      strings.set(input.markerKey, {
+        value: input.markerValue,
+        expiresAt:
+          input.markerTtlSeconds != null
+            ? Date.now() + input.markerTtlSeconds * 1000
+            : null,
+      });
+    },
     async flushdb() {
       strings.clear();
       geos.clear();

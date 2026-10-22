@@ -411,6 +411,19 @@ class _FakeRemote implements DriverLocationRemoteDataSource {
           acceptedAt: DateTime.now().toUtc().toIso8601String(),
         );
   }
+
+  @override
+  Future<LocationPublishResult> publishIdleLocation({
+    required int locationSeq,
+    required String locationStreamId,
+    required DriverLocationFix fix,
+    required CancelToken cancelToken,
+    RequestContext? context,
+  }) async {
+    return const LocationPublishFailed(
+      kind: LocationPublishFailureKind.unknown,
+    );
+  }
 }
 
 class _RecordingLogger extends AppLogger {

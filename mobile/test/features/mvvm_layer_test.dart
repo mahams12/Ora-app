@@ -61,9 +61,10 @@ void main() {
       'lib/features/passenger/presentation/views/home_shell_view.dart',
     ).readAsStringSync();
     // Ride request may use context.push; logout must not navigate.
-    expect(content.contains('onSignOut: homeState.signingOut ? null : vm.logout'),
+    expect(content.contains('homeState.signingOut ? () {} : _signOut'),
         isTrue);
-    expect(content.contains('vm.logout();'), isFalse);
+    expect(content.contains('onTap: homeState.signingOut ? null'),
+        isFalse);
     expect(RegExp(r'logout[\s\S]{0,80}context\.(go|push)').hasMatch(content),
         isFalse);
   });

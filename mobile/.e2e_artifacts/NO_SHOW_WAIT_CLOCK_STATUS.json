@@ -1,0 +1,40 @@
+{
+  "task": "Passenger wait-clock / NO_SHOW UX — inspection + verification",
+  "date": "2026-10-19",
+  "conclusion": "FEATURE_ALREADY_IMPLEMENTED — no app code written",
+  "implementation": {
+    "backend": {
+      "waitRule": "RIDE_NO_SHOW_WAIT_MS = 5min (types.ts:59)",
+      "arrivedAt": "set once on DRIVER_ARRIVED, immutable (ride_service.ts ~2192)",
+      "sweeper": "POST /v1/internal/rides/no-show-sweep; transactional, idempotent; staging cron */5min (wire_staging_cloud_scheduler.sh)",
+      "terminal": "NO_SHOW in TERMINAL + TERMINAL_FOR_OFFERS"
+    },
+    "client": {
+      "arrivedWaitLabel": "active_ride_display.dart — elapsed from server arrivedAt; null-safe on missing/invalid/future timestamp",
+      "clock": "ActiveRideViewModel._ensureClock — 1Hz ValueNotifier<DateTime> arrivedNow, DRIVER_ARRIVED only; pause/resume/dispose handled",
+      "ui": "_ArrivedWaitLabel widget (active_ride_view.dart:394); title 'Driver has arrived'; NO_SHOW 'No-show recorded' + 'No fees or penalties are invented here'; terminal → phase.ended → polling stops",
+      "integrity": "shouldAcceptRideSnapshot version gate; isRideUiEquivalent includes arrivedAt; connectivity-degraded infoMessage"
+    }
+  },
+  "automatedTests": {
+    "command": "flutter test active_ride_view_model_test active_ride_ui_test ride_progression_entity_test ride_history_view_model_test trip_location_session_test slice_k_performance_test",
+    "result": "58/58 PASS",
+    "analyze": "No issues found (3 items)",
+    "coverage": [
+      "polling stops on terminal NO_SHOW",
+      "arrivedWaitLabel uses real arrivedAt only (null on missing)",
+      "DRIVER_ARRIVED shows wait from arrivedAt (widget)",
+      "NO_SHOW — no invented fees (widget)",
+      "arrivedNow clock tick (slice_k)"
+    ]
+  },
+  "physicalProof": {
+    "status": "BLOCKED — staging outage",
+    "attempt": "no_show_wait_clock_e2e.py run 2026-10-19; passenger create failed at review — app showed 'Something went wrong'",
+    "rootCause": "GET /v1/health → 503/500; gcloud logging: 'The request failed because billing is disabled for this project' — Cloud Run cannot start instances; scheduled sweeps also stopped",
+    "evidence": ["no_show_run1.out", "two_actor_lifecycle_ratings_report_noshow_blocked.json"],
+    "note": "run failure overwrote tracked two_actor_lifecycle_ratings_report.json via module fail(); preserved as *_noshow_blocked.json and original restored via git checkout",
+    "unblockStep": "Re-enable GCP project billing, wait for Cloud Run instance, re-run: python3 no_show_wait_clock_e2e.py"
+  },
+  "verdict": "IMPLEMENTED + AUTOMATED-TESTED; physical proof pending staging restoration"
+}

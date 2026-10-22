@@ -146,35 +146,11 @@ class GooglePlacesHttpSearch implements PlaceSearchPort {
       // Places API (New) searchNearby — same key as autocomplete/details.
       // Do NOT use maps.googleapis.com Geocoding API here: that product is a
       // separate enablement and returns REQUEST_DENIED on Places-only keys.
-      final response = await _dio.post<Map<String, dynamic>>(
-        'v1/places:searchNearby',
-        data: <String, Object?>{
-          'maxResultCount': 5,
-          'rankPreference': 'DISTANCE',
-          'languageCode': 'en',
-          'locationRestriction': <String, Object?>{
-            'circle': <String, Object?>{
-              'center': <String, Object?>{
-                'latitude': lat,
-                'longitude': lng,
-              },
-              // Wide enough for sparse areas; still distance-ranked.
-              'radius': 500.0,
-            },
-          },
-        },
-        options: Options(
-          headers: <String, String>{
-            'X-Goog-Api-Key': _apiKey,
-            'X-Goog-FieldMask':
-                'places.displayName,'
-                'places.formattedAddress,'
-                'places.addressComponents',
-          },
-        ),
-      );
-
-      final data = response.data;
+      // Sparse areas: one wider-radius retry before reporting empty.
+      var data = await _searchNearby(lat, lng, radius: 500.0);
+      if (data == null || data['places'] is! List || (data['places'] as List).isEmpty) {
+        data = await _searchNearby(lat, lng, radius: 2000.0);
+      }
       if (data == null) {
         throw const PlaceSearchException(
           PlaceSearchFailureKind.empty,
@@ -214,9 +190,11 @@ class GooglePlacesHttpSearch implements PlaceSearchPort {
     } on PlaceSearchException {
       rethrow;
     } on DioException catch (e) {
+      final status = e.response?.statusCode;
       throw PlaceSearchException(
         PlaceSearchFailureKind.network,
-        e.message,
+        '${e.message ?? 'DioException ${e.type.name}'}'
+        '${status != null ? ' (HTTP $status)' : ''}',
       );
     } catch (e) {
       if (e is PlaceSearchException) rethrow;
@@ -225,6 +203,40 @@ class GooglePlacesHttpSearch implements PlaceSearchPort {
         'Location lookup isn\'t available right now.',
       );
     }
+  }
+
+  Future<Map<String, dynamic>?> _searchNearby(
+    double lat,
+    double lng, {
+    required double radius,
+  }) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      'v1/places:searchNearby',
+      data: <String, Object?>{
+        'maxResultCount': 5,
+        'rankPreference': 'DISTANCE',
+        'languageCode': 'en',
+        'locationRestriction': <String, Object?>{
+          'circle': <String, Object?>{
+            'center': <String, Object?>{
+              'latitude': lat,
+              'longitude': lng,
+            },
+            'radius': radius,
+          },
+        },
+      },
+      options: Options(
+        headers: <String, String>{
+          'X-Goog-Api-Key': _apiKey,
+          'X-Goog-FieldMask':
+              'places.displayName,'
+              'places.formattedAddress,'
+              'places.addressComponents',
+        },
+      ),
+    );
+    return response.data;
   }
 
   @override

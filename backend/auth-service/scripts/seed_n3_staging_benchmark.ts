@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import { getFirestore } from 'firebase-admin/firestore';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRedisGeoClientFromEnv } from '../src/redis/client';
+import { createFirestoreGeoClient } from '../src/redis/firestore_geo_client';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
@@ -71,7 +71,7 @@ async function seedFirestore(db: ReturnType<typeof getFirestore>, ids: string[])
 }
 
 async function seedRedis(
-  redis: NonNullable<Awaited<ReturnType<typeof createRedisGeoClientFromEnv>>>,
+  redis: ReturnType<typeof createFirestoreGeoClient>,
   ids: string[],
 ) {
   const now = Date.now();
@@ -118,7 +118,7 @@ async function listBenchDriverIds(db: ReturnType<typeof getFirestore>): Promise<
 }
 
 async function cleanupRedis(
-  redis: NonNullable<Awaited<ReturnType<typeof createRedisGeoClientFromEnv>>>,
+  redis: ReturnType<typeof createFirestoreGeoClient>,
   ids: string[],
 ) {
   for (const id of ids) {
@@ -144,11 +144,7 @@ function initFirebase() {
 async function main() {
   initFirebase();
   const db = getFirestore();
-  const redis = await createRedisGeoClientFromEnv(process.env);
-  if (!redis) {
-    console.error(JSON.stringify({ ok: false, error: 'REDIS_URL not set' }));
-    process.exit(2);
-  }
+  const redis = createFirestoreGeoClient(db);
 
   const ids = Array.from({ length: COUNT }, (_, i) => driverId(i));
 

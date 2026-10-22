@@ -14,6 +14,7 @@ import {
 } from '../drivers/nearby_service';
 import { DispatchWaveService } from '../rides/dispatch_wave_service';
 import { DispatchFcmProjector } from '../delivery/dispatch_fcm_projector';
+import { RideStateFcmProjector } from '../delivery/ride_state_fcm_projector';
 import type { FcmSender } from '../delivery/fcm_sender';
 import { createNullFcmSender } from '../delivery/fcm_sender';
 import type { RedisGeoClient } from '../redis/types';
@@ -31,6 +32,7 @@ export function createInternalRouter(
   const dispatch = new DispatchWaveService(db, nearby);
   const fcmSender = fcm ?? createNullFcmSender();
   const dispatchFcm = new DispatchFcmProjector(db, fcmSender);
+  const rideStateFcm = new RideStateFcmProjector(db, fcmSender);
   const expiresAtCleanup = new ExpiresAtCleanupService(db);
 
   router.post('/rides/expire-sweep', async (req, res) => {
@@ -261,7 +263,60 @@ export function createInternalRouter(
     }
   });
 
-  /** N3 — nearby driver candidates (worker-only; Redis GEO + Firestore filters). */
+  /**
+   * NOTIF-RS-PUSH — outbox→FCM projector for ride-state nudges.
+   * Emits identifiers-only RIDE_UPDATE pushes for the allowlisted lifecycle/
+   * offer events; recipients resolved server-side from rides/rideOffers docs.
+   */
+  router.post('/outbox/ride-state-fcm-sweep', async (req, res) => {
+    const started = Date.now();
+    const limitRaw = req.query.limit;
+    let limit: number | undefined;
+    if (limitRaw != null) {
+      const parsed = Number(String(limitRaw));
+      if (!Number.isInteger(parsed) || parsed < 1) {
+        sendApiError(
+          req,
+          res,
+          400,
+          'VALIDATION_ERROR',
+          'limit must be a positive integer.',
+        );
+        return;
+      }
+      limit = parsed;
+    }
+
+    try {
+      const result = await rideStateFcm.sweep({
+        correlationId: getRequestId(req),
+        limit,
+      });
+      logSafe('RS_RIDE_FCM_SWEEP', {
+        operation: 'RS_RIDE_FCM_SWEEP',
+        requestId: getRequestId(req),
+        scanned: result.scanned,
+        processed: result.processed,
+        delivered: result.delivered,
+        retryable: result.retryable,
+        deadLetter: result.deadLetter,
+        skipped: result.skipped,
+        failed: result.failed,
+        durationMs: Date.now() - started,
+      });
+      sendRideData(req, res, 200, result);
+    } catch (err) {
+      logSafe('RS_RIDE_FCM_SWEEP', {
+        operation: 'RS_RIDE_FCM_SWEEP',
+        requestId: getRequestId(req),
+        durationMs: Date.now() - started,
+        errorCode: err instanceof RideDomainError ? err.code : 'INTERNAL',
+      });
+      sendRideDomainError(req, res, err);
+    }
+  });
+
+  /** N3 — nearby driver candidates (worker-only; geo index + Firestore filters). */
   router.get('/drivers/nearby', async (req, res) => {
     const started = Date.now();
     const requestId = getRequestId(req);

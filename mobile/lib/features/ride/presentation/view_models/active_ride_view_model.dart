@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../app/di/providers.dart';
 import '../../../../core/errors/app_failure.dart';
 import '../../../../core/errors/failure_mapper.dart';
+import '../../../../core/notifications/ride_fcm_nudge.dart';
 import '../../../../core/storage/idempotency_nonce_store.dart';
 import '../../domain/entities/ride.dart';
 import '../../domain/use_cases/ride_use_cases.dart';
@@ -121,6 +122,8 @@ class ActiveRideViewModel
 
   Timer? _pollTimer;
   Timer? _clockTimer;
+  Timer? _nudgeDebounce;
+  bool _nudgePending = false;
   DateTime? _startedAt;
   bool _disposed = false;
   bool _paused = false;
@@ -150,6 +153,14 @@ class ActiveRideViewModel
     _failures = ref.read(failureMapperProvider);
     _policy = ref.read(activeRidePollingPolicyProvider);
     _nonceStore = ref.read(idempotencyNonceStoreProvider);
+
+    // NOTIF-RIDE-NUDGE: push ⇒ "poll now" hint for this ride only; HTTP
+    // polling stays the authoritative fallback and is untouched.
+    ref.listen<AsyncValue<RideFcmNudge>>(fcmRideNudgeProvider, (_, next) {
+      final nudge = next.value;
+      if (nudge == null || nudge.rideId != rideId) return;
+      _onRideNudge();
+    });
 
     ref.onDispose(() {
       _disposed = true;
@@ -208,6 +219,27 @@ class ActiveRideViewModel
     await refresh();
     _scheduleNext();
     _ensureClock();
+  }
+
+  /// Push nudge ⇒ one immediate refresh, then a short debounce window that
+  /// collapses FCM bursts into at most one extra fetch. [refresh]'s own
+  /// guards keep mutation/disposal safety; works while paused (push is the
+  /// wake signal) and never schedules or mutates polling.
+  static const Duration nudgeDebounceWindow = Duration(milliseconds: 500);
+
+  void _onRideNudge() {
+    if (!_alive) return;
+    if (_nudgeDebounce != null) {
+      _nudgePending = true;
+      return;
+    }
+    _nudgeDebounce = Timer(nudgeDebounceWindow, () {
+      _nudgeDebounce = null;
+      if (!_nudgePending) return;
+      _nudgePending = false;
+      if (_alive) unawaited(refresh());
+    });
+    unawaited(refresh());
   }
 
   /// [force] used for post-mutation reconciliation (never dropped).
@@ -576,6 +608,9 @@ class ActiveRideViewModel
     _pollTimer = null;
     _clockTimer?.cancel();
     _clockTimer = null;
+    _nudgeDebounce?.cancel();
+    _nudgeDebounce = null;
+    _nudgePending = false;
     _paused = true;
   }
 }

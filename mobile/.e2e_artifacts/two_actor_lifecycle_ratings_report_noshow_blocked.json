@@ -1,0 +1,12 @@
+{
+  "gates": {
+    "auth_driver": "GREEN",
+    "driver_ready": "PASS",
+    "auth_passenger": "GREEN"
+  },
+  "transitions": {},
+  "ratings": {},
+  "error": "review not reached",
+  "finished": "2026-10-19T06:56:43.011893+00:00",
+  "verdict": "NOT GREEN"
+}

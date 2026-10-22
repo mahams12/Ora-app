@@ -37,6 +37,10 @@ class Ride {
     this.agreedFareMinor,
     this.agreedOfferId,
     this.agreedFareCurrency,
+    this.driverPayoutMinor,
+    this.platformFeeMinor,
+    this.payoutCurrency,
+    this.feePolicyResolution,
     this.assignedAt,
     this.arrivedAt,
     this.startedAt,
@@ -62,6 +66,15 @@ class Ride {
   final int? agreedFareMinor;
   final String? agreedOfferId;
   final String? agreedFareCurrency;
+
+  /// Server-derived payout snapshot (immutable, set at offer selection).
+  /// Null on rides selected before the payout model or when the policy
+  /// resolution was UNAVAILABLE — earnings falls back to [agreedFareMinor]
+  /// labelled "trip fare" in that case. Never trusted from client input.
+  final int? driverPayoutMinor;
+  final int? platformFeeMinor;
+  final String? payoutCurrency;
+  final String? feePolicyResolution;
   final String paymentMethod;
   final int passengerCount;
   final String expiresAt;
@@ -136,6 +149,62 @@ class OpenRideListPage {
 
   final List<OpenRide> rides;
   final String? nextCursor;
+}
+
+/// Driver invitation item from GET /v1/rides/invited.
+///
+/// The invitation is backed by a dispatch wave — `inviteExpiresAt` is the
+/// single server-authoritative countdown deadline. `status` is the
+/// server-computed classification: ACTIVE, EXPIRED, RESPONDED_ACCEPTED,
+/// RESPONDED_DECLINED or CLOSED.
+class DriverInvite {
+  const DriverInvite({
+    required this.rideId,
+    required this.waveId,
+    required this.waveNumber,
+    required this.status,
+    required this.pickup,
+    required this.destination,
+    required this.passengerOfferMinor,
+    required this.currency,
+    required this.serviceType,
+    required this.category,
+    required this.passengerCount,
+    this.inviteExpiresAt,
+    this.respondedAt,
+    this.offerId,
+    this.distanceKm,
+  });
+
+  final String rideId;
+  final String waveId;
+  final int waveNumber;
+  final String status;
+  final LatLngPoint pickup;
+  final LatLngPoint destination;
+  final int passengerOfferMinor;
+  final String currency;
+  final String serviceType;
+  final String category;
+  final int passengerCount;
+  final DateTime? inviteExpiresAt;
+  final String? respondedAt;
+  final String? offerId;
+  final double? distanceKm;
+
+  bool get isActionable => status == 'ACTIVE';
+}
+
+class DriverInvitePage {
+  const DriverInvitePage({
+    required this.items,
+    required this.serverNowMs,
+  });
+
+  final List<DriverInvite> items;
+  /// Server wall-clock at response time — used to offset client clock skew
+  /// so countdowns stay consistent across devices/restarts.
+  final int serverNowMs;
 }
 
 class RideOffer {

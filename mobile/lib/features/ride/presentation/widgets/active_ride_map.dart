@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../app/theme/ora_colors.dart';
@@ -11,6 +12,7 @@ import '../../domain/location/trip_location_freshness.dart';
 import '../location/trip_location_session.dart';
 import '../utils/active_ride_map_camera_policy.dart';
 import '../utils/active_ride_map_progression_policy.dart';
+import '../utils/driver_marker_interpolator.dart';
 
 /// Active-ride Google Map — pickup/destination from HTTP [Ride], driver from RTDB.
 ///
@@ -70,11 +72,18 @@ class ActiveRideMap extends StatefulWidget {
   State<ActiveRideMap> createState() => _ActiveRideMapState();
 }
 
-class _ActiveRideMapState extends State<ActiveRideMap> {
+class _ActiveRideMapState extends State<ActiveRideMap>
+    with SingleTickerProviderStateMixin {
   GoogleMapController? _controller;
 
   /// Last successfully applied camera identity (guards against rebuild thrash).
   String? _fittedIdentity;
+
+  /// MAP-RT: display-only marker smoothing. RTDB coords stay authoritative;
+  /// the interpolator only renders a position between accepted fixes.
+  final DriverMarkerInterpolator _interpolator = DriverMarkerInterpolator();
+  Ticker? _markerTicker;
+  ({double lat, double lng})? _renderedDriver;
 
   /// In-flight fit target — prevents duplicate post-frame animate for same id.
   String? _pendingIdentity;
@@ -114,11 +123,12 @@ class _ActiveRideMapState extends State<ActiveRideMap> {
   @override
   void initState() {
     super.initState();
-    if (widget.onAnimateCamera != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _scheduleCameraFit();
-      });
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _feedLocationFix();
+        if (widget.onAnimateCamera != null) _scheduleCameraFit();
+      }
+    });
   }
 
   @override
@@ -129,6 +139,12 @@ class _ActiveRideMapState extends State<ActiveRideMap> {
     if (widget.userCameraMoveEpoch != oldWidget.userCameraMoveEpoch) {
       _onUserCameraMoveStarted();
     }
+
+    // Ride-state transition — restart interpolation so the next fix snaps.
+    if (widget.ride.state != oldWidget.ride.state) {
+      _interpolator.reset();
+    }
+    _feedLocationFix();
 
     final nextId = _currentIdentity;
     final prevId = ActiveRideMapCameraPolicy.fitIdentity(
@@ -147,8 +163,83 @@ class _ActiveRideMapState extends State<ActiveRideMap> {
 
   @override
   void dispose() {
+    _markerTicker?.dispose();
+    _markerTicker = null;
     _controller = null;
     super.dispose();
+  }
+
+  /// MAP-RT: feed the newest authoritative fix into the interpolator.
+  /// Ineligible input (no fix, invalid coords, marker hidden by freshness)
+  /// resets smoothing so the marker can't coast on stale data.
+  void _feedLocationFix() {
+    if (!mounted) return;
+    final session = widget.locationSession;
+    final latest = session.latest;
+    final eligible = latest != null &&
+        latest.hasValidCoordinates &&
+        const TripLocationFreshnessPolicy()
+            .shouldShowDriverMarker(session.freshness);
+    if (!eligible) {
+      if (_renderedDriver != null || _interpolator.isAnimating) {
+        _interpolator.reset();
+        _renderedDriver = null;
+        _stopMarkerTicker();
+        setState(() {});
+      }
+      return;
+    }
+
+    _interpolator.onFix(
+      lat: latest.lat,
+      lng: latest.lng,
+      streamKey: latest.locationStreamId,
+      seq: latest.locationSeq,
+    );
+    final rendered = _interpolator.rendered();
+    if (rendered != null && rendered != _renderedDriver) {
+      _renderedDriver = rendered;
+      setState(() {});
+    }
+    if (_interpolator.isAnimating) {
+      _ensureMarkerTicker();
+    } else {
+      _stopMarkerTicker();
+    }
+  }
+
+  void _ensureMarkerTicker() {
+    final ticker = _markerTicker ??= createTicker(_onMarkerTick);
+    if (!ticker.isActive) {
+      ticker.start();
+    }
+  }
+
+  void _stopMarkerTicker() {
+    final ticker = _markerTicker;
+    if (ticker != null && ticker.isActive) {
+      ticker.stop();
+    }
+  }
+
+  void _onMarkerTick(Duration _) {
+    if (!mounted) return;
+    final rendered = _interpolator.rendered();
+    if (rendered != null && rendered != _renderedDriver) {
+      _renderedDriver = rendered;
+      setState(() {});
+    }
+    if (!_interpolator.isAnimating) {
+      _stopMarkerTicker();
+    }
+  }
+
+  /// Displayed driver position — interpolated for the marker/guide only;
+  /// camera policy still reads the authoritative fix via [_driverLatLng].
+  LatLng? get _displayDriver {
+    final r = _renderedDriver;
+    if (r != null) return LatLng(r.lat, r.lng);
+    return _driverLatLng;
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -172,8 +263,11 @@ class _ActiveRideMapState extends State<ActiveRideMap> {
   }
 
   void _onRecenter() {
-    // Recenter: clear ownership, then one MAP-2B policy fit.
+    // Recenter: clear ownership, reset smoothing (next render snaps to the
+    // authoritative fix), then one MAP-2B policy fit.
     _releaseUserCameraOwnership();
+    _interpolator.reset();
+    _feedLocationFix();
     _fittedIdentity = null;
     _pendingIdentity = null;
     _scheduleCameraFit();
@@ -285,7 +379,7 @@ class _ActiveRideMapState extends State<ActiveRideMap> {
       );
     }
 
-    final driver = _driverLatLng;
+    final driver = _displayDriver;
     final latest = widget.locationSession.latest;
     if (driver != null && latest != null) {
       final band = widget.locationSession.freshness;
@@ -322,7 +416,7 @@ class _ActiveRideMapState extends State<ActiveRideMap> {
       rideState: widget.ride.state,
       pickup: _pickup,
       destination: _destination,
-      driver: _driverLatLng,
+      driver: _displayDriver,
     );
   }
 

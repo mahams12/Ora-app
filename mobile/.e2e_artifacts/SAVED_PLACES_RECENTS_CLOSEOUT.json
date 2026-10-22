@@ -1,0 +1,63 @@
+{
+  "report": "SAVED_PLACES_RECENTS_CLOSEOUT",
+  "date": "2026-10-19",
+  "workstream_A": {
+    "status": "IMPLEMENTED + on-device verified",
+    "new_files": [
+      "lib/features/saved_places/domain/entities/passenger_places.dart",
+      "lib/features/saved_places/domain/passenger_places_policy.dart",
+      "lib/features/saved_places/domain/ports/passenger_places_store.dart",
+      "lib/features/saved_places/data/secure_passenger_places_store.dart",
+      "lib/features/saved_places/presentation/view_models/passenger_places_view_model.dart",
+      "lib/features/saved_places/presentation/widgets/passenger_places_sections.dart",
+      "test/features/saved_places/passenger_places_test.dart",
+      "docs/design/FCM_RIDE_STATE_PROJECTOR_DESIGN.md"
+    ],
+    "modified_files": [
+      "lib/app/di/providers.dart (passengerPlacesStoreProvider)",
+      "lib/features/ride/domain/models/resolved_passenger_location.dart (+recent source, +displayName UI-only)",
+      "lib/features/ride/presentation/view_models/ride_request_view_model.dart (applySavedPlace/applyRecentDestination/savePlaceForField/record-on-confirm)",
+      "lib/features/ride/presentation/views/ride_request_view.dart (sections under fields, Save on proposal card, manage/save sheets)"
+    ],
+    "storage_decision": "SecureStorage (Keychain/Keystore) — the app's only durable local store; uid-scoped keys (ora.saved_places.v1.{uid}, ora.recent_destinations.v1.{uid}); wiped on logout via deleteAll -> strongest available account isolation, zero new dependencies. shared_preferences deliberately NOT added.",
+    "semantics": {
+      "saved_place": "id ('home'/'work' reserved slots / uuid), user name (<=40 chars normalized), authoritative lat/lng, optional genuine addressLabel (never fabricated), placeId. CRUD via bottom sheets; tap = instant apply, zero network.",
+      "recent_destination": "recorded ONLY at confirmDestination (explicit passenger confirm; abandoned searches/proposals never recorded). Dedup: same placeId OR <=75m haversine. Cap 8, most-recent first.",
+      "honesty": "ResolvedPassengerLocation.displayName renders user names ('Home') in UI but is never sent as ride `address`; unlabelled recents display 'Pinned location'."
+    },
+    "device_verification": {
+      "device": "SM-A325F (RF8R40ZQ1JH), debug build + local auth stub (staging still down: billing closed)",
+      "observed": [
+        "Use current location -> proposal card -> 'Save place' affordance rendered",
+        "Save sheet: Home/Work quick slots + custom name; saved 'Home'",
+        "'Home' row persisted and rendered under destination field on same compose AND across navigation (durable)",
+        "Tap Home row -> instant 'Home' proposal (displayName) + 'Confirm destination' — no network lookup",
+        "confirmDestination -> next compose shows 'Pinned location' recent row (honest fallback: GPS point had no resolved label)"
+      ],
+      "evidence": ["p2_saved_places_compose_ui.xml", "p2_saved_places_compose.png"]
+    },
+    "tests": {
+      "focused_new": "10 PASS — policy (name normalize, upsert ordering/cap, recent dedup/cap), store (roundtrip, uid isolation, corrupt/malformed tolerance), VM (CRUD, invalid-input rejection, recent dedup+persist, account scoping)",
+      "suite": "337 pass / 2 fail — ride_history_ui_test pre-existing failures reproduced at pristine HEAD (unrelated)",
+      "analyze": "flutter analyze lib/ -> No issues found"
+    }
+  },
+  "workstream_B": {
+    "status": "DESIGN ONLY — documented, NOT implemented or deployed",
+    "doc": "docs/design/FCM_RIDE_STATE_PROJECTOR_DESIGN.md",
+    "summary": "RideStateFcmProjector mirroring D1 (PENDING-first scan, CAS fence, per-recipient results, dead-letter). Closed event allowlist; identifiers-only payload {type:RIDE_UPDATE,rideId,eventId,deliveryEventId}; recipients resolved via rides/{id} (passengerId/assignedDriverId) + offers/{id} for offer.selected. Post-push fetch = existing GET /v1/rides/{id} via client refresh().",
+    "backend_blocker": "driverDeviceTokens registration gated to approved drivers (device_token_service.ts:60) — passengers have NO device-token path. Design recommends parameterizing DeviceTokenService by collection + role gate or a parallel passengerDeviceTokens collection.",
+    "client_status": "RideFcmNudge consumer already shipped (Phase 1) and lenient — RIDE_UPDATE messages activate the path with no app change."
+  },
+  "constraints_honored": [
+    "no cloud/billing/key/deploy changes; no paid services; no new deps",
+    "no ride/offer SM, pricing, matching, publishing-limit changes",
+    "no commits/pushes/destructive cleanup; all prior artifacts preserved",
+    "no e2e FCM claim — backend projector does not exist yet"
+  ],
+  "limitations": [
+    "Saved places are device-local only (no server sync — deliberate for this slice)",
+    "Physical verification used debug build without MAPLIBRE_TILE_KEY (map tileless; feature paths unaffected)",
+    "Staging remains down (billing closed) — no live-backend flow tested"
+  ]
+}

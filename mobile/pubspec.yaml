@@ -27,6 +27,7 @@ dependencies:
   geolocator: ^14.0.2
   google_maps_flutter: ^2.12.3
   maplibre_gl: ^0.27.1
+  geocoding: ^5.0.0
 
 dev_dependencies:
   flutter_test:
@@ -37,6 +38,8 @@ dev_dependencies:
   json_serializable: ^6.8.0
   riverpod_generator: ^2.6.3
   mocktail: ^1.0.4
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true

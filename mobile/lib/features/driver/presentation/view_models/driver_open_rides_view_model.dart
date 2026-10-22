@@ -33,6 +33,8 @@ class DriverOpenRidesUiState {
     this.lastCreatedOffer,
     this.offerErrorMessage,
     this.offerInfoMessage,
+    this.serviceTypeFilter,
+    this.categoryFilter,
   });
 
   final DriverOpenRidesPhase phase;
@@ -46,6 +48,14 @@ class DriverOpenRidesUiState {
   final RideOffer? lastCreatedOffer;
   final String? offerErrorMessage;
   final String? offerInfoMessage;
+
+  /// Server-side browse filters (GET /v1/rides/open params). `null` = Any.
+  /// Narrow what the list returns; never what the driver is eligible for.
+  final String? serviceTypeFilter;
+  final String? categoryFilter;
+
+  bool get hasActiveFilters =>
+      serviceTypeFilter != null || categoryFilter != null;
 
   bool get hasMore => nextCursor != null && nextCursor!.isNotEmpty;
 
@@ -70,6 +80,8 @@ class DriverOpenRidesUiState {
     RideOffer? lastCreatedOffer,
     String? offerErrorMessage,
     String? offerInfoMessage,
+    String? serviceTypeFilter,
+    String? categoryFilter,
     bool clearNextCursor = false,
     bool clearError = false,
     bool clearPaginationError = false,
@@ -77,6 +89,8 @@ class DriverOpenRidesUiState {
     bool clearLastOffer = false,
     bool clearOfferError = false,
     bool clearOfferInfo = false,
+    bool clearServiceTypeFilter = false,
+    bool clearCategoryFilter = false,
   }) {
     return DriverOpenRidesUiState(
       phase: phase ?? this.phase,
@@ -99,6 +113,12 @@ class DriverOpenRidesUiState {
       offerInfoMessage: clearOfferInfo
           ? null
           : (offerInfoMessage ?? this.offerInfoMessage),
+      serviceTypeFilter: clearServiceTypeFilter
+          ? null
+          : (serviceTypeFilter ?? this.serviceTypeFilter),
+      categoryFilter: clearCategoryFilter
+          ? null
+          : (categoryFilter ?? this.categoryFilter),
     );
   }
 }
@@ -210,6 +230,33 @@ class DriverOpenRidesViewModel
   }
 
   Future<void> retry() => loadInitial();
+
+  /// Browse filters — applied server-side on the next fetch. Changing a
+  /// filter reloads page 1 so results always reflect the active set.
+  Future<void> setServiceTypeFilter(String? value) {
+    if (value == state.serviceTypeFilter) return Future.value();
+    state = value == null
+        ? state.copyWith(clearServiceTypeFilter: true)
+        : state.copyWith(serviceTypeFilter: value);
+    return loadInitial();
+  }
+
+  Future<void> setCategoryFilter(String? value) {
+    if (value == state.categoryFilter) return Future.value();
+    state = value == null
+        ? state.copyWith(clearCategoryFilter: true)
+        : state.copyWith(categoryFilter: value);
+    return loadInitial();
+  }
+
+  Future<void> clearFilters() {
+    if (!state.hasActiveFilters) return Future.value();
+    state = state.copyWith(
+      clearServiceTypeFilter: true,
+      clearCategoryFilter: true,
+    );
+    return loadInitial();
+  }
 
   Future<void> submitOffer({
     required OpenRide ride,
@@ -326,6 +373,8 @@ class DriverOpenRidesViewModel
       final page = await _listOpenRides(
         limit: openRidesDefaultLimit,
         cursor: cursor,
+        serviceType: state.serviceTypeFilter,
+        category: state.categoryFilter,
       );
       if (seq != _requestSeq) return;
 

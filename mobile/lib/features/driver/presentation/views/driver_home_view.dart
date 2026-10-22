@@ -20,7 +20,12 @@ class DriverHomeView extends StatelessWidget {
     required this.onOpenRideRequests,
     required this.onOpenAssignedTrips,
     required this.onOpenDirectOffer,
+    required this.onOpenEarnings,
     required this.onUnavailable,
+    required this.availabilityOnline,
+    required this.availabilityBusy,
+    required this.availabilityLoaded,
+    required this.onToggleAvailability,
     super.key,
   });
 
@@ -31,7 +36,12 @@ class DriverHomeView extends StatelessWidget {
   final VoidCallback onOpenRideRequests;
   final VoidCallback onOpenAssignedTrips;
   final VoidCallback onOpenDirectOffer;
+  final VoidCallback onOpenEarnings;
   final ValueChanged<String> onUnavailable;
+  final bool availabilityOnline;
+  final bool availabilityBusy;
+  final bool availabilityLoaded;
+  final VoidCallback onToggleAvailability;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +55,7 @@ class DriverHomeView extends StatelessWidget {
             avatarInitials: avatarInitials,
             onOpenDrawer: onOpenDrawer,
             onOpenProfile: onOpenProfile,
-            onEarningsTap: () => onUnavailable('Earnings'),
+            onEarningsTap: onOpenEarnings,
           ),
         ),
         SliverPadding(
@@ -60,7 +70,10 @@ class DriverHomeView extends StatelessWidget {
               const _MapStub(),
               const SizedBox(height: OraSpacing.md),
               _AvailabilityCard(
-                onTap: () => onUnavailable('Go online / offline'),
+                isOnline: availabilityOnline,
+                busy: availabilityBusy,
+                loaded: availabilityLoaded,
+                onTap: onToggleAvailability,
               ),
               const SizedBox(height: OraSpacing.md),
               OraCard(
@@ -125,7 +138,7 @@ class DriverHomeView extends StatelessWidget {
                     icon: Icons.show_chart_rounded,
                     label: 'Earnings',
                     color: OraColors.tealBright,
-                    onTap: () => onUnavailable('Earnings'),
+                    onTap: onOpenEarnings,
                   ),
                   _QuickTile(
                     icon: Icons.route_rounded,
@@ -298,11 +311,11 @@ class _DriverHero extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Today's earnings",
+                    'Trip fares',
                     style: OraTypography.caption(const Color(0xFFB9BDD1)),
                   ),
                   Text(
-                    '—',
+                    'Earnings',
                     style: OraTypography.display(Colors.white).copyWith(
                       fontSize: 30,
                       fontWeight: FontWeight.w800,
@@ -310,7 +323,7 @@ class _DriverHero extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Live payouts connect in a later slice · not invented',
+                    'Verified fares from completed trips · tap to view',
                     style: OraTypography.caption(const Color(0xFFB9BDD1)),
                   ),
                 ],
@@ -390,14 +403,34 @@ class _MapStub extends StatelessWidget {
 }
 
 class _AvailabilityCard extends StatelessWidget {
-  const _AvailabilityCard({required this.onTap});
+  const _AvailabilityCard({
+    required this.isOnline,
+    required this.busy,
+    required this.loaded,
+    required this.onTap,
+  });
+
+  /// Last server-confirmed availability.
+  final bool isOnline;
+
+  /// A go-online/go-offline call is in flight.
+  final bool busy;
+
+  /// First status fetch completed — before that, show an honest
+  /// "checking" state rather than assuming offline.
+  final bool loaded;
 
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final subtitle = !loaded
+        ? 'Checking availability…'
+        : isOnline
+            ? 'Online — visible for nearby dispatches'
+            : 'Offline — tap to go online';
     return OraCard(
-      onTap: onTap,
+      onTap: busy ? null : onTap,
       padding: const EdgeInsets.all(OraSpacing.md),
       child: Row(
         children: [
@@ -410,8 +443,10 @@ class _AvailabilityCard extends StatelessWidget {
                   style: OraTypography.bodyEmphasis(OraColors.textPrimary),
                 ),
                 Text(
-                  'Go online connects in a later slice',
-                  style: OraTypography.caption(OraColors.textMuted),
+                  subtitle,
+                  style: OraTypography.caption(
+                    isOnline ? OraColors.tealBright : OraColors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -421,16 +456,18 @@ class _AvailabilityCard extends StatelessWidget {
             height: 28,
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: OraColors.border,
+              color: isOnline ? OraColors.secondary : OraColors.border,
               borderRadius: BorderRadius.circular(999),
             ),
-            alignment: Alignment.centerLeft,
+            alignment: isOnline
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
             child: Container(
               width: 22,
               height: 22,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: OraColors.slateMuted,
+                color: isOnline ? Colors.white : OraColors.slateMuted,
               ),
             ),
           ),

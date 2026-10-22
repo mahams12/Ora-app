@@ -1,0 +1,44 @@
+{
+  "task": "Driver payout model — launch policy implementation",
+  "date": "2026-10-19",
+  "status": "implemented_unit_tested_not_deployed",
+  "launch_rule": "platformFee NONE → platformFeeMinor=0, driverPayoutMinor=agreedFareMinor (valid fare+currency only)",
+  "non_goals_verified": [
+    "no non-zero commission activated",
+    "no settlement/wallet/cash-out/payment-provider code",
+    "no backfill of pre-model rides",
+    "completion never recomputes payout",
+    "ride/offer state machines, pricing authority, matching, location limits untouched"
+  ],
+  "implemented": {
+    "backend": [
+      "src/pricing/fee_policy.ts — derivePayoutSnapshot/computePlatformFeeMinor/parseFeePolicyDoc; resolutions APPLIED|LAUNCH_DEFAULT|UNAVAILABLE; floor(fare*bps/10000) helper for future percent policies (inactive); fee clamped to [0,fare]",
+      "ride_service.ts selectOffer — feePolicies/{city}_{category} → _global read inside tx; snapshot+payout fields atomic with assignment",
+      "RideDoc + publicRide — driverPayoutMinor/platformFeeMinor/payoutCurrency/feePolicyResolution"
+    ],
+    "api_exposure_review_2026_10_19": [
+      "publicRide(ride, viewer) — viewer 'driver'|'passenger' derived server-side from caller uid (assignedDriverId match / list queryRole); payout block emitted only for 'driver'",
+      "passenger-facing select/select-replay response bodies — payout fields removed (fields still written to the ride doc in the same tx)",
+      "passenger GET /rides/{id}, passenger/driver GET /rides list — gated by viewer; cancel/close responses gated by caller==assignedDriverId; progression responses are driver-only callers",
+      "publicOpenRide (M0 open discovery) verified clean — never carried payout fields",
+      "fields exposed to PASSENGERS: agreedFareMinor/agreedOfferId/agreedFareCurrency (unchanged); payout internals now driver-only BEFORE any non-zero fee exists"
+    ],
+    "client": [
+      "Ride entity + remote parser — four new nullable fields",
+      "driver_earnings_summary — per-period payoutRideCount/payoutMinor/fareOnlyMinor; effective amount prefers payout, falls back to fare",
+      "driver_earnings_view — hero 'Driver payout' only when payout-backed; 'Trip fares' fallback; mixed-basis note"
+    ]
+  },
+  "tests": {
+    "backend_new_file": "src/__tests__/fee_policy.test.ts — 12 cases (incl. 8b role-gating regression: passenger GET/list absent, driver GET/list present)",
+    "backend_suite": "469/469",
+    "mobile_driver_suite": "131 pass incl. 3 new payout aggregation cases",
+    "analysis": "tsc --noEmit clean; flutter analyze lib/ clean"
+  },
+  "limitations": [
+    "no physical/staging verification (billing disabled)",
+    "RESOLVED: payout internals are now driver-only — publicRide gates on server-derived viewer; select responses are passenger-facing and no longer carry them",
+    "no feePolicies docs exist → all new selections resolve LAUNCH_DEFAULT until ops creates policy docs"
+  ],
+  "next_product_feature": "live E2E verify FCM ride-state pushes + payout fields on staging once billing restored; or ops feePolicies seeding runbook"
+}

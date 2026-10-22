@@ -571,4 +571,145 @@ void main() {
     expect(find.text('Offers'), findsWidgets);
     expect(find.text('Waiting for offers'), findsOneWidget);
   });
+
+  testWidgets('compose shows service selector; deep-link seeds intercity', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(const RideRequestView(initialServiceType: 'intercity')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('City ride'), findsOneWidget);
+    expect(find.text('Intercity'), findsOneWidget);
+
+    final element = tester.element(find.byType(RideRequestView));
+    final container = ProviderScope.containerOf(element);
+    expect(
+      container.read(rideRequestViewModelProvider).serviceType,
+      'intercity',
+    );
+  });
+
+  testWidgets('service chip tap switches to intercity and back', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap(const RideRequestView()));
+    await tester.pumpAndSettle();
+
+    final element = tester.element(find.byType(RideRequestView));
+    final container = ProviderScope.containerOf(element);
+    expect(
+      container.read(rideRequestViewModelProvider).serviceType,
+      'ride',
+    );
+
+    await tester.tap(find.text('Intercity'));
+    await tester.pumpAndSettle();
+    expect(
+      container.read(rideRequestViewModelProvider).serviceType,
+      'intercity',
+    );
+
+    await tester.tap(find.text('City ride'));
+    await tester.pumpAndSettle();
+    expect(
+      container.read(rideRequestViewModelProvider).serviceType,
+      'ride',
+    );
+  });
+
+  testWidgets('GPS proposal shows fix accuracy only when reported', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        const RideRequestView(),
+        overrides: [
+          deviceLocationPortProvider.overrideWithValue(
+            _AccurateUiDeviceLocation(),
+          ),
+          placeSearchPortProvider.overrideWithValue(
+            _UiFailingPlaceSearch(),
+          ),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final element = tester.element(find.byType(RideRequestView));
+    final container = ProviderScope.containerOf(element);
+    final vm = container.read(rideRequestViewModelProvider.notifier);
+
+    await vm.useCurrentLocationForPickup();
+    await tester.pumpAndSettle();
+
+    // Places fails in _wrap default → honest unresolved copy + GPS accuracy.
+    expect(find.text('GPS fix accuracy ±12 m'), findsOneWidget);
+    expect(find.textContaining('Retry name lookup'), findsOneWidget);
+    expect(find.textContaining('your exact position'), findsOneWidget);
+  });
+
+  testWidgets('Adjust on map enters set-point mode; collapse cancels it', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_wrap(const RideRequestView()));
+    await tester.pumpAndSettle();
+
+    final element = tester.element(find.byType(RideRequestView));
+    final container = ProviderScope.containerOf(element);
+    final vm = container.read(rideRequestViewModelProvider.notifier);
+
+    await vm.useCurrentLocationForPickup();
+    await tester.pumpAndSettle();
+
+    // Proposal card offers the adjust affordance.
+    expect(find.text('Adjust on map'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('Adjust on map'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Adjust on map'));
+    await tester.pumpAndSettle();
+
+    // Adjust mode armed; map expanded → compose sheet is hidden.
+    expect(
+      container.read(rideRequestViewModelProvider).pinAdjustTarget,
+      LocationField.pickup,
+    );
+    expect(find.text('Where to?'), findsNothing);
+
+    // Collapsing the map cancels adjust — a later stray tap is inert.
+    await tester.tap(find.byIcon(Icons.close_fullscreen_rounded));
+    await tester.pumpAndSettle();
+    expect(
+      container.read(rideRequestViewModelProvider).pinAdjustTarget,
+      isNull,
+    );
+    expect(find.text('Where to?'), findsOneWidget);
+  });
+}
+
+class _UiFailingPlaceSearch extends _UiPlaceSearch {
+  @override
+  Future<ResolvedPassengerLocation> reverseGeocode({
+    required double lat,
+    required double lng,
+  }) {
+    throw const PlaceSearchException(
+      PlaceSearchFailureKind.network,
+      'down',
+    );
+  }
+}
+
+class _AccurateUiDeviceLocation implements DeviceLocationPort {
+  @override
+  Future<ResolvedPassengerLocation> getCurrentLocation() async {
+    return const ResolvedPassengerLocation(
+      lat: 31.46,
+      lng: 74.26,
+      source: PassengerLocationSource.gps,
+      horizontalAccuracyMeters: 12.4,
+    );
+  }
 }

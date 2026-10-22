@@ -48,11 +48,41 @@ class ListOpenRidesUseCase {
   Future<OpenRideListPage> call({
     int? limit,
     String? cursor,
+    String? serviceType,
+    String? category,
   }) =>
       _repository.listOpenRides(
         limit: limit,
         cursor: cursor,
+        serviceType: serviceType,
+        category: category,
       );
+}
+
+class ListInvitedRidesUseCase {
+  const ListInvitedRidesUseCase(this._repository);
+
+  final RideRepository _repository;
+
+  Future<DriverInvitePage> call() => _repository.listInvited();
+}
+
+class AcceptInviteUseCase {
+  const AcceptInviteUseCase(this._repository);
+
+  final RideRepository _repository;
+
+  Future<String> call({required String rideId, required String waveId}) =>
+      _repository.acceptInvite(rideId: rideId, waveId: waveId);
+}
+
+class DeclineInviteUseCase {
+  const DeclineInviteUseCase(this._repository);
+
+  final RideRepository _repository;
+
+  Future<void> call({required String rideId, required String waveId}) =>
+      _repository.declineInvite(rideId: rideId, waveId: waveId);
 }
 
 class ListOffersUseCase {

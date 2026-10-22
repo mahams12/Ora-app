@@ -1,0 +1,5 @@
+stub auth api on 127.0.0.1:8081
+[stub] POST /v1/auth/register -> handled
+[stub] GET /v1/auth/me -> handled
+[stub] POST /v1/auth/register -> handled
+[stub] GET /v1/auth/me -> handled

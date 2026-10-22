@@ -1,0 +1,77 @@
+{
+  "slice": "firestore_geo_client + idle presence + matching-cost optimization",
+  "status": "implemented_local_only_phase1_complete",
+  "purpose": "Firestore-native RedisGeoClient (zero standing cost, multi-instance safe) + idle-driver presence + read-cost and radius-expansion optimizations from the matching audit",
+  "changelog": [
+    {
+      "date": "2026-10-21 (round 2 \u2014 approved audit fixes 1-4)",
+      "changes": [
+        "BUSY-PREFETCH: nearby_service.ts prefetchBusyDriverIds now filters `state in N3_BUSY_RIDE_STATES` server-side \u2014 previously read EVERY ride ever assigned to each candidate (unbounded, the worst read in the codebase). Covered by existing rides(assignedDriverId,state) composite index.",
+        "DISJUNCTION CAP: N3_BUSY_PREFETCH_IN_CHUNK_SIZE 30 -> floor(30/4)=7 \u2014 assignedDriverId in(n) x state in(4) multiplies into 30-disjunction DNF limit; 30x4=120 would fail on real Firestore. Chunks now run via Promise.all (parallel \u2014 chunk count grew, latency held).",
+        "MARKER PIGGYBACK: GeoRadiusHit gains optional markerValue; Firestore georadius returns it from the bounding-box scan (docs already paid for); N3 only MGETs hits lacking markerValue (Redis path \u2014 unchanged). Verified diag.redisGetCount=0 in Firestore mode.",
+        "SERVER-SIDE FRESHNESS: geo docs now carry top-level lastLocationTs + accuracy (parsed from markerValue JSON in markerFields()); georadius input gains optional minLastLocationTs; N3 passes nowMs-15s. Stale docs never billed as reads. Docs without parseable marker are excluded = fail-closed same outcome as marker_missing. del() clears the twin fields too.",
+        "RADIUS EXPANSION: N4_WAVE_RADII_KM=[10,15,25] via waveRadiusKm(wave) replaces flat N4_RADIUS_KM=10; waveDoc.radiusKm + outbox payload record searched radius. Nearest-first ordering, wave sizes 5/10/15, 30-invite cap, requestVersion binding, create-once wave docs all preserved.",
+        "SCAN-CAP DIAGNOSTIC: georadius logs GEORADIUS_SCAN_CAPPED when the 5000-doc limit binds (previously silent miss risk).",
+        "INDEX: geoDrivers composite updated to (lat ASC, lng ASC, lastLocationTs ASC) \u2014 required by the 3-field range query; NOT deployed.",
+        "memoryDb: added < / > operators; fixed FieldValue.delete sentinel detection (SDK exposes methodName getter, not _methodName) \u2014 prior del tests passed coincidentally on non-string values."
+      ],
+      "tests": "backend 505/505 (+10), tsc clean, flutter analyze clean; mobile untouched this round",
+      "deployed": false
+    },
+    {
+      "date": "2026-10-21 (round 1 \u2014 client + presence)",
+      "changes": [
+        "FirestoreGeoClient merged single-doc schema (geo+marker), projectLocation port, per-stream seq guard, GEO_STORE env, deploy-script opt-in, mobile DriverPresencePublisher + availability toggle + GET /v1/drivers/availability"
+      ],
+      "tests": "backend 495/495, driver slice 151/151",
+      "deployed": false
+    }
+  ],
+  "files_changed_round2": [
+    "src/redis/types.ts (GeoRadiusHit.markerValue, georadius.minLastLocationTs)",
+    "src/redis/firestore_geo_client.ts (freshness twins, server-side filter, markerValue in hits, del clears twins, scan-cap log)",
+    "src/drivers/nearby_service.ts (chunk 7 + state-in filter + parallel prefetch, minLastLocationTs, marker-piggyback mget skip)",
+    "src/rides/dispatch_types.ts (N4_WAVE_RADII_KM, waveRadiusKm \u2014 N4_RADIUS_KM removed)",
+    "src/rides/dispatch_wave_service.ts (per-wave radius in query/doc/payload)",
+    "firestore.indexes.json (geoDrivers: lat,lng,lastLocationTs)",
+    "src/__tests__/helpers/memory_db.ts (<,> ops; sentinel detection fix)",
+    "src/__tests__/dispatch.test.ts (+3 tests, updated asserts)",
+    "src/__tests__/n3_busy_prefetch.test.ts (+2 tests, chunk-driven expectations)",
+    "src/__tests__/firestore_geo_client.test.ts (+5 tests)"
+  ],
+  "read_write_counts_firestore_mode": {
+    "per_accepted_gps_update": "1 read (seq guard) + 1 write (merged doc)",
+    "per_n3_search": "1 box query (reads = fresh in-box docs only now \u2014 stale excluded server-side) + 0 mget + ceil(hits/7) busy queries (reads = busy-state docs only, ~0 typically) + <=2x100 getAll users/drivers + ~4-5 reads per N4-checked candidate",
+    "sample_wave1_10hits": "~10 box + ~0 busy docs + 20 getAll + ~25 N4 ~= 55 reads (was ~95 + unbounded ride history)"
+  },
+  "cost_estimate_us_central1": {
+    "note": "estimates not measured; asia-south1 ~20-30% higher unverified",
+    "1-2_test_drivers": "$0 (free tier ~55 driver-hours/day)",
+    "10_drivers_8h_day": "~$1-2/mo",
+    "100_drivers_8h_day": "~$15-20/mo",
+    "1000_drivers_8h_day": "~$150-250/mo"
+  },
+  "not_verified": [
+    "real Firestore index enforcement + multi-range query behavior (memoryDb has no index concept)",
+    "real latency p50/p95; cross-region us-central1 -> asia-south1",
+    "multi-instance Cloud Run concurrency",
+    "FireStore disjunction behavior on the double-in busy query (verified only against documented limit)",
+    "staging deployment; TTL policy; physical device presence"
+  ],
+  "rollback": "unset GEO_STORE -> redeploy (script re-attaches connector + REDIS_URL); Redis code path fully preserved",
+  "deployment_status": "NOTHING DEPLOYED \u2014 no staging, no production, no resource changes",
+  "next_approved_steps": [
+    "firebase deploy --only firestore:indexes (builds geoDrivers 3-field index)",
+    "staging deploy with GEO_STORE=firestore",
+    "verify N3/N4 + presence end-to-end (2 drivers), wave radius expansion on real data",
+    "measure N3 p50/p95 (target p50<600ms p95<1.5s), op counts, error rate <0.1%",
+    "optional: Firestore TTL policy on geoDrivers.expiresAt",
+    "then separate prod migration + Memorystore/connector/secret deletion (separate approval)"
+  ],
+  "changeLog": [
+    {
+      "date": "2026-10-21",
+      "entry": "AUDIT-2026-10-21: Redis runtime fully removed (ioredis dep, client.ts, REDIS_URL/GEO_STORE, redis scripts). Driver invitation flow: inviteExpiresAt=20s on wave docs+FCM, GET /v1/rides/invited, accept->createOffer (not assignment), decline ledger, tx-checked ownership+expiry, idempotent. Backend 521/521; mobile 776/776 after fixing 5 real bugs (eager Geocoding() NPE, unguarded FirebaseMessaging, ride-card overflow, stale test assertions). Billing disabled on ora-app-d8112+novexa; Redis/connector/secrets still provisioned but suspended. No deploys, no cloud changes."
+    }
+  ]
+}

@@ -29,8 +29,14 @@ export const N3_DEFAULT_LIMIT = 30;
 export const N3_MAX_LIMIT = 100;
 export const N3_MIN_LIMIT = 1;
 
-/** Firestore `in` disjunction limit for assignedDriverId batch busy prefetch. */
-export const N3_BUSY_PREFETCH_IN_CHUNK_SIZE = 30;
+/**
+ * assignedDriverId chunk size for the batch busy prefetch. Firestore expands
+ * every `in` into disjunctions with a hard cap of 30 per query, and multiple
+ * `in` filters multiply: chunkSize × busyStateCount ≤ 30 → 7 × 4 = 28.
+ */
+export const N3_BUSY_PREFETCH_IN_CHUNK_SIZE = Math.floor(
+  30 / N3_BUSY_RIDE_STATES.length,
+);
 
 /** Firestore `in` disjunction limit for assignedDriverId batch busy prefetch. */
 export const N3_FIRESTORE_IN_QUERY_MAX = 30;
@@ -361,6 +367,11 @@ export class NearbyDriversService {
         latitude: parsed.lat,
         radiusKm: parsed.radiusKm,
         count: N3_REDIS_GEO_COUNT,
+        // Server-side freshness floor where the store supports it (Firestore
+        // range filter — skips stale docs before they are billed as reads).
+        // Redis ignores it; the marker check below enforces freshness either
+        // way, so semantics are identical across both stores.
+        minLastLocationTs: nowMs - N3_FRESHNESS_MAX_AGE_MS,
       });
     } catch (err) {
       logSafe('N3_REDIS_GEORADIUS_FAILED', {
@@ -378,19 +389,35 @@ export class NearbyDriversService {
     diag.geoHits = geoHits.length;
     const surviving: NearbyCandidate[] = [];
 
+    // Markers piggyback on geo hits when the store supports it (Firestore
+    // merged doc — already paid for as a document read). Hits without
+    // markerValue still need a marker fetch (Redis GEORADIUS path).
     const markerByMember = new Map<string, string | null>();
-    if (geoHits.length > 0) {
-      const markerKeys = geoHits.map((hit) => driverOnlineKey(hit.member));
+    const hitsNeedingMarkerFetch: typeof geoHits = [];
+    for (const hit of geoHits) {
+      if (hit.markerValue !== undefined) {
+        markerByMember.set(hit.member, hit.markerValue);
+      } else {
+        hitsNeedingMarkerFetch.push(hit);
+      }
+    }
+    if (hitsNeedingMarkerFetch.length > 0) {
+      const markerKeys = hitsNeedingMarkerFetch.map((hit) =>
+        driverOnlineKey(hit.member),
+      );
       try {
         const markerValues = await this.redis.mget(markerKeys);
         diag.redisGetCount += 1;
-        for (let i = 0; i < geoHits.length; i++) {
-          markerByMember.set(geoHits[i].member, markerValues[i] ?? null);
+        for (let i = 0; i < hitsNeedingMarkerFetch.length; i++) {
+          markerByMember.set(
+            hitsNeedingMarkerFetch[i].member,
+            markerValues[i] ?? null,
+          );
         }
       } catch (err) {
         logSafe('N3_REDIS_MARKER_FAILED', {
           requestId: input.requestId ?? null,
-          driverId: geoHits[0]?.member ?? null,
+          driverId: hitsNeedingMarkerFetch[0]?.member ?? null,
           errorType: err instanceof Error ? err.name : 'unknown',
         });
         throw new NearbyDomainError(
@@ -516,23 +543,27 @@ export class NearbyDriversService {
       return busy;
     }
     const unique = [...new Set(driverIds)];
+    const chunks: string[][] = [];
     for (let i = 0; i < unique.length; i += N3_BUSY_PREFETCH_IN_CHUNK_SIZE) {
-      const chunk = unique.slice(i, i + N3_BUSY_PREFETCH_IN_CHUNK_SIZE);
-      if (diag) diag.firestoreBusyRideQueries += 1;
-      const snap = await this.db
-        .collection(RIDES)
-        .where('assignedDriverId', 'in', chunk)
-        .get();
+      chunks.push(unique.slice(i, i + N3_BUSY_PREFETCH_IN_CHUNK_SIZE));
+    }
+    // Server-side `state in BUSY` filter — without it every historical
+    // (closed/cancelled) ride ever assigned to a candidate is read and billed.
+    // Chunk queries are independent — run them in parallel so the smaller
+    // chunk size (disjunction cap) doesn't add sequential round-trips.
+    if (diag) diag.firestoreBusyRideQueries += chunks.length;
+    const snapshots = await Promise.all(
+      chunks.map((chunk) =>
+        this.db
+          .collection(RIDES)
+          .where('assignedDriverId', 'in', chunk)
+          .where('state', 'in', [...N3_BUSY_RIDE_STATES])
+          .get(),
+      ),
+    );
+    for (const snap of snapshots) {
       for (const doc of snap.docs) {
-        const data = doc.data() ?? {};
-        const state = data.state;
-        if (
-          typeof state !== 'string' ||
-          !(N3_BUSY_RIDE_STATES as readonly string[]).includes(state)
-        ) {
-          continue;
-        }
-        const assigned = data.assignedDriverId;
+        const assigned = doc.data()?.assignedDriverId;
         if (typeof assigned === 'string' && assigned.length > 0) {
           busy.add(assigned);
         }

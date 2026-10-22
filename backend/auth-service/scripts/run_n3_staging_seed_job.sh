@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Run N3 bench seed/cleanup inside VPC (Memorystore is private; local laptop cannot reach it).
+# Run N3 bench seed/cleanup as a Cloud Run Job (Firestore geo store — no VPC/Redis needed;
+# the job only needs Firestore access via the runtime SA).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -8,8 +9,6 @@ cd "$ROOT"
 PROJECT="${GCP_PROJECT_ID:-ora-app-d8112}"
 REGION="${GCP_REGION:-us-central1}"
 JOB="${N3_SEED_JOB:-ora-n3-staging-seed}"
-VPC_CONNECTOR="${VPC_CONNECTOR:-ora-staging-vpc}"
-SECRET_NAME="${REDIS_SECRET_NAME:-ora-staging-redis-url}"
 SA_EMAIL="${CLOUD_RUN_RUNTIME_SA:-firebase-adminsdk-fbsvc@${PROJECT}.iam.gserviceaccount.com}"
 MODE="${1:-seed}"
 COUNT="${2:-100}"
@@ -31,9 +30,6 @@ if ! gcloud run jobs describe "$JOB" --project="$PROJECT" --region="$REGION" >/d
     --region="$REGION" \
     --image="$IMAGE" \
     --service-account="$SA_EMAIL" \
-    --vpc-connector="$VPC_CONNECTOR" \
-    --vpc-egress=private-ranges-only \
-    --set-secrets="REDIS_URL=${SECRET_NAME}:latest" \
     --set-env-vars="FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID},NODE_ENV=staging,ORA_ENV=staging,BENCH_PREFIX=${BENCH_PREFIX}" \
     --memory=512Mi \
     --cpu=1 \

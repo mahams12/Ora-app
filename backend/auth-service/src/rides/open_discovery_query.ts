@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { RideDomainError } from './types';
 import {
   RIDE_LIST_CURSOR_VERSION,
+  RIDE_LIST_SERVICE_TYPES,
   decodeListCursor,
   encodeListCursor,
 } from './list_query';
@@ -12,10 +13,20 @@ export const OPEN_DISCOVERY_MAX_LIMIT = 50;
 /** Max docs fetched per open-discovery scan (unordered query — no composite index). */
 export const OPEN_DISCOVERY_SCAN_CAP = 200;
 
-/** Stable binding so discovery cursors cannot be reused on owner-scoped list endpoints. */
-export function discoveryBinding(): string {
+/**
+ * Stable binding so discovery cursors cannot be reused on owner-scoped list
+ * endpoints — or across different filter sets (serviceType/category are part
+ * of the binding, so a cursor minted unfiltered cannot paginate a filtered
+ * list and vice versa).
+ */
+export function discoveryBinding(filters?: {
+  serviceType?: string;
+  category?: string;
+}): string {
+  const serviceType = filters?.serviceType ?? '';
+  const category = filters?.category ?? '';
   return createHash('sha256')
-    .update('open-discovery:v1')
+    .update(`open-discovery:v1:${serviceType}:${category}`)
     .digest('base64url')
     .slice(0, 22);
 }
@@ -47,8 +58,10 @@ function singleQueryValue(
 export function parseOpenDiscoveryQuery(query: Record<string, unknown>): {
   limit: number;
   cursor: string | undefined;
+  serviceType: string | undefined;
+  category: string | undefined;
 } {
-  const allowed = new Set(['limit', 'cursor']);
+  const allowed = new Set(['limit', 'cursor', 'serviceType', 'category']);
   const extra = Object.keys(query).filter((k) => !allowed.has(k));
   if (extra.length > 0) {
     throw new RideDomainError(
@@ -83,5 +96,35 @@ export function parseOpenDiscoveryQuery(query: Record<string, unknown>): {
   }
 
   const cursor = singleQueryValue(query.cursor, 'cursor');
-  return { limit, cursor };
+
+  const serviceTypeRaw = singleQueryValue(query.serviceType, 'serviceType');
+  let serviceType: string | undefined;
+  if (serviceTypeRaw !== undefined) {
+    if (
+      !(RIDE_LIST_SERVICE_TYPES as readonly string[]).includes(serviceTypeRaw)
+    ) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        'serviceType must be one of: ride, courier, intercity, move.',
+      );
+    }
+    serviceType = serviceTypeRaw;
+  }
+
+  const categoryRaw = singleQueryValue(query.category, 'category');
+  let category: string | undefined;
+  if (categoryRaw !== undefined) {
+    const trimmed = categoryRaw.trim();
+    if (trimmed.length === 0 || trimmed.length > 64) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        'category must be a non-empty string up to 64 characters.',
+      );
+    }
+    category = trimmed;
+  }
+
+  return { limit, cursor, serviceType, category };
 }

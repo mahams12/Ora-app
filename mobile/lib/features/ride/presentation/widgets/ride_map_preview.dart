@@ -31,6 +31,9 @@ class RideMapPreview extends StatefulWidget {
     this.isExpanded = false,
     this.onExpand,
     this.onCollapse,
+    this.pinAdjustLabel,
+    this.onMapPointSelected,
+    this.onCancelPinAdjust,
   });
 
   final RideMapPreviewModel model;
@@ -49,6 +52,17 @@ class RideMapPreview extends StatefulWidget {
   /// Expanded → compact. Null hides the collapse control.
   final VoidCallback? onCollapse;
 
+  /// MAP-PIN-ADJUST: when non-null ("pickup"/"destination"), the map is in
+  /// set-point mode — taps call [onMapPointSelected] and a guidance banner
+  /// is shown. Map gestures stay enabled so the user can pan before tapping.
+  final String? pinAdjustLabel;
+
+  /// Called with tapped map coordinates while [pinAdjustLabel] is set.
+  final void Function(double lat, double lng)? onMapPointSelected;
+
+  /// Cancels set-point mode without applying a point.
+  final VoidCallback? onCancelPinAdjust;
+
   @override
   State<RideMapPreview> createState() => _RideMapPreviewState();
 }
@@ -66,6 +80,13 @@ class _RideMapPreviewState extends State<RideMapPreview> {
 
   static const String _pickupImageId = 'ora_preview_pickup';
   static const String _destImageId = 'ora_preview_dest';
+
+  /// Perf (SM-A325F profile evidence): 3D tilt + building extrusions add a
+  /// raster tail (rasterMs p95 18.8→14.8, max 61.6→28.7 with them off) while
+  /// being decorative noise on the ~168dp compact strip. They apply only in
+  /// expanded mode; the user toggles remain and take effect on expand.
+  bool get _effectiveThreeD => _threeDEnabled && widget.isExpanded;
+  bool get _effectiveBuildings => _buildingsVisible && widget.isExpanded;
 
   @override
   void initState() {
@@ -86,6 +107,37 @@ class _RideMapPreviewState extends State<RideMapPreview> {
       if (_styleReady) {
         _applyOverlays();
       }
+    }
+    if (oldWidget.isExpanded != widget.isExpanded && _styleReady) {
+      _applyExpandedMode();
+    }
+  }
+
+  /// Apply/restore the expanded-only 3D look without an extra camera pass —
+  /// instant moveCamera, not a second animateCamera animation.
+  Future<void> _applyExpandedMode() async {
+    final c = _controller;
+    if (c == null) return;
+    try {
+      final pos = c.cameraPosition;
+      if (pos != null) {
+        await c.moveCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: pos.target,
+              zoom: pos.zoom,
+              bearing: pos.bearing,
+              tilt: _effectiveThreeD
+                  ? MapPreviewConfig.threeDTilt
+                  : MapPreviewConfig.flatTilt,
+            ),
+          ),
+        );
+      }
+      await _applyBuildingVisibility(c);
+      await _updateCalloutPositions();
+    } catch (_) {
+      // Soft — camera/layer state stays consistent with the last fit.
     }
   }
 
@@ -213,8 +265,8 @@ class _RideMapPreviewState extends State<RideMapPreview> {
 
   Future<void> _applyBuildingVisibility(MapLibreMapController c) async {
     try {
-      await c.setLayerVisibility('building-3d', _buildingsVisible);
-      await c.setLayerVisibility('building-2d', _buildingsVisible);
+      await c.setLayerVisibility('building-3d', _effectiveBuildings);
+      await c.setLayerVisibility('building-2d', _effectiveBuildings);
     } catch (_) {
       // Layer ids may differ — soft.
     }
@@ -242,8 +294,14 @@ class _RideMapPreviewState extends State<RideMapPreview> {
       if (_fittedIdentity == identity) return;
       try {
         await controller.animateCamera(update);
-        if (_threeDEnabled) {
-          await _applyTilt(controller, MapPreviewConfig.threeDTilt);
+        if (_effectiveThreeD) {
+          // Instant tilt — a second animateCamera doubles the raster pass
+          // during map open/expand (measured tail spikes on SM-A325F).
+          await _applyTilt(
+            controller,
+            MapPreviewConfig.threeDTilt,
+            animated: false,
+          );
         }
         if (mounted) {
           _fittedIdentity = identity;
@@ -258,21 +316,30 @@ class _RideMapPreviewState extends State<RideMapPreview> {
     });
   }
 
-  Future<void> _applyTilt(MapLibreMapController controller, double tilt) async {
+  Future<void> _applyTilt(
+    MapLibreMapController controller,
+    double tilt, {
+    bool animated = true,
+  }) async {
     try {
       final pos = controller.cameraPosition;
       if (pos == null) return;
-      await controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: pos.target,
-            zoom: pos.zoom,
-            bearing: pos.bearing,
-            tilt: tilt,
-          ),
+      final update = CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: pos.target,
+          zoom: pos.zoom,
+          bearing: pos.bearing,
+          tilt: tilt,
         ),
-        duration: const Duration(milliseconds: 450),
       );
+      if (animated) {
+        await controller.animateCamera(
+          update,
+          duration: const Duration(milliseconds: 450),
+        );
+      } else {
+        await controller.moveCamera(update);
+      }
     } catch (_) {
       // Soft.
     }
@@ -321,7 +388,7 @@ class _RideMapPreviewState extends State<RideMapPreview> {
             target: pos.target,
             zoom: pos.zoom,
             bearing: 0,
-            tilt: _threeDEnabled
+            tilt: _effectiveThreeD
                 ? MapPreviewConfig.threeDTilt
                 : MapPreviewConfig.flatTilt,
           ),
@@ -339,7 +406,9 @@ class _RideMapPreviewState extends State<RideMapPreview> {
     if (c == null) return;
     await _applyTilt(
       c,
-      next ? MapPreviewConfig.threeDTilt : MapPreviewConfig.flatTilt,
+      next && widget.isExpanded
+          ? MapPreviewConfig.threeDTilt
+          : MapPreviewConfig.flatTilt,
     );
     await _updateCalloutPositions();
   }
@@ -399,6 +468,14 @@ class _RideMapPreviewState extends State<RideMapPreview> {
                   initialCameraPosition: _initialCamera(),
                   onMapCreated: _onMapCreated,
                   onStyleLoadedCallback: _onStyleLoaded,
+                  onMapClick: (point, latLng) {
+                    // MAP-PIN-ADJUST: taps only capture while set-point mode
+                    // is active; pan/zoom gestures are unaffected (a drag
+                    // does not fire onMapClick).
+                    final cb = widget.onMapPointSelected;
+                    if (widget.pinAdjustLabel == null || cb == null) return;
+                    cb(latLng.latitude, latLng.longitude);
+                  },
                   onCameraIdle: () {
                     _updateCalloutPositions();
                   },
@@ -461,6 +538,56 @@ class _RideMapPreviewState extends State<RideMapPreview> {
                   ],
                 ),
               ),
+              // MAP-PIN-ADJUST guidance banner (below top chrome).
+              if (_canShowMap && widget.pinAdjustLabel != null)
+                Positioned(
+                  top: topInset + OraSpacing.sm + 44,
+                  left: OraSpacing.md,
+                  right: OraSpacing.md,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: OraSpacing.sm,
+                        vertical: OraSpacing.xxs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: OraColors.surfaceElevated.withValues(
+                          alpha: 0.94,
+                        ),
+                        borderRadius: BorderRadius.circular(OraRadius.pill),
+                        border: Border.all(
+                          color: OraColors.tealBright.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.add_location_alt_outlined,
+                            size: 16,
+                            color: OraColors.tealBright,
+                          ),
+                          const SizedBox(width: OraSpacing.xxs),
+                          Text(
+                            'Tap the map to set ${widget.pinAdjustLabel}',
+                            style: OraTypography.caption(
+                              OraColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(width: OraSpacing.xs),
+                          if (widget.onCancelPinAdjust != null)
+                            GestureDetector(
+                              onTap: widget.onCancelPinAdjust,
+                              child: Text(
+                                'Cancel',
+                                style: OraTypography.caption(OraColors.info),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               // Right-side map controls
               if (_canShowMap)
                 Positioned(
@@ -576,7 +703,7 @@ class _RideMapPreviewState extends State<RideMapPreview> {
     final pickup = _toMl(widget.model.pickup);
     final destination = _toMl(widget.model.destination);
     final tilt =
-        _threeDEnabled ? MapPreviewConfig.threeDTilt : MapPreviewConfig.flatTilt;
+        _effectiveThreeD ? MapPreviewConfig.threeDTilt : MapPreviewConfig.flatTilt;
     if (pickup != null && destination != null) {
       if (MapPreviewCameraPolicy.areExtremelyClose(pickup, destination)) {
         return CameraPosition(

@@ -82,7 +82,8 @@ describe('N3 busy-ride batch prefetch', () => {
   it('≤ chunk size geo hits → exactly one busy query', async () => {
     const db = memoryDb();
     const redis = createMemoryRedis();
-    for (let i = 0; i < 10; i++) {
+    const n = N3_BUSY_PREFETCH_IN_CHUNK_SIZE;
+    for (let i = 0; i < n; i++) {
       const id = `d${i}`;
       seedApprovedOnline(db, id);
       await seedGeo(redis, id, 0.001 * (i + 1), { lastLocationTs: now - 1000 });
@@ -90,15 +91,15 @@ describe('N3 busy-ride batch prefetch', () => {
     const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     await svc.findNearby({
-      query: { ...pickup, limit: 10 },
+      query: { ...pickup, limit: n },
       nowMs: now,
       collectDiagnostics: (d) => {
         diag = d;
       },
     });
     expect(diag.firestoreBusyRideQueries).toBe(1);
-    expect(diag.firestoreUsersReads).toBe(10);
-    expect(diag.firestoreDriversReads).toBe(10);
+    expect(diag.firestoreUsersReads).toBe(n);
+    expect(diag.firestoreDriversReads).toBe(n);
   });
 
   it('> chunk size → correct number of busy query chunks', async () => {
@@ -122,7 +123,15 @@ describe('N3 busy-ride batch prefetch', () => {
     expect(diag.firestoreBusyRideQueries).toBe(2);
   });
 
-  it('100 geo hits → four busy chunks (chunk size 30)', async () => {
+  it('busy prefetch disjunctions stay within the Firestore limit', () => {
+    // `assignedDriverId in (n)` × `state in (4)` = n×4 disjunctions ≤ 30.
+    expect(
+      N3_BUSY_PREFETCH_IN_CHUNK_SIZE * N3_BUSY_RIDE_STATES.length,
+    ).toBeLessThanOrEqual(30);
+    expect(N3_BUSY_PREFETCH_IN_CHUNK_SIZE).toBeGreaterThan(0);
+  });
+
+  it('100 geo hits → chunked busy queries within disjunction bound', async () => {
     const n = 100;
     const db = memoryDb();
     const redis = createMemoryRedis();
@@ -165,6 +174,29 @@ describe('N3 busy-ride batch prefetch', () => {
     });
     expect(result.candidates).toHaveLength(1);
     expect(diag.rejected.driver_busy).toBe(0);
+  });
+
+  it('driver with only closed-ride history is not marked busy (state-filtered query)', async () => {
+    const db = memoryDb();
+    const redis = createMemoryRedis();
+    seedApprovedOnline(db, 'd1');
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    // Historical terminal-state rides must not reach the busy set — the query
+    // filters `state in BUSY` server-side, so they are never even read.
+    for (const [i, state] of ['RIDE_CLOSED', 'CANCELLED', 'EXPIRED'].entries()) {
+      db.seed('rides', `r-hist-${i}`, {
+        rideId: `r-hist-${i}`,
+        assignedDriverId: 'd1',
+        state,
+        passengerId: 'p1',
+      });
+    }
+    const svc = new NearbyDriversService(db as never, redis);
+    const result = await svc.findNearby({
+      query: { ...pickup },
+      nowMs: now,
+    });
+    expect(result.candidates.map((c) => c.driverId)).toEqual(['d1']);
   });
 
   it('batch marks busy driver rejected; non-busy remains eligible', async () => {

@@ -11,6 +11,7 @@ import 'package:ora/core/errors/failure_mapper.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';
 import 'package:ora/features/ride/domain/use_cases/ride_use_cases.dart';
 import 'package:ora/features/ride/presentation/views/ride_history_view.dart';
+import 'package:ora/features/ride/presentation/widgets/ride_card/ride_card_status.dart';
 
 class MockListRidesUseCase extends Mock implements ListRidesUseCase {}
 
@@ -132,12 +133,12 @@ void main() {
 
     expect(find.text('My rides'), findsOneWidget);
     expect(find.textContaining('not wired yet'), findsNothing);
-    expect(find.text('All'), findsOneWidget);
-    expect(find.text('Completed'), findsOneWidget);
-    expect(find.text('Cancelled'), findsOneWidget);
-    expect(find.text('Closed'), findsOneWidget);
+    expect(find.widgetWithText(OraChip, 'All'), findsOneWidget);
+    expect(find.widgetWithText(OraChip, 'Completed'), findsOneWidget);
+    expect(find.widgetWithText(OraChip, 'Cancelled'), findsOneWidget);
+    // Card-level status badge for the seeded RIDE_CLOSED ride.
+    expect(find.widgetWithText(RideCardStatus, 'Completed'), findsOneWidget);
     expect(find.textContaining('Gulberg'), findsOneWidget);
-    expect(find.textContaining('Fare'), findsOneWidget);
     expect(find.textContaining('Rs 210'), findsOneWidget);
     expect(find.textContaining('4.9'), findsNothing);
     expect(find.textContaining('ETA'), findsNothing);

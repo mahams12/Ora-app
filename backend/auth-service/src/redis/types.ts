@@ -1,6 +1,6 @@
 /**
  * Minimal Redis command surface for N2C GEO projection + N3 GEORADIUS read.
- * Real: ioredis. Tests: in-memory fake.
+ * Real: FirestoreGeoClient. Tests: in-memory fake.
  */
 export interface GeoRadiusHit {
   member: string;
@@ -8,6 +8,13 @@ export interface GeoRadiusHit {
   distanceKm: number;
   longitude: number;
   latitude: number;
+  /**
+   * Optional: online-marker value read from the same document the geo hit was
+   * scanned from (Firestore client only — Redis GEORADIUS cannot return it).
+   * Present-but-null means the marker is missing/expired (no refetch needed);
+   * absent means the caller must fetch it separately (MGET).
+   */
+  markerValue?: string | null;
 }
 
 export interface RedisGeoClient {
@@ -32,12 +39,33 @@ export interface RedisGeoClient {
     latitude: number;
     radiusKm: number;
     count: number;
+    /**
+     * Optional server-side freshness floor: only return docs whose stored
+     * lastLocationTs is strictly newer. Firestore client applies it as a range
+     * filter (cutting billed reads); Redis GEORADIUS ignores it (caller-side
+     * marker checks still enforce freshness identically).
+     */
+    minLastLocationTs?: number;
   }): Promise<GeoRadiusHit[]>;
   get(key: string): Promise<string | null>;
   /** Batch string GET (MGET); values align 1:1 with keys. */
   mget(keys: string[]): Promise<(string | null)[]>;
   set(key: string, value: string, ttlSeconds?: number): Promise<'OK'>;
   del(...keys: string[]): Promise<number>;
+  /**
+   * Optional hot-path write: GEO membership + online marker in one store
+   * round-trip (N2C runs this every accepted GPS packet). Callers fall back
+   * to geoadd + set when absent.
+   */
+  projectLocation?(input: {
+    key: string;
+    member: string;
+    longitude: number;
+    latitude: number;
+    markerKey: string;
+    markerValue: string;
+    markerTtlSeconds?: number;
+  }): Promise<void>;
   /** Optional — used by live proofs / tests. */
   flushdb?(): Promise<'OK'>;
   quit?(): Promise<'OK'>;

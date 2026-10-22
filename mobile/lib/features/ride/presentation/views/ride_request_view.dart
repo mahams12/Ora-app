@@ -10,6 +10,9 @@ import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
+import '../../../saved_places/domain/entities/passenger_places.dart';
+import '../../../saved_places/presentation/view_models/passenger_places_view_model.dart';
+import '../../../saved_places/presentation/widgets/passenger_places_sections.dart';
 import '../../domain/models/passenger_city.dart';
 import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/models/ride_category_option.dart';
@@ -23,9 +26,16 @@ import '../widgets/ride_map_preview.dart';
 
 /// Passenger ride compose + review. Pricing from backend estimate (Phase 5C).
 class RideRequestView extends ConsumerStatefulWidget {
-  const RideRequestView({super.key, this.initialCategoryId});
+  const RideRequestView({
+    super.key,
+    this.initialCategoryId,
+    this.initialServiceType,
+  });
 
   final String? initialCategoryId;
+
+  /// e.g. `?service=intercity` — validated against [kRideRequestServiceTypes].
+  final String? initialServiceType;
 
   @override
   ConsumerState<RideRequestView> createState() => _RideRequestViewState();
@@ -46,10 +56,13 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
     _pickupController = TextEditingController();
     _destinationController = TextEditingController();
     final category = widget.initialCategoryId;
-    if (category != null) {
+    final serviceType = widget.initialServiceType;
+    if (category != null || serviceType != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ref.read(rideRequestViewModelProvider.notifier).seedCategory(category);
+        final vm = ref.read(rideRequestViewModelProvider.notifier);
+        vm.seedCategory(category);
+        vm.seedServiceType(serviceType);
       });
     }
   }
@@ -69,6 +82,9 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
 
   void _collapseMap() {
     if (!_mapExpanded) return;
+    // Leaving the map abandons any pending pin-adjust target — the next
+    // stray tap must not silently overwrite a proposal.
+    ref.read(rideRequestViewModelProvider.notifier).cancelPinAdjust();
     setState(() => _mapExpanded = false);
   }
 
@@ -123,10 +139,58 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
     );
   }
 
+  /// SAVED-PLACES: open the save sheet for the field's current
+  /// proposed/confirmed point, persist via the ride VM, and surface the
+  /// result. Coordinates are reused as-is — no extra lookup runs.
+  Future<void> _saveFieldPlace(LocationField field) async {
+    final request = await showSavePlaceSheet(context);
+    if (request == null || !mounted) return;
+    final error = await ref
+        .read(rideRequestViewModelProvider.notifier)
+        .savePlaceForField(
+          field: field,
+          name: request.name,
+          id: request.slotId,
+        );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(error ?? 'Saved as ${request.name}'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  /// SAVED-PLACES: rename/remove an existing saved place.
+  Future<void> _manageSavedPlace(SavedPlace place) async {
+    final request = await showManagePlaceSheet(context, place: place);
+    if (request == null || !mounted) return;
+    final places = ref.read(passengerPlacesProvider.notifier);
+    final error = switch (request.action) {
+      'rename' =>
+        await places.renamePlace(id: place.id, name: request.name),
+      'remove' => await places.removePlace(place.id),
+      _ => null,
+    };
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          error ??
+              (request.action == 'remove'
+                  ? 'Removed ${place.name}'
+                  : 'Renamed to ${request.name}'),
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(rideRequestViewModelProvider);
     final vm = ref.read(rideRequestViewModelProvider.notifier);
+    final placesState = ref.watch(passengerPlacesProvider);
     final padding = Responsive.horizontalPadding(context);
 
     // Keep text controllers aligned when VM sets labels (GPS / place select).
@@ -218,6 +282,16 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                     onExpand: _expandMap,
                     onCollapse: _collapseMap,
                     onBack: () => _onMapBack(state),
+                    pinAdjustLabel: switch (state.pinAdjustTarget) {
+                      LocationField.pickup => 'pickup',
+                      LocationField.destination => 'destination',
+                      null => null,
+                    },
+                    onMapPointSelected: (lat, lng) {
+                      vm.setPinFromMapTap(lat, lng);
+                      _collapseMap();
+                    },
+                    onCancelPinAdjust: _collapseMap,
                   ),
                   if (!_mapExpanded)
                     Expanded(
@@ -252,6 +326,8 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                           padding: padding,
                                           canSubmit: vm.canSubmitRideRequest,
                                           onSelectCategory: vm.selectCategory,
+                                          onSelectServiceType:
+                                              vm.selectServiceType,
                                           onEditLocations: vm.goToCompose,
                                           onSubmit: vm.submit,
                                           onRetryPricing: vm.retryPricing,
@@ -279,6 +355,8 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                           onPickupChanged: vm.setPickupText,
                                           onDestinationChanged:
                                               vm.setDestinationText,
+                                          onSelectServiceType:
+                                              vm.selectServiceType,
                                           onUseCurrentLocation:
                                               vm.useCurrentLocationForPickup,
                                           onSelectPickupSuggestion: (s) =>
@@ -292,9 +370,48 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                             suggestion: s,
                                           ),
                                           onConfirmPickup: vm.confirmPickup,
+                                          onRetryPickupName:
+                                              vm.retryPickupNameLookup,
+                                          onAdjustPickupOnMap: () {
+                                            vm.startPinAdjust(
+                                              LocationField.pickup,
+                                            );
+                                            _expandMap();
+                                          },
                                           onConfirmDestination:
                                               vm.confirmDestination,
+                                          onRetryDestinationName:
+                                              vm.retryDestinationNameLookup,
+                                          onAdjustDestinationOnMap: () {
+                                            vm.startPinAdjust(
+                                              LocationField.destination,
+                                            );
+                                            _expandMap();
+                                          },
                                           onContinue: vm.goToReview,
+                                          savedPlaces: placesState.places,
+                                          recents: placesState.recents,
+                                          onSelectSavedPickup: (p) =>
+                                              vm.applySavedPlace(
+                                            field: LocationField.pickup,
+                                            place: p,
+                                          ),
+                                          onSelectSavedDestination: (p) =>
+                                              vm.applySavedPlace(
+                                            field: LocationField.destination,
+                                            place: p,
+                                          ),
+                                          onSelectRecent:
+                                              vm.applyRecentDestination,
+                                          onManageSaved: (p) =>
+                                              _manageSavedPlace(p),
+                                          onSavePickup: () => _saveFieldPlace(
+                                            LocationField.pickup,
+                                          ),
+                                          onSaveDestination: () =>
+                                              _saveFieldPlace(
+                                            LocationField.destination,
+                                          ),
                                         ),
                         ),
                       ),
@@ -319,12 +436,25 @@ class _ComposePane extends StatelessWidget {
     required this.destinationController,
     required this.onPickupChanged,
     required this.onDestinationChanged,
+    required this.onSelectServiceType,
     required this.onUseCurrentLocation,
     required this.onSelectPickupSuggestion,
     required this.onSelectDestinationSuggestion,
     required this.onConfirmPickup,
+    required this.onRetryPickupName,
+    required this.onAdjustPickupOnMap,
     required this.onConfirmDestination,
+    required this.onRetryDestinationName,
+    required this.onAdjustDestinationOnMap,
     required this.onContinue,
+    required this.savedPlaces,
+    required this.recents,
+    required this.onSelectSavedPickup,
+    required this.onSelectSavedDestination,
+    required this.onSelectRecent,
+    required this.onManageSaved,
+    required this.onSavePickup,
+    required this.onSaveDestination,
   });
 
   final RideRequestUiState state;
@@ -335,12 +465,27 @@ class _ComposePane extends StatelessWidget {
   final TextEditingController destinationController;
   final ValueChanged<String> onPickupChanged;
   final ValueChanged<String> onDestinationChanged;
+  final ValueChanged<String> onSelectServiceType;
   final VoidCallback onUseCurrentLocation;
   final ValueChanged<PlaceSuggestion> onSelectPickupSuggestion;
   final ValueChanged<PlaceSuggestion> onSelectDestinationSuggestion;
   final VoidCallback onConfirmPickup;
+  final VoidCallback onRetryPickupName;
+
+  /// MAP-PIN-ADJUST: expands the map in set-point mode for this endpoint.
+  final VoidCallback onAdjustPickupOnMap;
   final VoidCallback onConfirmDestination;
+  final VoidCallback onRetryDestinationName;
+  final VoidCallback onAdjustDestinationOnMap;
   final VoidCallback onContinue;
+  final List<SavedPlace> savedPlaces;
+  final List<RecentDestination> recents;
+  final ValueChanged<SavedPlace> onSelectSavedPickup;
+  final ValueChanged<SavedPlace> onSelectSavedDestination;
+  final ValueChanged<RecentDestination> onSelectRecent;
+  final ValueChanged<SavedPlace> onManageSaved;
+  final VoidCallback onSavePickup;
+  final VoidCallback onSaveDestination;
 
   @override
   Widget build(BuildContext context) {
@@ -378,6 +523,11 @@ class _ComposePane extends StatelessWidget {
                 'Search a place or use your current location. Confirm each '
                 'point before continuing — text alone is not enough.',
                 style: OraTypography.caption(OraColors.textMuted),
+              ),
+              const SizedBox(height: OraSpacing.sm),
+              _ServiceTypeSelector(
+                selected: state.serviceType,
+                onSelect: onSelectServiceType,
               ),
               const SizedBox(height: OraSpacing.md),
               Row(
@@ -460,12 +610,27 @@ class _ComposePane extends StatelessWidget {
                             showDivider: true,
                           ),
                         ),
+                        // SAVED-PLACES: instant pickup reuse — shown only for
+                        // an untouched field (no text/proposal/confirmation).
+                        if (!state.hasPickupText &&
+                            state.proposedPickup == null &&
+                            !state.hasConfirmedPickup &&
+                            !state.pickupBusy)
+                          SavedPlacesSection(
+                            places: savedPlaces,
+                            onSelect: onSelectSavedPickup,
+                            onManage: onManageSaved,
+                          ),
                         if (state.proposedPickup != null &&
                             !state.hasConfirmedPickup)
                           _ProposalCard(
                             title: 'Confirm pickup',
                             location: state.proposedPickup!,
                             onConfirm: onConfirmPickup,
+                            nameUnresolved: state.pickupNameUnresolved,
+                            onRetryName: onRetryPickupName,
+                            onAdjustOnMap: onAdjustPickupOnMap,
+                            onSave: onSavePickup,
                           ),
                         const SizedBox(height: OraSpacing.sm),
                         OraTextField(
@@ -506,6 +671,21 @@ class _ComposePane extends StatelessWidget {
                             showDivider: true,
                           ),
                         ),
+                        // SAVED-PLACES + RECENTS: instant destination reuse.
+                        if (!state.hasDestinationText &&
+                            state.proposedDestination == null &&
+                            !state.hasConfirmedDestination &&
+                            !state.destinationBusy) ...[
+                          SavedPlacesSection(
+                            places: savedPlaces,
+                            onSelect: onSelectSavedDestination,
+                            onManage: onManageSaved,
+                          ),
+                          RecentDestinationsSection(
+                            recents: recents,
+                            onSelect: onSelectRecent,
+                          ),
+                        ],
                         if (state.proposedDestination != null &&
                             !state.hasConfirmedDestination)
                           KeyedSubtree(
@@ -514,6 +694,10 @@ class _ComposePane extends StatelessWidget {
                               title: 'Confirm destination',
                               location: state.proposedDestination!,
                               onConfirm: onConfirmDestination,
+                              nameUnresolved: state.destinationNameUnresolved,
+                              onRetryName: onRetryDestinationName,
+                              onAdjustOnMap: onAdjustDestinationOnMap,
+                              onSave: onSaveDestination,
                             ),
                           ),
                       ],
@@ -564,11 +748,26 @@ class _ProposalCard extends StatelessWidget {
     required this.title,
     required this.location,
     required this.onConfirm,
+    this.nameUnresolved = false,
+    this.onRetryName,
+    this.onAdjustOnMap,
+    this.onSave,
   });
 
   final String title;
   final ResolvedPassengerLocation location;
   final VoidCallback onConfirm;
+
+  /// Coordinates are authoritative but no place name resolved — explain and
+  /// offer a name-only retry (never re-runs GPS or blocks confirm).
+  final bool nameUnresolved;
+  final VoidCallback? onRetryName;
+
+  /// MAP-PIN-ADJUST: expands the map in set-point mode for this endpoint.
+  final VoidCallback? onAdjustOnMap;
+
+  /// SAVED-PLACES: save this proposed point as a favorite (optional).
+  final VoidCallback? onSave;
 
   @override
   Widget build(BuildContext context) {
@@ -577,6 +776,7 @@ class _ProposalCard extends StatelessWidget {
       PassengerLocationSource.place => 'Place search',
       PassengerLocationSource.mapPin => 'Map pin',
       PassengerLocationSource.savedPlace => 'Saved place',
+      PassengerLocationSource.recent => 'Recent destination',
     };
 
     return Padding(
@@ -595,8 +795,75 @@ class _ProposalCard extends StatelessWidget {
               sourceLabel,
               style: OraTypography.caption(OraColors.textMuted),
             ),
+            // GPS fix accuracy — shown only when the provider reported it.
+            // Distinct from address accuracy; never invents a value.
+            if (location.horizontalAccuracyMeters != null) ...[
+              const SizedBox(height: OraSpacing.xxs),
+              Text(
+                'GPS fix accuracy ±'
+                '${location.horizontalAccuracyMeters!.round()} m',
+                style: OraTypography.caption(OraColors.textMuted),
+              ),
+            ],
+            if (nameUnresolved) ...[
+              const SizedBox(height: OraSpacing.xxs),
+              Text(
+                location.source == PassengerLocationSource.mapPin
+                    ? 'Couldn\'t fetch a place name — the pinned point is '
+                        'still used. Tap "Adjust on map" to move it, or '
+                        'search above.'
+                    : 'Couldn\'t fetch a place name — your exact position is '
+                        'still used. Tap "Adjust on map" to move the pin, or '
+                        'search above.',
+                style: OraTypography.caption(OraColors.textMuted),
+              ),
+              if (onRetryName != null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: onRetryName,
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(0, 32),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text('Retry name lookup'),
+                  ),
+                ),
+            ],
             const SizedBox(height: OraSpacing.sm),
             OraButton(label: title, onPressed: onConfirm),
+            if (onAdjustOnMap != null || onSave != null)
+              Row(
+                children: [
+                  if (onAdjustOnMap != null)
+                    TextButton.icon(
+                      onPressed: onAdjustOnMap,
+                      icon: const Icon(Icons.edit_location_alt_outlined,
+                          size: 18),
+                      label: const Text('Adjust on map'),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 32),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  if (onAdjustOnMap != null && onSave != null)
+                    const SizedBox(width: OraSpacing.sm),
+                  if (onSave != null)
+                    TextButton.icon(
+                      onPressed: onSave,
+                      icon:
+                          const Icon(Icons.bookmark_add_outlined, size: 18),
+                      label: const Text('Save place'),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 32),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                ],
+              ),
           ],
         ),
       ),
@@ -610,6 +877,7 @@ class _ReviewPane extends StatelessWidget {
     required this.padding,
     required this.canSubmit,
     required this.onSelectCategory,
+    required this.onSelectServiceType,
     required this.onEditLocations,
     required this.onSubmit,
     required this.onRetryPricing,
@@ -622,6 +890,7 @@ class _ReviewPane extends StatelessWidget {
   final double padding;
   final bool canSubmit;
   final ValueChanged<String> onSelectCategory;
+  final ValueChanged<String> onSelectServiceType;
   final VoidCallback onEditLocations;
   final VoidCallback onSubmit;
   final VoidCallback onRetryPricing;
@@ -667,6 +936,11 @@ class _ReviewPane extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: OraSpacing.md),
+              _ServiceTypeSelector(
+                selected: state.serviceType,
+                onSelect: onSelectServiceType,
+              ),
+              const SizedBox(height: OraSpacing.sm),
               OraSectionHeader(
                 title: 'Select a ride',
                 action: Text(
@@ -1019,6 +1293,40 @@ class _StatusChip extends StatelessWidget {
         selected: ok,
         variant: OraChipVariant.status,
       ),
+    );
+  }
+}
+
+/// Service-kind chips (City ride / Intercity). Backend accepts
+/// courier/move too but those stay unexposed until their product
+/// semantics exist.
+class _ServiceTypeSelector extends StatelessWidget {
+  const _ServiceTypeSelector({required this.selected, required this.onSelect});
+
+  final String selected;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        OraChip(
+          label: rideRequestServiceTypeLabel('ride'),
+          selected: selected == 'ride',
+          onTap: () => onSelect('ride'),
+        ),
+        const SizedBox(width: OraSpacing.xs),
+        OraChip(
+          label: rideRequestServiceTypeLabel('intercity'),
+          selected: selected == 'intercity',
+          onTap: () => onSelect('intercity'),
+          leading: const Icon(
+            Icons.route_rounded,
+            size: 16,
+            color: OraColors.textSecondary,
+          ),
+        ),
+      ],
     );
   }
 }

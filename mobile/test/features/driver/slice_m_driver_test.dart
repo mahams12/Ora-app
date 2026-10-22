@@ -362,6 +362,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
@@ -378,7 +380,12 @@ void main() {
       expect(state.rides.single.rideId, 'open-1');
       expect(state.rides.single.requestVersion, 1);
       verify(
-        () => listOpen(limit: openRidesDefaultLimit, cursor: null),
+        () => listOpen(
+          limit: openRidesDefaultLimit,
+          cursor: null,
+          serviceType: null,
+          category: null,
+        ),
       ).called(1);
     });
 
@@ -387,6 +394,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(
@@ -412,6 +421,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(
@@ -439,7 +450,12 @@ void main() {
       state = c.read(driverOpenRidesViewModelProvider);
       expect(state.rides.map((r) => r.rideId).toSet(), {'open-a', 'open-b'});
       verify(
-        () => listOpen(limit: openRidesDefaultLimit, cursor: null),
+        () => listOpen(
+          limit: openRidesDefaultLimit,
+          cursor: null,
+          serviceType: null,
+          category: null,
+        ),
       ).called(2);
     });
 
@@ -448,6 +464,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => const OpenRideListPage(rides: [], nextCursor: null),
@@ -468,6 +486,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenThrow(const AppFailure.network(message: 'offline'));
 
@@ -486,6 +506,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer((invocation) async {
         calls += 1;
@@ -517,7 +539,12 @@ void main() {
 
     test('cursor pagination appends without duplicates', () async {
       when(
-        () => listOpen(limit: any(named: 'limit'), cursor: null),
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: null,
+          serviceType: null,
+          category: null,
+        ),
       ).thenAnswer(
         (_) async => OpenRideListPage(
           rides: [_openRide(id: 'a'), _openRide(id: 'b')],
@@ -525,7 +552,12 @@ void main() {
         ),
       );
       when(
-        () => listOpen(limit: any(named: 'limit'), cursor: 'c1'),
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: 'c1',
+          serviceType: null,
+          category: null,
+        ),
       ).thenAnswer(
         (_) async => OpenRideListPage(
           rides: [_openRide(id: 'b'), _openRide(id: 'c')],
@@ -547,7 +579,12 @@ void main() {
     test('duplicate pagination request prevented', () async {
       final gate = Completer<OpenRideListPage>();
       when(
-        () => listOpen(limit: any(named: 'limit'), cursor: null),
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: null,
+          serviceType: null,
+          category: null,
+        ),
       ).thenAnswer(
         (_) async => OpenRideListPage(
           rides: [_openRide(id: 'a')],
@@ -555,7 +592,12 @@ void main() {
         ),
       );
       when(
-        () => listOpen(limit: any(named: 'limit'), cursor: 'c1'),
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: 'c1',
+          serviceType: null,
+          category: null,
+        ),
       ).thenAnswer((_) => gate.future);
 
       final c = container();
@@ -570,7 +612,12 @@ void main() {
       );
       await Future.wait([first, second]);
       verify(
-        () => listOpen(limit: any(named: 'limit'), cursor: 'c1'),
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: 'c1',
+          serviceType: null,
+          category: null,
+        ),
       ).called(1);
     });
 
@@ -580,6 +627,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(
@@ -640,6 +689,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
@@ -674,6 +725,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
@@ -712,6 +765,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer((_) async {
         calls += 1;
@@ -757,6 +812,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
@@ -795,6 +852,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
@@ -833,6 +892,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
@@ -872,6 +933,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer((_) async {
         call += 1;
@@ -896,6 +959,157 @@ void main() {
         c.read(driverOpenRidesViewModelProvider).rides.single.rideId,
         'fresh',
       );
+    });
+
+    test('setServiceTypeFilter refetches with the filter as a query param',
+        () async {
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
+        ),
+      ).thenAnswer(
+        (_) async => OpenRideListPage(
+          rides: [_openRide()],
+          nextCursor: null,
+        ),
+      );
+
+      final c = container();
+      addTearDown(c.dispose);
+      c.listen(driverOpenRidesViewModelProvider, (_, __) {});
+      final vm = c.read(driverOpenRidesViewModelProvider.notifier);
+      await vm.loadInitial();
+      await vm.setServiceTypeFilter('intercity');
+
+      final state = c.read(driverOpenRidesViewModelProvider);
+      expect(state.serviceTypeFilter, 'intercity');
+      verify(
+        () => listOpen(
+          limit: openRidesDefaultLimit,
+          cursor: null,
+          serviceType: 'intercity',
+          category: null,
+        ),
+      ).called(1);
+    });
+
+    test('setCategoryFilter refetches; clearFilters resets both', () async {
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
+        ),
+      ).thenAnswer(
+        (_) async => OpenRideListPage(
+          rides: [_openRide()],
+          nextCursor: null,
+        ),
+      );
+
+      final c = container();
+      addTearDown(c.dispose);
+      c.listen(driverOpenRidesViewModelProvider, (_, __) {});
+      final vm = c.read(driverOpenRidesViewModelProvider.notifier);
+      await vm.loadInitial();
+      await vm.setCategoryFilter('executive');
+      await vm.setServiceTypeFilter('ride');
+
+      var state = c.read(driverOpenRidesViewModelProvider);
+      expect(state.categoryFilter, 'executive');
+      expect(state.serviceTypeFilter, 'ride');
+      expect(state.hasActiveFilters, isTrue);
+      verify(
+        () => listOpen(
+          limit: openRidesDefaultLimit,
+          cursor: null,
+          serviceType: 'ride',
+          category: 'executive',
+        ),
+      ).called(1);
+
+      await vm.clearFilters();
+      state = c.read(driverOpenRidesViewModelProvider);
+      expect(state.hasActiveFilters, isFalse);
+      verify(
+        () => listOpen(
+          limit: openRidesDefaultLimit,
+          cursor: null,
+          serviceType: null,
+          category: null,
+        ),
+      ).called(2); // initial + post-clear reload
+    });
+
+    test('loadMore keeps the active filters', () async {
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
+        ),
+      ).thenAnswer((inv) async {
+        final cursor = inv.namedArguments[#cursor] as String?;
+        if (cursor == null) {
+          return OpenRideListPage(
+            rides: [_openRide(id: 'p1')],
+            nextCursor: 'c1',
+          );
+        }
+        return OpenRideListPage(
+          rides: [_openRide(id: 'p2')],
+          nextCursor: null,
+        );
+      });
+
+      final c = container();
+      addTearDown(c.dispose);
+      c.listen(driverOpenRidesViewModelProvider, (_, __) {});
+      final vm = c.read(driverOpenRidesViewModelProvider.notifier);
+      await vm.setServiceTypeFilter('intercity');
+      await vm.loadMore();
+
+      verify(
+        () => listOpen(
+          limit: openRidesDefaultLimit,
+          cursor: 'c1',
+          serviceType: 'intercity',
+          category: null,
+        ),
+      ).called(1);
+      expect(
+        c.read(driverOpenRidesViewModelProvider).rides.map((r) => r.rideId),
+        ['p1', 'p2'],
+      );
+    });
+
+    test('re-selecting the same filter is a no-op (no refetch)', () async {
+      var calls = 0;
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
+        ),
+      ).thenAnswer((_) async {
+        calls++;
+        return OpenRideListPage(rides: [_openRide()], nextCursor: null);
+      });
+
+      final c = container();
+      addTearDown(c.dispose);
+      c.listen(driverOpenRidesViewModelProvider, (_, __) {});
+      final vm = c.read(driverOpenRidesViewModelProvider.notifier);
+      await vm.loadInitial();
+      await vm.setServiceTypeFilter('ride');
+      await vm.setServiceTypeFilter('ride'); // same value — must not refetch
+      expect(calls, 2); // loadInitial + one filtered reload only
     });
   });
 
@@ -946,6 +1160,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => const OpenRideListPage(rides: [], nextCursor: null),
@@ -981,6 +1197,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(
@@ -1022,6 +1240,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
@@ -1051,6 +1271,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(
@@ -1099,6 +1321,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(rides: [_openRide()], nextCursor: null),
@@ -1127,6 +1351,8 @@ void main() {
         () => listOpen(
           limit: any(named: 'limit'),
           cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
         ),
       ).thenAnswer(
         (_) async => OpenRideListPage(
@@ -1173,6 +1399,76 @@ void main() {
       gate.complete(_offer());
       await tester.pump();
       semanticsHandle.dispose();
+    });
+
+    testWidgets('service filter chip refetches with server param',
+        (tester) async {
+      final listOpen = MockListOpenRidesUseCase();
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
+        ),
+      ).thenAnswer(
+        (_) async => OpenRideListPage(
+          rides: [_openRide()],
+          nextCursor: null,
+        ),
+      );
+
+      await _pumpDriverOpenRidesView(tester, listOpen: listOpen);
+
+      expect(find.text('Service'), findsOneWidget);
+      expect(find.text('Category'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Intercity'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Intercity'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => listOpen(
+          limit: openRidesDefaultLimit,
+          cursor: null,
+          serviceType: 'intercity',
+          category: null,
+        ),
+      ).called(1);
+    });
+
+    testWidgets('filtered-empty state offers Clear filters', (tester) async {
+      final listOpen = MockListOpenRidesUseCase();
+      var calls = 0;
+      when(
+        () => listOpen(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+          serviceType: any(named: 'serviceType'),
+          category: any(named: 'category'),
+        ),
+      ).thenAnswer((_) async {
+        calls++;
+        return const OpenRideListPage(rides: [], nextCursor: null);
+      });
+
+      await _pumpDriverOpenRidesView(tester, listOpen: listOpen);
+      // Unfiltered empty — no Clear filters affordance.
+      expect(find.text('Clear filters'), findsNothing);
+
+      await tester.ensureVisible(find.text('Intercity'));
+      await tester.tap(find.text('Intercity'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('No open rides match'), findsOneWidget);
+      await tester.ensureVisible(find.text('Clear filters'));
+      await tester.tap(find.text('Clear filters'));
+      await tester.pumpAndSettle();
+
+      // initial + filtered + post-clear reload
+      expect(calls, 3);
+      expect(find.text('No open ride requests'), findsOneWidget);
     });
   });
 }

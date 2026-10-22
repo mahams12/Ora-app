@@ -1,0 +1,46 @@
+{
+  "closeout": "OPEN-RIDES-FILTERS",
+  "title": "Driver open-rides browse filters (serviceType + category)",
+  "date": "2026-10-19",
+  "status": "IMPLEMENTED — local automated tests green; no device/staging run",
+
+  "gap": "Drivers browsed a single chronological open-rides list with no way to narrow by service type or vehicle category. Data fields already existed on OpenRide; GET /v1/rides/open previously rejected all params except limit/cursor.",
+
+  "implementation": {
+    "backend_query": "src/rides/open_discovery_query.ts — accepts serviceType (enum-validated against RIDE_LIST_SERVICE_TYPES) and category (non-empty trimmed string, <=64 chars). Unknown params still 400.",
+    "backend_filter": "src/rides/ride_service.ts listOpenRides — exact-match filters applied to discoverable rides before sort/cursor/page. Cursor binding now hashes the active filter set (discoveryBinding({serviceType, category})), so a cursor minted under one filter set cannot paginate another.",
+    "mobile_plumbing": "serviceType/category params threaded: ride_remote_data_source -> ride_repository_impl -> ride_repository -> ListOpenRidesUseCase.",
+    "vm": "driver_open_rides_view_model.dart — serviceTypeFilter/categoryFilter state (null = Any), hasActiveFilters, setServiceTypeFilter/setCategoryFilter/clearFilters (change -> loadInitial page-1 refetch; same value = no-op). Filters flow into every fetch incl. loadMore; seq-guard discards stale responses across filter changes.",
+    "view": "driver_open_rides_view.dart — Service + Category chip rows (OraChip, mirrors ride-history filter rows; labels via historyServiceTypeLabel + kRideCategoryOptions). Filtered-empty state says 'No open rides match' + Clear filters button; unfiltered empty keeps the original copy."
+  },
+
+  "honesty_notes": [
+    "Filters narrow what the driver SEES — they do not change eligibility, matching, or dispatch semantics.",
+    "Category is exact-match on the stored client category id; no server-side category enum exists (create accepts any non-empty string).",
+    "A filtered page that matches zero rides emits no nextCursor even when the underlying scan hit scanCap — consistent with the pre-existing 200-doc scan cap; matches beyond the cap are unreachable either way.",
+    "Filter chips hidden during initialLoading; persist across refresh and pagination."
+  ],
+
+  "tests_run": {
+    "backend_open_discovery": "24/24 PASS (+7: serviceType/category/combined filters, invalid serviceType 400, blank category 400, unknown-param regression, cross-filter cursor replay rejected + same-set cursor valid)",
+    "backend_full_suite": "478/478 PASS",
+    "mobile_slice_m": "37/37 PASS (+6: VM filter refetch/clear/loadMore/no-op-dedupe; widget chip->server-param round-trip; filtered-empty Clear filters flow)",
+    "driver_feature_tests": "137 PASS",
+    "flutter_analyze_lib": "clean (0 issues)"
+  },
+
+  "verification_boundary": {
+    "local_automated": "PASS",
+    "physical_device": "NOT RUN — no device attached (SM-A325F adb link dropped in prior session)",
+    "staging": "NOT RUN — staging down (GCP billing disabled); server-side filter path verified via memoryDb HTTP tests only",
+    "cloud_cost": "zero — no billing, paid services, or deployments"
+  },
+
+  "limitations": [
+    "Filtered result sets beyond the 200-doc scan cap remain unreachable (pre-existing cap).",
+    "Server-side filtered path not exercised against real Firestore/staging.",
+    "No physical-device verification of chip UI."
+  ],
+
+  "next_step": "On stable adb: bounded driver-surface smoke of filter chips; on billing restore: verify filtered open-rides against staging."
+}

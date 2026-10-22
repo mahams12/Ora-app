@@ -25,6 +25,29 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   PassengerShellPage _page = PassengerShellPage.home;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _syncPassengerFcmToken());
+  }
+
+  /// NOTIF-RS-PUSH — passengers register an FCM token so ride-state nudges
+  /// can reach them. Role-gated server-side; failures are non-fatal.
+  Future<void> _syncPassengerFcmToken() async {
+    final profile = ref.read(sessionUserProfileProvider);
+    if (profile?.role != 'passenger') {
+      return;
+    }
+    try {
+      await ref
+          .read(dispatchFcmServiceProvider)
+          .syncPassengerTokenRegistration();
+    } catch (_) {
+      // Token sync is best-effort; ride state stays authoritative over HTTP.
+    }
+  }
+
   void _openDrawer() => _scaffoldKey.currentState?.openDrawer();
 
   void _closeDrawer() {
@@ -39,11 +62,13 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
     setState(() => _page = page);
   }
 
-  void _openRideRequest([String? categoryId]) {
+  void _openRideRequest(String? categoryId, {String? serviceType}) {
     final uri = Uri(
       path: AppRoutes.rideRequest,
       queryParameters: {
         if (categoryId != null && categoryId.isNotEmpty) 'category': categoryId,
+        if (serviceType != null && serviceType.isNotEmpty)
+          'service': serviceType,
       },
     );
     context.push(uri.toString());
@@ -110,6 +135,9 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
 
   Future<void> _signOut() async {
     _closeDrawer();
+    if (ref.read(sessionUserProfileProvider)?.role == 'passenger') {
+      await ref.read(dispatchFcmServiceProvider).clearRegisteredToken();
+    }
     final vm = ref.read(homeViewModelProvider.notifier);
     await vm.logout();
   }

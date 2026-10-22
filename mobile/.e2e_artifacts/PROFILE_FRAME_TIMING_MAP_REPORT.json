@@ -1,0 +1,69 @@
+{
+  "artifact": "PROFILE_FRAME_TIMING_MAP_REPORT",
+  "completedAtLocal": "2026-10-19T12:18:00+05:00",
+  "purpose": "Close the numeric frame-timing evidence gap from ORA_RIDE_UI_MAP_FINAL_AUDIT (prior debug build emitted 0 ORA_FRAME samples).",
+  "device": {
+    "serial": "RF8R40ZQ1JH",
+    "model": "SM-A325F",
+    "android": "13",
+    "package": "com.ora.ora",
+    "renderer": "Impeller (Vulkan) — per flutter logcat line"
+  },
+  "build": {
+    "mode": "profile (flutter build apk --profile)",
+    "apk": "mobile/build/app/outputs/flutter-apk/app-profile.apk (135.0MB)",
+    "dartDefines": [
+      "ORA_ENV=staging",
+      "ORA_API_BASE_URL=http://127.0.0.1:8081/v1",
+      "ORA_ALLOW_HTTP_API=true",
+      "ORA_APP_CHECK=false",
+      "ORA_GOOGLE_PLACES_API_KEY=<from android/local.properties, redacted>",
+      "MAPLIBRE_TILE_KEY=<from android/local.properties, redacted>",
+      "ORA_FRAME_TIMING=true"
+    ],
+    "note": "Staging Cloud Run is DOWN (GCP billing disabled). API base pointed at local stub (stub_auth_api.py + adb reverse tcp:8081) so the app could pass /auth/me and reach the map UI. Frame timing measures client-side rendering; backend identity is irrelevant to these numbers."
+  },
+  "rootCauseOfPriorZeroSamples": {
+    "finding": "bool.fromEnvironment('ORA_FRAME_TIMING') only accepts the string 'true' — value '1' falls back to defaultValue=false, so the logger was never installed in either the prior debug build or this run's first profile build (=1: 0 samples confirmed).",
+    "fix": "No app-code change — rebuilt with ORA_FRAME_TIMING=true. Instrumentation itself is adequate."
+  },
+  "procedure": [
+    "adb reverse tcp:8081 tcp:8081 (device -> local stub)",
+    "install app-profile.apk -r, adb logcat -c, launch",
+    "Home -> tap 'Where are you headed' -> ride-request compose (MapLibre preview, real tiles)",
+    "gestures via adb input: Expand map -> 6 pans -> double-tap zoom -> 2 long drags -> Collapse -> 4 compact pans -> sheet scroll -> expand -> 2 pans",
+    "adb logcat -d | grep ORA_FRAME -> ft_profile_map_frames.log"
+  ],
+  "captureWindow": {
+    "firstSample": "10-19 12:15:48.528",
+    "lastSample": "10-19 12:16:57.837",
+    "durationSecApprox": 69,
+    "sampleCount": 856
+  },
+  "results": {
+    "buildMs": {"min": 0.20, "median": 0.42, "mean": 0.73, "p90": 0.84, "p95": 1.69, "max": 47.62, "over16_67ms": 3, "over16_67pct": 0.4},
+    "rasterMs": {"min": 3.16, "median": 7.86, "mean": 9.32, "p90": 15.35, "p95": 18.84, "max": 61.56, "over16_67ms": 66, "over16_67pct": 7.7},
+    "totalMs": {"min": 4.35, "median": 13.35, "mean": 16.26, "p90": 28.84, "p95": 37.33, "max": 275.69, "over16_67ms": 251, "over16_67pct": 29.3}
+  },
+  "interpretation": {
+    "whatWasMeasured": "Flutter FrameTiming via WidgetsBinding.addTimingsCallback -> debugPrint 'ORA_FRAME n buildMs rasterMs totalMs' -> logcat (main.dart::_installFrameTimingLogger).",
+    "caveat_totalMs": "totalMs is totalSpan (build start -> raster end, spans vsync); >16.67ms here does NOT equal a dropped frame. The actionable budget numbers are buildMs and rasterMs vs the 16.67ms frame deadline.",
+    "caveat_fps": "No FPS figure is claimed — the log carries per-frame durations only; no display refresh-rate or jank-threshold policy is invented.",
+    "honestReading": "UI thread (build) is light (median 0.42ms). Raster is the heavier side during map gesture/tile work (median 7.86ms, p95 18.84ms). Worst tail (totalMs max 275.69ms) is cold-load/expand transient."
+  },
+  "limitations": [
+    "Backend was a local stub — no real rides/offers data loaded; map surfaces are backend-independent for rendering.",
+    "Gestures were scripted adb swipes/taps, not human finger input — representative but not organic.",
+    "Single device, single ~69s window; no sustained-load or thermal measurement.",
+    "Pinch-zoom not driven (adb input is single-pointer); double-tap zoom used instead.",
+    "Profile build points at stub URL — do NOT distribute or treat as staging build."
+  ],
+  "evidenceFiles": [
+    "ft_profile_map_frames.log (856 ORA_FRAME lines)",
+    "ft_profile_expanded_map.png (expanded MapLibre map, Lahore tiles)",
+    "ft_profile_expanded_ui.xml",
+    "stub_auth_api.py, stub_run.out",
+    "no_show_run1.out (unrelated earlier artifact)"
+  ],
+  "verdict": "NUMERIC_EVIDENCE_CAPTURED — 856 real FrameTiming samples on SM-A325F profile build; prior 0-sample gap root-caused to ORA_FRAME_TIMING=1 vs bool.fromEnvironment parsing."
+}

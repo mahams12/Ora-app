@@ -6,11 +6,14 @@ class DispatchInviteMessage {
     required this.rideId,
     required this.eventId,
     this.waveNumber,
+    this.inviteExpiresAt,
   });
 
   final String rideId;
   final String eventId;
   final String? waveNumber;
+  /// Server-authoritative countdown deadline (may be absent on old payloads).
+  final DateTime? inviteExpiresAt;
 
   static DispatchInviteMessage? tryParse(Map<String, dynamic> data) {
     final type = data[DispatchFcmConstants.dataKeyType];
@@ -26,10 +29,13 @@ class DispatchInviteMessage {
       return null;
     }
     final wave = data[DispatchFcmConstants.dataKeyWaveNumber];
+    final rawExpiry = data[DispatchFcmConstants.dataKeyInviteExpiresAt];
     return DispatchInviteMessage(
       rideId: rideId,
       eventId: eventId,
       waveNumber: wave is String ? wave : null,
+      inviteExpiresAt:
+          rawExpiry is String ? DateTime.tryParse(rawExpiry) : null,
     );
   }
 }

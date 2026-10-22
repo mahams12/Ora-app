@@ -48,10 +48,13 @@ class GeolocatorDeviceLocation implements DeviceLocationPort {
       );
       // Address is resolved via PlaceSearchPort.reverseGeocode in the VM.
       // Keep GPS authoritative coords only — do not hardcode "Current location".
+      final accuracy = position.accuracy;
       final location = ResolvedPassengerLocation(
         lat: position.latitude,
         lng: position.longitude,
         source: PassengerLocationSource.gps,
+        horizontalAccuracyMeters:
+            accuracy.isFinite && accuracy >= 0 ? accuracy : null,
       );
       if (!location.hasValidCoordinates) {
         throw const DeviceLocationException(

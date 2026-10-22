@@ -25,6 +25,23 @@ class _FakeRideRepository implements RideRepository {
   }
 
   @override
+  Future<DriverInvitePage> listInvited() => throw UnimplementedError();
+
+  @override
+  Future<String> acceptInvite({
+    required String rideId,
+    required String waveId,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<void> declineInvite({
+    required String rideId,
+    required String waveId,
+  }) =>
+      throw UnimplementedError();
+
+  @override
   Future<Ride> createRide({
     required Map<String, Object?> body,
     required String operationKey,
@@ -38,6 +55,8 @@ class _FakeRideRepository implements RideRepository {
   Future<OpenRideListPage> listOpenRides({
     int? limit,
     String? cursor,
+    String? serviceType,
+    String? category,
   }) =>
       throw UnimplementedError();
 

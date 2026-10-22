@@ -318,10 +318,69 @@ void main() {
     final proposed = c.read(rideRequestViewModelProvider).proposedPickup;
     expect(proposed?.lat, 31.46);
     expect(proposed?.lng, 74.26);
-    expect(proposed?.address, 'Location selected');
+    // No invented address — displayLabel renders the generic fallback.
+    expect(proposed?.address, isNull);
     expect(proposed?.displayLabel, 'Location selected');
+    expect(c.read(rideRequestViewModelProvider).pickupNameUnresolved, isTrue);
     expect(proposed?.displayLabel.toLowerCase(), isNot(contains('current')));
     expect(proposed?.displayLabel, isNot(contains('31.46')));
+  });
+
+  test('E — GPS retry names the pickup without re-running GPS', () async {
+    var reverseCalls = 0;
+    var gpsCalls = 0;
+    final device = FakeDeviceLocation(
+      onGet: () async {
+        gpsCalls++;
+        return _gpsResolved;
+      },
+    );
+    final places = FakePlaceSearch(
+      onReverseGeocode: (lat, lng) async {
+        reverseCalls++;
+        if (reverseCalls == 1) {
+          throw const PlaceSearchException(PlaceSearchFailureKind.network);
+        }
+        return const ResolvedPassengerLocation(
+          lat: 31.46,
+          lng: 74.26,
+          address: 'Gulberg III, Lahore',
+          source: PassengerLocationSource.gps,
+        );
+      },
+    );
+    final c = container(device: device, places: places);
+    addTearDown(c.dispose);
+    final vm = c.read(rideRequestViewModelProvider.notifier);
+    await vm.useCurrentLocationForPickup();
+    var state = c.read(rideRequestViewModelProvider);
+    expect(state.pickupNameUnresolved, isTrue);
+    expect(state.proposedPickup?.address, isNull);
+    expect(state.proposedPickup?.lat, 31.46);
+
+    await vm.retryPickupNameLookup();
+    state = c.read(rideRequestViewModelProvider);
+    expect(state.pickupNameUnresolved, isFalse);
+    expect(state.proposedPickup?.address, 'Gulberg III, Lahore');
+    expect(state.proposedPickup?.displayLabel, 'Gulberg III, Lahore');
+    expect(gpsCalls, 1); // retry never re-runs GPS
+    expect(reverseCalls, 2);
+  });
+
+  test('E — replacing proposal clears the unresolved flag', () async {
+    final places = FakePlaceSearch(
+      reverseError: const PlaceSearchException(
+        PlaceSearchFailureKind.network,
+      ),
+    );
+    final c = container(device: FakeDeviceLocation(result: _gpsResolved), places: places);
+    addTearDown(c.dispose);
+    final vm = c.read(rideRequestViewModelProvider.notifier);
+    await vm.useCurrentLocationForPickup();
+    expect(c.read(rideRequestViewModelProvider).pickupNameUnresolved, isTrue);
+    // Any re-pick (even another GPS attempt) clears the stale flag.
+    await vm.useCurrentLocationForPickup();
+    expect(c.read(rideRequestViewModelProvider).pickupNameUnresolved, isTrue);
   });
 
   test('F — stale reverse-geocode must not overwrite newer GPS selection',
@@ -1201,6 +1260,389 @@ void main() {
       await Future.wait([first, second]);
       expect(calls, 1);
     });
+  });
+
+  group('Service type (intercity)', () {
+    test('defaults to ride; seedServiceType honors intercity, ignores junk', () {
+      final c = container();
+      addTearDown(c.dispose);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+
+      expect(c.read(rideRequestViewModelProvider).serviceType, 'ride');
+
+      vm.seedServiceType('intercity');
+      expect(
+        c.read(rideRequestViewModelProvider).serviceType,
+        'intercity',
+      );
+
+      vm.seedServiceType('bogus');
+      expect(
+        c.read(rideRequestViewModelProvider).serviceType,
+        'intercity',
+      );
+
+      vm.seedServiceType(null);
+      vm.seedServiceType('  ');
+      expect(
+        c.read(rideRequestViewModelProvider).serviceType,
+        'intercity',
+      );
+    });
+
+    test('estimate request carries selected serviceType', () async {
+      final pricing = FakePricingPort(estimateResult: _sampleEstimate());
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(pricing: pricing, places: places);
+      addTearDown(c.dispose);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+
+      vm.seedServiceType('intercity');
+      await confirmBoth(vm, places: places);
+
+      expect(pricing.requests, isNotEmpty);
+      expect(pricing.requests.last.serviceType, 'intercity');
+    });
+
+    test('switching service invalidates pricing and refetches', () async {
+      final pricing = FakePricingPort(estimateResult: _sampleEstimate());
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(pricing: pricing, places: places);
+      addTearDown(c.dispose);
+      // Keep the autoDispose provider alive across awaits.
+      final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+      addTearDown(sub.close);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+
+      await confirmBoth(vm, places: places);
+      expect(c.read(rideRequestViewModelProvider).hasUsablePricing, isTrue);
+      final callsAfterFirst = pricing.estimateCalls;
+
+      vm.selectServiceType('intercity');
+      // Give the unawaited refetch a chance to complete.
+      await Future<void>.delayed(Duration.zero);
+
+      expect(
+        c.read(rideRequestViewModelProvider).serviceType,
+        'intercity',
+      );
+      expect(pricing.estimateCalls, greaterThan(callsAfterFirst));
+      expect(pricing.requests.last.serviceType, 'intercity');
+      expect(c.read(rideRequestViewModelProvider).hasUsablePricing, isTrue);
+    });
+
+    test('selectServiceType rejects unsupported values without side effects',
+        () async {
+      final pricing = FakePricingPort(estimateResult: _sampleEstimate());
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(pricing: pricing, places: places);
+      addTearDown(c.dispose);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+
+      await confirmBoth(vm, places: places);
+      final calls = pricing.estimateCalls;
+
+      vm.selectServiceType('courier'); // valid server-side, not exposed here
+      vm.selectServiceType('ride'); // same as current → no-op
+      await Future<void>.delayed(Duration.zero);
+
+      expect(c.read(rideRequestViewModelProvider).serviceType, 'ride');
+      expect(pricing.estimateCalls, calls);
+    });
+
+    test('stale estimate cannot be submitted after service switch', () async {
+      // Refetch that never completes — simulates in-flight post-switch.
+      final pricing = _RacePricingPort(
+        onEstimate: () async {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+          return _sampleEstimate();
+        },
+      );
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(pricing: pricing, places: places);
+      addTearDown(c.dispose);
+      final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+      addTearDown(sub.close);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+
+      await confirmBoth(vm, places: places);
+      expect(c.read(rideRequestViewModelProvider).hasUsablePricing, isTrue);
+      vm.goToReview();
+      expect(vm.canSubmitRideRequest, isTrue);
+
+      // Switch → pricing invalidated synchronously → submit must be blocked
+      // while the intercity estimate is still in flight.
+      vm.selectServiceType('intercity');
+      expect(vm.canSubmitRideRequest, isFalse);
+      expect(
+        vm.submitBlockReason,
+        RideRequestBlockReason.pricingUnavailable,
+      );
+      expect(
+        c.read(rideRequestViewModelProvider).pricingStatus,
+        PricingStatus.loading,
+      );
+
+      await Future<void>.delayed(const Duration(milliseconds: 80));
+      expect(c.read(rideRequestViewModelProvider).hasUsablePricing, isTrue);
+      expect(vm.canSubmitRideRequest, isTrue);
+    });
+
+    test('failed intercity refetch keeps submit blocked', () async {
+      var calls = 0;
+      final pricing = _RacePricingPort(
+        onEstimate: () async {
+          calls++;
+          if (calls == 1) return _sampleEstimate();
+          throw const PricingClientException(
+            PricingFailureKind.pricingUnavailable,
+            'Pricing isn\'t available right now.',
+          );
+        },
+      );
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(pricing: pricing, places: places);
+      addTearDown(c.dispose);
+      final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+      addTearDown(sub.close);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+
+      await confirmBoth(vm, places: places);
+      vm.goToReview();
+      vm.selectServiceType('intercity');
+      await Future<void>.delayed(Duration.zero);
+
+      expect(vm.canSubmitRideRequest, isFalse);
+      expect(
+        c.read(rideRequestViewModelProvider).pricingStatus,
+        PricingStatus.pricingUnavailable,
+      );
+    });
+
+    test('create body sends selected serviceType', () async {
+      final createRide = MockCreateRideUseCase();
+      when(
+        () => createRide(
+          body: any(named: 'body'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).thenAnswer((_) async => _sampleRide());
+
+      final places = FakePlaceSearch(resolved: _pickupResolved);
+      final c = container(
+        createRide: createRide,
+        places: places,
+        caps: const RideRequestCapabilities(
+          pricingSnapshotId: 'snap-1',
+          passengerOfferMinor: 25000,
+        ),
+      );
+      addTearDown(c.dispose);
+      final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+      addTearDown(sub.close);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+      vm.seedServiceType('intercity');
+      await confirmBoth(vm, places: places);
+      vm.goToReview();
+      await vm.submit();
+
+      expect(
+        c.read(rideRequestViewModelProvider).phase,
+        RideRequestPhase.created,
+      );
+      final captured = verify(
+        () => createRide(
+          body: captureAny(named: 'body'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).captured.single as Map<String, Object?>;
+      expect(captured['serviceType'], 'intercity');
+    });
+  });
+
+  group('MAP-PIN-ADJUST — set point on map', () {
+    test('startPinAdjust sets target; cancelPinAdjust clears it', () {
+      final c = container();
+      addTearDown(c.dispose);
+      final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+      addTearDown(sub.close);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+
+      vm.startPinAdjust(LocationField.pickup);
+      expect(
+        c.read(rideRequestViewModelProvider).pinAdjustTarget,
+        LocationField.pickup,
+      );
+      vm.cancelPinAdjust();
+      expect(
+        c.read(rideRequestViewModelProvider).pinAdjustTarget,
+        isNull,
+      );
+    });
+
+    test('map tap without an active target is ignored', () async {
+      final places = FakePlaceSearch();
+      final c = container(places: places);
+      addTearDown(c.dispose);
+      final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+      addTearDown(sub.close);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+
+      await vm.setPinFromMapTap(31.5, 74.3);
+      final s = c.read(rideRequestViewModelProvider);
+      expect(s.proposedPickup, isNull);
+      expect(s.proposedDestination, isNull);
+      expect(places.reverseCalls, 0);
+    });
+
+    test(
+      'pickup map tap preserves tapped coords, marks mapPin source, '
+      'clears adjust mode',
+      () async {
+        final c = container();
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        vm.startPinAdjust(LocationField.pickup);
+        await vm.setPinFromMapTap(31.612, 74.981);
+
+        final s = c.read(rideRequestViewModelProvider);
+        final p = s.proposedPickup!;
+        expect(p.lat, 31.612);
+        expect(p.lng, 74.981);
+        expect(p.source, PassengerLocationSource.mapPin);
+        expect(p.address, 'Bahria Town, Lahore'); // fallback resolves name
+        expect(p.horizontalAccuracyMeters, isNull); // no GPS fix involved
+        expect(s.pinAdjustTarget, isNull);
+        expect(s.pickupNameUnresolved, isFalse);
+        expect(s.confirmedPickup, isNull);
+      },
+    );
+
+    test(
+      'destination map tap names the point; naming failure stays honest '
+      'and retryable',
+      () async {
+        final places = FakePlaceSearch(
+          reverseError: const PlaceSearchException(
+            PlaceSearchFailureKind.network,
+            'down',
+          ),
+        );
+        final c = container(places: places);
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        vm.startPinAdjust(LocationField.destination);
+        await vm.setPinFromMapTap(31.7, 74.0);
+
+        var s = c.read(rideRequestViewModelProvider);
+        var d = s.proposedDestination!;
+        expect(d.lat, 31.7);
+        expect(d.lng, 74.0);
+        expect(d.source, PassengerLocationSource.mapPin);
+        expect(d.address, isNull); // never invented
+        expect(s.destinationNameUnresolved, isTrue);
+
+        places.reverseError = null;
+        await vm.retryDestinationNameLookup();
+        s = c.read(rideRequestViewModelProvider);
+        d = s.proposedDestination!;
+        expect(d.lat, 31.7); // same coords — pin never moves
+        expect(d.lng, 74.0);
+        expect(d.address, 'Bahria Town, Lahore');
+        expect(s.destinationNameUnresolved, isFalse);
+      },
+    );
+
+    test(
+      'mapPin pickup retry reuses tapped coords and preserves source',
+      () async {
+        final places = FakePlaceSearch(
+          reverseError: const PlaceSearchException(
+            PlaceSearchFailureKind.network,
+            'down',
+          ),
+        );
+        final c = container(places: places);
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        vm.startPinAdjust(LocationField.pickup);
+        await vm.setPinFromMapTap(31.55, 74.41);
+        expect(
+          c.read(rideRequestViewModelProvider).pickupNameUnresolved,
+          isTrue,
+        );
+
+        places.reverseError = null;
+        await vm.retryPickupNameLookup();
+        final s = c.read(rideRequestViewModelProvider);
+        final p = s.proposedPickup!;
+        expect(p.lat, 31.55);
+        expect(p.lng, 74.41);
+        expect(p.source, PassengerLocationSource.mapPin);
+        expect(p.address, 'Bahria Town, Lahore');
+        expect(s.pickupNameUnresolved, isFalse);
+      },
+    );
+
+    test('out-of-range tap coordinates are rejected', () async {
+      final places = FakePlaceSearch();
+      final c = container(places: places);
+      addTearDown(c.dispose);
+      final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+      addTearDown(sub.close);
+      final vm = c.read(rideRequestViewModelProvider.notifier);
+
+      vm.startPinAdjust(LocationField.pickup);
+      await vm.setPinFromMapTap(91.0, 74.3);
+      await vm.setPinFromMapTap(31.5, 181.0);
+      expect(
+        c.read(rideRequestViewModelProvider).proposedPickup,
+        isNull,
+      );
+      expect(places.reverseCalls, 0);
+    });
+
+    test(
+      'selecting a suggestion clears a stale adjust target — a later tap '
+      'cannot overwrite it',
+      () async {
+        final places = FakePlaceSearch(resolved: _pickupResolved);
+        final c = container(places: places);
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        vm.startPinAdjust(LocationField.pickup);
+        await vm.selectPlaceSuggestion(
+          field: LocationField.pickup,
+          suggestion: const PlaceSuggestion(
+            placeId: 'place-pickup',
+            primaryText: 'Lahore Fort',
+            secondaryText: 'Lahore',
+          ),
+        );
+        expect(
+          c.read(rideRequestViewModelProvider).pinAdjustTarget,
+          isNull,
+        );
+        // A stale tap now does nothing.
+        await vm.setPinFromMapTap(31.0, 74.0);
+        expect(
+          c.read(rideRequestViewModelProvider).proposedPickup!.lat,
+          _pickupResolved.lat,
+        );
+      },
+    );
   });
 }
 

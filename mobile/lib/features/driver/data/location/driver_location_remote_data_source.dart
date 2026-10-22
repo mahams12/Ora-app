@@ -47,7 +47,7 @@ enum LocationPublishFailureKind {
   unknown,
 }
 
-/// HTTP adapter for POST /v1/location/update (trip mode).
+/// HTTP adapter for POST /v1/location/update (trip + idle modes).
 abstract class DriverLocationRemoteDataSource {
   Future<LocationPublishResult> publishTripLocation({
     required String rideId,
@@ -57,6 +57,24 @@ abstract class DriverLocationRemoteDataSource {
     required CancelToken cancelToken,
     RequestContext? context,
   });
+
+  /// Idle-mode publish — no rideId, so the server records it under the
+  /// driver's idle stream and projects presence into the geo index. Online
+  /// drivers need this to stay discoverable between trips.
+  ///
+  /// Default returns unsupported so pre-existing fakes stay valid; the HTTP
+  /// adapter overrides it.
+  Future<LocationPublishResult> publishIdleLocation({
+    required int locationSeq,
+    required String locationStreamId,
+    required DriverLocationFix fix,
+    required CancelToken cancelToken,
+    RequestContext? context,
+  }) async {
+    return const LocationPublishFailed(
+      kind: LocationPublishFailureKind.unknown,
+    );
+  }
 }
 
 /// Uses existing [ApiClient] auth/interceptors. Never marks the POST idempotent.
@@ -75,9 +93,47 @@ class ApiDriverLocationRemoteDataSource
     required CancelToken cancelToken,
     RequestContext? context,
   }) async {
+    return _publish(
+      rideId: rideId,
+      locationSeq: locationSeq,
+      locationStreamId: locationStreamId,
+      fix: fix,
+      cancelToken: cancelToken,
+      context: context,
+    );
+  }
+
+  @override
+  Future<LocationPublishResult> publishIdleLocation({
+    required int locationSeq,
+    required String locationStreamId,
+    required DriverLocationFix fix,
+    required CancelToken cancelToken,
+    RequestContext? context,
+  }) async {
+    return _publish(
+      rideId: null,
+      locationSeq: locationSeq,
+      locationStreamId: locationStreamId,
+      fix: fix,
+      cancelToken: cancelToken,
+      context: context,
+    );
+  }
+
+  Future<LocationPublishResult> _publish({
+    required String? rideId,
+    required int locationSeq,
+    required String locationStreamId,
+    required DriverLocationFix fix,
+    required CancelToken cancelToken,
+    RequestContext? context,
+  }) async {
     final heading = fix.headingDegrees;
     final body = <String, Object?>{
-      'rideId': rideId,
+      // rideId omitted entirely in idle mode — the server treats its absence
+      // as an idle (presence) stream, not a trip stream.
+      if (rideId != null) 'rideId': rideId,
       'locationSeq': locationSeq,
       'locationStreamId': locationStreamId,
       'lat': fix.latitude,

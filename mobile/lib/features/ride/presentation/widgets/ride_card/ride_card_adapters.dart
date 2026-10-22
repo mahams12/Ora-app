@@ -46,8 +46,9 @@ class RideCardAdapters {
       destinationLng: ride.destination.lng,
       // Privacy: open DTO has no passenger identity — leave empty slots.
       participant: null,
+      // passengerOfferMinor is the gross fare offered — not driver payout.
       fareLabel: formatOpenRideFareMinor(ride.passengerOfferMinor),
-      fareCaption: 'Your earnings',
+      fareCaption: 'Trip fare',
       distanceLabel: distance,
       durationLabel: duration,
       paymentLabel: _paymentLabel(ride.paymentMethod),
@@ -108,11 +109,12 @@ class RideCardAdapters {
       participant: null,
       vehicle: null,
       fareLabel: fare,
+      // agreedFareMinor is the gross trip fare — not a driver payout.
       fareCaption: kind == RideCardStatusKind.danger
           ? 'Cancelled'
           : active
               ? 'Agreed fare'
-              : 'Your earnings',
+              : 'Trip fare',
       distanceLabel: distance,
       // Duration is not on Ride DTO — leave null (grid shows "—").
       durationLabel: null,

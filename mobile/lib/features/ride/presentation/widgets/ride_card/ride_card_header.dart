@@ -37,14 +37,18 @@ class RideCardHeader extends StatelessWidget {
     return Row(
       children: [
         if (hasStatus)
-          RideCardStatus(
-            label: statusLabel!,
-            emphasized: emphasized,
-            kind: statusKind,
+          Flexible(
+            child: RideCardStatus(
+              label: statusLabel!,
+              emphasized: emphasized,
+              kind: statusKind,
+            ),
           ),
         if (hasSecondary) ...[
           if (hasStatus) const SizedBox(width: OraSpacing.xs),
-          RideCardSecondaryStatus(label: secondaryStatusLabel!),
+          Flexible(
+            child: RideCardSecondaryStatus(label: secondaryStatusLabel!),
+          ),
         ],
         if (hasTitle) ...[
           if (hasStatus || hasSecondary) const SizedBox(width: OraSpacing.sm),

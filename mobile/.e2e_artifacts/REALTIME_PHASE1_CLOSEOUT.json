@@ -1,0 +1,58 @@
+{
+  "report": "REALTIME_PHASE1_CLOSEOUT",
+  "date": "2026-10-19",
+  "basis": "REALTIME_PERF_AUDIT_STATUS.json findings 3 (marker teleport) + 2 (poll-only ride state latency)",
+  "partA_marker_interpolation": {
+    "status": "IMPLEMENTED + unit-tested",
+    "files": [
+      "lib/features/ride/presentation/utils/driver_marker_interpolator.dart (new, pure, injectable clock)",
+      "lib/features/ride/presentation/widgets/active_ride_map.dart (Ticker wiring)"
+    ],
+    "semantics": {
+      "authority": "server/RTDB TripLocationLatest remains authoritative; interpolator output feeds ONLY the driver Marker position and progression-guide anchor (_displayDriver). Camera fitIdentity still reads the raw fix (_driverLatLng); interpolation never reaches publishing, state, pricing, or persistence.",
+      "segment": "700ms linear from rendered position to new fix",
+      "snap_conditions": [
+        "first fix", ">=150m discontinuity", "locationStreamId change (stream restart)",
+        "seq regression/duplicate ignored", "stale/expired/marker-hidden input resets",
+        "ride-state transition resets", "recenter resets", "init/reinit snaps"
+      ],
+      "jitter_floor_m": 1.5,
+      "battery": "Ticker created lazily, runs only while a segment is active; stops on idle/dispose; no work when widget unmounted or no driver marker is shown"
+    }
+  },
+  "partB_fcm_ride_nudge": {
+    "status": "IMPLEMENTED client-side; INERT until backend emits ride-state pushes",
+    "files": [
+      "lib/core/notifications/ride_fcm_nudge.dart (new parser)",
+      "lib/core/notifications/dispatch_fcm_service.dart (rideNudges broadcast, eventId dedup via existing seen set)",
+      "lib/app/di/providers.dart (fcmRideNudgeProvider)",
+      "lib/features/ride/presentation/view_models/active_ride_view_model.dart (500ms-debounced refresh hint)",
+      "lib/features/driver/presentation/view_models/driver_assigned_ride_view_model.dart (same)"
+    ],
+    "contract": {
+      "trigger": "any non-invite FCM message with non-empty data.rideId (or ride_id)",
+      "dedup": "eventId/event_id/delivery_event_id via shared 200-entry seen set; id-less nudges pass to consumer debounce",
+      "consumer": "matching rideId only -> one immediate refresh() + 500ms debounce collapses bursts to <=1 extra fetch; refresh() guards (alive, seq, mutating) unchanged; polling schedule untouched",
+      "payload_trust": "never authoritative — type/state/fare fields parsed for diagnostics only"
+    },
+    "backend_gap": "dispatch_fcm_projector.ts is dispatch-invite-only; no ride-state push projector exists. Client contract deliberately lenient so any future {data:{rideId,eventId}} message works without app change. Adding a backend projector is separate owner-scoped work."
+  },
+  "verification": {
+    "analyze": "flutter analyze lib/ -> No issues found",
+    "tests_focused": "29 PASS (9 interpolator + 5 nudge parser + 15 active_ride_view_model incl. 4 new nudge cases: matching-ride refresh, wrong-ride ignored, burst->immediate+trailing, disposed-screen ignored)",
+    "tests_suite": "flutter test test/features/ride + driver_publisher + core/notifications: 341 pass / 2 FAIL",
+    "pre_existing_failures": "ride_history_ui_test.dart 2 failures reproduced identically at pristine HEAD (git worktree check) — 'Completed' rendered by both filter chip and ride-card badge vs findsOneWidget; unrelated to this change",
+    "device_smoke": "debug APK builds; installed + launched on SM-A325F (RF8R40ZQ1JH) with local auth stub -> reached Home cleanly, no FATAL/D1_FCM errors",
+    "physical_blocked": {
+      "marker_smoothness": "needs live ride + RTDB tripLocations stream -> staging down (billing closed)",
+      "push_to_visible_latency": "no backend ride-state push exists to time (see backend_gap) AND staging down",
+      "note": "no metrics invented; unit coverage substitutes until infra restored"
+    }
+  },
+  "constraints_honored": [
+    "no cloud/billing/key/deploy changes",
+    "no ride/offer state-machine, pricing, matching, or publishing-limit changes",
+    "no geocoding dependency added",
+    "no commits/pushes/destructive cleanup; all prior working-tree changes + artifacts preserved"
+  ]
+}

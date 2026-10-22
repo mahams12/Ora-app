@@ -38,10 +38,8 @@
     "test:phase-n3-unit-proof": "./node_modules/.bin/esbuild scripts/run_phase_n3_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_n3_unit_proof.cjs && node .tmp/phase_n3_unit_proof.cjs",
     "test:phase-n4-unit-proof": "./node_modules/.bin/esbuild scripts/run_phase_n4_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_n4_unit_proof.cjs && node .tmp/phase_n4_unit_proof.cjs",
     "test:phase-d1-unit-proof": "./node_modules/.bin/esbuild scripts/run_phase_d1_unit_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/phase_d1_unit_proof.cjs && node .tmp/phase_d1_unit_proof.cjs",
-    "test:dispatch-live-proof": "./node_modules/.bin/esbuild scripts/run_dispatch_live_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/dispatch_live_proof.cjs --external:ioredis && node .tmp/dispatch_live_proof.cjs",
+    "test:dispatch-live-proof": "./node_modules/.bin/esbuild scripts/run_dispatch_live_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/dispatch_live_proof.cjs && node .tmp/dispatch_live_proof.cjs",
     "test:dispatch-fcm-live-proof": "./node_modules/.bin/esbuild scripts/run_dispatch_fcm_live_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/dispatch_fcm_live_proof.cjs && node .tmp/dispatch_fcm_live_proof.cjs",
-    "test:nearby-redis-proof": "./node_modules/.bin/esbuild scripts/run_nearby_redis_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/nearby_redis_proof.cjs --external:ioredis && node .tmp/nearby_redis_proof.cjs",
-    "test:redis-geo-proof": "./node_modules/.bin/esbuild scripts/run_redis_geo_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/redis_geo_proof.cjs --external:ioredis && node .tmp/redis_geo_proof.cjs",
     "test:driver-availability-firestore": "./node_modules/.bin/esbuild scripts/run_driver_availability_firestore_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/driver_availability_firestore_proof.cjs && node .tmp/driver_availability_firestore_proof.cjs",
     "test:location-update-firestore": "./node_modules/.bin/esbuild scripts/run_location_update_firestore_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/location_update_firestore_proof.cjs && node .tmp/location_update_firestore_proof.cjs",
     "test:city-catalog-firestore": "./node_modules/.bin/esbuild scripts/run_city_catalog_firestore_proof.ts --bundle --platform=node --format=cjs --outfile=.tmp/city_catalog_firestore_proof.cjs && node .tmp/city_catalog_firestore_proof.cjs",
@@ -59,7 +57,6 @@
   "dependencies": {
     "express": "^4.21.2",
     "firebase-admin": "^13.0.2",
-    "ioredis": "^5.11.1",
     "uuid": "^11.0.5"
   },
   "devDependencies": {

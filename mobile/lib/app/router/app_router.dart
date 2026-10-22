@@ -72,6 +72,7 @@ GoRouter createAppRouter({
         name: 'ride-request',
         builder: (context, state) => RideRequestView(
           initialCategoryId: state.uri.queryParameters['category'],
+          initialServiceType: state.uri.queryParameters['service'],
         ),
       ),
       GoRoute(

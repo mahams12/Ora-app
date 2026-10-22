@@ -3,7 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { createApp } from './app';
 import { assertProductionSecurityConfig } from './config/production_guards';
-import { createRedisGeoClientFromEnv } from './redis/client';
+import { createFirestoreGeoClient } from './redis/firestore_geo_client';
 import { RedisGeoProjectionService } from './redis/geo_projection';
 import { createFirebaseFcmSender } from './delivery/fcm_sender';
 import { logSafe } from './http/errors';
@@ -54,11 +54,11 @@ async function main() {
     configured: process.env.FIREBASE_DATABASE_URL?.trim() ? true : false,
   });
 
-  const redisClient = await createRedisGeoClientFromEnv(process.env);
+  // GEO store: Firestore-native index — zero standing cost, multi-instance
+  // safe, always configured (no Redis dependency, no silent memory fallback).
+  const redisClient = createFirestoreGeoClient(db);
   const geoProjection = new RedisGeoProjectionService(redisClient);
-  logSafe('redis_geo_init', {
-    configured: redisClient != null,
-  });
+  logSafe('geo_init', { configured: true, store: 'firestore' });
 
   // D1 — FCM Admin Messaging (data-only). Always construct; send fails gracefully if misconfigured.
   const fcmSender = createFirebaseFcmSender();
@@ -94,7 +94,7 @@ async function main() {
   app.listen(port, () => {
     // eslint-disable-next-line no-console
     console.log(
-      `ora-auth-service listening on :${port} project=${projectId} appCheck=${requireAppCheck} redisGeo=${redisClient != null} routing=${routingProvider != null} rtdb=${Boolean(process.env.FIREBASE_DATABASE_URL?.trim())}`,
+      `ora-auth-service listening on :${port} project=${projectId} appCheck=${requireAppCheck} geo=firestore routing=${routingProvider != null} rtdb=${Boolean(process.env.FIREBASE_DATABASE_URL?.trim())}`,
     );
   });
 }

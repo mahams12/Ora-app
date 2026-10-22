@@ -297,6 +297,51 @@ describe('N1 driver availability — concurrency', () => {
   });
 });
 
+describe('N1 driver availability — GET status', () => {
+  it('returns offline for driver with no doc (default)', async () => {
+    const db = memoryDb();
+    seedApprovedDriver(db, 'd1');
+    const res = await request(appFor(db, 'd1'))
+      .get('/v1/drivers/availability')
+      .set('Authorization', 'Bearer t');
+    expect(res.status).toBe(200);
+    expect(res.body.data.availabilityState).toBe('offline');
+  });
+
+  it('reflects persisted state after go-online/go-offline round-trip', async () => {
+    const db = memoryDb();
+    seedApprovedDriver(db, 'd1');
+    const app = appFor(db, 'd1');
+    await request(app)
+      .post('/v1/drivers/go-online')
+      .set('Authorization', 'Bearer t')
+      .send({});
+    let res = await request(app)
+      .get('/v1/drivers/availability')
+      .set('Authorization', 'Bearer t');
+    expect(res.body.data.availabilityState).toBe('online');
+    await request(app)
+      .post('/v1/drivers/go-offline')
+      .set('Authorization', 'Bearer t')
+      .send({});
+    res = await request(app)
+      .get('/v1/drivers/availability')
+      .set('Authorization', 'Bearer t');
+    expect(res.body.data.availabilityState).toBe('offline');
+  });
+
+  it('rejects passenger and unauthenticated callers', async () => {
+    const db = memoryDb();
+    seedUser(db, 'p1', { role: 'passenger', driverStatus: 'none' });
+    const res = await request(appFor(db, 'p1'))
+      .get('/v1/drivers/availability')
+      .set('Authorization', 'Bearer t');
+    expect(res.status).toBe(403);
+    const noAuth = await request(appFor(db, 'd1')).get('/v1/drivers/availability');
+    expect(noAuth.status).toBe(401);
+  });
+});
+
 describe('N1 driver availability — persistence', () => {
   it('Firestore contains authoritative state after mutations', async () => {
     const db = memoryDb();

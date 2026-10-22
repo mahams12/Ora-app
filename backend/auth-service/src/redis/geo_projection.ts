@@ -52,17 +52,20 @@ export class RedisGeoProjectionService {
       const onlineKey = driverOnlineKey(input.driverId);
 
       // Monotonic guard: do not let older accepted packets overwrite newer projection.
+      // Seq comparison is per-stream (idle + trip streams count independently);
+      // a different stream only loses when its packet is strictly older by ts.
       const existingRaw = await this.redis.get(onlineKey);
       if (existingRaw) {
         try {
           const prev = JSON.parse(existingRaw) as DriverOnlineMarker;
-          if (
-            typeof prev.locationSeq === 'number' &&
+          const staleTs =
             typeof prev.lastLocationTs === 'number' &&
-            (prev.locationSeq > input.locationSeq ||
-              (prev.locationSeq === input.locationSeq &&
-                prev.lastLocationTs > input.lastLocationTs))
-          ) {
+            prev.lastLocationTs > input.lastLocationTs;
+          const staleSeq =
+            prev.locationStreamId === input.locationStreamId &&
+            typeof prev.locationSeq === 'number' &&
+            prev.locationSeq > input.locationSeq;
+          if (staleTs || staleSeq) {
             logSafe('REDIS_GEO_SKIP', {
               reason: 'stale_projection',
               driverId: input.driverId,
@@ -81,13 +84,42 @@ export class RedisGeoProjectionService {
         }
       }
 
+      const marker: DriverOnlineMarker = {
+        driverId: input.driverId,
+        lastLocationTs: input.lastLocationTs,
+        accuracy: input.accuracy,
+        city,
+        locationStreamId: input.locationStreamId,
+        locationSeq: input.locationSeq,
+        acceptedAt: input.acceptedAt,
+      };
+      const markerValue = JSON.stringify(marker);
+
       // Coordinate-primary: always project live coords (homeCity not required).
-      await this.redis.geoadd(
-        GEO_DRIVERS_KEY,
-        input.lng,
-        input.lat,
-        input.driverId,
-      );
+      // projectLocation = single store round-trip (GEO membership + marker).
+      if (this.redis.projectLocation) {
+        await this.redis.projectLocation({
+          key: GEO_DRIVERS_KEY,
+          member: input.driverId,
+          longitude: input.lng,
+          latitude: input.lat,
+          markerKey: onlineKey,
+          markerValue,
+          markerTtlSeconds: DRIVER_ONLINE_TTL_SECONDS,
+        });
+      } else {
+        await this.redis.geoadd(
+          GEO_DRIVERS_KEY,
+          input.lng,
+          input.lat,
+          input.driverId,
+        );
+        await this.redis.set(
+          onlineKey,
+          markerValue,
+          DRIVER_ONLINE_TTL_SECONDS,
+        );
+      }
 
       // Dual-write legacy city shard when homeCity present (migration / rollback).
       if (city) {
@@ -98,21 +130,6 @@ export class RedisGeoProjectionService {
           input.driverId,
         );
       }
-
-      const marker: DriverOnlineMarker = {
-        driverId: input.driverId,
-        lastLocationTs: input.lastLocationTs,
-        accuracy: input.accuracy,
-        city,
-        locationStreamId: input.locationStreamId,
-        locationSeq: input.locationSeq,
-        acceptedAt: input.acceptedAt,
-      };
-      await this.redis.set(
-        onlineKey,
-        JSON.stringify(marker),
-        DRIVER_ONLINE_TTL_SECONDS,
-      );
 
       logSafe('REDIS_GEO_PROJECTED', {
         driverId: input.driverId,

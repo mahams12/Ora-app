@@ -1,10 +1,13 @@
 
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ora/app/di/providers.dart';
 import 'package:ora/core/errors/app_failure.dart';
 import 'package:ora/core/errors/failure_mapper.dart';
+import 'package:ora/core/notifications/ride_fcm_nudge.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';
 import 'package:ora/features/ride/domain/use_cases/ride_use_cases.dart';
 import 'package:ora/features/ride/presentation/active_ride/active_ride_display.dart';
@@ -70,6 +73,7 @@ ProviderContainer _container({
     intervals: [Duration(days: 1)],
     maxLifetime: Duration(days: 1),
   ),
+  Stream<RideFcmNudge>? nudgeStream,
 }) {
   return ProviderContainer(
     overrides: [
@@ -80,6 +84,8 @@ ProviderContainer _container({
       activeRidePollingPolicyProvider.overrideWithValue(policy),
       idempotencyNonceStoreProvider
           .overrideWithValue(InMemoryIdempotencyNonceStore()),
+      if (nudgeStream != null)
+        fcmRideNudgeProvider.overrideWith((_) => nudgeStream),
     ],
   );
 }
@@ -308,5 +314,93 @@ void main() {
   test('passengerCanCancel false for RIDE_COMPLETED', () {
     expect(passengerCanCancel('RIDE_COMPLETED'), isFalse);
     expect(passengerCanClose('RIDE_COMPLETED'), isTrue);
+  });
+
+  group('FCM ride nudge (NOTIF-RIDE-NUDGE)', () {
+    test('nudge for this ride triggers an immediate extra refresh', () async {
+      when(() => getRide('ride-1')).thenAnswer((_) async => _ride());
+      final nudges = StreamController<RideFcmNudge>.broadcast();
+      addTearDown(nudges.close);
+      final c = _container(
+        getRide: getRide,
+        cancel: cancel,
+        close: close,
+        nudgeStream: nudges.stream,
+      );
+      addTearDown(c.dispose);
+      await (await keepActive(c)).refresh();
+      clearInteractions(getRide);
+
+      nudges.add(const RideFcmNudge(rideId: 'ride-1', eventId: 'e1'));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      verify(() => getRide('ride-1')).called(1);
+    });
+
+    test('nudge for a different ride is ignored', () async {
+      when(() => getRide('ride-1')).thenAnswer((_) async => _ride());
+      final nudges = StreamController<RideFcmNudge>.broadcast();
+      addTearDown(nudges.close);
+      final c = _container(
+        getRide: getRide,
+        cancel: cancel,
+        close: close,
+        nudgeStream: nudges.stream,
+      );
+      addTearDown(c.dispose);
+      await (await keepActive(c)).refresh();
+      clearInteractions(getRide);
+
+      nudges.add(const RideFcmNudge(rideId: 'ride-2', eventId: 'e2'));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      verifyNever(() => getRide(any()));
+    });
+
+    test('burst of nudges collapses to immediate + one trailing fetch',
+        () async {
+      when(() => getRide('ride-1')).thenAnswer((_) async => _ride());
+      final nudges = StreamController<RideFcmNudge>.broadcast();
+      addTearDown(nudges.close);
+      final c = _container(
+        getRide: getRide,
+        cancel: cancel,
+        close: close,
+        nudgeStream: nudges.stream,
+      );
+      addTearDown(c.dispose);
+      await (await keepActive(c)).refresh();
+      clearInteractions(getRide);
+
+      // 5 nudges inside the debounce window → 1 immediate + 1 trailing.
+      for (var k = 0; k < 5; k++) {
+        nudges.add(RideFcmNudge(rideId: 'ride-1', eventId: 'e$k'));
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      verify(() => getRide('ride-1')).called(1);
+      await Future<void>.delayed(
+        ActiveRideViewModel.nudgeDebounceWindow +
+            const Duration(milliseconds: 150),
+      );
+      verify(() => getRide('ride-1')).called(1);
+      verifyNoMoreInteractions(getRide);
+    });
+
+    test('disposed screen ignores nudges', () async {
+      when(() => getRide('ride-1')).thenAnswer((_) async => _ride());
+      final nudges = StreamController<RideFcmNudge>.broadcast();
+      addTearDown(nudges.close);
+      final c = _container(
+        getRide: getRide,
+        cancel: cancel,
+        close: close,
+        nudgeStream: nudges.stream,
+      );
+      await (await keepActive(c)).refresh();
+      c.dispose();
+      clearInteractions(getRide);
+
+      nudges.add(const RideFcmNudge(rideId: 'ride-1', eventId: 'e3'));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      verifyNever(() => getRide(any()));
+    });
   });
 }

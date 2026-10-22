@@ -22,12 +22,13 @@ import { RideDomainError } from './types';
 import {
   DISPATCH_WAVES,
   DISPATCHABLE_STATES,
+  N4_INVITE_TTL_MS,
   N4_MAX_TOTAL_INVITES,
   N4_MAX_WAVES,
-  N4_RADIUS_KM,
   N4_WAVE_CADENCE_MS,
   waveDocId,
   waveInviteCapacity,
+  waveRadiusKm,
   type DispatchTickResult,
   type DispatchWaveDoc,
   type SweepDispatchResult,
@@ -185,6 +186,7 @@ export class DispatchWaveService {
     const capacity = waveInviteCapacity(nextWave);
     const remainingBudget = N4_MAX_TOTAL_INVITES - alreadyInvited.size;
     const need = Math.min(capacity, remainingBudget);
+    const searchRadiusKm = waveRadiusKm(nextWave);
 
     let nearbyResult;
     try {
@@ -192,7 +194,7 @@ export class DispatchWaveService {
         query: {
           lat: ride.pickup.lat,
           lng: ride.pickup.lng,
-          radiusKm: N4_RADIUS_KM,
+          radiusKm: searchRadiusKm,
           limit: N3_MAX_LIMIT,
         },
         requestId: input.correlationId,
@@ -311,17 +313,26 @@ export class DispatchWaveService {
         };
       }
 
+      // Authoritative invite deadline: 20s from wave completion, never past
+      // the ride's own expiry (isRideDispatchable already guarantees a finite
+      // future expiresAt).
+      const rideExpiryMs = Date.parse(rideTx.expiresAt);
+      const inviteExpiresAt = new Date(
+        Math.min(nowMs + N4_INVITE_TTL_MS, rideExpiryMs),
+      ).toISOString();
+
       const waveDoc: DispatchWaveDoc = {
         waveId,
         rideId: input.rideId,
         waveNumber: nextWave,
         requestVersion: boundRequestVersion,
         driverIds: selected,
-        radiusKm: N4_RADIUS_KM,
+        radiusKm: searchRadiusKm,
         status: 'COMPLETED',
         correlationId: input.correlationId,
         createdAt: nowIso,
         completedAt: nowIso,
+        inviteExpiresAt,
       };
       tx.set(waveRef, waveDoc as unknown as Record<string, unknown>);
 
@@ -353,7 +364,8 @@ export class DispatchWaveService {
           waveNumber: nextWave,
           driverIds: selected,
           invitedCount: selected.length,
-          radiusKm: N4_RADIUS_KM,
+          radiusKm: searchRadiusKm,
+          inviteExpiresAt,
         },
         publishState: 'PENDING',
         attemptCount: 0,

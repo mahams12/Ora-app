@@ -117,6 +117,7 @@ upsert_run_job ora-staging-worker-expire-sweep /internal/rides/expire-sweep POST
 upsert_run_job ora-staging-worker-offer-expire-sweep /internal/rides/offer-expire-sweep POST
 upsert_run_job ora-staging-worker-dispatch-sweep /internal/rides/dispatch-sweep POST
 upsert_run_job ora-staging-worker-dispatch-fcm-sweep /internal/outbox/dispatch-fcm-sweep POST
+upsert_run_job ora-staging-worker-ride-state-fcm-sweep /internal/outbox/ride-state-fcm-sweep POST
 upsert_run_job ora-staging-worker-no-show-sweep /internal/rides/no-show-sweep POST
 upsert_run_job ora-staging-worker-expires-at-cleanup /internal/storage/expires-at-cleanup POST
 
@@ -125,7 +126,8 @@ upsert_scheduler_job ora-staging-sched-expire-sweep ora-staging-worker-expire-sw
 upsert_scheduler_job ora-staging-sched-offer-expire-sweep ora-staging-worker-offer-expire-sweep '* * * * *'
 upsert_scheduler_job ora-staging-sched-dispatch-sweep ora-staging-worker-dispatch-sweep '* * * * *'
 upsert_scheduler_job ora-staging-sched-dispatch-fcm-sweep ora-staging-worker-dispatch-fcm-sweep '* * * * *'
+upsert_scheduler_job ora-staging-sched-ride-state-fcm-sweep ora-staging-worker-ride-state-fcm-sweep '* * * * *'
 upsert_scheduler_job ora-staging-sched-no-show-sweep ora-staging-worker-no-show-sweep '*/5 * * * *'
 upsert_scheduler_job ora-staging-sched-expires-at-cleanup ora-staging-worker-expires-at-cleanup '*/15 * * * *'
 
-echo "OK Cloud Scheduler wired for staging (6 jobs). Image=$IMAGE"
+echo "OK Cloud Scheduler wired for staging (7 jobs). Image=$IMAGE"

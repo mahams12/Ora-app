@@ -131,6 +131,9 @@ class RideCardSecondaryStatus extends StatelessWidget {
           fontSize: 10,
           letterSpacing: 0.6,
         ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        softWrap: false,
       ),
     );
   }

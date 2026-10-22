@@ -71,13 +71,48 @@ class RideRepositoryImpl implements RideRepository {
   }
 
   @override
+  Future<DriverInvitePage> listInvited() {
+    return _remote.listInvited(context: _apiClient.newContext());
+  }
+
+  @override
+  Future<String> acceptInvite({
+    required String rideId,
+    required String waveId,
+  }) {
+    // Server uses a deterministic internal idempotency key
+    // (invite_accept_{waveId}_{driverId}) — no client nonce needed.
+    return _remote.acceptInvite(
+      rideId: rideId,
+      waveId: waveId,
+      context: _apiClient.newContext(),
+    );
+  }
+
+  @override
+  Future<void> declineInvite({
+    required String rideId,
+    required String waveId,
+  }) {
+    return _remote.declineInvite(
+      rideId: rideId,
+      waveId: waveId,
+      context: _apiClient.newContext(),
+    );
+  }
+
+  @override
   Future<OpenRideListPage> listOpenRides({
     int? limit,
     String? cursor,
+    String? serviceType,
+    String? category,
   }) {
     return _remote.listOpenRides(
       limit: limit,
       cursor: cursor,
+      serviceType: serviceType,
+      category: category,
       context: _apiClient.newContext(),
     );
   }

@@ -515,4 +515,114 @@ describe('Slice M0 open ride discovery', () => {
       'r-own-reg',
     ]);
   });
+
+  it('serviceType filter returns only matching open rides', async () => {
+    const db = memoryDb();
+    seedDriver(db, 'd-fsvc');
+    seedOpenRide(db, { rideId: 'r-city', serviceType: 'ride' });
+    seedOpenRide(db, { rideId: 'r-ic', serviceType: 'intercity' });
+    const res = await listOpen(db, 'd-fsvc', { serviceType: 'intercity' });
+    expect(res.status).toBe(200);
+    expect(res.body.data.rides.map((r: { rideId: string }) => r.rideId))
+      .toEqual(['r-ic']);
+  });
+
+  it('category filter returns only matching open rides', async () => {
+    const db = memoryDb();
+    seedDriver(db, 'd-fcat');
+    seedOpenRide(db, { rideId: 'r-easy', category: 'easy' });
+    seedOpenRide(db, { rideId: 'r-exec', category: 'executive' });
+    const res = await listOpen(db, 'd-fcat', { category: 'executive' });
+    expect(res.status).toBe(200);
+    expect(res.body.data.rides.map((r: { rideId: string }) => r.rideId))
+      .toEqual(['r-exec']);
+  });
+
+  it('serviceType + category combine (AND)', async () => {
+    const db = memoryDb();
+    seedDriver(db, 'd-fboth');
+    seedOpenRide(db, {
+      rideId: 'r-match',
+      serviceType: 'intercity',
+      category: 'easy',
+    });
+    seedOpenRide(db, {
+      rideId: 'r-wrong-svc',
+      serviceType: 'ride',
+      category: 'easy',
+    });
+    seedOpenRide(db, {
+      rideId: 'r-wrong-cat',
+      serviceType: 'intercity',
+      category: 'premium',
+    });
+    const res = await listOpen(db, 'd-fboth', {
+      serviceType: 'intercity',
+      category: 'easy',
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.data.rides.map((r: { rideId: string }) => r.rideId))
+      .toEqual(['r-match']);
+  });
+
+  it('rejects unsupported serviceType filter', async () => {
+    const db = memoryDb();
+    seedDriver(db, 'd-fsvc-bad');
+    const res = await listOpen(db, 'd-fsvc-bad', { serviceType: 'helicopter' });
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('rejects blank category filter', async () => {
+    const db = memoryDb();
+    seedDriver(db, 'd-fcat-bad');
+    const res = await listOpen(db, 'd-fcat-bad', { category: '   ' });
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('still rejects unknown query parameters', async () => {
+    const db = memoryDb();
+    seedDriver(db, 'd-funk');
+    const res = await listOpen(db, 'd-funk', { sortBy: 'fare' });
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('VALIDATION_ERROR');
+  });
+
+  it('filtered cursor cannot paginate a different filter set', async () => {
+    const db = memoryDb();
+    seedDriver(db, 'd-fcur');
+    const ts = '2026-05-01T12:00:00.000Z';
+    for (const id of ['fa', 'fb', 'fc']) {
+      seedOpenRide(db, {
+        rideId: `r-${id}`,
+        serviceType: 'ride',
+        createdAt: ts,
+      });
+    }
+    const page1 = await listOpen(db, 'd-fcur', {
+      limit: '1',
+      serviceType: 'ride',
+    });
+    expect(page1.status).toBe(200);
+    expect(page1.body.data.nextCursor).toBeTruthy();
+
+    // Replaying the filtered cursor under a different filter → 400.
+    const replay = await listOpen(db, 'd-fcur', {
+      limit: '1',
+      serviceType: 'intercity',
+      cursor: page1.body.data.nextCursor,
+    });
+    expect(replay.status).toBe(400);
+    expect(replay.body.error.code).toBe('VALIDATION_ERROR');
+
+    // Same filter set — cursor stays valid.
+    const page2 = await listOpen(db, 'd-fcur', {
+      limit: '1',
+      serviceType: 'ride',
+      cursor: page1.body.data.nextCursor,
+    });
+    expect(page2.status).toBe(200);
+    expect(page2.body.data.rides).toHaveLength(1);
+  });
 });

@@ -1,0 +1,38 @@
+{
+  "report": "Location naming + map perf optimization closeout",
+  "date": "2026-10-19",
+  "device": "Samsung SM-A325F (RF8R40ZQ1JH)",
+  "build": "flutter build apk --profile, ORA_FRAME_TIMING=true, ORA_API_BASE_URL=http://127.0.0.1:8081/v1 (local stub, staging down), MAPLIBRE_TILE_KEY from android/local.properties",
+  "part1_location_naming": {
+    "root_cause": "Use current location -> GPS ok -> GooglePlacesHttpSearch.reverseGeocode -> Places API (New) v1/places:searchNearby returns HTTP 403 on-device. Reproduced via curl: places.googleapis.com returns 403 for BOTH ORA_GOOGLE_PLACES_API_KEY in local.properties (AIzaSyCdEpWc...) and the stale key in l1_build_ux.out (AIzaSyD7c36Ib75...). Stale key error: API_KEY_SERVICE_BLOCKED for places.googleapis.com SearchNearby AND AutocompletePlaces. maps.googleapis.com Geocoding API: REQUEST_DENIED 'API is not activated on your API project'. => the Places key/project config blocks Places API (New); a GCP Console change is required (owner action), not an app defect.",
+    "code_changes": [
+      "ride_request_view_model.dart: pickupNameUnresolved state flag; fallback proposal now address:null (no invented label); retryPickupNameLookup() re-runs reverseGeocode on the same GPS coords only (never re-runs GPS); flag cleared on re-pick/confirm/text-edit; debugPrint logs failure kind+message (no payload/keys).",
+      "google_places_http_search.dart: one wider-radius (2000m) retry when 500m searchNearby returns empty; DioException message enriched with HTTP status for diagnosis.",
+      "ride_request_view.dart: _ProposalCard nameUnresolved caption 'Couldn\\'t fetch a place name — your exact position is still used.' + 'Retry name lookup' affordance; Confirm pickup unchanged."
+    ],
+    "device_verification": {
+      "flow": "compose -> Use current location -> 'Location selected' + unresolved caption + Retry name lookup rendered; retry tapped -> still unresolved (403 persists, honest). Confirm pickup preserved.",
+      "evidence": ["locn_unresolved_retry_ui.xml", "locn_unresolved_retry_ui.png"],
+      "logcat": "reverseGeocode soft-fail: PlaceSearchFailureKind.network — status code 403",
+      "naming_success": "NOT VERIFIED — blocked by Places key 403 (GCP key/API restriction, owner-side). UX + retry verified."
+    }
+  },
+  "part2_perf_optimization": {
+    "confirmed_bottleneck": "3D tilt + building extrusions on compact strip: A/B on same profile APK showed rasterMs p95 18.84->14.82, max 61.56->28.66, totalMs p95 37.33->20.09 when disabled. newLatLngBounds forces tilt=0 then code animated tilt again for 450ms (extra raster pass).",
+    "hypotheses_not_confirmed": ["steady-state tile rendering dominates raster median (median unchanged between A/B)", "build thread light (median 0.42ms)"],
+    "code_changes": [
+      "ride_map_preview.dart: 3D tilt + building extrusions now apply only when isExpanded (compact strip is flat 2D; toggles still work on expand). didUpdateWidget applies/removes on expand/collapse via instant moveCamera (no extra animation pass). Post-fit tilt now moveCamera instead of second 450ms animateCamera."
+    ],
+    "measurement_baseline_3d_on": {"samples": 856, "buildMs_med": 0.42, "buildMs_p95": 1.69, "rasterMs_med": 7.86, "rasterMs_p95": 18.84, "rasterMs_max": 61.56, "totalMs_med": 13.35, "totalMs_p95": 37.33, "totalMs_max": 275.69},
+    "measurement_post_opt": {"samples": 1129, "buildMs_med": 0.52, "buildMs_p95": 2.86, "rasterMs_med": 7.20, "rasterMs_p95": 18.31, "rasterMs_max": 54.26, "totalMs_med": 12.19, "totalMs_p95": 33.80, "totalMs_max": 251.02, "flow": "compose -> compact pan x2 -> sheet scroll -> expand -> 6 pans -> double-tap zoom -> drags -> collapse -> compact -> re-expand -> pans"},
+    "reading": "Modest aggregate improvement (raster med 7.86->7.20, total med 13.35->12.19, total p95 37.33->33.80, max 275->251). The optimization scopes 3D/buildings to expanded mode; the measurement window is expanded-dominant by design so the expanded-phase raster tail (still 3D-on) dominates the aggregate. compact-phase savings are real but small in a ~90s expanded-heavy window. totalMs>16.67 share is a timing descriptor, not a dropped-frame count.",
+    "log": "ft_profile_map_frames_post_opt_run2.log (run1 log discarded: mixed tile-key-less build + diagnosis build)"
+  },
+  "tests": "flutter test ride_request_view_model/ui/reverse_geocode/ride_map_preview/ride_request_map_layout/places_locality_label: 84/84 PASS (2 new view-model tests added); flutter analyze lib/features/ride: clean",
+  "limitations": [
+    "Place naming cannot succeed on-device until Places key restriction is fixed in GCP Console (owner action) — 403 for both candidate keys.",
+    "Profile APK uses local stub backend + adb reverse (staging billing still disabled) — map/tile rendering unaffected.",
+    "Gesture script uses adb input (no pinch); flow duration ~90s single window.",
+    "buildMs p95 rose 1.69->2.86 (sample composition differs; build thread still far under budget)."
+  ]
+}

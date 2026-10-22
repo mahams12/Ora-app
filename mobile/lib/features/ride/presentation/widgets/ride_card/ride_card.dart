@@ -142,7 +142,7 @@ class _RideCardBody extends StatelessWidget {
             ? _ActiveDriverJobBody(model: model)
             : _HistoryBody(
                 model: model,
-                fareCaptionFallback: 'Your earnings',
+                fareCaptionFallback: 'Trip fare',
                 showPhoneSlot: true,
               );
       case RideCardVariant.passengerHistory:
@@ -252,7 +252,7 @@ class _OpenRideBody extends StatelessWidget {
             const SizedBox(width: OraSpacing.sm),
             RideCardFare(
               fareLabel: model.fareLabel,
-              fareCaption: model.fareCaption ?? 'Your earnings',
+              fareCaption: model.fareCaption ?? 'Trip fare',
               emphasized: true,
             ),
           ],

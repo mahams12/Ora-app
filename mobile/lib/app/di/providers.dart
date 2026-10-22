@@ -41,21 +41,29 @@ import '../../features/onboarding/presentation/view_models/onboarding_view_state
 import '../../features/passenger/presentation/view_models/home_view_model.dart';
 import '../../features/ride/data/data_sources/pricing_remote_data_source.dart';
 import '../../features/ride/data/data_sources/ride_remote_data_source.dart';
+import '../../features/driver/data/availability/driver_availability_remote_data_source.dart';
 import '../../features/driver/data/location/driver_location_remote_data_source.dart';
 import '../../features/driver/data/location/geolocator_driver_location_source.dart';
 import '../../features/driver/domain/location/driver_location_source.dart';
+import '../../features/ride/data/location/fallback_place_search.dart';
+import '../../features/ride/data/location/geocoding_device_geocoder.dart';
 import '../../features/ride/data/location/geolocator_device_location.dart';
 import '../../features/ride/data/location/google_places_http_search.dart';
 import '../../features/ride/data/location/rtdb_trip_location_data_source.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
+import '../../features/ride/data/secure_ride_compose_draft_store.dart';
 import '../../features/ride/domain/location/trip_location_freshness.dart';
 import '../../features/ride/domain/ports/device_location_port.dart';
 import '../../features/ride/domain/ports/place_search_port.dart';
 import '../../features/ride/domain/ports/pricing_estimate_port.dart';
+import '../../features/ride/domain/ports/ride_compose_draft_store.dart';
 import '../../features/ride/domain/ports/trip_location_port.dart';
 import '../../features/ride/domain/repositories/ride_repository.dart';
 import '../../features/ride/domain/use_cases/ride_use_cases.dart';
+import '../../features/saved_places/data/secure_passenger_places_store.dart';
+import '../../features/saved_places/domain/ports/passenger_places_store.dart';
 import '../../core/notifications/dispatch_fcm_service.dart';
+import '../../core/notifications/ride_fcm_nudge.dart';
 import '../../features/driver/data/driver_device_token_remote_data_source.dart';
 
 // ── Environment / Config ──────────────────────────────────────────────────────
@@ -119,6 +127,24 @@ final dispatchFcmServiceProvider = Provider<DispatchFcmService>(
   ),
 );
 
+/// NOTIF-RIDE-NUDGE: ride-state push hints ("poll now"), never authoritative.
+/// Active-ride VMs listen and debounce into an immediate HTTP refresh.
+final fcmRideNudgeProvider = StreamProvider<RideFcmNudge>(
+  (ref) => ref.watch(dispatchFcmServiceProvider).rideNudges,
+);
+
+/// SAVED-PLACES / RECENTS: uid-scoped local persistence via SecureStorage —
+/// durable, per-account (keys carry uid), and wiped on logout.
+final passengerPlacesStoreProvider = Provider<PassengerPlacesStore>(
+  (ref) => SecurePassengerPlacesStore(ref.watch(secureStorageProvider)),
+);
+
+/// COMPOSE-DRAFT: uid-scoped durable ride-request draft via SecureStorage —
+/// survives process death; wiped on logout with the rest of the account.
+final rideComposeDraftStoreProvider = Provider<RideComposeDraftStore>(
+  (ref) => SecureRideComposeDraftStore(ref.watch(secureStorageProvider)),
+);
+
 final rideRepositoryProvider = Provider<RideRepository>(
   (ref) => RideRepositoryImpl(
     remote: ref.watch(rideRemoteDataSourceProvider),
@@ -147,10 +173,21 @@ final driverLocationRemoteDataSourceProvider =
   (ref) => ApiDriverLocationRemoteDataSource(ref.watch(apiClientProvider)),
 );
 
+/// Driver availability endpoints (N1) — go-online/go-offline + status GET.
+final driverAvailabilityRemoteDataSourceProvider =
+    Provider<DriverAvailabilityRemoteDataSource>(
+  (ref) => ApiDriverAvailabilityRemoteDataSource(ref.watch(apiClientProvider)),
+);
+
 /// Google Places autocomplete + details (Phase 4A). Not Routes.
+/// Reverse-geocode additionally falls back to the platform geocoder
+/// (GeocodingDeviceGeocoder) — no API key or billing required.
 final placeSearchPortProvider = Provider<PlaceSearchPort>((ref) {
   final key = ref.watch(appConfigProvider).googlePlacesApiKey;
-  return GooglePlacesHttpSearch(apiKey: key);
+  return FallbackPlaceSearch(
+    primary: GooglePlacesHttpSearch(apiKey: key),
+    deviceGeocoder: GeocodingDeviceGeocoder(),
+  );
 });
 
 /// Backend POST /v1/pricing/estimate (Phase 5C). Never fabricates fares.
@@ -190,6 +227,18 @@ final listRidesUseCaseProvider = Provider<ListRidesUseCase>(
 
 final listOpenRidesUseCaseProvider = Provider<ListOpenRidesUseCase>(
   (ref) => ListOpenRidesUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final listInvitedRidesUseCaseProvider = Provider<ListInvitedRidesUseCase>(
+  (ref) => ListInvitedRidesUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final acceptInviteUseCaseProvider = Provider<AcceptInviteUseCase>(
+  (ref) => AcceptInviteUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final declineInviteUseCaseProvider = Provider<DeclineInviteUseCase>(
+  (ref) => DeclineInviteUseCase(ref.watch(rideRepositoryProvider)),
 );
 
 final listOffersUseCaseProvider = Provider<ListOffersUseCase>(

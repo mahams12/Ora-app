@@ -1,0 +1,56 @@
+{
+  "feature": "MAP-PIN-ADJUST — set-point-on-map for pickup/destination",
+  "date": "2026-10-19",
+  "status": "IMPLEMENTED + unit/widget-tested; on-device map-tap proof BLOCKED (adb link dropped mid-run, twice)",
+  "why_this_feature": "PICKUP_LOCATION_NAMING_CONFIDENCE_CLOSEOUT recorded 'no pin adjustment path — search only' as its explicit limitation; PassenerLocationSource.mapPin existed unused. Highest-value remaining passenger gap implementable without billing/staging/owner decisions.",
+  "changes": {
+    "mobile/lib/features/ride/presentation/view_models/ride_request_view_model.dart": [
+      "RideRequestUiState.pinAdjustTarget (LocationField?, UI-only) + clearPinAdjustTarget copyWith flag",
+      "destinationNameUnresolved + clearDestinationNameUnresolved — parity for unnamed map-pin destinations",
+      "startPinAdjust / cancelPinAdjust",
+      "setPinFromMapTap(lat,lng) — tapped coords authoritative, source=mapPin, geocodes via existing Places→device fallback, clears target, invalidates pricing, per-field generation guards",
+      "_resolveGpsPlaceName → _resolvePointName (+source param) — mapPin labels never rewritten to gps",
+      "retryPickupNameLookup now accepts mapPin source; new retryDestinationNameLookup",
+      "pinAdjustTarget cleared on selectPlaceSuggestion/useCurrentLocation/_applyLocalLocation/confirmPickup/confirmDestination — a stale mode can't hijack a later tap"
+    ],
+    "mobile/lib/features/ride/presentation/widgets/ride_map_preview.dart": [
+      "pinAdjustLabel / onMapPointSelected / onCancelPinAdjust props",
+      "MapLibreMap.onMapClick → latLng (drags never fire it — pan/zoom unaffected)",
+      "'Tap the map to set {endpoint}' + Cancel banner below top chrome"
+    ],
+    "mobile/lib/features/ride/presentation/views/ride_request_view.dart": [
+      "map wired: point select → setPinFromMapTap + collapse; cancel → collapse; _collapseMap cancels stale adjust on back/collapse",
+      "proposal cards: 'Adjust on map' action beside 'Save place'; auto-expands map in adjust mode",
+      "destination card gains nameUnresolved + retry parity; unresolved copy is source-aware and names the real adjust path"
+    ]
+  },
+  "invariants": [
+    "tapped coordinates authoritative; naming never moves the pin",
+    "no fabricated addresses; unresolved keeps honest fallback + retry",
+    "pinAdjustTarget is UI-only and cleared on collapse/selection — stray taps inert",
+    "zero backend/pricing/matching/lifecycle/payout changes"
+  ],
+  "tests": {
+    "new_vm_cases": 7,
+    "new_widget_cases": 1,
+    "ride_request_view_model_test": "51/51 pass",
+    "ride_request_ui_test": "16/16 pass",
+    "device_geocoder_fallback_test": "10/10 pass (unchanged)",
+    "ride_suite": "338 pass / 2 pre-existing ride_history_ui_test failures (files unmodified vs HEAD — documented earlier)",
+    "flutter_analyze_lib": "clean"
+  },
+  "physical_verification": {
+    "device": "Samsung SM-A325F, Android 13, serial RF8R40ZQ1JH",
+    "harness": "integration_test/map_pin_adjust_smoke_test.dart — real RideRequestView + real Places→native-geocoder fallback + real MapLibre tap; only device location faked",
+    "result": "BLOCKED — run 1 stalled awaiting app first frame (~6min, timed out); run 2 failed at install: 'adb: device RF8R40ZQ1JH not found'; device dropped off adb entirely and did not return during session",
+    "prior_proof": "native geocoder path already device-verified this session (device_geocoder_smoke_test: 'Plot n, Sher Ali Road, Aitchison Society')",
+    "pending": "re-run the smoke test when the device is back on a stable USB link — physical map-tap proof NOT claimed"
+  },
+  "limitations": [
+    "map tap → onMapClick→LatLng conversion is framework plumbing — physical gesture verification pending device stability",
+    "adjust requires expand + tap; compact-strip taps also work while adjust armed (by design)",
+    "Places still billing-blocked; map-pin naming rides the same honest fallback"
+  ],
+  "next_recommended_feature": "live ride-state push + full compose E2E once billing/staging restore; otherwise Courier/Move pending owner product semantics",
+  "safety": "No billing/cloud/deploy/commit/push; all prior working-tree changes preserved (99 entries)"
+}

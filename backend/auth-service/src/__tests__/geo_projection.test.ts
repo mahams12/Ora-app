@@ -106,6 +106,57 @@ describe('N2C coordinate-primary GEO projection', () => {
     expect(marker.locationSeq).toBe(5);
   });
 
+  it('4b. cross-stream: newer-ts packet from a different stream wins', async () => {
+    // Idle + trip streams count seq independently — a long idle stream must
+    // not starve a fresh trip stream whose packets have newer timestamps.
+    const redis = createMemoryRedis();
+    const geo = new RedisGeoProjectionService(redis);
+    const t0 = Date.now();
+    await geo.projectAcceptedLocation(
+      baseInput({ locationStreamId: 'idle-1', locationSeq: 500, lastLocationTs: t0 }),
+    );
+    await geo.projectAcceptedLocation(
+      baseInput({
+        locationStreamId: 'trip-1',
+        locationSeq: 1,
+        lastLocationTs: t0 + 2000,
+        lat: 31.7,
+        lng: 74.5,
+      }),
+    );
+    const pos = await redis.geopos(GEO_DRIVERS_KEY, 'd1');
+    expect(Math.abs(Number(pos![1]) - 31.7)).toBeLessThan(1e-6);
+    const marker = JSON.parse((await redis.get(driverOnlineKey('d1')))!);
+    expect(marker.locationStreamId).toBe('trip-1');
+  });
+
+  it('4c. cross-stream: strictly older-ts packet is still rejected', async () => {
+    const redis = createMemoryRedis();
+    const geo = new RedisGeoProjectionService(redis);
+    const t0 = Date.now();
+    await geo.projectAcceptedLocation(
+      baseInput({
+        locationStreamId: 'trip-1',
+        locationSeq: 3,
+        lastLocationTs: t0 + 2000,
+        lat: 31.7,
+        lng: 74.5,
+      }),
+    );
+    // An old idle packet (older ts) must not overwrite the newer trip fix.
+    await geo.projectAcceptedLocation(
+      baseInput({
+        locationStreamId: 'idle-1',
+        locationSeq: 900,
+        lastLocationTs: t0,
+        lat: 31.0,
+        lng: 74.0,
+      }),
+    );
+    const pos = await redis.geopos(GEO_DRIVERS_KEY, 'd1');
+    expect(Math.abs(Number(pos![1]) - 31.7)).toBeLessThan(1e-6);
+  });
+
   it('7. offline removes from geo:drivers', async () => {
     const redis = createMemoryRedis();
     const geo = new RedisGeoProjectionService(redis);

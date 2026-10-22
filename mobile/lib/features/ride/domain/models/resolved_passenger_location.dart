@@ -6,6 +6,7 @@ enum PassengerLocationSource {
   place,
   mapPin,
   savedPlace,
+  recent,
 }
 
 /// Passenger-confirmed (or proposed) location — Phase 4A.
@@ -19,6 +20,8 @@ class ResolvedPassengerLocation {
     required this.source,
     this.address,
     this.placeId,
+    this.displayName,
+    this.horizontalAccuracyMeters,
   });
 
   final double lat;
@@ -26,6 +29,16 @@ class ResolvedPassengerLocation {
   final String? address;
   final String? placeId;
   final PassengerLocationSource source;
+
+  /// GPS horizontal fix accuracy in metres, when the provider reports it.
+  /// Fix-quality metadata only — deliberately excluded from `==`/`hashCode`
+  /// and never used as address accuracy.
+  final double? horizontalAccuracyMeters;
+
+  /// User-assigned label (e.g. a saved-place name like "Home") — UI display
+  /// only. Never sent as `address` in the ride create body; a custom name
+  /// is not a resolved address.
+  final String? displayName;
 
   bool get hasValidCoordinates =>
       lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
@@ -38,6 +51,8 @@ class ResolvedPassengerLocation {
 
   /// Human-readable label for UI. Never exposes raw coordinates.
   String get displayLabel {
+    final named = displayName?.trim();
+    if (named != null && named.isNotEmpty) return named;
     final trimmed = address?.trim();
     if (trimmed != null && trimmed.isNotEmpty) {
       if (trimmed.toLowerCase() == 'current location') {
@@ -55,11 +70,13 @@ class ResolvedPassengerLocation {
         other.lng == lng &&
         other.address == address &&
         other.placeId == placeId &&
-        other.source == source;
+        other.source == source &&
+        other.displayName == displayName;
   }
 
   @override
-  int get hashCode => Object.hash(lat, lng, address, placeId, source);
+  int get hashCode =>
+      Object.hash(lat, lng, address, placeId, source, displayName);
 }
 
 /// Autocomplete row before Place Details resolves coordinates.

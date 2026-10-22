@@ -15,10 +15,11 @@ import {
 } from '../redis/types';
 import {
   N4_MAX_TOTAL_INVITES,
-  N4_RADIUS_KM,
   N4_WAVE_CADENCE_MS,
+  N4_WAVE_RADII_KM,
   N4_WAVE_SIZES,
   waveDocId,
+  waveRadiusKm,
 } from '../rides/dispatch_types';
 
 const WORKER = 'test-worker-token-n4-xxxx';
@@ -185,9 +186,23 @@ describe('N4 dispatch wave MVP', () => {
 
     const wave = db.getDoc('rideDispatchWaves', waveDocId('r1', 1));
     expect(wave).toBeTruthy();
-    expect(wave!.radiusKm).toBe(N4_RADIUS_KM);
+    expect(wave!.radiusKm).toBe(N4_WAVE_RADII_KM[0]);
     expect(wave!.driverIds).toEqual(ids.slice(0, 5));
     expect(wave!.requestVersion).toBe(1);
+
+    // Authoritative invitation deadline = completedAt + 20s (capped at
+    // ride.expiresAt — irrelevant here at 15min out).
+    const inviteExpMs = Date.parse(String(wave!.inviteExpiresAt));
+    const completedMs = Date.parse(String(wave!.completedAt));
+    expect(inviteExpMs - completedMs).toBe(20_000);
+    // …and propagates to the outbox payload for the FCM projector.
+    let outboxPayload: Record<string, unknown> | undefined;
+    for (const [path, doc] of db.store.entries()) {
+      if (path.startsWith('outboxEvents/')) {
+        outboxPayload = doc.payload as Record<string, unknown>;
+      }
+    }
+    expect(outboxPayload?.inviteExpiresAt).toBe(wave!.inviteExpiresAt);
 
     const ride = db.getDoc('rides', 'r1')!;
     expect(ride.dispatchWave).toBe(1);
@@ -262,6 +277,99 @@ describe('N4 dispatch wave MVP', () => {
     expect(db.getDoc('rideDispatchWaves', waveDocId('r2', 4))).toBeUndefined();
 
     void nextAt1;
+  });
+
+  it('expands search radius per wave: 10 → 15 → 25 km, nearest first', async () => {
+    const db = memoryDb();
+    const redis = createMemoryRedis();
+    const now = Date.now();
+    // At lat 31.52, 0.01° lng ≈ 0.95 km.
+    // d-near ~1.9km (wave 1), d-mid ~12.3km (wave 2 only), d-far ~19.9km (wave 3 only),
+    // d-too-far ~28.5km (never reached).
+    for (const [id, lngOffset] of [
+      ['d-near', 0.02],
+      ['d-mid', 0.13],
+      ['d-far', 0.21],
+      ['d-too-far', 0.30],
+    ] as const) {
+      seedApprovedOnline(db, id, null);
+      await seedGeo(redis, id, PICKUP.lng + lngOffset, PICKUP.lat, {
+        lastLocationTs: now,
+        accuracy: 5,
+      });
+    }
+    seedDispatchableRide(db, 'r-exp');
+    const app = appFor(db, redis);
+
+    const w1 = await tick(app, 'r-exp');
+    expect(w1.body.data.outcome).toBe('wave_completed');
+    expect(w1.body.data.driverIds).toEqual(['d-near']);
+    expect(db.getDoc('rideDispatchWaves', waveDocId('r-exp', 1))!.radiusKm).toBe(
+      waveRadiusKm(1),
+    );
+
+    db.seed('rides', 'r-exp', {
+      ...db.getDoc('rides', 'r-exp')!,
+      dispatchNextAt: new Date(Date.now() - 1000).toISOString(),
+    });
+    const w2 = await tick(app, 'r-exp');
+    expect(w2.body.data.driverIds).toEqual(['d-mid']);
+    expect(db.getDoc('rideDispatchWaves', waveDocId('r-exp', 2))!.radiusKm).toBe(
+      waveRadiusKm(2),
+    );
+
+    db.seed('rides', 'r-exp', {
+      ...db.getDoc('rides', 'r-exp')!,
+      dispatchNextAt: new Date(Date.now() - 1000).toISOString(),
+    });
+    const w3 = await tick(app, 'r-exp');
+    expect(w3.body.data.driverIds).toEqual(['d-far']);
+    expect(db.getDoc('rideDispatchWaves', waveDocId('r-exp', 3))!.radiusKm).toBe(
+      waveRadiusKm(3),
+    );
+
+    // d-too-far (28.5km) never invited even at max radius
+    const invited = [
+      ...w1.body.data.driverIds,
+      ...w2.body.data.driverIds,
+      ...w3.body.data.driverIds,
+    ];
+    expect(invited).not.toContain('d-too-far');
+  });
+
+  it('radius expansion is nearest-first: closer driver invited before farther', async () => {
+    const db = memoryDb();
+    const redis = createMemoryRedis();
+    const now = Date.now();
+    // Two drivers inside wave-2 radius (15km): nearer one wins order.
+    for (const [id, lngOffset] of [
+      ['d-far2', 0.13],
+      ['d-near2', 0.11],
+    ] as const) {
+      seedApprovedOnline(db, id, null);
+      await seedGeo(redis, id, PICKUP.lng + lngOffset, PICKUP.lat, {
+        lastLocationTs: now,
+        accuracy: 5,
+      });
+    }
+    seedDispatchableRide(db, 'r-order');
+    const app = appFor(db, redis);
+
+    const w1 = await tick(app, 'r-order');
+    expect(w1.body.data.driverIds).toEqual([]); // both > 10km
+
+    db.seed('rides', 'r-order', {
+      ...db.getDoc('rides', 'r-order')!,
+      dispatchNextAt: new Date(Date.now() - 1000).toISOString(),
+    });
+    const w2 = await tick(app, 'r-order');
+    expect(w2.body.data.driverIds).toEqual(['d-near2', 'd-far2']);
+  });
+
+  it('waveRadiusKm matches the expansion table', () => {
+    expect(waveRadiusKm(1)).toBe(10);
+    expect(waveRadiusKm(2)).toBe(15);
+    expect(waveRadiusKm(3)).toBe(25);
   });
 
   it('deduplicates drivers that reappear across N3 responses', async () => {

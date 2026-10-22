@@ -1,19 +1,18 @@
 /**
- * LIVE N4 dispatch proof — real Redis GEO + Firestore emulator.
+ * LIVE N4 dispatch proof — Firestore geo store + Firestore emulator.
  *
  * Requires:
  *   FIRESTORE_EMULATOR_HOST (via firebase emulators:exec)
- *   REDIS_URL (real Redis)
  *
  * Usage:
- *   REDIS_URL=redis://127.0.0.1:6379 npm run test:dispatch-live-proof
+ *   npm run test:dispatch-live-proof
  *   (root script wraps firebase emulators:exec)
  */
 import { initializeApp, deleteApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import request from 'supertest';
 import { createApp } from '../src/app';
-import { createRedisGeoClientFromEnv } from '../src/redis/client';
+import { createFirestoreGeoClient } from '../src/redis/firestore_geo_client';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
@@ -49,21 +48,15 @@ async function main(): Promise<void> {
       'N4 LIVE PROOF BLOCKED: FIRESTORE_EMULATOR_HOST is not set.',
     );
     console.error(
-      'Run via: REDIS_URL=... npm run test:dispatch-live-proof (root package.json)',
+      'Run via: npm run test:dispatch-live-proof (root package.json)',
     );
     process.exit(2);
   }
-  if (!process.env.REDIS_URL?.trim()) {
-    console.error('N4 LIVE PROOF BLOCKED: REDIS_URL is not set.');
-    process.exit(2);
-  }
-
-  const redis = await createRedisGeoClientFromEnv(process.env);
-  assert(redis != null, 'redis client');
 
   const appName = `n4-dispatch-${Date.now()}`;
   const fbApp = initializeApp({ projectId: 'ora-n4-dispatch' }, appName);
   const db = getFirestore(fbApp);
+  const redis = createFirestoreGeoClient(db);
   db.settings({ ignoreUndefinedProperties: true });
 
   const prefix = `n4live-${Date.now()}`;
