@@ -7,10 +7,14 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
-    // Must follow com.android.application: it hooks the Android variants to
-    // parse google-services.json.  Build fails with an explicit "File
-    // google-services.json is missing" until that file is supplied.
-    id("com.google.gms.google-services")
+}
+
+// google-services.json is gitignored client config — never committed. The gms
+// plugin only generates Firebase resources, so debug builds (e.g. CI) compile
+// without it; release builds still fail closed in afterEvaluate below.
+val googleServicesFile = file("google-services.json")
+if (googleServicesFile.exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 // Production release identity — android/key.properties (gitignored) or ORA_ANDROID_KEY_PROPERTIES_FILE.
@@ -115,6 +119,13 @@ afterEvaluate {
         doFirst {
             if (!keystorePropertiesFile.exists()) {
                 throw GradleException(releaseKeystoreMessage)
+            }
+            if (!googleServicesFile.exists()) {
+                throw GradleException(
+                    "Release build requires android/app/google-services.json " +
+                        "for Firebase. It is gitignored client config — supply " +
+                        "it locally before building release artifacts.",
+                )
             }
         }
     }
