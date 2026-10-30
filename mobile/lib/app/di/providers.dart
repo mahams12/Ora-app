@@ -49,6 +49,7 @@ import '../../features/ride/data/location/fallback_place_search.dart';
 import '../../features/ride/data/location/geocoding_device_geocoder.dart';
 import '../../features/ride/data/location/geolocator_device_location.dart';
 import '../../features/ride/data/location/google_places_http_search.dart';
+import '../../features/ride/data/location/nominatim_place_search.dart';
 import '../../features/ride/data/location/rtdb_trip_location_data_source.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
 import '../../features/ride/data/secure_ride_compose_draft_store.dart';
@@ -184,8 +185,13 @@ final driverAvailabilityRemoteDataSourceProvider =
 /// (GeocodingDeviceGeocoder) — no API key or billing required.
 final placeSearchPortProvider = Provider<PlaceSearchPort>((ref) {
   final key = ref.watch(appConfigProvider).googlePlacesApiKey;
+  // No Places key (local/test builds) → free OSM Nominatim as primary, so
+  // search + reverse geocode still work on devices without an Android
+  // Geocoder backend (e.g. some MIUI ROMs). Zero cost, zero keys.
   return FallbackPlaceSearch(
-    primary: GooglePlacesHttpSearch(apiKey: key),
+    primary: key.trim().isEmpty
+        ? NominatimPlaceSearch()
+        : GooglePlacesHttpSearch(apiKey: key),
     deviceGeocoder: GeocodingDeviceGeocoder(),
   );
 });
