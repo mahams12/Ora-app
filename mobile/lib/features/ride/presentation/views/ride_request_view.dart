@@ -520,8 +520,9 @@ class _ComposePane extends StatelessWidget {
               ),
               const SizedBox(height: OraSpacing.xxs),
               Text(
-                'Search a place or use your current location. Confirm each '
-                'point before continuing — text alone is not enough.',
+                'Search a place, use your current location, or set a point '
+                'on the map. Confirm each point before continuing — text '
+                'alone is not enough.',
                 style: OraTypography.caption(OraColors.textMuted),
               ),
               const SizedBox(height: OraSpacing.sm),
@@ -615,12 +616,30 @@ class _ComposePane extends StatelessWidget {
                         if (!state.hasPickupText &&
                             state.proposedPickup == null &&
                             !state.hasConfirmedPickup &&
-                            !state.pickupBusy)
+                            !state.pickupBusy) ...[
                           SavedPlacesSection(
                             places: savedPlaces,
                             onSelect: onSelectSavedPickup,
                             onManage: onManageSaved,
                           ),
+                          // ZERO-COST PICKUP: direct map pin entry — reachable
+                          // even when place search is unavailable or GPS is
+                          // denied. The tap expands the map in set-point mode;
+                          // coordinates are authoritative, name resolves
+                          // best-effort via the device geocoder.
+                          OraListRow(
+                            title: 'Set pickup on map',
+                            subtitle:
+                                'Tap the map to drop the pickup pin',
+                            leading: const Icon(
+                              Icons.edit_location_alt_outlined,
+                              color: OraColors.tealBright,
+                              size: 20,
+                            ),
+                            onTap: onAdjustPickupOnMap,
+                            showDivider: false,
+                          ),
+                        ],
                         if (state.proposedPickup != null &&
                             !state.hasConfirmedPickup)
                           _ProposalCard(
@@ -684,6 +703,24 @@ class _ComposePane extends StatelessWidget {
                           RecentDestinationsSection(
                             recents: recents,
                             onSelect: onSelectRecent,
+                          ),
+                          // ZERO-COST DESTINATION: direct map pin entry — the
+                          // fallback path when Places is unconfigured and no
+                          // saved/recent places exist. Tap expands the map in
+                          // set-point mode; coordinates are authoritative and
+                          // the name resolves best-effort via the device
+                          // geocoder (unresolved stays visibly unresolved).
+                          OraListRow(
+                            title: 'Set destination on map',
+                            subtitle:
+                                'Tap the map to drop the destination pin',
+                            leading: const Icon(
+                              Icons.edit_location_alt_outlined,
+                              color: OraColors.primary,
+                              size: 20,
+                            ),
+                            onTap: onAdjustDestinationOnMap,
+                            showDivider: false,
                           ),
                         ],
                         if (state.proposedDestination != null &&

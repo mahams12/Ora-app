@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,6 +14,7 @@ import '../../../ride/presentation/history/ride_history_display.dart';
 import '../../../ride/presentation/widgets/ride_card/ride_card.dart';
 import '../open_ride_display.dart';
 import '../view_models/driver_direct_offer_view_model.dart';
+import '../view_models/driver_invites_view_model.dart';
 import '../view_models/driver_open_rides_view_model.dart';
 import '../widgets/driver_invites_section.dart';
 
@@ -50,6 +53,14 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
       if (!mounted) return;
       ref.read(driverOpenRidesViewModelProvider.notifier).loadInitial();
     });
+  }
+
+  /// Pull-to-refresh resyncs the open list AND the invite feed — the invites
+  /// otherwise depend solely on the DISPATCH_INVITE FCM nudge, so a missed or
+  /// delayed push (or FCM-off local builds) would hide live invitations.
+  Future<void> _refreshAll(DriverOpenRidesViewModel vm) async {
+    unawaited(ref.read(driverInvitesViewModelProvider.notifier).refresh());
+    await vm.refresh();
   }
 
   Future<void> _openOfferSheet(OpenRide ride) async {
@@ -183,7 +194,7 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
       final filtered = state.hasActiveFilters;
       return RefreshIndicator(
         color: OraColors.primary,
-        onRefresh: vm.refresh,
+        onRefresh: () => _refreshAll(vm),
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: padding),
@@ -216,7 +227,7 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
 
     return RefreshIndicator(
       color: OraColors.primary,
-      onRefresh: vm.refresh,
+      onRefresh: () => _refreshAll(vm),
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),

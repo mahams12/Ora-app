@@ -235,7 +235,7 @@ async function listOffersForRide(
   // Emulator may lack composite indexes; scan collection and filter.
   const snap = await db.collection('rideOffers').get();
   return snap.docs
-    .map((d) => ({ id: d.id, ...(d.data() as Record<string, unknown>) }))
+    .map((d) => ({ ...d.data(), id: d.id }) as Record<string, unknown>)
     .filter((o) => o.rideId === rideId)
     .map((o) => ({
       id: String(o.id),
@@ -537,11 +537,11 @@ async function main(): Promise<void> {
       assert(cancelRes.status === 200, `cancel ${cancelRes.status}`);
       assert(ride.assignedDriverId == null, 'no driver');
       for (const o of offers) {
+        // Only EXPIRED or PENDING may remain — SELECTED is excluded by this.
         assert(
           o.status === 'EXPIRED' || o.status === 'PENDING',
           `offer status=${o.status}`,
         );
-        assert(o.status !== 'SELECTED', 'not SELECTED');
       }
       if (offerRes.status === 201) {
         // Offer may have landed before cancel expired it.

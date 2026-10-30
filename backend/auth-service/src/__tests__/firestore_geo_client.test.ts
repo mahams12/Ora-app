@@ -183,6 +183,105 @@ describe('FirestoreGeoClient — client semantics', () => {
     expect(hits.map((h) => h.member)).toEqual(['d1']);
   });
 
+  it('projectLocation markerGuard: skip aborts the write inside the same transaction', async () => {
+    const db = memoryDb();
+    const geo = createFirestoreGeoClient(db as never);
+    await geo.projectLocation!({
+      key: GEO_DRIVERS_KEY,
+      member: 'd1',
+      longitude: LAHORE.lng,
+      latitude: LAHORE.lat,
+      markerKey: driverOnlineKey('d1'),
+      markerValue: markerFor('d1', { lastLocationTs: 1000, locationSeq: 5 }),
+      markerTtlSeconds: DRIVER_ONLINE_TTL_SECONDS,
+    });
+
+    // Stale packet: guard sees the stored marker and skips — existing doc
+    // untouched (no stale coordinate overwrite possible).
+    let guardSaw: { lat: number; lng: number; markerValue: string | null } | null =
+      null;
+    const result = await geo.projectLocation!({
+      key: GEO_DRIVERS_KEY,
+      member: 'd1',
+      longitude: LAHORE.lng + 1,
+      latitude: LAHORE.lat + 1,
+      markerKey: driverOnlineKey('d1'),
+      markerValue: markerFor('d1', { lastLocationTs: 500, locationSeq: 4 }),
+      markerTtlSeconds: DRIVER_ONLINE_TTL_SECONDS,
+      markerGuard: (existing) => {
+        guardSaw = {
+          lat: existing.latitude,
+          lng: existing.longitude,
+          markerValue: existing.markerValue,
+        };
+        return 'skip';
+      },
+    });
+    expect(result).toBe('skipped');
+    expect(guardSaw).not.toBeNull();
+    expect(guardSaw!.lat).toBe(LAHORE.lat);
+    expect(JSON.parse(guardSaw!.markerValue!).locationSeq).toBe(5);
+    expect(await geo.geopos(GEO_DRIVERS_KEY, 'd1')).toEqual([
+      String(LAHORE.lng),
+      String(LAHORE.lat),
+    ]);
+    expect(
+      JSON.parse((await geo.get(driverOnlineKey('d1')))!).locationSeq,
+    ).toBe(5);
+  });
+
+  it('projectLocation markerGuard: write decision applies atomically + returns written', async () => {
+    const db = memoryDb();
+    const geo = createFirestoreGeoClient(db as never);
+    await geo.projectLocation!({
+      key: GEO_DRIVERS_KEY,
+      member: 'd1',
+      longitude: LAHORE.lng,
+      latitude: LAHORE.lat,
+      markerKey: driverOnlineKey('d1'),
+      markerValue: markerFor('d1', { lastLocationTs: 1000, locationSeq: 5 }),
+      markerTtlSeconds: DRIVER_ONLINE_TTL_SECONDS,
+    });
+    const result = await geo.projectLocation!({
+      key: GEO_DRIVERS_KEY,
+      member: 'd1',
+      longitude: LAHORE.lng + 0.01,
+      latitude: LAHORE.lat + 0.01,
+      markerKey: driverOnlineKey('d1'),
+      markerValue: markerFor('d1', { lastLocationTs: 2000, locationSeq: 6 }),
+      markerTtlSeconds: DRIVER_ONLINE_TTL_SECONDS,
+      markerGuard: (existing) => {
+        const prev = JSON.parse(existing.markerValue!) as DriverOnlineMarker;
+        return prev.lastLocationTs > 2000 ? 'skip' : 'write';
+      },
+    });
+    expect(result).toBe('written');
+    expect(
+      JSON.parse((await geo.get(driverOnlineKey('d1')))!).locationSeq,
+    ).toBe(6);
+  });
+
+  it('projectLocation markerGuard: absent doc / expired marker passes null markerValue', async () => {
+    const db = memoryDb();
+    const geo = createFirestoreGeoClient(db as never);
+    await geo.set(driverOnlineKey('d-exp'), markerFor('d-exp'), -1);
+    let seen: string | null | undefined;
+    await geo.projectLocation!({
+      key: GEO_DRIVERS_KEY,
+      member: 'd-exp',
+      longitude: LAHORE.lng,
+      latitude: LAHORE.lat,
+      markerKey: driverOnlineKey('d-exp'),
+      markerValue: markerFor('d-exp'),
+      markerTtlSeconds: DRIVER_ONLINE_TTL_SECONDS,
+      markerGuard: (existing) => {
+        seen = existing.markerValue;
+        return 'write';
+      },
+    });
+    expect(seen).toBeNull();
+  });
+
   it('del removes marker but preserves geo membership (Redis parity)', async () => {
     const db = memoryDb();
     const geo = createFirestoreGeoClient(db as never);
@@ -337,6 +436,110 @@ describe('FirestoreGeoClient — client semantics', () => {
         count: 10,
       }),
     ).toEqual([]);
+  });
+
+  it('scan-cap hit splits the box into quadrants — nearest driver is not lost', async () => {
+    const db = memoryDb();
+    // 10-doc scan cap: the root box query returns the first 10 scanned docs
+    // (index/insertion order, NOT nearest-first). Without quadrant splitting
+    // the closest driver — seeded last — would be silently dropped.
+    const geo = createFirestoreGeoClient(db as never, { scanLimit: 10 });
+    // 14 far drivers spread across the box quadrants.
+    const far: Array<[number, number, string]> = [
+      [31.50, 74.30, 'f1'],
+      [31.51, 74.31, 'f2'],
+      [31.58, 74.44, 'f3'],
+      [31.53, 74.33, 'f4'],
+      [31.54, 74.34, 'f5'],
+      [31.55, 74.35, 'f6'],
+      [31.56, 74.36, 'f7'],
+      [31.57, 74.37, 'f8'],
+      [31.50, 74.38, 'f9'],
+      [31.51, 74.39, 'f10'],
+      [31.52, 74.40, 'f11'],
+      [31.53, 74.41, 'f12'],
+      [31.54, 74.42, 'f13'],
+      [31.55, 74.43, 'f14'],
+    ];
+    for (const [lat, lng, id] of far) {
+      await geo.geoadd(GEO_DRIVERS_KEY, lng, lat, id);
+    }
+    // The actual nearest driver (~0.3 km) — scanned last, dropped by a naive cap.
+    await geo.geoadd(GEO_DRIVERS_KEY, 74.322, 31.523, 'nearest');
+
+    const hits = await geo.georadius({
+      key: GEO_DRIVERS_KEY,
+      longitude: 74.32,
+      latitude: 31.52,
+      radiusKm: 20,
+      count: 100,
+    });
+    expect(hits).toHaveLength(15);
+    expect(hits[0].member).toBe('nearest');
+    // Distance ordering preserved across quadrant merge.
+    for (let i = 1; i < hits.length; i += 1) {
+      expect(hits[i].distanceKm).toBeGreaterThanOrEqual(
+        hits[i - 1].distanceKm,
+      );
+    }
+  });
+
+  it('maxScanQueries bound still returns a capped best-effort result', async () => {
+    const db = memoryDb();
+    // Only the root query allowed — split is disabled, so the call must
+    // degrade to the capped result set rather than throwing.
+    const geo = createFirestoreGeoClient(db as never, {
+      scanLimit: 10,
+      maxScanQueries: 1,
+    });
+    for (let i = 0; i < 15; i += 1) {
+      await geo.geoadd(
+        GEO_DRIVERS_KEY,
+        74.30 + i * 0.01,
+        31.50 + i * 0.01,
+        `d${i}`,
+      );
+    }
+    const hits = await geo.georadius({
+      key: GEO_DRIVERS_KEY,
+      longitude: 74.32,
+      latitude: 31.52,
+      radiusKm: 20,
+      count: 100,
+    });
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits.length).toBeLessThanOrEqual(15);
+  });
+
+  it('minLastLocationTs excludes stale docs across quadrant scans', async () => {
+    const db = memoryDb();
+    const geo = createFirestoreGeoClient(db as never, { scanLimit: 10 });
+    const nowMs = Date.now();
+    // 14 stale docs (old lastLocationTs) + 1 fresh nearest doc.
+    for (let i = 0; i < 14; i += 1) {
+      db.seed('geoDrivers', `stale${i}`, {
+        driverId: `stale${i}`,
+        lat: 31.50 + i * 0.01,
+        lng: 74.30 + i * 0.01,
+        lastLocationTs: nowMs - 60_000,
+      });
+    }
+    db.seed('geoDrivers', 'fresh-near', {
+      driverId: 'fresh-near',
+      lat: 31.523,
+      lng: 74.322,
+      lastLocationTs: nowMs,
+      markerValue: markerFor('fresh-near'),
+    });
+    const hits = await geo.georadius({
+      key: GEO_DRIVERS_KEY,
+      longitude: 74.32,
+      latitude: 31.52,
+      radiusKm: 20,
+      count: 100,
+      minLastLocationTs: nowMs - 15_000,
+    });
+    expect(hits.map((h) => h.member)).toEqual(['fresh-near']);
   });
 });
 

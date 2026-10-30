@@ -1,4 +1,5 @@
 import type { Firestore } from 'firebase-admin/firestore';
+import type { LocationStreamStore } from '../location/stream_store';
 import { PRICING_SNAPSHOTS_COLLECTION } from '../pricing/estimate_service';
 
 export const IDEMPOTENCY_RECORDS_COLLECTION = 'idempotencyRecords';
@@ -42,7 +43,10 @@ export function isRetentionExpired(
 }
 
 export class ExpiresAtCleanupService {
-  constructor(private readonly db: Firestore) {}
+  constructor(
+    private readonly db: Firestore,
+    private readonly locationStreamStore: LocationStreamStore | null = null,
+  ) {}
 
   async runCleanup(input?: {
     limit?: number;
@@ -68,12 +72,20 @@ export class ExpiresAtCleanupService {
         nowIso,
         nowMs,
       ),
-      locationStreams: await this.cleanupCollection(
-        LOCATION_STREAMS_COLLECTION,
-        limit,
-        nowIso,
-        nowMs,
-      ),
+      locationStreams: this.locationStreamStore
+        ? {
+            collection: LOCATION_STREAMS_COLLECTION,
+            ...(await this.locationStreamStore.sweepExpired({
+              limit,
+              nowMs,
+            })),
+          }
+        : await this.cleanupCollection(
+            LOCATION_STREAMS_COLLECTION,
+            limit,
+            nowIso,
+            nowMs,
+          ),
     };
   }
 

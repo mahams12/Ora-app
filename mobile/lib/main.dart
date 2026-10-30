@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -78,6 +79,16 @@ void main() async {
         appVerificationDisabledForTesting: true,
       );
       _startupMark('firebase_auth_settings_done');
+      // Zero-cloud local dev: --dart-define=ORA_FIREBASE_EMULATOR_HOST=127.0.0.1
+      // (use adb reverse for physical devices). Never active in release builds.
+      const emulatorHost = String.fromEnvironment(
+        'ORA_FIREBASE_EMULATOR_HOST',
+      );
+      if (emulatorHost.isNotEmpty) {
+        await FirebaseAuth.instance.useAuthEmulator(emulatorHost, 9099);
+        FirebaseDatabase.instance.useDatabaseEmulator(emulatorHost, 9000);
+        debugPrint('ORA FIREBASE EMULATOR = $emulatorHost (auth:9099 rtdb:9000)');
+      }
     }
 
     final env = environmentFromString(

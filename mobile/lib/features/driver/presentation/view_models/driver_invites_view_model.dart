@@ -55,6 +55,12 @@ class DriverInvitesUiState {
   }
 }
 
+/// Display-only mirror of the server's `N4_INVITE_TTL_MS` (20s) — used to
+/// size the Accept countdown ring so late-seen invites show their true
+/// remaining fraction (e.g. 8s left → 40% ring). Authoritative expiry is
+/// always `inviteExpiresAt`; this only affects the ring's fullness.
+const Duration driverInviteWindow = Duration(seconds: 20);
+
 /// Incoming dispatch invitations with an authoritative server countdown.
 ///
 /// Clock-skew safety: `serverNowMs` from the last invited-list response is

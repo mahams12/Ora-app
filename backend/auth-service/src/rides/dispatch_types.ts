@@ -14,7 +14,7 @@ export const N4_WAVE_RADII_KM: readonly [number, number, number] = [10, 15, 25];
 export const N4_WAVE_CADENCE_MS = 5_000;
 export const N4_MAX_WAVES = 3;
 export const N4_MAX_TOTAL_INVITES = 30;
-/** Wave 1 → 5, wave 2 → 10, wave 3 → 15. */
+/** Invite capacity per wave: wave 1 → 5, wave 2 → 10, wave 3 → 15. */
 export const N4_WAVE_SIZES: readonly [number, number, number] = [5, 10, 15];
 /**
  * Single authoritative driver-invitation TTL (inDrive-style countdown).

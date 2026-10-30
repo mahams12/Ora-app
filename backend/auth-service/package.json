@@ -6,6 +6,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck:scripts": "tsc -p tsconfig.scripts.json --noEmit",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "dev:backend": "./scripts/dev_backend.sh start",

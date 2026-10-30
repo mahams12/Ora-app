@@ -11,9 +11,17 @@ import { DeviceTokenService } from '../delivery/device_token_service';
 export function createDriversRouter(
   db: Firestore,
   geoProjection?: import('../redis/geo_projection').RedisGeoProjectionService | null,
+  onAvailabilityTransition?: (
+    driverId: string,
+    state: import('./types').AvailabilityState,
+  ) => void,
 ): Router {
   const router = Router();
-  const availability = new DriverAvailabilityService(db, geoProjection ?? null);
+  const availability = new DriverAvailabilityService(
+    db,
+    geoProjection ?? null,
+    onAvailabilityTransition,
+  );
   const deviceTokens = new DeviceTokenService(db);
 
   router.post('/go-online', async (req: AuthedRequest, res) => {

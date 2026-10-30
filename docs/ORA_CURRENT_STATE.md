@@ -204,6 +204,422 @@ These are **historical** and must not be used as live status:
 
 ---
 
+## Zero-cost local development (Firebase emulators)
+
+Runs the full backend + Flutter debug app with **$0 incremental cloud cost** —
+no billing, no deploys, no paid Google APIs.
+
+**Start:**
+
+```bash
+# 1. Emulators (firestore :8181, auth :9099, rtdb :9000 — firebase.json)
+firebase emulators:start --project ora-app-d8112
+
+# 2. Backend on :8080 (sets emulator hosts, ORA_FCM_SENDER=none,
+#    ORA_ROUTING_PROVIDER=haversine, unsets GOOGLE_MAPS_SERVER_KEY + ADC)
+backend/auth-service/scripts/dev_emulator_backend.sh
+
+# 3. Local tick loop — replaces Cloud Scheduler (dispatch waves + FCM sweep)
+backend/auth-service/scripts/dev_local_ticks.sh
+```
+
+**Physical device (USB, `adb reverse`):**
+
+```bash
+backend/auth-service/scripts/dev_adb_reverse.sh   # api :8081→:8080, auth :9099, rtdb :9000
+cd mobile && flutter run --debug -d <serial> \
+  --dart-define=ORA_API_BASE_URL=http://127.0.0.1:8081/v1 \
+  --dart-define=ORA_ALLOW_HTTP_API=true \
+  --dart-define=ORA_ENV=development \
+  --dart-define=ORA_FIREBASE_EMULATOR_HOST=127.0.0.1
+```
+
+Note: FlutterFire remaps `127.0.0.1`→`10.0.2.2` (emulator alias) — on a
+**physical** phone bind emulators to `0.0.0.0` and pass the Mac's LAN IP as
+`ORA_FIREBASE_EMULATOR_HOST` instead; `adb reverse` only covers the API.
+
+**Scripted proof:** `backend/auth-service/scripts/run_local_emulator_e2e.ts` —
+28 checks: emulator auth, driver approval/online, geo projection, dispatch
+waves 10→15→25 km, invite list + 20s server-authoritative expiry, accept →
+offer → passenger select → full lifecycle → ratings, idempotency.
+
+**What cannot run locally:** real FCM delivery, Google Routes pricing
+(haversine instead), Places autocomplete (no key), MapTiler tiles (no key —
+placeholder style). Emulator data is wiped on restart — re-seed users +
+`pricingRules` before each session.
+
+**Phase-2 device audit (2026-10-22):** physical Accept AND Decline captured
+on SM-A325F — `INVITE_ACCEPT`→offerId then `INVITE_DECLINE` logged
+server-side from on-device taps. Pull-to-refresh on Open rides now refreshes
+BOTH the open list and the invite feed (`_refreshAll` in
+`driver_open_rides_view.dart`) — previously invites only re-fetched on
+mount/resume or FCM, so a missed/delayed push (or FCM-off local builds) hid
+live invitations for the whole session. Measured on-device: create→invited
+1.7s, invite TTL ~20s server-authoritative (expired status at 21.97s incl.
+poll latency), invite accept 75ms, accept-after-decline →
+`INVITE_ALREADY_RESPONDED`, decline replay idempotent, duplicate accept →
+same offerId. `STATE_CONFLICT` earlier observed was a genuine 5-min
+offer-window expiry (ride `expiresAt`), not a version bug — `requestVersion`
+is immutable through dispatch waves (regression-tested in
+`dispatch.test.ts`). Driver offline→online cycle verified: offline driver
+excluded (`invitedCount: 0` across all 3 waves), re-online re-invited.
+
+**Production-safety incident + fail-closed guard (2026-10-24):** a bare
+`tsx src/index.ts` launch once connected to the **real** Firebase project
+(`ora-app-d8112`) for ~2 min — sweeps ran, `fcm_sender_init: firebase`, and
+one production `outboxEvents` doc (`aeacaade-cf21-…`, a 10-day-old
+`ride.dispatch.wave_completed`) was updated to `DELIVERED` at
+`2026-10-24T12:37:04Z`. No FCM delivery confirmed (`sent: 0` in all observed
+records) but real credentials were present, so attempts were possible; treat
+as an incident — no cleanup performed without approval. Fix:
+`src/config/firebase_target_guards.ts` runs before `initializeApp` — local
+mode now **refuses to start** unless all three emulator hosts are set plus
+`ORA_FCM_SENDER=none` and `ORA_ROUTING_PROVIDER=haversine`; verified by
+intentional misconfigured launches (exit 1) and a clean emulator boot.
+Local scripts no longer source real service-account/Maps credentials.
+
+**Device-verified (2026-10-24, SM-A325F driver + headless AVD passenger):**
+full two-actor chain — dispatch invite w/ live countdown → Accept → PENDING
+offer → passenger Select → DRIVER_ASSIGNED → driver lifecycle
+en-route → arrived → started → completed → closed, mirrored on both UIs;
+memory bounded ~505MB PSS. Background/resume: invite card auto-removes on
+resume past server deadline (no countdown reset). Network cut (adb-reverse
+removed): pull-refresh fails closed with "Cannot reach Ora API" while
+retaining last-known cards; recovery refetches. GPS: presence publisher
+`accepted: true` ~10-15s cadence with real fixes.
+
+**Zero-cost destination selection (2026-10-24):** `ride_request_view.dart`
+now shows "Set pickup/destination on map" in each field's untouched state —
+no Places key, saved place, or prior proposal required. Map tap → pin →
+device-geocoder name (best-effort, unresolved stays retryable) → confirm.
+Verified end-to-end on the emulator UI: pickup via GPS, destination via map
+tap ("9, Jubilee Town Housing Scheme, Lahore"), Request Easy → SEARCHING
+ride that invited the physical driver — no paid API calls anywhere.
+
+**Post-Redis migration audit (2026-10-24):** repository-wide diff of the
+Redis-removal commit `f821d8d` vs parent baseline `521e8b9`, all changed
+files audited. External behavior preserved through the `RedisGeoClient`
+port; Firestore `geoDrivers/{driverId}` merged doc = GEO membership +
+online marker (one write per accepted GPS packet, same as Redis hot path).
+Regressions found & fixed this pass:
+
+- `georadius` bounding-box scan cap (5000 docs) returned index-ordered rows,
+  not nearest-first — dense fleets could silently hide the closest drivers.
+  Fix: recursive quadrant-split on cap hit (depth 4, ≤33 queries), dedup +
+  exact haversine + distance sort unchanged. `GEORADIUS_SCAN_CAPPED` still
+  logged if a leaf stays capped at the query bound.
+- `GET /v1/rides/invited` did `array-contains` + `limit(100)` with no
+  orderBy — doc-id order meant a driver with >100 lifetime wave memberships
+  could lose their ACTIVE invite. Fix: `orderBy('createdAt', 'desc')` +
+  `limit(25)` server-side; new composite index
+  `rideDispatchWaves(driverIds ARRAY_CONTAINS, createdAt DESC)` added to
+  `firestore.indexes.json`.
+- Script-level production safety: backend `index.ts` was guarded but
+  standalone scripts using `applicationDefault()` could still fall back to
+  ADC and touch the real project. New `scripts/lib/script_env.ts`
+  (`assertScriptFirebaseTarget`, same fail-closed semantics) wired into
+  `check_driver_online.ts`, `check_driver_device_tokens.ts`,
+  `list_searching_rides.ts`. cert()-based staging tools left as-is
+  (explicit credential = declared intent).
+
+Not a regression (documented): the Rs 136,470 local test fare was a
+test-seed units bug — paisa-scale numbers (`baseFare:16000, ratePerKm:20000,
+ratePerMin:200`) entered into rupee-denominated `pricingRules` fields:
+`16000 + 5.882×20000 + 14.117×200 = 136,466 → Rs 136,470`. Calculator is
+correct; units clarified in `buildPricingRuleSeed` JSDoc + pinned by
+regression tests (realistic Lahore ≈ Rs 290, intercity ≈ Rs 7,940, and the
+anomalous seed reproducing exactly 13,647,000 minor).
+
+Verification this pass: `tsc --noEmit` clean; vitest **538/538** (8 new:
+quadrant-split, scan-cap bound, stale-in-box, invite >100-wave listing,
+fare realism ×3, script guard ×4 + backend guard negatives); flutter
+analyze clean; flutter test **781/781**; emulator E2E `run_local_emulator_e2e.ts`
+**28/28** on fresh emulator (incl. RTDB `tripLocations` projection — a
+prior FAIL was the running backend missing `FIREBASE_DATABASE_URL`, not a
+code defect); firestore.rules mocha **43/43**, database.rules **9/9**.
+Geo benchmark vs emulator (wall-clock, NOT production latency):
+projection write p50 10.3ms (1 read + 1 write/packet); findNearby p50
+35ms @10 / 37ms @100 / 380ms @1000 (~320 in-box doc reads). Emulator data
+is in-memory — `locationStreams` seq cursors persist across runs, so the
+E2E needs a fresh emulator per run (stale cursors correctly reject
+`locationSeq:1` as SEQUENCE_VIOLATION — validated live).
+
+## Hot-path optimization (post-audit)
+
+Two safe optimizations landed after the audit (all 547 backend tests +
+28/28 E2E + 43 rules + 9 RTDB rules still pass on the new path):
+
+1. **Atomic marker guard** (`firestore_geo_client.projectLocation`):
+   the stale-packet guard and the geo+marker write now run inside ONE
+   Firestore transaction (`markerGuard` callback on
+   `ProjectLocationOptions`; memoryRedis parity added). Previously the
+   guard was a standalone `get` followed by a separate `set` — a
+   check-then-act window where a stale packet could interleave and
+   overwrite a fresher projection (idle + trip publishers overlap at
+   mode transitions). Same billed ops (1R+1W per accepted packet,
+   1R+0W on guard-skip), strictly better atomicity.
+2. **Bounded eligibility cache** (`DriverEligibilityCache`, 15s TTL):
+   the per-packet `users` + `drivers` reads are now cached. Staleness
+   is safe — matching re-checks `drivers/{id}` authoritatively at match
+   time, so a just-banned/offline driver can only waste geo writes for
+   ≤15s, never become incorrectly matchable. Same-process availability
+   transitions invalidate immediately via an
+   `onAvailabilityTransition` hook wired in `app.ts`
+   (drivers router → location router shared instance). Only successful
+   loads are cached (fail-closed). Deliberately NOT cached: trip
+   publish authorization (ride-state checks stay fresh — a driver
+   must stop publishing within one request of trip completion).
+
+Per-packet ops: **2.07R+2W** measured (cache 29 hits / 1 miss over 30
+packets) vs **4R+2W** before ≈ 48% fewer reads, ~33% fewer total ops.
+Post-optimization emulator benchmark (`BENCH_FLEETS=10,100,1000,5000`):
+- `projection_write_tx_guard` p50 5.8ms / p95 12.4ms (30 samples)
+- `full_update_per_packet` p50 11.0ms / p95 15.7ms end-to-end
+- `findNearby` p50: 13.7ms @10, 14.3ms @100, 35.2ms @1k, 50.1ms @5k
+Rejected as unsafe: skip-writes on unchanged position (the 15s N3
+freshness window on `lastLocationTs` vs the 10s publish cadence leaves
+no safe skip margin — skipping would let stationary drivers go stale);
+a blind write without the guard read (stale cross-stream overwrite).
+Documented future option (needs approval, ~25% read cut): merge idle+
+trip cursors into one `locationStreams/{driverId}` doc so the geo
+write can join the same transaction without a separate guard read.
+
+Revised cost model — honest arithmetic (Firestore $0.06/100k reads,
+$0.18/100k writes; idle presence at 10s cadence = 6 pkt/min =
+8,640 packets/day per always-online driver; trip packets add +1R ride
+auth +1 RTDB write):
+- Per driver/day (idle, 24h): ~17.9k reads + ~17.3k writes ≈ **$0.042**
+- 10 drivers ≈ $0.42/day (~$13/mo); 100 ≈ $4.2/day (~$126/mo);
+  1k ≈ $42/day (~$1.3k/mo); 5k ≈ $210/day; 10k ≈ $420/day (~$12.6k/mo);
+  25k modeled ≈ $1,050/day. Dispatch/rides traffic adds ~1-3% at these
+  volumes (waves ≈ 200-300 reads/ride). Storage negligible (<$0.10/mo).
+- Redis/Memorystore (~$84/mo standing) crossover ≈ **~70 always-online
+  drivers** — below that Firestore presence is cheaper; above it the
+  old Redis design was. At 10k drivers a dedicated geo store
+  (RTDB/Redis/custom) is materially cheaper — flagged, not adopted.
+- Free tier (50k reads + 20k writes/day): ~1 always-online driver;
+  a ~5-driver × ~4h/day pilot fits under both caps. Zero incremental
+  cost during development is met via emulators, not the free tier.
+- Trip-mode premium: publishable states only (ASSIGNED→STARTED, ~4-10
+  pkt/min) — roughly +50% ops vs idle while active.
+
+---
+
+## RTDB geohash GEO (candidate replacement — local verified)
+
+Implemented 2026-10-24 behind `GEO_BACKEND=firestore|rtdb`
+(`src/index.ts` startup selection; unknown values + missing
+`FIREBASE_DATABASE_URL` refuse startup — fail closed). Local dev
+scripts (`dev_emulator_backend.sh`, `run_local_device_backend.sh`)
+default to `rtdb`; the code default and production stay `firestore`
+until a staging soak is approved. Rollback is one env var — both
+implementations live behind the same `RedisGeoClient` contract.
+
+Design (`src/rtdb/rtdb_geo_client.ts` + `src/rtdb/geohash.ts`):
+- `geoPresence/{driverId}` node per online driver: `{g: geohash(12),
+  l:[lat,lng], lat, lng, accuracy, lastLocationTs, expiresAtMs,
+  markerExpiresAtMs, markerValue, stream}`.
+- Marker guard + write inside ONE RTDB `transaction()` per node —
+  same atomic cross-stream protection as the Firestore tx-guard.
+- `georadius` = geohash covering-cell queries
+  (`orderByChild('g')` + `startAt/endAt` per cell, dedup) → exact
+  haversine filter → nearest-first sort. Correctness identical to
+  the Firestore quadrant-split path (same candidate sets measured).
+- Expiry: `expiresAtMs`/`markerExpiresAtMs` filters in queries (lazy
+  eligibility) + `sweepExpired()` storage-hygiene sweeper exposed at
+  `POST /v1/internal/geo/presence-sweep` (worker token), driven by
+  `dev_local_ticks.sh` slow loop. Verified end-to-end: sweep removed
+  3 expired nodes post-backend-restart.
+- `database.rules.json`: `geoPresence` is `.read:false/.write:false`
+  (server-write-only, admin bypasses rules) with `.indexOn: [g,
+  expiresAtMs]` — verified by a new rules test (10/10 RTDB rules).
+- `locationStreams` cursors stay in Firestore (durable authority —
+  deliberate). Geo projection and cursor are NOT one atomic unit on
+  either backend; the accepted-then-project ordering + guard
+  semantics are unchanged from the Firestore path.
+- Restart recovery: state is external — a restarted backend reads
+  `geoPresence` on the next match (verified: backend restart +
+  presence-sweep read/write post-restart). Multi-instance: verified
+  live — two backend processes (:8080 + :8082, both `GEO_BACKEND=rtdb`)
+  share the same `geoPresence`; instance B swept a node that instance
+  A then confirmed absent.
+
+Benchmarks (emulator wall-clock — NOT production latency; identical
+workloads both backends, `run_geo_benchmark.ts`):
+
+| op | Firestore GEO | RTDB GEO |
+|---|---|---|
+| projection write tx-guard p50 | 4.2–6.8ms | 3.6–4.0ms |
+| full `update()` p50 | 8.3–15.2ms | 6.7–28.0ms |
+| findNearby p50 @10 | 15.4ms | 46.9ms (cold first query) |
+| findNearby p50 @100 | 16.6ms | 18.7ms |
+| findNearby p50 @1k | 22.3ms | 21.4ms |
+| findNearby p50 @5k | 28.0ms | 27.6ms |
+| findNearby p50 @10k | 109.7ms | **46.7ms** |
+
+Candidate sets identical at every fleet size (7/21/52/52/52).
+
+Billed ops per accepted idle packet:
+- Firestore GEO: ~2.07R + 2W → ~$0.042/driver/day (@6 pkt/min).
+- RTDB GEO: eligibility cache (~0.07R) + `locationStreams` tx (1R+1W)
+  + RTDB tx (uploads free) → ~1.07R + 1W ≈ **$0.021/driver/day —
+  ~50% cut**; RTDB downloads only on match queries (≈52 candidates ×
+  ~200B ≈ pennies/day). Documented further option (not taken):
+  `locationStreams` → RTDB would drop billed ops to ~$0.004/driver/day
+  but moves cursor authority off Firestore — needs explicit approval.
+
+Verification: tsc clean; backend 568/568 (+21: 7 geohash, 14 RTDB
+client); RTDB rules 10/10; Firestore rules 43/43; Flutter analyze
+clean + 781/781; emulator E2E **29/29 on GEO_BACKEND=rtdb**
+(incl. geoPresence write, dispatch wave, ~20s invite TTL, guardrails,
+offer→select, lifecycle, RTDB tripLocations, ratings, expired-invite
+rejection). E2E script gained a `GEO_BACKEND`-aware geo-store check +
+a driver presence refresh before the expired-invite ride (the check
+previously raced the 15s freshness gate — timing artifact, not a
+weakening: an online driver republishes every ~10s).
+
+Remaining (unchanged): real-Firestore/RTDB latency, index performance,
+real FCM, Google Routes accuracy — external blockers. RTDB-specific:
+dual-instance live soak, staging soak before any production flag flip.
+
+---
+
+## locationStreams → RTDB (cursor migration — local verified)
+
+Implemented 2026-10-24 behind `LOCATION_STREAMS_BACKEND` (defaults to
+the `GEO_BACKEND` pairing; explicit override allowed; invalid values +
+missing `FIREBASE_DATABASE_URL` refuse startup). Firestore cursor
+remains available for rollback via `LOCATION_STREAMS_BACKEND=firestore`.
+
+Design (`src/location/stream_store.ts` + `src/rtdb/rtdb_stream_store.ts`):
+- `LocationStreamStore` interface — `accept` (atomic cursor tx),
+  `close` (idempotent), `sweepExpired` (hygiene). Firestore impl is the
+  ORIGINAL transaction verbatim — semantics byte-identical on both.
+- RTDB layout: `locationStreams/{docId}` mirrors the Firestore doc
+  (`activeStreamId, lastAcceptedSeq, streamState, previousStreamIds[],
+  rideId?, expiresAtMs, createdAt, updatedAt`) — docId = driverId
+  (idle) or `{rideId}_{driverId}` (trip).
+- `accept` = one RTDB `transaction()` per doc; rejection = abort with
+  out-of-band reason → same `SEQUENCE_VIOLATION` 422s (CLOSED, same-
+  stream seq, replaced stream). RTDB serializes per-node transactions —
+  concurrent publishers/multi-instance stay correct.
+- `closeTripLocationStream` / `cleanupTripLocationOnTerminal` route
+  through the same store (ride terminal close still sets CLOSED).
+- `ExpiresAtCleanupService` delegates `locationStreams` cleanup to
+  `store.sweepExpired` — `orderByChild('expiresAtMs')` + `.indexOn`.
+- Atomicity analysis (documented, deliberately NOT merged): a single
+  tx covering cursor+geo requires folding cursor memory into
+  `geoPresence/{driverId}` — offline geo removal would then erase
+  previousStreamIds/CLOSED memory and allow stale-stream re-acceptance
+  after re-online, and per-ride expiresAt cannot be indexed inside the
+  geo node. Two ordered transactions (cursor accept → guarded geo
+  project) preserve the exact atomicity of the original Firestore
+  design: cursor can never lag geo; a crash between them only delays
+  geo by ≤1 packet.
+
+Billed ops per accepted idle packet: **~0.07R + 0W** (eligibility
+cache amortized) — was ~1.07R+1W on RTDB geo alone, ~2.07R+2W on
+Firestore geo, 4R+2W pre-optimization. Verified live: after a full
+29/29 E2E, RTDB `locationStreams` held all 3 cursors (incl. trip
+cursor `{rideId}_{driverId}` + previousStreamIds) while Firestore
+`locationStreams` had **0 docs**.
+
+Latency note (emulator wall-clock): `full_update_per_packet` p50
+48.4ms / p95 71.2ms — two SEQUENTIAL RTDB transactions per packet add
+~10–40ms over the Firestore-cursor path (~7–15ms). Trivially within
+the 10s publish cadence; production regional latency will differ.
+
+Revised per-packet cost model (@6 pkt/min, 8,640 pkt/driver/day):
+- Idle packets: ~605 eligibility reads/day ≈ **$0.0004/driver/day**
+- Trip packets (+1 uncached ride-auth read, ~10% of time): +$0.0005
+- Effective ≈ **$0.0005–0.001/driver/day ≈ $0.02–0.03/driver/mo** —
+  ~97–98% reduction vs the pre-migration ~$0.65/driver/mo GPS pipeline.
+- RTDB: uploads free; downloads only on match queries (~52 docs ×
+  ~200B ≈ pennies/day); storage ~650B/driver → 10k ≈ 6.5MB ≈ $0.03/mo.
+- What still bills: eligibility + trip-auth reads (~$20/mo @1k
+  drivers), ride business ops (unchanged), hosting compute, egress,
+  auth. NOT free — honest pilot math: a ~5-driver × 4h/day pilot now
+  fits comfortably under Firestore free tier for the GPS path; the
+  backend host remains the dominant cost at every fleet size.
+
+Verification: backend 581/581 (+13 stream-store tests: seq ordering,
+replaced-stream rejection, CLOSED, concurrency, expiry, sweep);
+RTDB rules 11/11 (new locationStreams deny test); Firestore rules
+43/43; emulator E2E 29/29 on the RTDB cursor path (expired-invite,
+trip-auth and sequence guards all exercised against RTDB cursors);
+Flutter unchanged (backend-only).
+
+---
+
+## RELEASE GATE — full-system stabilization (2026-11)
+
+Complete inventory + audit of the existing system (no new features).
+Issues found & fixed this round:
+
+1. **`scripts/` never typechecked** — `tsconfig.json` includes only
+   `src/**/*`; CI ran no `tsc` at all. Fixed: new
+   `backend/auth-service/tsconfig.scripts.json` (ESM/NodeNext for
+   `import.meta`, strict, `declaration:false`, noEmit-only), 19 real
+   semantic errors fixed across 5 scripts (`run_geo_benchmark.ts`,
+   `repro_open_rides_live.ts`, `run_phase_n2c_unit_proof.ts`,
+   `run_ride_offer_create_firestore_concurrency.ts`,
+   `seed_e2e_driver_profile.ts`). New npm scripts `typecheck` +
+   `typecheck:scripts`; CI now runs both before `npm test`.
+   No script was excluded to make compilation pass.
+2. **N2C proof test 9 failing (pre-existing bit-rot)** —
+   `run_phase_n2c_unit_proof.ts` test 9 ("homeCity change keeps
+   primary; moves legacy shard only") had not run since the
+   eligibility-cache refactor. Root cause: `drivers` doc mutation via
+   `db.seed` is invisible inside the 15s `DriverEligibilityCache`
+   window → stale `homeCity` → legacy-shard `zrem` skipped. Analysis:
+   correct-by-design staleness (homeCity is ops-seeded, never
+   API-written; legacy `geo:drivers:{city}` shards are never read by
+   N3; marker `prevCity` self-heals ≤15s; primary `geo:drivers` is
+   city-independent). Fix: `CreateAppOptions.eligibilityCache` is now
+   injectable (`options.eligibilityCache ?? new DriverEligibilityCache()`)
+   and the test injects `new DriverEligibilityCache(0)` (TTL 0 disables
+   `set`). Proof now 11/11. Availability transitions already
+   invalidate via `onAvailabilityTransition` (verified `app.ts`).
+3. **Ambiguous dispatch comment** — `dispatch_types.ts` line 17 said
+   "Wave 1 → 5, 2 → 10, 3 → 15" (invite sizes) next to radii
+   `[10,15,25]` — clarified to "Invite capacity per wave". Verified
+   authoritative constants: radii **10 → 15 → 25 km**, invite sizes
+   **5/10/15**, `N4_INVITE_TTL_MS = 20s` — matches inDrive-style spec.
+
+Re-verification this round (all local, emulators only):
+- `tsc -p tsconfig.json --noEmit` + `tsc -p tsconfig.scripts.json
+  --noEmit`: both clean (all 63+ scripts now checked).
+- Backend suite: **581/581** (40 files) post-changes.
+- Emulator E2E `run_local_emulator_e2e.ts`:
+  - `GEO_BACKEND=rtdb` (+RTDB cursors): **29/29** — geoPresence,
+    invite TTL 20s, offer→select, lifecycle, tripLocations, ratings,
+    expired-invite rejection.
+  - `GEO_BACKEND=firestore` (+Firestore cursors): **29/29** —
+    full rollback path green (`geoDrivers` asserted).
+- Concurrency proof `test:ride-offer-create-firestore-concurrency`:
+  8/8 (real Firestore txn contention observed).
+- `test:phase-n2c-unit-proof`: 11/11 (was 10/11 — now fixed).
+- Rules: Firestore 43/43, RTDB 11/11 (unchanged).
+- Flutter: analyze clean, 781/781 (unchanged — backend-only edits).
+- Backend RSS ~53MB idle.
+
+Rollback drill: backend restarted with `GEO_BACKEND=firestore
+LOCATION_STREAMS_BACKEND=firestore` → E2E 29/29 → restarted back to
+`rtdb`. Rollback is one env var, verified working.
+
+Remaining locally-unverifiable (production/staging only):
+- Real Firestore/RTDB latency + index behavior at scale.
+- FCM delivery + retry (sender = none locally).
+- Google Routes production accuracy/cost (haversine locally).
+- Staging soak + flag rollout; physical Samsung verification of the
+  RTDB backend path (device proofs predate the RTDB switch —
+  Flutter code unchanged, but the on-device RTDB GEO round-trip is
+  not yet device-verified).
+- Production hosting/auth/egress/notification costs remain non-zero;
+  local dev stays at $0 incremental cloud cost.
+
+---
+
 ## How to update this file
 
 When a phase closes:

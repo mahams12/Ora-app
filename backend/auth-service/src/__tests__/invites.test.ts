@@ -196,6 +196,60 @@ describe('driver invitations', () => {
     expect(res9.body.data.items).toHaveLength(0);
   });
 
+  it('invited list stays newest-first beyond the historical page bound', async () => {
+    const db = memoryDb();
+    seedDriver(db, 'd1');
+    // 105 historical wave memberships (rides long gone), then the newest
+    // ACTIVE invite — under an unordered scan-limit the newest wave could be
+    // truncated out of the result set entirely.
+    const stale = new Date(Date.now() - 3_600_000).toISOString();
+    for (let i = 0; i < 105; i += 1) {
+      const waveId = `stale-ride-${String(i).padStart(3, '0')}_w1`;
+      db.seed('rideDispatchWaves', waveId, {
+        waveId,
+        rideId: `stale-ride-${i}`,
+        waveNumber: 1,
+        requestVersion: 1,
+        driverIds: ['d1'],
+        radiusKm: 10,
+        status: 'COMPLETED',
+        correlationId: 'c',
+        createdAt: stale,
+        completedAt: stale,
+        inviteExpiresAt: stale,
+      });
+    }
+    seedRide(db, 'newest');
+    const freshWave = {
+      waveId: 'newest_w1',
+      rideId: 'newest',
+      waveNumber: 1,
+      requestVersion: 1,
+      driverIds: ['d1'],
+      radiusKm: 10,
+      status: 'COMPLETED',
+      correlationId: 'c',
+      createdAt: new Date().toISOString(),
+      completedAt: new Date().toISOString(),
+      inviteExpiresAt: new Date(Date.now() + 20_000).toISOString(),
+    };
+    db.seed('rideDispatchWaves', 'newest_w1', freshWave);
+
+    const res = await request(appFor(db, 'd1'))
+      .get('/v1/rides/invited')
+      .set('Authorization', 'Bearer t')
+      .expect(200);
+
+    const items = res.body.data.items as Array<{
+      rideId: string;
+      status: string;
+    }>;
+    // The ACTIVE invite must surface — it is the only one with a live ride.
+    expect(items).toHaveLength(1);
+    expect(items[0].rideId).toBe('newest');
+    expect(items[0].status).toBe('ACTIVE');
+  });
+
   it('passenger cannot list invites (driver-only)', async () => {
     const db = memoryDb();
     seedPassenger(db, 'p1');

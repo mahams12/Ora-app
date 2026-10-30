@@ -48,8 +48,28 @@ const EARTH_RADIUS_KM = 6371;
 /**
  * Defensive cap on bounding-box scans — box reads are billed per doc. Far
  * above any realistic fleet size; prevents unbounded reads on huge datasets.
+ * When a box scan hits this cap, the box is split into quadrants and each is
+ * rescanned (GEO_SPLIT_MAX_DEPTH levels deep) so a dense fleet cannot hide
+ * the nearest drivers behind index-order truncation.
  */
 const GEO_QUERY_SCAN_LIMIT = 5000;
+/** Max recursive quadrant splits on a capped scan (4^4 = 256 leaf boxes). */
+const GEO_SPLIT_MAX_DEPTH = 4;
+/**
+ * Hard bound on total box queries per georadius call (including splits).
+ * Prevents pathological density from issuing unbounded sub-queries; any box
+ * still capped at the bound is reported via GEORADIUS_SCAN_CAPPED.
+ */
+const GEO_SPLIT_MAX_QUERIES = 33;
+
+export interface FirestoreGeoClientOptions {
+  /** Test hook — defaults to GEO_QUERY_SCAN_LIMIT. */
+  scanLimit?: number;
+  /** Test hook — defaults to GEO_SPLIT_MAX_DEPTH. */
+  maxSplitDepth?: number;
+  /** Test hook — defaults to GEO_SPLIT_MAX_QUERIES. */
+  maxScanQueries?: number;
+}
 
 function haversineKm(
   lat1: number,
@@ -79,8 +99,12 @@ function kmToLngDegrees(km: number, atLat: number): number {
 
 export function createFirestoreGeoClient(
   db: Firestore,
+  options?: FirestoreGeoClientOptions,
 ): RedisGeoClient & { flushdb(): Promise<'OK'>; quit(): Promise<'OK'> } {
   const geoCol = db.collection(GEO_COLLECTION);
+  const scanLimit = options?.scanLimit ?? GEO_QUERY_SCAN_LIMIT;
+  const maxSplitDepth = options?.maxSplitDepth ?? GEO_SPLIT_MAX_DEPTH;
+  const maxScanQueries = options?.maxScanQueries ?? GEO_SPLIT_MAX_QUERIES;
 
   function isGeoKey(key: string): boolean {
     return key === GEO_DRIVERS_KEY;
@@ -159,17 +183,46 @@ export function createFirestoreGeoClient(
     },
 
     async projectLocation(input) {
-      if (!isGeoKey(input.key)) return;
-      // Hot path: geo coords + marker in ONE document write.
-      await geoCol.doc(input.member).set(
-        {
-          driverId: input.member,
-          lat: input.latitude,
-          lng: input.longitude,
-          ...markerFields(input.markerValue, input.markerTtlSeconds),
-        },
-        { merge: true },
-      );
+      if (!isGeoKey(input.key)) return 'skipped';
+      const ref = geoCol.doc(input.member);
+      // Hot path: geo coords + marker in ONE document write. When a
+      // markerGuard is provided the guard read + conditional write run in a
+      // single transaction — concurrent same-driver packets (idle and trip
+      // publishers overlap at mode transitions) can no longer interleave a
+      // stale write between the guard check and the set.
+      if (!input.markerGuard) {
+        await ref.set(
+          {
+            driverId: input.member,
+            lat: input.latitude,
+            lng: input.longitude,
+            ...markerFields(input.markerValue, input.markerTtlSeconds),
+          },
+          { merge: true },
+        );
+        return 'written';
+      }
+      return db.runTransaction(async (tx) => {
+        const snap = await tx.get(ref);
+        const data = snap.exists ? (snap.data() ?? {}) : null;
+        const decision = input.markerGuard!({
+          latitude: typeof data?.lat === 'number' ? data.lat : NaN,
+          longitude: typeof data?.lng === 'number' ? data.lng : NaN,
+          markerValue: data ? liveMarkerValue(data) : null,
+        });
+        if (decision === 'skip') return 'skipped';
+        tx.set(
+          ref,
+          {
+            driverId: input.member,
+            lat: input.latitude,
+            lng: input.longitude,
+            ...markerFields(input.markerValue, input.markerTtlSeconds),
+          },
+          { merge: true },
+        );
+        return 'written';
+      });
     },
 
     async zrem(key, member) {
@@ -204,32 +257,105 @@ export function createFirestoreGeoClient(
       // Longitude wrap (antimeridian / polar) — widen to full range; the
       // haversine filter below keeps only true in-radius hits.
       const wrapped = minLng < -180 || maxLng > 180;
+      const minTs = input.minLastLocationTs;
 
-      let query = geoCol
-        .where('lat', '>=', minLat)
-        .where('lat', '<=', maxLat);
-      if (!wrapped) {
-        query = query
-          .where('lng', '>=', minLng)
-          .where('lng', '<=', maxLng);
-      }
-      if (input.minLastLocationTs != null) {
-        // Server-side freshness floor — docs without a parseable marker
-        // timestamp never match, identical outcome to the N3 marker_missing/
-        // marker_not_fresh rejections but without paying a document read.
-        query = query.where('lastLocationTs', '>', input.minLastLocationTs);
-      }
-      const snap = await query.limit(GEO_QUERY_SCAN_LIMIT).get();
-      const scanCapped = snap.docs.length >= GEO_QUERY_SCAN_LIMIT;
-      if (scanCapped) {
+      type Box = {
+        minLat: number;
+        maxLat: number;
+        minLng: number;
+        maxLng: number;
+      };
+      type ScannedDoc = { id: string; data: () => Record<string, unknown> };
+
+      // Docs deduped by id — quadrant splits share edge boundaries so the
+      // same doc can legitimately appear in two sibling boxes.
+      const docsById = new Map<string, ScannedDoc>();
+      let queriesIssued = 0;
+      let cappedLeaves = 0;
+
+      const scan = async (box: Box, depth: number): Promise<void> => {
+        let query = geoCol
+          .where('lat', '>=', box.minLat)
+          .where('lat', '<=', box.maxLat);
+        if (!wrapped) {
+          query = query
+            .where('lng', '>=', box.minLng)
+            .where('lng', '<=', box.maxLng);
+        }
+        if (minTs != null) {
+          // Server-side freshness floor — docs without a parseable marker
+          // timestamp never match, identical outcome to the N3 marker_missing/
+          // marker_not_fresh rejections but without paying a document read.
+          query = query.where('lastLocationTs', '>', minTs);
+        }
+        queriesIssued += 1;
+        const snap = await query.limit(scanLimit).get();
+        const capped = snap.docs.length >= scanLimit;
+
+        if (
+          capped &&
+          depth < maxSplitDepth &&
+          queriesIssued + 4 <= maxScanQueries
+        ) {
+          // Cap hit: Firestore returns index-ordered (lat,lng) rows, NOT
+          // nearest-first — a dense fleet would hide the closest drivers.
+          // Split the box into quadrants and rescan each; edge overlaps are
+          // harmless (docsById dedup).
+          const midLat = (box.minLat + box.maxLat) / 2;
+          const midLng = (box.minLng + box.maxLng) / 2;
+          const quadrants: Box[] = [
+            {
+              minLat: box.minLat,
+              maxLat: midLat,
+              minLng: box.minLng,
+              maxLng: midLng,
+            },
+            {
+              minLat: midLat,
+              maxLat: box.maxLat,
+              minLng: box.minLng,
+              maxLng: midLng,
+            },
+            {
+              minLat: box.minLat,
+              maxLat: midLat,
+              minLng: midLng,
+              maxLng: box.maxLng,
+            },
+            {
+              minLat: midLat,
+              maxLat: box.maxLat,
+              minLng: midLng,
+              maxLng: box.maxLng,
+            },
+          ];
+          for (const sub of quadrants) {
+            if (sub.minLat === sub.maxLat && sub.minLng === sub.maxLng) {
+              continue; // degenerate point box — parent result stands
+            }
+            await scan(sub, depth + 1);
+          }
+          return;
+        }
+
+        if (capped) cappedLeaves += 1;
+        for (const doc of snap.docs) {
+          docsById.set(doc.id, doc as ScannedDoc);
+        }
+      };
+
+      await scan({ minLat, maxLat, minLng, maxLng }, 0);
+      if (cappedLeaves > 0) {
         logSafe('GEORADIUS_SCAN_CAPPED', {
-          scanLimit: GEO_QUERY_SCAN_LIMIT,
+          scanLimit,
+          cappedLeaves,
+          queriesIssued,
           radiusKm: input.radiusKm,
         });
       }
 
       const hits: GeoRadiusHit[] = [];
-      for (const doc of snap.docs) {
+      for (const doc of docsById.values()) {
         const data = (doc.data() ?? {}) as { lat?: unknown; lng?: unknown };
         if (typeof data.lat !== 'number' || typeof data.lng !== 'number') {
           continue;

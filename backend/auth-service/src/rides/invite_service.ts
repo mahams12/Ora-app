@@ -31,8 +31,12 @@ import {
 } from './dispatch_types';
 
 const RIDES = 'rides';
-/** Scan cap for the array-contains listing — bounded read, sorted in code. */
-const INVITED_SCAN_LIMIT = 100;
+/**
+ * Server-side newest-first listing bound. Requires composite index
+ * rideDispatchWaves (driverIds ARRAY_CONTAINS, createdAt DESC) — declared in
+ * firestore.indexes.json. Fetching only the page means a driver with hundreds
+ * of historical wave memberships still sees their newest ACTIVE invite.
+ */
 const INVITED_PAGE_LIMIT = 25;
 
 export type InviteStatus =
@@ -93,13 +97,11 @@ export class InviteService {
     const waveSnap = await this.db
       .collection(DISPATCH_WAVES)
       .where('driverIds', 'array-contains', input.caller.uid)
-      .limit(INVITED_SCAN_LIMIT)
+      .orderBy('createdAt', 'desc')
+      .limit(INVITED_PAGE_LIMIT)
       .get();
 
-    const waves = waveSnap.docs
-      .map((d) => d.data() as DispatchWaveDoc)
-      .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
-      .slice(0, INVITED_PAGE_LIMIT);
+    const waves = waveSnap.docs.map((d) => d.data() as DispatchWaveDoc);
 
     // Batch-load rides + per-driver response docs.
     const rideRefs = waves.map((w) =>

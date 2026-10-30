@@ -679,4 +679,60 @@ describe('N4 dispatch wave MVP', () => {
     expect(res.body.data.completed).toBeGreaterThanOrEqual(1);
     expect(db.getDoc('rideDispatchWaves', waveDocId('r15', 1))).toBeTruthy();
   });
+
+  it('requestVersion is stable across all waves — open-ride offers still succeed', async () => {
+    const db = memoryDb();
+    const redis = createMemoryRedis();
+    const now = Date.now();
+    await seedDriversNearPickup(db, redis, 5, now);
+    seedDispatchableRide(db, 'r16');
+    // Caller is 'unused' (authStub) — make it an approved online driver.
+    seedApprovedOnline(db, 'unused', 'lahore');
+    const app = appFor(db, redis);
+
+    for (let wave = 1; wave <= 3; wave += 1) {
+      db.seed('rides', 'r16', {
+        ...db.getDoc('rides', 'r16')!,
+        dispatchNextAt: new Date(Date.now() - 1000).toISOString(),
+      });
+      await tick(app, 'r16');
+    }
+    expect(db.getDoc('rides', 'r16')!.requestVersion).toBe(1);
+    expect(db.getDoc('rides', 'r16')!.dispatchStatus).toBe('exhausted');
+
+    // A driver browsing open rides still offers against requestVersion 1.
+    const res = await request(app)
+      .post('/v1/rides/r16/offers')
+      .set('Authorization', 'Bearer t')
+      .set('Idempotency-Key', 'idem-offer-r16')
+      .send({
+        type: 'PASSENGER_PRICE_ACCEPTED',
+        amountMinor: 45000,
+        expectedRequestVersion: 1,
+      })
+      .expect(201);
+    expect(res.body.data.offerId).toBe('r16_unused_v1');
+  });
+
+  it('rejects driver offers after the ride offer window expires (STATE_CONFLICT)', async () => {
+    const db = memoryDb();
+    const redis = createMemoryRedis();
+    seedApprovedOnline(db, 'unused', 'lahore');
+    seedDispatchableRide(db, 'r17', {
+      expiresAt: new Date(Date.now() - 1000).toISOString(),
+    });
+    const app = appFor(db, redis);
+
+    const res = await request(app)
+      .post('/v1/rides/r17/offers')
+      .set('Authorization', 'Bearer t')
+      .set('Idempotency-Key', 'idem-offer-r17')
+      .send({
+        type: 'PASSENGER_PRICE_ACCEPTED',
+        amountMinor: 45000,
+        expectedRequestVersion: 1,
+      })
+      .expect(409);
+    expect(res.body.error.code).toBe('STATE_CONFLICT');
+  });
 });

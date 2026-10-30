@@ -65,7 +65,25 @@ export interface RedisGeoClient {
     markerKey: string;
     markerValue: string;
     markerTtlSeconds?: number;
-  }): Promise<void>;
+    /**
+     * Optional atomic marker guard. Implementations evaluate it against the
+     * CURRENTLY STORED marker while holding the write (same transaction —
+     * no check-then-act gap between read and write). Return 'skip' to abort
+     * the write; the existing projection is left untouched. When omitted
+     * the write is unconditional.
+     */
+    markerGuard?: (existing: {
+      latitude: number;
+      longitude: number;
+      markerValue: string | null;
+    }) => 'write' | 'skip';
+  }): Promise<'written' | 'skipped'>;
+  /**
+   * Optional storage-hygiene sweep — physically remove fully-expired
+   * presence records. Matching never depends on this (TTL is enforced on
+   * read); it only bounds index growth. Implemented by the RTDB client.
+   */
+  sweepExpired?(nowMs?: number): Promise<number>;
   /** Optional — used by live proofs / tests. */
   flushdb?(): Promise<'OK'>;
   quit?(): Promise<'OK'>;

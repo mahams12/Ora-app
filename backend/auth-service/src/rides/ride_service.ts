@@ -29,6 +29,7 @@ import {
   isExpirable,
 } from './state_machine';
 import type { TripLocationRtdb } from '../rtdb/types';
+import type { LocationStreamStore } from '../location/stream_store';
 import { NullTripLocationRtdb } from '../rtdb/admin_trip_location_rtdb';
 import {
   cleanupTripLocationOnTerminal,
@@ -543,12 +544,15 @@ function assertIdempotencyRecord(
 
 export class RideService {
   private readonly tripLocationRtdb: TripLocationRtdb;
+  private readonly streamStore: LocationStreamStore | null;
 
   constructor(
     private readonly db: Firestore,
     tripLocationRtdb: TripLocationRtdb | null = null,
+    streamStore: LocationStreamStore | null = null,
   ) {
     this.tripLocationRtdb = tripLocationRtdb ?? new NullTripLocationRtdb();
+    this.streamStore = streamStore;
   }
 
   /** L2 Step 3 — grant rideAccess after durable DRIVER_ASSIGNED (best-effort). */
@@ -581,6 +585,7 @@ export class RideService {
       assignedDriverId: input.assignedDriverId,
       requestId: input.requestId,
       reason: input.reason,
+      streamStore: this.streamStore ?? undefined,
     });
   }
 

@@ -140,4 +140,45 @@ describe('L2 Step 2 RTDB rules', () => {
     await assertFails(get(ref(db, 'driverPresence/u1')));
     await assertFails(set(ref(db, 'secrets/x'), { a: 1 }));
   });
+
+  it('geoPresence is server-write-only and not client-readable', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await set(ref(ctx.database(), 'geoPresence/driver-1'), {
+        g: 'ttsg7',
+        l: [31.52, 74.35],
+        driverId: 'driver-1',
+        expiresAtMs: Date.now() + 30_000,
+      });
+    });
+    const authed = testEnv.authenticatedContext('driver-1').database();
+    await assertFails(set(ref(authed, 'geoPresence/driver-1'), { g: 'xxxx' }));
+    await assertFails(update(ref(authed, 'geoPresence/driver-1'), { expiresAtMs: 0 }));
+    await assertFails(remove(ref(authed, 'geoPresence/driver-1')));
+    await assertFails(get(ref(authed, 'geoPresence/driver-1')));
+    await assertFails(get(ref(authed, 'geoPresence')));
+    const anon = testEnv.unauthenticatedContext().database();
+    await assertFails(get(ref(anon, 'geoPresence/driver-1')));
+    await assertFails(set(ref(anon, 'geoPresence/x'), { g: 'a' }));
+  });
+
+  it('locationStreams cursors are server-write-only and not client-readable', async () => {
+    await testEnv.withSecurityRulesDisabled(async (ctx) => {
+      await set(ref(ctx.database(), 'locationStreams/driver-1'), {
+        activeStreamId: 's1',
+        lastAcceptedSeq: 3,
+        streamState: 'ACTIVE',
+        expiresAtMs: Date.now() + 60_000,
+      });
+    });
+    const authed = testEnv.authenticatedContext('driver-1').database();
+    await assertFails(get(ref(authed, 'locationStreams/driver-1')));
+    await assertFails(get(ref(authed, 'locationStreams')));
+    await assertFails(
+      update(ref(authed, 'locationStreams/driver-1'), { lastAcceptedSeq: 99 }),
+    );
+    await assertFails(remove(ref(authed, 'locationStreams/driver-1')));
+    const anon = testEnv.unauthenticatedContext().database();
+    await assertFails(get(ref(anon, 'locationStreams/driver-1')));
+    await assertFails(set(ref(anon, 'locationStreams/x'), { streamState: 'ACTIVE' }));
+  });
 });

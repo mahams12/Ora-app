@@ -14,7 +14,7 @@ export interface DriveRouteResult {
   distanceKm: number;
   durationMin: number;
   encodedPolyline?: string;
-  provider: 'google_routes';
+  provider: 'google_routes' | 'haversine';
   rawRequestId?: string;
 }
 

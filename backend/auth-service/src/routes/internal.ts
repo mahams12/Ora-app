@@ -25,15 +25,16 @@ export function createInternalRouter(
   redis: RedisGeoClient | null = null,
   fcm: FcmSender | null = null,
   tripLocationRtdb: import('../rtdb/types').TripLocationRtdb | null = null,
+  streamStore: import('../location/stream_store').LocationStreamStore | null = null,
 ): Router {
   const router = Router();
-  const rides = new RideService(db, tripLocationRtdb);
+  const rides = new RideService(db, tripLocationRtdb, streamStore);
   const nearby = new NearbyDriversService(db, redis);
   const dispatch = new DispatchWaveService(db, nearby);
   const fcmSender = fcm ?? createNullFcmSender();
   const dispatchFcm = new DispatchFcmProjector(db, fcmSender);
   const rideStateFcm = new RideStateFcmProjector(db, fcmSender);
-  const expiresAtCleanup = new ExpiresAtCleanupService(db);
+  const expiresAtCleanup = new ExpiresAtCleanupService(db, streamStore);
 
   router.post('/rides/expire-sweep', async (req, res) => {
     const started = Date.now();
@@ -173,6 +174,30 @@ export function createInternalRouter(
         requestId: getRequestId(req),
         durationMs: Date.now() - started,
         errorCode: err instanceof RideDomainError ? err.code : 'INTERNAL',
+      });
+      sendRideDomainError(req, res, err);
+    }
+  });
+
+  /** RTDB GEO — storage-hygiene sweep of fully-expired presence nodes. */
+  router.post('/geo/presence-sweep', async (req, res) => {
+    const started = Date.now();
+    try {
+      const removed = (await redis?.sweepExpired?.()) ?? 0;
+      logSafe('GEO_PRESENCE_SWEEP', {
+        operation: 'GEO_PRESENCE_SWEEP',
+        requestId: getRequestId(req),
+        removed,
+        supported: typeof redis?.sweepExpired === 'function',
+        durationMs: Date.now() - started,
+      });
+      sendRideData(req, res, 200, { removed });
+    } catch (err) {
+      logSafe('GEO_PRESENCE_SWEEP', {
+        operation: 'GEO_PRESENCE_SWEEP',
+        requestId: getRequestId(req),
+        durationMs: Date.now() - started,
+        errorCode: err instanceof Error ? err.name : 'INTERNAL',
       });
       sendRideDomainError(req, res, err);
     }

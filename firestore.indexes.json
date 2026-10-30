@@ -299,6 +299,20 @@
           "order": "ASCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "rideDispatchWaves",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "driverIds",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

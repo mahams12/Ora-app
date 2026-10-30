@@ -48,6 +48,10 @@ jobs:
           cache: npm
           cache-dependency-path: backend/auth-service/package-lock.json
       - run: npm ci
+      - name: Typecheck backend source
+        run: npm run typecheck
+      - name: Typecheck executable scripts
+        run: npm run typecheck:scripts
       - run: npm test
       - name: Ride core concurrency proof
         run: npm run test:ride-proof

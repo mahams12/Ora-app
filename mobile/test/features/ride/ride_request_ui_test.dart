@@ -686,6 +686,83 @@ void main() {
     );
     expect(find.text('Where to?'), findsOneWidget);
   });
+
+  testWidgets(
+    'destination can be set on map before any proposal (zero-cost path)',
+    (tester) async {
+      await tester.pumpWidget(_wrap(const RideRequestView()));
+      await tester.pumpAndSettle();
+
+      final element = tester.element(find.byType(RideRequestView));
+      final container = ProviderScope.containerOf(element);
+
+      // Fresh state — no Places needed: direct map entry is reachable.
+      expect(find.text('Set destination on map'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Set destination on map'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Set destination on map'));
+      await tester.pumpAndSettle();
+
+      expect(
+        container.read(rideRequestViewModelProvider).pinAdjustTarget,
+        LocationField.destination,
+      );
+      // Map expanded → compose sheet hidden while setting the point.
+      expect(find.text('Where to?'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'pickup can be set on map before any proposal (GPS-denied fallback)',
+    (tester) async {
+      await tester.pumpWidget(_wrap(const RideRequestView()));
+      await tester.pumpAndSettle();
+
+      final element = tester.element(find.byType(RideRequestView));
+      final container = ProviderScope.containerOf(element);
+
+      expect(find.text('Set pickup on map'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Set pickup on map'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Set pickup on map'));
+      await tester.pumpAndSettle();
+
+      expect(
+        container.read(rideRequestViewModelProvider).pinAdjustTarget,
+        LocationField.pickup,
+      );
+      expect(find.text('Where to?'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'map-pin destination proposal appears after a map tap without Places',
+    (tester) async {
+      await tester.pumpWidget(_wrap(const RideRequestView()));
+      await tester.pumpAndSettle();
+
+      final element = tester.element(find.byType(RideRequestView));
+      final container = ProviderScope.containerOf(element);
+      final vm = container.read(rideRequestViewModelProvider.notifier);
+
+      await tester.ensureVisible(find.text('Set destination on map'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Set destination on map'));
+      await tester.pumpAndSettle();
+
+      // Simulate the map tap the expanded map would deliver — the view
+      // auto-collapses the map afterwards (see onMapPointSelected).
+      await vm.setPinFromMapTap(31.512, 74.349);
+      await tester.tap(find.byIcon(Icons.close_fullscreen_rounded));
+      await tester.pumpAndSettle();
+
+      // Proposal surfaced with reverse-geocoded label; confirm required.
+      expect(find.text('Confirm destination'), findsOneWidget);
+      expect(find.text('Map pin'), findsOneWidget);
+    },
+  );
 }
 
 class _UiFailingPlaceSearch extends _UiPlaceSearch {

@@ -61,7 +61,12 @@ async function serviceOpen() {
   const started = Date.now();
   try {
     const result = await rides.listOpenRides({
-      caller: { uid: driverUid, phoneNumber: '+923012345677' },
+      caller: {
+        uid: driverUid,
+        phoneNumber: '+923012345677',
+        email: null,
+        disabled: false,
+      },
       query: {},
     });
     const body = result.body as { data: { rides: unknown[] } };

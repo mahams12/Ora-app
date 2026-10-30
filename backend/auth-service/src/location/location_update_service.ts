@@ -8,15 +8,17 @@ import { NullTripLocationRtdb } from '../rtdb/admin_trip_location_rtdb';
 import { projectAcceptedTripLocationLatest } from '../rtdb/ride_location_lifecycle';
 import { parseAndValidateLocationBody } from './validation';
 import {
+  FirestoreLocationStreamStore,
+  type LocationStreamStore,
+} from './stream_store';
+import {
   LocationDomainError,
   type LocationMode,
   type LocationUpdateSnapshot,
-  type ParsedLocationUpdate,
 } from './types';
 
 const DRIVERS = 'drivers';
 const RIDES = 'rides';
-const LOCATION_STREAMS = 'locationStreams';
 
 /**
  * Ride states that allow trip-mode live location publishing (L2 Step 1).
@@ -54,6 +56,78 @@ export function peekRideIdFromBody(body: unknown): string | null {
   return trimmed === '' ? null : trimmed;
 }
 
+export const DEFAULT_ELIGIBILITY_CACHE_TTL_MS = 15_000;
+
+/**
+ * Bounded TTL cache for the users+drivers eligibility snapshot that is
+ * otherwise re-read on every GPS packet (2 of the ~4 per-packet reads).
+ *
+ * Staleness is bounded and safe: matching eligibility is re-checked
+ * authoritatively against drivers/{id} at match time, so a just-banned or
+ * just-offline driver can only write geo markers for up to ttlMs — never
+ * become incorrectly matchable. Availability transitions in the same
+ * process invalidate the entry immediately via `invalidate`. Only
+ * successful eligibility loads are cached — failures re-evaluate every
+ * call (fail-closed).
+ *
+ * Shared across routers by app composition so the availability service can
+ * invalidate entries on go-online/go-offline transitions.
+ */
+export class DriverEligibilityCache {
+  private readonly entries = new Map<
+    string,
+    { driverData: Record<string, unknown> | null; expiresAtMs: number }
+  >();
+  private hits = 0;
+  private misses = 0;
+
+  constructor(
+    private readonly ttlMs: number = DEFAULT_ELIGIBILITY_CACHE_TTL_MS,
+    private readonly now: () => number = Date.now,
+  ) {}
+
+  /** Returns the cached driver data on a fresh hit, undefined otherwise. */
+  get(driverId: string): Record<string, unknown> | null | undefined {
+    const entry = this.entries.get(driverId);
+    if (entry && entry.expiresAtMs > this.now()) {
+      this.hits += 1;
+      return entry.driverData;
+    }
+    this.misses += 1;
+    return undefined;
+  }
+
+  set(driverId: string, driverData: Record<string, unknown> | null): void {
+    if (this.ttlMs <= 0) return;
+    this.entries.set(driverId, {
+      driverData,
+      expiresAtMs: this.now() + this.ttlMs,
+    });
+  }
+
+  invalidate(driverId: string): void {
+    this.entries.delete(driverId);
+  }
+
+  stats(): { hits: number; misses: number; size: number } {
+    return { hits: this.hits, misses: this.misses, size: this.entries.size };
+  }
+}
+
+export interface LocationUpdateServiceOptions {
+  /**
+   * Shared eligibility cache — inject the app-composed instance so the
+   * availability service can invalidate it on status transitions.
+   * Defaults to a fresh 15s-TTL cache when not provided.
+   */
+  eligibilityCache?: DriverEligibilityCache;
+  /**
+   * Cursor store override (LOCATION_STREAMS_BACKEND). Defaults to the
+   * Firestore-backed store preserving the original transaction semantics.
+   */
+  streamStore?: LocationStreamStore;
+}
+
 /**
  * N2A — validate location update + durable locationStreams cursor.
  * L2 Step 1 — trip mode requires assigned driver + publishable ride state.
@@ -62,13 +136,20 @@ export function peekRideIdFromBody(body: unknown): string | null {
  */
 export class LocationUpdateService {
   private readonly tripLocationRtdb: TripLocationRtdb;
+  private readonly eligibilityCache: DriverEligibilityCache;
+  private readonly streamStore: LocationStreamStore;
 
   constructor(
     private readonly db: Firestore,
     private readonly geoProjection: RedisGeoProjectionService | null = null,
     tripLocationRtdb: TripLocationRtdb | null = null,
+    options: LocationUpdateServiceOptions = {},
   ) {
     this.tripLocationRtdb = tripLocationRtdb ?? new NullTripLocationRtdb();
+    this.eligibilityCache =
+      options.eligibilityCache ?? new DriverEligibilityCache();
+    this.streamStore =
+      options.streamStore ?? new FirestoreLocationStreamStore(db);
   }
 
   async update(input: {
@@ -113,7 +194,7 @@ export class LocationUpdateService {
         : tripStreamDocId(parsed.rideId!, driverId);
 
     const acceptedAt = new Date(nowMs).toISOString();
-    const snapshot = await this.acceptInTransaction({
+    const snapshot = await this.streamStore.accept({
       docId,
       driverId,
       mode,
@@ -163,6 +244,16 @@ export class LocationUpdateService {
   }
 
   private async assertApprovedOnlineDriver(
+    uid: string,
+  ): Promise<Record<string, unknown> | null> {
+    const cached = this.eligibilityCache.get(uid);
+    if (cached !== undefined) return cached;
+    const driverData = await this.loadApprovedOnlineDriver(uid);
+    this.eligibilityCache.set(uid, driverData);
+    return driverData;
+  }
+
+  private async loadApprovedOnlineDriver(
     uid: string,
   ): Promise<Record<string, unknown> | null> {
     let actor;
@@ -234,118 +325,4 @@ export class LocationUpdateService {
     }
   }
 
-  private async acceptInTransaction(input: {
-    docId: string;
-    driverId: string;
-    mode: LocationMode;
-    parsed: ParsedLocationUpdate;
-    acceptedAt: string;
-  }): Promise<LocationUpdateSnapshot> {
-    const { docId, driverId, mode, parsed, acceptedAt } = input;
-
-    return this.db.runTransaction(async (tx) => {
-      const ref = this.db.collection(LOCATION_STREAMS).doc(docId);
-      const snap = await tx.get(ref);
-      const existing = snap.exists ? (snap.data() ?? {}) : null;
-
-      if (existing) {
-        const activeStreamId =
-          typeof existing.activeStreamId === 'string'
-            ? existing.activeStreamId
-            : '';
-        const lastAcceptedSeq =
-          typeof existing.lastAcceptedSeq === 'number'
-            ? existing.lastAcceptedSeq
-            : -1;
-        const streamState =
-          typeof existing.streamState === 'string'
-            ? existing.streamState
-            : 'ACTIVE';
-
-        if (streamState === 'CLOSED') {
-          throw new LocationDomainError(
-            'SEQUENCE_VIOLATION',
-            422,
-            'Location stream is closed.',
-          );
-        }
-
-        if (activeStreamId === parsed.locationStreamId) {
-          if (parsed.locationSeq <= lastAcceptedSeq) {
-            throw new LocationDomainError(
-              'SEQUENCE_VIOLATION',
-              422,
-              'locationSeq must be greater than last accepted sequence.',
-            );
-          }
-          tx.update(ref, {
-            lastAcceptedSeq: parsed.locationSeq,
-            streamState: 'ACTIVE',
-            updatedAt: acceptedAt,
-            expiresAt: this.computeExpiresAt(mode, acceptedAt),
-          });
-        } else {
-          const previous =
-            Array.isArray(existing.previousStreamIds) &&
-            existing.previousStreamIds.every((x) => typeof x === 'string')
-              ? ([...existing.previousStreamIds] as string[])
-              : [];
-
-          // Late packets from a replaced stream must never overwrite the active stream.
-          if (previous.includes(parsed.locationStreamId)) {
-            throw new LocationDomainError(
-              'SEQUENCE_VIOLATION',
-              422,
-              'Location stream is no longer active.',
-            );
-          }
-
-          // New stream replaces active; sequence does not carry over.
-          if (activeStreamId) previous.push(activeStreamId);
-          tx.update(ref, {
-            activeStreamId: parsed.locationStreamId,
-            lastAcceptedSeq: parsed.locationSeq,
-            streamState: 'ACTIVE',
-            previousStreamIds: previous.slice(-5),
-            updatedAt: acceptedAt,
-            expiresAt: this.computeExpiresAt(mode, acceptedAt),
-            ...(mode === 'trip' && parsed.rideId
-              ? { rideId: parsed.rideId }
-              : {}),
-          });
-        }
-      } else {
-        const created: Record<string, unknown> = {
-          driverId,
-          activeStreamId: parsed.locationStreamId,
-          lastAcceptedSeq: parsed.locationSeq,
-          streamState: 'ACTIVE',
-          previousStreamIds: [],
-          createdAt: acceptedAt,
-          updatedAt: acceptedAt,
-          expiresAt: this.computeExpiresAt(mode, acceptedAt),
-        };
-        if (mode === 'trip' && parsed.rideId) {
-          created.rideId = parsed.rideId;
-        }
-        tx.set(ref, created);
-      }
-
-      return {
-        driverId,
-        mode,
-        rideId: parsed.rideId,
-        locationStreamId: parsed.locationStreamId,
-        locationSeq: parsed.locationSeq,
-        acceptedAt,
-      };
-    });
-  }
-
-  private computeExpiresAt(mode: LocationMode, acceptedAtIso: string): string {
-    const t = Date.parse(acceptedAtIso);
-    // Idle: refresh sliding 24h. Trip: long enough until terminal cleanup (N2B+).
-    const ms = mode === 'idle' ? 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
-    return new Date(t + ms).toISOString();
-  }
 }

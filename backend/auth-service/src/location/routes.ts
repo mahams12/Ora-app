@@ -11,12 +11,15 @@ export function createLocationRouter(
   db: Firestore,
   geoProjection?: import('../redis/geo_projection').RedisGeoProjectionService | null,
   tripLocationRtdb?: import('../rtdb/types').TripLocationRtdb | null,
+  eligibilityCache?: import('./location_update_service').DriverEligibilityCache,
+  streamStore?: import('./stream_store').LocationStreamStore | null,
 ): Router {
   const router = Router();
   const locations = new LocationUpdateService(
     db,
     geoProjection ?? null,
     tripLocationRtdb ?? null,
+    { eligibilityCache, streamStore: streamStore ?? undefined },
   );
 
   router.post('/update', async (req: AuthedRequest, res) => {

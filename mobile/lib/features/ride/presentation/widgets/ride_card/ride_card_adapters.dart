@@ -81,6 +81,83 @@ class RideCardAdapters {
     );
   }
 
+  /// Dispatch invitation — same epic card as open rides, plus the animated
+  /// Accept countdown driven by the server-authoritative invite deadline.
+  /// [remaining] is the live server-adjusted remaining duration (ticks ~1s);
+  /// [windowTotal] is the full invite TTL so late-arriving invites show the
+  /// true remaining fraction instead of restarting the ring.
+  static RideCardModel fromDriverInvite(
+    DriverInvite invite, {
+    required Duration remaining,
+    required Duration windowTotal,
+    required bool responding,
+    required VoidCallback onAccept,
+    required VoidCallback onDecline,
+  }) {
+    final secondsLeft = remaining.inSeconds.clamp(0, 1 << 30);
+    final actionable = invite.isActionable && secondsLeft > 0;
+    final distance = _formatDistanceKm(invite.distanceKm);
+    final category = _category(invite.category);
+    final progress = windowTotal.inMilliseconds <= 0
+        ? 0.0
+        : (remaining.inMilliseconds / windowTotal.inMilliseconds)
+            .clamp(0.0, 1.0);
+
+    return RideCardModel(
+      rideId: invite.rideId,
+      variant: RideCardVariant.openRequest,
+      tone: actionable ? RideCardTone.active : RideCardTone.standard,
+      statusLabel: actionable ? 'Invitation' : 'Expired',
+      statusKind:
+          actionable ? RideCardStatusKind.active : RideCardStatusKind.neutral,
+      pickupLabel: rideCardLocationLabel(invite.pickup),
+      destinationLabel: rideCardLocationLabel(invite.destination),
+      pickupLat: invite.pickup.lat,
+      pickupLng: invite.pickup.lng,
+      destinationLat: invite.destination.lat,
+      destinationLng: invite.destination.lng,
+      participant: null,
+      // passengerOfferMinor is the gross fare offered — not driver payout.
+      fareLabel:
+          formatOfferAmountMinor(invite.passengerOfferMinor, invite.currency),
+      fareCaption: 'Trip fare',
+      distanceLabel: distance,
+      serviceLabel: invite.serviceType.trim().isEmpty
+          ? null
+          : historyServiceTypeLabel(invite.serviceType),
+      categoryLabel: category.$1,
+      categoryTone: category.$2,
+      carAsset: _carAssetFor(invite.rideId),
+      expiresLabel:
+          actionable ? 'Respond within ${secondsLeft}s' : 'Offer expired',
+      showRoutePreview: true,
+      showMapThumb: true,
+      showCarAccent: true,
+      actions: [
+        RideCardActionSpec(
+          label: 'Decline',
+          semanticLabel: 'Decline invitation',
+          isPrimary: false,
+          onPressed: actionable && !responding ? onDecline : null,
+        ),
+        RideCardActionSpec(
+          label: responding
+              ? 'Sending…'
+              : (actionable ? 'Accept · ${secondsLeft}s' : 'Expired'),
+          semanticLabel: actionable
+              ? 'Accept invitation, $secondsLeft seconds remaining'
+              : 'Invitation expired',
+          isLoading: responding,
+          onPressed: actionable && !responding ? onAccept : null,
+          isPrimary: true,
+          progress: actionable ? progress : null,
+        ),
+      ],
+      semanticsLabel:
+          'Dispatch invitation ${invite.rideId}, ${actionable ? '$secondsLeft seconds left' : 'expired'}',
+    );
+  }
+
   /// Driver job / my-rides card — empty passenger/vehicle slots when unknown.
   static RideCardModel fromDriverJob(
     Ride ride, {

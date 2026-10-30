@@ -3,7 +3,8 @@
  * Usage: npm run test:phase-n2c-unit-proof
  */
 import request from 'supertest';
-import { createApp } from '../src/app';
+import { createApp, type CreateAppOptions } from '../src/app';
+import { DriverEligibilityCache } from '../src/location/location_update_service';
 import { memoryDb } from '../src/__tests__/helpers/memory_db';
 import { createMemoryRedis } from '../src/redis/memory_redis';
 import { RedisGeoProjectionService } from '../src/redis/geo_projection';
@@ -65,6 +66,7 @@ function appFor(
   db: ReturnType<typeof memoryDb>,
   uid: string,
   redis: RedisGeoClient | null,
+  extra: Partial<CreateAppOptions> = {},
 ) {
   const geo =
     redis != null ? new RedisGeoProjectionService(redis) : null;
@@ -74,6 +76,7 @@ function appFor(
     requireAppCheck: false,
     rateLimit: { windowMs: 60_000, max: 10_000 },
     geoProjection: geo,
+    ...extra,
   });
 }
 
@@ -212,6 +215,9 @@ async function main(): Promise<void> {
       async get() {
         throw new Error('REDIS_DOWN');
       },
+      async mget() {
+        throw new Error('REDIS_DOWN');
+      },
       async set() {
         throw new Error('REDIS_DOWN');
       },
@@ -266,7 +272,12 @@ async function main(): Promise<void> {
     const db = memoryDb();
     const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'lahore');
-    const app = appFor(db, 'd1', redis);
+    // Zero-TTL eligibility cache: the out-of-band homeCity write below must
+    // be visible to the second update (production changes invalidate via
+    // availability transitions or the 15s TTL).
+    const app = appFor(db, 'd1', redis, {
+      eligibilityCache: new DriverEligibilityCache(0),
+    });
     await request(app)
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')

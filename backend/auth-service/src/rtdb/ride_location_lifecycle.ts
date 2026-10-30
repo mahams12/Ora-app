@@ -1,9 +1,11 @@
 import type { Firestore } from 'firebase-admin/firestore';
 import { logSafe } from '../http/errors';
+import {
+  FirestoreLocationStreamStore,
+  type LocationStreamStore,
+} from '../location/stream_store';
 import { NullTripLocationRtdb } from './admin_trip_location_rtdb';
 import type { TripLocationLatest, TripLocationRtdb } from './types';
-
-const LOCATION_STREAMS = 'locationStreams';
 
 /** Same id formula as location_update_service.tripStreamDocId. */
 function tripStreamDocId(rideId: string, driverId: string): string {
@@ -54,13 +56,14 @@ export async function grantRideLocationAccess(input: {
 
 /**
  * Close trip locationStreams/{rideId}_{driverId} (idempotent).
- * Durable Firestore mutation — separate from RTDB projection.
+ * Durable cursor mutation via the configured stream store (Firestore or RTDB).
  */
 export async function closeTripLocationStream(input: {
   db: Firestore;
   rideId: string;
   driverId: string | null | undefined;
   nowMs?: number;
+  streamStore?: LocationStreamStore;
 }): Promise<void> {
   const driverId =
     typeof input.driverId === 'string' && input.driverId.trim() !== ''
@@ -70,18 +73,11 @@ export async function closeTripLocationStream(input: {
 
   const nowMs = input.nowMs ?? Date.now();
   const nowIso = new Date(nowMs).toISOString();
+  const expiresAtIso = new Date(nowMs + STREAM_CLOSED_EXPIRES_MS).toISOString();
   const docId = tripStreamDocId(input.rideId, driverId);
-  const ref = input.db.collection(LOCATION_STREAMS).doc(docId);
-  const snap = await ref.get();
-  if (!snap.exists) return;
-  const data = snap.data() ?? {};
-  if (data.streamState === 'CLOSED') return;
-
-  await ref.update({
-    streamState: 'CLOSED',
-    updatedAt: nowIso,
-    expiresAt: new Date(nowMs + STREAM_CLOSED_EXPIRES_MS).toISOString(),
-  });
+  const store =
+    input.streamStore ?? new FirestoreLocationStreamStore(input.db);
+  await store.close({ docId, updatedAtIso: nowIso, expiresAtIso });
 }
 
 /**
@@ -96,6 +92,7 @@ export async function cleanupTripLocationOnTerminal(input: {
   assignedDriverId: string | null | undefined;
   requestId?: string;
   reason: string;
+  streamStore?: LocationStreamStore;
 }): Promise<void> {
   try {
     if (isRtdbLive(input.rtdb)) {
@@ -106,6 +103,7 @@ export async function cleanupTripLocationOnTerminal(input: {
       db: input.db,
       rideId: input.rideId,
       driverId: input.assignedDriverId,
+      streamStore: input.streamStore,
     });
     logSafe('RTDB_TRIP_LOCATION_CLEANUP', {
       rideId: input.rideId,

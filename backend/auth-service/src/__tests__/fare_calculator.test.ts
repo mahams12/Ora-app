@@ -432,3 +432,83 @@ describe('fare calculator — calculateFare', () => {
     ).toThrow(PricingError);
   });
 });
+
+describe('fare calculator — realistic Pakistan scenarios (regression)', () => {
+  // Regression context: a local test once produced Rs 136,470 for a 5.88 km /
+  // 14 min Lahore ride. Root cause was NOT a calculator bug — the test
+  // pricingRules seed was written in paisa-scale units (baseFare 16000,
+  // ratePerKm 20000, ratePerMin 200) while the schema is rupee-denominated:
+  //   16000 + 5.882×20000 + 14.117×200 = 136,466 → round10 → Rs 136,470.
+  // These tests pin realistic rupee-denominated rules to realistic fares so a
+  // unit regression in either direction is caught.
+
+  it('realistic Lahore city ride (easy) → sub-Rs-1,000 band', () => {
+    // 5.88 km / 14.12 min, easy: base 100, Rs 20/km, Rs 5/min.
+    const result = calculateFare({
+      distanceKm: 5.882,
+      durationMin: 14.117,
+      category: 'easy',
+      city: 'lahore',
+      rules: easyLahore(),
+    });
+    // 100 + 117.64 + 70.59 = 288.2 → round 290 → 29,000 minor (Rs 290).
+    expect(result.recommendedFareMinor).toBe(29000);
+    expect(result.recommendedFareMinor).toBeGreaterThanOrEqual(15000);
+    expect(result.recommendedFareMinor).toBeLessThanOrEqual(100000);
+  });
+
+  it('realistic intercity ride → thousands-of-rupees band', () => {
+    // Lahore → Islamabad-class trip: ~120 km / ~120 min.
+    const intercity = buildPricingRuleSeed({
+      city: 'lahore',
+      category: 'intercity',
+      version: 'intercity-test',
+      baseFare: 500,
+      ratePerKm: 60,
+      ratePerMin: 2,
+      categoryMultiplier: 1,
+      minFare: 1000,
+      maxFare: 30000,
+    });
+    const result = calculateFare({
+      distanceKm: 120,
+      durationMin: 120,
+      category: 'intercity',
+      city: 'lahore',
+      rules: intercity,
+    });
+    // 500 + 7200 + 240 = 7940 → Rs 7,940 → 794,000 minor.
+    expect(result.recommendedFareMinor).toBe(794000);
+    expect(result.recommendedFareMinor).toBeGreaterThanOrEqual(300000);
+    expect(result.recommendedFareMinor).toBeLessThanOrEqual(2000000);
+  });
+
+  it('paisa-scale seeded rates inflate the fare — units contract documented', () => {
+    // The observed anomaly: seeding paisa-scale values into rupee fields.
+    // This test pins the CURRENT deterministic outcome so any future change
+    // to units is explicit, and documents that the calculator faithfully
+    // applies whatever (rupee-denominated) rules it is given.
+    const paisaConfused = buildPricingRuleSeed({
+      city: 'lahore',
+      category: 'easy',
+      version: 'paisa-confused',
+      baseFare: 16000,
+      ratePerKm: 20000,
+      ratePerMin: 200,
+      categoryMultiplier: 1,
+      minFare: 150,
+      maxFare: 500000,
+      offerMinRatio: 0.7,
+      offerMaxRatio: 2.5,
+    });
+    const result = calculateFare({
+      distanceKm: 5.8821677,
+      durationMin: 14.1172025,
+      category: 'easy',
+      city: 'lahore',
+      rules: paisaConfused,
+    });
+    // 16000 + 117,643 + 2,823 = 136,466 → round → Rs 136,470 → 13,647,000 minor.
+    expect(result.recommendedFareMinor).toBe(13647000);
+  });
+});

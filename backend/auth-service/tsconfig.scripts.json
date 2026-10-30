@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    // Scripts execute under tsx (ESM semantics + import.meta + .ts imports).
+    // The src build stays NodeNext/CJS — this config only typechecks.
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    // Typecheck-only config (noEmit) — d.ts naming rules don't apply.
+    "declaration": false
+  },
+  "include": ["src/**/*", "scripts/**/*.ts"],
+  "exclude": ["src/**/__tests__/**", "dist", "node_modules"]
+}

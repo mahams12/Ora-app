@@ -121,6 +121,19 @@ export function createMemoryRedis(): RedisGeoClient & {
         set = new Map();
         geos.set(input.key, set);
       }
+      if (input.markerGuard) {
+        const existing = set.get(input.member);
+        const marker = strings.get(input.markerKey);
+        const markerAlive =
+          marker != null &&
+          (marker.expiresAt == null || Date.now() <= marker.expiresAt);
+        const decision = input.markerGuard({
+          latitude: existing ? existing.lat : NaN,
+          longitude: existing ? existing.lng : NaN,
+          markerValue: markerAlive ? marker!.value : null,
+        });
+        if (decision === 'skip') return 'skipped';
+      }
       set.set(input.member, { lng: input.longitude, lat: input.latitude });
       strings.set(input.markerKey, {
         value: input.markerValue,
@@ -129,6 +142,7 @@ export function createMemoryRedis(): RedisGeoClient & {
             ? Date.now() + input.markerTtlSeconds * 1000
             : null,
       });
+      return 'written';
     },
     async flushdb() {
       strings.clear();

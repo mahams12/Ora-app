@@ -187,7 +187,15 @@ export class PricingRulesRepository {
   }
 }
 
-/** Server/admin seed helper for tests and ops — never exposed to clients. */
+/**
+ * Server/admin seed helper for tests and ops — never exposed to clients.
+ *
+ * UNITS: baseFare, ratePerKm, ratePerMin, minFare and maxFare are whole-PKR
+ * rupee values, NOT paisa/minor units. Seeding paisa-scale numbers (e.g.
+ * ratePerKm: 20000 meaning Rs 200) inflates fares ~100× — a past local test
+ * seed produced Rs 136,470 for a 5.9 km ride this way. The calculator applies
+ * the stored values verbatim as rupees.
+ */
 export function buildPricingRuleSeed(input: {
   city: string;
   category: string;

@@ -23,6 +23,15 @@ export class DriverAvailabilityService {
   constructor(
     private readonly db: Firestore,
     private readonly geoProjection: RedisGeoProjectionService | null = null,
+    /**
+     * Same-process hook fired after each durable availability transition —
+     * used to invalidate the location-update eligibility cache so toggles
+     * take effect immediately rather than at cache TTL expiry.
+     */
+    private readonly onAvailabilityTransition?: (
+      driverId: string,
+      state: AvailabilityState,
+    ) => void,
   ) {}
 
   async goOnline(input: {
@@ -30,6 +39,7 @@ export class DriverAvailabilityService {
   }): Promise<{ httpStatus: number; body: { data: DriverAvailabilitySnapshot } }> {
     const actor = await this.loadApprovedDriver(input.caller.uid);
     const snapshot = await this.transition(actor.uid, 'online');
+    this.onAvailabilityTransition?.(actor.uid, 'online');
     return { httpStatus: 200, body: { data: snapshot } };
   }
 
@@ -63,6 +73,7 @@ export class DriverAvailabilityService {
         requestId: input.requestId,
       });
     }
+    this.onAvailabilityTransition?.(actor.uid, 'offline');
     return { httpStatus: 200, body: { data: snapshot } };
   }
 

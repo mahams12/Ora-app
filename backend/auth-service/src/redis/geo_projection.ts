@@ -51,13 +51,22 @@ export class RedisGeoProjectionService {
       const city = normalizeCitySlug(input.homeCity);
       const onlineKey = driverOnlineKey(input.driverId);
 
-      // Monotonic guard: do not let older accepted packets overwrite newer projection.
-      // Seq comparison is per-stream (idle + trip streams count independently);
-      // a different stream only loses when its packet is strictly older by ts.
-      const existingRaw = await this.redis.get(onlineKey);
-      if (existingRaw) {
+      // Monotonic guard: do not let older accepted packets overwrite newer
+      // projection. Seq comparison is per-stream (idle + trip streams count
+      // independently); a different stream only loses when its packet is
+      // strictly older by ts. The guard is evaluated inside the client's
+      // projectLocation transaction (atomic with the write) — the previous
+      // standalone get() left a check-then-act window where a stale packet
+      // could interleave and overwrite a fresher projection.
+      let prevCity: string | null = null;
+      const guard = (existing: {
+        latitude: number;
+        longitude: number;
+        markerValue: string | null;
+      }): 'write' | 'skip' => {
+        if (!existing.markerValue) return 'write';
         try {
-          const prev = JSON.parse(existingRaw) as DriverOnlineMarker;
+          const prev = JSON.parse(existing.markerValue) as DriverOnlineMarker;
           const staleTs =
             typeof prev.lastLocationTs === 'number' &&
             prev.lastLocationTs > input.lastLocationTs;
@@ -65,24 +74,13 @@ export class RedisGeoProjectionService {
             prev.locationStreamId === input.locationStreamId &&
             typeof prev.locationSeq === 'number' &&
             prev.locationSeq > input.locationSeq;
-          if (staleTs || staleSeq) {
-            logSafe('REDIS_GEO_SKIP', {
-              reason: 'stale_projection',
-              driverId: input.driverId,
-              requestId: input.requestId ?? null,
-            });
-            return;
-          }
-          // Legacy city-shard: remove from previous city key on homeCity change.
-          if (prev.city && city && prev.city !== city) {
-            await this.redis.zrem(geoDriversCityKey(prev.city), input.driverId);
-          } else if (prev.city && !city) {
-            await this.redis.zrem(geoDriversCityKey(prev.city), input.driverId);
-          }
+          if (staleTs || staleSeq) return 'skip';
+          prevCity = typeof prev.city === 'string' ? prev.city : null;
         } catch {
           // Corrupt marker — overwrite.
         }
-      }
+        return 'write';
+      };
 
       const marker: DriverOnlineMarker = {
         driverId: input.driverId,
@@ -96,9 +94,10 @@ export class RedisGeoProjectionService {
       const markerValue = JSON.stringify(marker);
 
       // Coordinate-primary: always project live coords (homeCity not required).
-      // projectLocation = single store round-trip (GEO membership + marker).
+      // projectLocation = single store round-trip (GEO membership + marker),
+      // guard applied atomically inside the write.
       if (this.redis.projectLocation) {
-        await this.redis.projectLocation({
+        const result = await this.redis.projectLocation({
           key: GEO_DRIVERS_KEY,
           member: input.driverId,
           longitude: input.lng,
@@ -106,8 +105,42 @@ export class RedisGeoProjectionService {
           markerKey: onlineKey,
           markerValue,
           markerTtlSeconds: DRIVER_ONLINE_TTL_SECONDS,
+          markerGuard: guard,
         });
+        if (result === 'skipped') {
+          logSafe('REDIS_GEO_SKIP', {
+            reason: 'stale_projection',
+            driverId: input.driverId,
+            requestId: input.requestId ?? null,
+          });
+          return;
+        }
+        // Legacy city-shard: remove from previous city key on homeCity
+        // change. Best-effort, outside the projection write.
+        if (prevCity && prevCity !== city) {
+          await this.redis.zrem(geoDriversCityKey(prevCity), input.driverId);
+        } else if (prevCity && !city) {
+          await this.redis.zrem(geoDriversCityKey(prevCity), input.driverId);
+        }
       } else {
+        // Fallback for clients without projectLocation — preserves the old
+        // read-then-write ordering (non-atomic guard is unavoidable here).
+        const existingRaw = await this.redis.get(onlineKey);
+        if (existingRaw) {
+          const decision = guard({
+            latitude: NaN,
+            longitude: NaN,
+            markerValue: existingRaw,
+          });
+          if (decision === 'skip') {
+            logSafe('REDIS_GEO_SKIP', {
+              reason: 'stale_projection',
+              driverId: input.driverId,
+              requestId: input.requestId ?? null,
+            });
+            return;
+          }
+        }
         await this.redis.geoadd(
           GEO_DRIVERS_KEY,
           input.lng,
@@ -119,6 +152,11 @@ export class RedisGeoProjectionService {
           markerValue,
           DRIVER_ONLINE_TTL_SECONDS,
         );
+        if (prevCity && prevCity !== city) {
+          await this.redis.zrem(geoDriversCityKey(prevCity), input.driverId);
+        } else if (prevCity && !city) {
+          await this.redis.zrem(geoDriversCityKey(prevCity), input.driverId);
+        }
       }
 
       // Dual-write legacy city shard when homeCity present (migration / rollback).

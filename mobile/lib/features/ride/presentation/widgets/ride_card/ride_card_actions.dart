@@ -105,6 +105,74 @@ class _ActionButtonState extends State<_ActionButton> {
       ];
     }
 
+    final label = action.isLoading
+        ? SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: fg,
+            ),
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (action.icon != null) ...[
+                Icon(action.icon, size: 16, color: fg),
+                const SizedBox(width: 6),
+              ],
+              Text(
+                action.label,
+                style: OraTypography.button(fg).copyWith(fontSize: 14),
+              ),
+            ],
+          );
+
+    Widget buttonBody = Container(
+      height: height,
+      width: widget.expand ? double.infinity : null,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        gradient: enabled ? gradient : null,
+        color: enabled ? bg : OraColors.disabled.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(OraRadius.button),
+        border: Border.all(color: border),
+        boxShadow: enabled ? shadows : null,
+      ),
+      child: label,
+    );
+
+    // Dispatch-invite countdown — smooth perimeter sweep depleting with the
+    // server-authoritative invite window. Reduced-motion users get the same
+    // ring, stepped once per second instead of eased continuously.
+    if (action.progress != null) {
+      final reduceMotion = MediaQuery.disableAnimationsOf(context);
+      // Capture the container by value — the closure must see the inner
+      // body, not this variable after reassignment (else the painter wraps
+      // the TweenAnimationBuilder in itself and the build recurses forever).
+      final paintedChild = buttonBody;
+      buttonBody = TweenAnimationBuilder<double>(
+        tween: Tween<double>(
+          begin: action.progress,
+          end: action.progress!.clamp(0.0, 1.0),
+        ),
+        duration: reduceMotion
+            ? Duration.zero
+            : const Duration(milliseconds: 950),
+        curve: Curves.linear,
+        builder: (context, value, _) => CustomPaint(
+          foregroundPainter: _CountdownPerimeterPainter(
+            progress: value,
+            radius: OraRadius.button,
+            trackColor: fg.withValues(alpha: 0.25),
+            progressColor: fg,
+          ),
+          child: paintedChild,
+        ),
+      );
+    }
+
     return Semantics(
       button: true,
       label: action.semanticLabel ?? action.label,
@@ -120,47 +188,58 @@ class _ActionButtonState extends State<_ActionButton> {
           child: AnimatedOpacity(
             opacity: enabled ? 1 : 0.45,
             duration: OraMotion.fade,
-            child: Container(
-              height: height,
-              width: widget.expand ? double.infinity : null,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                gradient: enabled ? gradient : null,
-                color: enabled
-                    ? bg
-                    : OraColors.disabled.withValues(alpha: 0.35),
-                borderRadius: BorderRadius.circular(OraRadius.button),
-                border: Border.all(color: border),
-                boxShadow: enabled ? shadows : null,
-              ),
-              child: action.isLoading
-                  ? SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: fg,
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (action.icon != null) ...[
-                          Icon(action.icon, size: 16, color: fg),
-                          const SizedBox(width: 6),
-                        ],
-                        Text(
-                          action.label,
-                          style:
-                              OraTypography.button(fg).copyWith(fontSize: 14),
-                        ),
-                      ],
-                    ),
-            ),
+            child: buttonBody,
           ),
         ),
       ),
     );
   }
+}
+
+/// Sweeps a rounded-rect perimeter clockwise from the top-left, depleting as
+/// `progress` → 0. Faint track shows the full border so the drain is legible.
+class _CountdownPerimeterPainter extends CustomPainter {
+  _CountdownPerimeterPainter({
+    required this.progress,
+    required this.radius,
+    required this.trackColor,
+    required this.progressColor,
+  });
+
+  final double progress;
+  final double radius;
+  final Color trackColor;
+  final Color progressColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final rrect = RRect.fromRectAndRadius(
+      rect.deflate(1.2),
+      Radius.circular(radius),
+    );
+    final track = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4
+      ..color = trackColor;
+    canvas.drawRRect(rrect, track);
+    if (progress <= 0) return;
+    final path = Path()..addRRect(rrect);
+    final metric = path.computeMetrics().first;
+    final draw = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4
+      ..strokeCap = StrokeCap.round
+      ..color = progressColor;
+    canvas.drawPath(
+      metric.extractPath(0, metric.length * progress.clamp(0.0, 1.0)),
+      draw,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_CountdownPerimeterPainter old) =>
+      old.progress != progress ||
+      old.trackColor != trackColor ||
+      old.progressColor != progressColor;
 }

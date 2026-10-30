@@ -8,8 +8,8 @@ import { getFirestore } from 'firebase-admin/firestore';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const phone = process.env.ORA_E2E_DRIVER_PHONE;
-if (!phone) {
+const phone: string = process.env.ORA_E2E_DRIVER_PHONE ?? '';
+if (phone.trim() === '') {
   console.error('Set ORA_E2E_DRIVER_PHONE');
   process.exit(2);
 }

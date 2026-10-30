@@ -1,7 +1,9 @@
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import { assertScriptFirebaseTarget } from './lib/script_env';
 
 async function main(): Promise<void> {
+  assertScriptFirebaseTarget(process.env);
   initializeApp({
     credential: applicationDefault(),
     projectId: process.env.FIREBASE_PROJECT_ID,

@@ -8,13 +8,15 @@ import { InviteService } from './invite_service';
 import { sendRideData, sendRideDomainError } from './http';
 import { RideDomainError } from './types';
 import type { TripLocationRtdb } from '../rtdb/types';
+import type { LocationStreamStore } from '../location/stream_store';
 
 export function createRidesRouter(
   db: Firestore,
   tripLocationRtdb: TripLocationRtdb | null = null,
+  streamStore: LocationStreamStore | null = null,
 ): Router {
   const router = Router();
-  const rides = new RideService(db, tripLocationRtdb);
+  const rides = new RideService(db, tripLocationRtdb, streamStore);
   const invites = new InviteService(db, rides);
 
   router.post('/', async (req: AuthedRequest, res) => {

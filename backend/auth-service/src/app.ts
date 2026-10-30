@@ -10,6 +10,7 @@ import { createRidesRouter } from './rides/routes';
 import { createDriversRouter } from './drivers/routes';
 import { createDeviceTokensRouter } from './routes/device_tokens';
 import { createLocationRouter } from './location/routes';
+import { DriverEligibilityCache } from './location/location_update_service';
 import { createInternalWorkerMiddleware } from './middleware/internal_worker';
 import { sendApiError } from './http/errors';
 import { createRequestIdMiddleware } from './http/request_id';
@@ -51,6 +52,8 @@ export interface CreateAppOptions {
   tripLocationRtdb?: TripLocationRtdb | null;
   /** N3 nearby GEORADIUS client (optional; null = DEPENDENCY_ERROR). */
   redis?: RedisGeoClient | null;
+  /** locationStreams cursor store (Firestore default / RTDB when configured). */
+  streamStore?: import('./location/stream_store').LocationStreamStore | null;
   /** D1 FCM sender (optional; null = null sender / no real FCM). */
   fcmSender?: FcmSender | null;
   /**
@@ -58,6 +61,12 @@ export interface CreateAppOptions {
    * When omitted, POST /v1/pricing/estimate returns 503 PRICING_UNAVAILABLE.
    */
   routingProvider?: RoutingProvider | null;
+  /**
+   * Shared driver eligibility cache (location updates + availability
+   * invalidation). Injectable for tests that need controlled staleness —
+   * e.g. `new DriverEligibilityCache(0)` disables caching.
+   */
+  eligibilityCache?: DriverEligibilityCache;
 }
 
 export function createApp(options: CreateAppOptions) {
@@ -91,6 +100,10 @@ export function createApp(options: CreateAppOptions) {
   const rateLimit = createRateLimitMiddleware(limiter);
   const geo = options.geoProjection ?? null;
   const tripLocationRtdb = options.tripLocationRtdb ?? null;
+  // Shared across routers: availability transitions invalidate the location
+  // eligibility cache immediately (bounded-TTL fallback otherwise).
+  const eligibilityCache =
+    options.eligibilityCache ?? new DriverEligibilityCache();
 
   app.use('/v1/auth', requireAuth, rateLimit, createAuthRouter(options.db));
 
@@ -99,7 +112,7 @@ export function createApp(options: CreateAppOptions) {
     '/v1/rides',
     requireAuth,
     rateLimit,
-    createRidesRouter(options.db, tripLocationRtdb),
+    createRidesRouter(options.db, tripLocationRtdb, options.streamStore ?? null),
   );
 
   // N1 + N2C offline GEO cleanup.
@@ -107,7 +120,9 @@ export function createApp(options: CreateAppOptions) {
     '/v1/drivers',
     requireAuth,
     rateLimit,
-    createDriversRouter(options.db, geo),
+    createDriversRouter(options.db, geo, (driverId) =>
+      eligibilityCache.invalidate(driverId),
+    ),
   );
 
   // NOTIF-RS-PUSH — passenger FCM device-token registration (role-gated).
@@ -123,7 +138,13 @@ export function createApp(options: CreateAppOptions) {
     '/v1/location',
     requireAuth,
     rateLimit,
-    createLocationRouter(options.db, geo, tripLocationRtdb),
+    createLocationRouter(
+      options.db,
+      geo,
+      tripLocationRtdb,
+      eligibilityCache,
+      options.streamStore ?? null,
+    ),
   );
 
   // Phase 4B/5B — pricing estimate (stricter per-uid limit than global auth).
@@ -169,6 +190,7 @@ export function createApp(options: CreateAppOptions) {
       options.redis ?? null,
       options.fcmSender ?? null,
       tripLocationRtdb,
+      options.streamStore ?? null,
     ),
   );
 

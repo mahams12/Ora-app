@@ -180,6 +180,7 @@ class RideCardActionSpec {
     this.isPrimary = true,
     this.isDestructive = false,
     this.icon,
+    this.progress,
   });
 
   final String label;
@@ -189,4 +190,8 @@ class RideCardActionSpec {
   final bool isPrimary;
   final bool isDestructive;
   final IconData? icon;
+
+  /// Optional 0..1 countdown fraction for dispatch-invite actions — paints a
+  /// depleting perimeter sweep on the button. `null` = no progress ring.
+  final double? progress;
 }
