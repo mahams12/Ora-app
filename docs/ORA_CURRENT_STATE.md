@@ -611,12 +611,85 @@ Remaining locally-unverifiable (production/staging only):
 - Real Firestore/RTDB latency + index behavior at scale.
 - FCM delivery + retry (sender = none locally).
 - Google Routes production accuracy/cost (haversine locally).
-- Staging soak + flag rollout; physical Samsung verification of the
-  RTDB backend path (device proofs predate the RTDB switch —
-  Flutter code unchanged, but the on-device RTDB GEO round-trip is
-  not yet device-verified).
+- Staging soak + flag rollout.
 - Production hosting/auth/egress/notification costs remain non-zero;
   local dev stays at $0 incremental cloud cost.
+
+---
+
+## Physical-device verification — RTDB backend (2026-10-30)
+
+Devices: Samsung SM-A325F (`RF8R40ZQ1JH`, real GPS, driver) +
+Android emulator-5554 (passenger). Backend: local, `GEO_BACKEND=rtdb`
++ `LOCATION_STREAMS_BACKEND=rtdb`, `ORA_ROUTING_PROVIDER=haversine`,
+`ORA_FCM_SENDER=none`. Firebase emulators only (Auth/Firestore/RTDB
+on Mac LAN `192.168.0.111`). $0 incremental cloud cost. Checkpoint:
+`7cd8194`.
+
+Verified on real hardware (not emulated app):
+- Auth-emulator OTP login on physical device; onboarding; driver
+  approval seed; driver-mode switch.
+- Driver online → `presence_watch_started` → real GPS publishes to
+  `/v1/location/update` — RTDB `geoPresence/{driverId}` live
+  (lat 31.2999, lng 74.2058, geohash `ttsf09gp`, ±3 m) and RTDB
+  `locationStreams` cursor accepting sequential packets (seq 180+
+  over the session, incl. `accepted:false` stale-packet rejection).
+- Ride request: pickup "Use current location" (emulator geo fix
+  placed next to driver's live position), destination map pin,
+  estimate Rs 1190 (15.1 km haversine, offer bounds 0.7–2.5×),
+  ride create.
+- Dispatch: wave 1 (10 km) invited the Samsung (nearest driver);
+  wave expansion verified on an earlier run (10 km miss → 15 km hit).
+- 20-second server-authoritative invitation: card rendered with live
+  countdown ("Accept · 14s"), server-adjusted clock, expired cards
+  auto-flip to "Offer expired"/auto-remove; three expiry cycles
+  observed end-to-end (SEARCHING → waves → EXPIRED).
+- Driver accept → `INVITE_ACCEPT` → offer `PASSENGER_PRICE_ACCEPTED`
+  (offerId `<ride>_<driver>_v1`) — accept creates an offer, not an
+  assignment.
+- Passenger offer list → "Driver offer Rs 1190, PENDING" → Select →
+  `DRIVER_ASSIGNED`, agreed fare Rs 1190.
+- Lifecycle on device: Mark en route → `DRIVER_EN_ROUTE`; Mark
+  arrived → `DRIVER_ARRIVED` (passenger shows server `arrivedAt`
+  "Waiting 13s"); Start → `RIDE_STARTED` (driver app switched to
+  trip-mode publishing — `tripLocations/{rideId}` received real GPS
+  points incl. speed/accuracy); Complete → `RIDE_COMPLETED`; Close →
+  `RIDE_CLOSED`.
+- Ratings both directions persisted to `ratings/`
+  (`passenger_rates_driver` 5★, `driver_rates_passenger` 5★);
+  duplicate-rating attempt correctly refused ("You already rated
+  this ride").
+- Driver Earnings: Rs 1190 / 1 trip (day + 7-day windows),
+  payout = agreed fare (launch fee zero), honest no-settlement
+  label; completed-trip history card. Passenger "My rides": Completed
+  (Rs 1190 Paid Cash) + Expired entries correct.
+- Offline transition: availability off → `geoPresence` removed from
+  RTDB; driver invisible (verified `geoPresence == null`).
+- Background/resume recovery: app backgrounded/terminated → GPS
+  keeps publishing via foreground service (geoPresence stayed
+  fresh); relaunch → session intact (no re-login), driver console
+  still Online; assigned/active ride state restored.
+
+Device-side findings / limitations:
+- Invite delivery is pull-based locally by design: with
+  `ORA_FCM_SENDER=none` the driver sees invites only via the Open
+  rides screen refresh/pull-to-refresh (production delivery rides on
+  the DISPATCH_INVITE FCM nudge — inert locally, not a defect).
+  Accept was driven inside the 20 s window via on-device polling +
+  tap; manual adb taps repeatedly arrived after expiry, confirming
+  the countdown is genuinely tight and server-enforced.
+- Minor observation: after going offline, a `presence_watch_started`
+  recurred once when the console remounted — the stream cursor
+  accepts packets but **no geoPresence is written while offline**
+  (invariant holds; small battery/quota waste only).
+- Pricing rules must be seeded after an emulator wipe
+  (`pricingRules/{city}_{category}`; seeded all 6 categories for
+  lahore) — expected fail-closed `PRICING_UNAVAILABLE` behavior
+  verified before seeding.
+- Physical-device flows not exercised this run: real road routing
+  (haversine only), FCM push delivery, decline-before-expiry,
+  counteroffer amount entry, cancellation mid-trip, multi-driver
+  contention, app termination during an ACTIVE trip.
 
 ---
 
