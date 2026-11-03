@@ -39,6 +39,8 @@ import '../../features/auth/presentation/view_models/splash_view_state.dart';
 import '../../features/onboarding/presentation/view_models/onboarding_view_model.dart';
 import '../../features/onboarding/presentation/view_models/onboarding_view_state.dart';
 import '../../features/passenger/presentation/view_models/home_view_model.dart';
+import '../../features/chat/data/rtdb_ride_chat_data_source.dart';
+import '../../features/chat/domain/ports/ride_chat_port.dart';
 import '../../features/ride/data/data_sources/pricing_remote_data_source.dart';
 import '../../features/ride/data/data_sources/ride_remote_data_source.dart';
 import '../../features/driver/data/availability/driver_availability_remote_data_source.dart';
@@ -200,6 +202,15 @@ final placeSearchPortProvider = Provider<PlaceSearchPort>((ref) {
 final pricingEstimatePortProvider = Provider<PricingEstimatePort>(
   (ref) => PricingRemoteDataSource(ref.watch(apiClientProvider)),
 );
+
+/// CHAT — RTDB rideChats/{rideId}/messages (read + write).
+final rideChatPortProvider = Provider<RideChatPort>((ref) {
+  final config = ref.watch(appConfigProvider);
+  return RtdbRideChatDataSource(
+    databaseUrl: config.firebaseDatabaseUrl,
+    logger: ref.watch(appLoggerProvider),
+  );
+});
 
 /// MAP-2A — read-only RTDB tripLocations/{rideId}/latest (never writes).
 final tripLocationPortProvider = Provider<TripLocationPort>((ref) {

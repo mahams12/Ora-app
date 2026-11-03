@@ -25,6 +25,12 @@ class AppRoutes {
   /// Passenger active ride (Slice F). Use [activeRidePath].
   static const activeRide = '/rides/:rideId/active';
 
+  /// Ride chat — passenger side. Use [rideChatPath].
+  static const rideChat = '/rides/:rideId/chat';
+
+  /// Ride chat — driver side. Use [driverRideChatPath].
+  static const driverRideChat = '/driver/rides/:rideId/chat';
+
   /// Past ride detail (Slice H). Use [rideHistoryDetailPath].
   static const rideHistoryDetail = '/rides/:rideId/detail';
 
@@ -54,6 +60,12 @@ class AppRoutes {
 
   static String activeRidePath(String rideId) =>
       '/rides/${Uri.encodeComponent(rideId)}/active';
+
+  static String rideChatPath(String rideId) =>
+      '/rides/${Uri.encodeComponent(rideId)}/chat';
+
+  static String driverRideChatPath(String rideId) =>
+      '/driver/rides/${Uri.encodeComponent(rideId)}/chat';
 
   static String rideHistoryDetailPath(String rideId) =>
       '/rides/${Uri.encodeComponent(rideId)}/detail';

@@ -136,6 +136,12 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
         ),
         actions: [
           IconButton(
+            tooltip: 'Chat with passenger',
+            onPressed: () =>
+                context.push(AppRoutes.driverRideChatPath(rideId)),
+            icon: const Icon(Icons.chat_bubble_outline_rounded),
+          ),
+          IconButton(
             tooltip: 'Refresh',
             onPressed: isRefreshing ? null : () => vm.refresh(),
             icon: isRefreshing

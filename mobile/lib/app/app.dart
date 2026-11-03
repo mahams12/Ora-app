@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart' as mui;
 
 import 'di/providers.dart';
 import 'router/app_router.dart';
@@ -40,6 +41,13 @@ class _OraAppState extends ConsumerState<OraApp> {
       // Prototype is dark-first; product surfaces default to Ora dark.
       themeMode: ThemeMode.dark,
       routerConfig: router,
+      // flutter_chat_ui v2 builds on package:material_ui; its delegate must
+      // sit alongside Flutter's defaults (en_US only, matching the app).
+      localizationsDelegates: const [
+        mui.DefaultMaterialLocalizations.delegate,
+        DefaultMaterialLocalizations.delegate,
+        DefaultWidgetsLocalizations.delegate,
+      ],
     );
   }
 }

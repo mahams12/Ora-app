@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/views/otp_entry_view.dart';
+import '../../features/chat/presentation/ride_chat_view.dart';
 import '../../features/auth/presentation/views/phone_entry_view.dart';
 import '../../features/auth/presentation/views/splash_view.dart';
 import '../../features/driver/presentation/views/driver_assigned_ride_view.dart';
@@ -147,6 +148,20 @@ GoRouter createAppRouter({
           final rideId = state.pathParameters['rideId'] ?? '';
           return DriverAssignedRideView(rideId: rideId);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.rideChat,
+        builder: (context, state) => RideChatView(
+          rideId: state.pathParameters['rideId']!,
+          otherPartyLabel: 'Driver',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.driverRideChat,
+        builder: (context, state) => RideChatView(
+          rideId: state.pathParameters['rideId']!,
+          otherPartyLabel: 'Passenger',
+        ),
       ),
       GoRoute(
         path: AppRoutes.driverDirectOffer,

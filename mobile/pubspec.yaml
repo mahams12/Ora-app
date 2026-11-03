@@ -25,9 +25,22 @@ dependencies:
   flutter_local_notifications: ^19.0.0
   flutter_secure_storage: ^10.3.1
   geolocator: ^14.0.2
+  flutter_chat_core: ^2.9.1
+  flutter_chat_ui: ^2.12.0
+  flyer_chat_text_message: ^2.6.1
+  # flutter_chat_ui v2 composes on the new material_ui package (composer
+  # resolves its Material + localizations) — direct dep since we import it.
+  material_ui: ^1.9.0
+  flyer_chat_system_message: ^2.2.1
   google_maps_flutter: ^2.12.3
   maplibre_gl: ^0.27.1
   geocoding: ^5.0.0
+
+dependency_overrides:
+  # flutter_chat_core requires freezed_annotation ^3.1.0; the app's own
+  # freezed 2.5.8 codegen is unaffected (annotations are compile-time only).
+  # TODO: migrate freezed 2.x -> 3.x (removes .when/.map helpers) separately.
+  freezed_annotation: ^3.1.0
 
 dev_dependencies:
   flutter_test:
