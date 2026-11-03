@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -1388,7 +1390,7 @@ void main() {
       final semanticsHandle = tester.ensureSemantics();
       await tester.pump();
       final secondAccept = tester.getSemantics(find.text('Accept').last);
-      expect(secondAccept.flagsCollection.isEnabled, isFalse);
+      expect(secondAccept.flagsCollection.isEnabled, Tristate.isFalse);
 
       final sheetCount = find.text('Submit offer').evaluate().length;
       await tester.tap(find.text('Accept').last, warnIfMissed: false);
