@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -244,7 +245,7 @@ class _Body extends ConsumerWidget {
           parent: BouncingScrollPhysics(),
         ),
         // Tall premium cards — keep footer/next page within build cache.
-        cacheExtent: 480,
+        scrollCacheExtent: const ScrollCacheExtent.pixels(480),
         padding: EdgeInsets.fromLTRB(
           padding,
           OraSpacing.sm,

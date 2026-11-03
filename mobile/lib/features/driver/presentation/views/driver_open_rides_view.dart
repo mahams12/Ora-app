@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/ora_colors.dart';
@@ -232,7 +233,7 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
         physics: const AlwaysScrollableScrollPhysics(
           parent: BouncingScrollPhysics(),
         ),
-        cacheExtent: 480,
+        scrollCacheExtent: const ScrollCacheExtent.pixels(480),
         padding: EdgeInsets.fromLTRB(
           padding,
           OraSpacing.sm,

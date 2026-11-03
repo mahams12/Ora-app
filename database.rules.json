@@ -17,12 +17,28 @@
     "geoPresence": {
       ".read": false,
       ".write": false,
-      ".indexOn": ["g", "expiresAtMs"]
+      ".indexOn": [
+        "g",
+        "expiresAtMs"
+      ]
     },
     "locationStreams": {
       ".read": false,
       ".write": false,
-      ".indexOn": ["expiresAtMs"]
+      ".indexOn": [
+        "expiresAtMs"
+      ]
+    },
+    "rideChats": {
+      "$rideId": {
+        ".read": "auth != null && root.child('rideAccess').child($rideId).child(auth.uid).val() === true",
+        ".write": "auth != null && root.child('rideAccess').child($rideId).child(auth.uid).val() === true",
+        "messages": {
+          ".indexOn": [
+            "createdAtMs"
+          ]
+        }
+      }
     }
   }
 }
