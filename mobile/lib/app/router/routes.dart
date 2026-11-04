@@ -13,6 +13,12 @@ class AppRoutes {
   // Protected
   static const home = '/home';
 
+  /// Passenger's ride services hub.
+  static const ridesHub = '/rides';
+  static const logistics = '/logistics';
+  static const rental = '/rental';
+  static const services = '/services';
+
   /// Passenger ride compose (Slice D).
   static const rideRequest = '/rides/request';
 
@@ -51,6 +57,14 @@ class AppRoutes {
 
   static String offersInboxPath(String rideId) =>
       '/rides/${Uri.encodeComponent(rideId)}/offers';
+
+  static String rideRequestUri({String? category, String? service}) => Uri(
+    path: rideRequest,
+    queryParameters: {
+      if (category != null && category.isNotEmpty) 'category': category,
+      if (service != null && service.isNotEmpty) 'service': service,
+    },
+  ).toString();
 
   static String activeRidePath(String rideId) =>
       '/rides/${Uri.encodeComponent(rideId)}/active';

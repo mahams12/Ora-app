@@ -7,6 +7,7 @@ import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/responsive.dart';
+import '../../../super_app/presentation/widgets/ora_module_grid.dart';
 import '../view_models/home_view_model.dart';
 
 /// Visual-only ride category (fares come from backend estimate — never fabricated).
@@ -185,16 +186,9 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
                 ),
               ),
               const SizedBox(height: OraSpacing.lg),
-              const OraSectionHeader(title: 'Services'),
+              const OraSectionHeader(title: 'Explore ORA'),
               const SizedBox(height: OraSpacing.sm),
-              _ServicesGrid(
-                onCityRides: () => widget.onRequestRideEntry(null),
-                onIntercity: () => widget.onRequestRideEntry(
-                  null,
-                  serviceType: 'intercity',
-                ),
-                onUnavailable: widget.onUnavailableFeature,
-              ),
+              const OraModuleGrid(),
               const SizedBox(height: OraSpacing.lg),
               OraSectionHeader(
                 title: 'Choose a ride',
@@ -303,6 +297,7 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
     );
   }
 }
+
 
 class _HomeHeroHeader extends StatelessWidget {
   const _HomeHeroHeader({
@@ -487,180 +482,6 @@ class _PromoCard extends StatelessWidget {
                 style: OraTypography.title(OraColors.textPrimary),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ServicesGrid extends StatelessWidget {
-  const _ServicesGrid({
-    required this.onCityRides,
-    required this.onIntercity,
-    required this.onUnavailable,
-  });
-
-  final VoidCallback onCityRides;
-  final VoidCallback onIntercity;
-  final ValueChanged<String> onUnavailable;
-
-  @override
-  Widget build(BuildContext context) {
-    // Fixed 112px tiles (prototype) — avoid GridView aspect-ratio overflow.
-    Widget row(_ServiceImageTile a, _ServiceImageTile b) {
-      return Row(
-        children: [
-          Expanded(child: a),
-          const SizedBox(width: OraSpacing.sm),
-          Expanded(child: b),
-        ],
-      );
-    }
-
-    return Column(
-      children: [
-        row(
-          _ServiceImageTile(
-            title: 'City rides',
-            subtitle: 'Zip to Premium',
-            imageAsset: AppConstants.serviceCityRidesAsset,
-            icon: Icons.directions_car_filled_rounded,
-            badgeColor: OraColors.primary,
-            onTap: onCityRides,
-          ),
-          _ServiceImageTile(
-            title: 'Intercity',
-            subtitle: 'City to city',
-            imageAsset: AppConstants.serviceIntercityAsset,
-            icon: Icons.alt_route_rounded,
-            badgeColor: OraColors.info,
-            onTap: onIntercity,
-          ),
-        ),
-        const SizedBox(height: OraSpacing.sm),
-        row(
-          _ServiceImageTile(
-            title: 'Courier',
-            subtitle: 'Send anything same day',
-            imageAsset: AppConstants.serviceCourierAsset,
-            icon: Icons.inventory_2_outlined,
-            badgeColor: OraColors.accentPurple,
-            onTap: () => onUnavailable('Courier'),
-          ),
-          _ServiceImageTile(
-            title: 'Move',
-            subtitle: 'Truck + helpers',
-            imageAsset: AppConstants.serviceMoveAsset,
-            icon: Icons.local_shipping_outlined,
-            badgeColor: OraColors.tealBright,
-            onTap: () => onUnavailable('Move'),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ServiceImageTile extends StatelessWidget {
-  const _ServiceImageTile({
-    required this.title,
-    required this.subtitle,
-    required this.imageAsset,
-    required this.icon,
-    required this.badgeColor,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final String imageAsset;
-  final IconData icon;
-  final Color badgeColor;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(OraRadius.card),
-        child: SizedBox(
-          height: 112,
-          child: Ink(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(OraRadius.card),
-              color: OraColors.navyElevated,
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(OraRadius.card),
-              child: Stack(
-                fit: StackFit.expand,
-                clipBehavior: Clip.hardEdge,
-                children: [
-                  Image.asset(
-                    imageAsset,
-                    fit: BoxFit.cover,
-                    filterQuality: FilterQuality.medium,
-                  ),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color(0x26140F05),
-                          Color(0xC7140F05),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 10,
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: const Color(0xF2FFFFFF),
-                        borderRadius: BorderRadius.circular(9),
-                      ),
-                      child: Icon(icon, size: 15, color: badgeColor),
-                    ),
-                  ),
-                  Positioned(
-                    left: 12,
-                    right: 10,
-                    bottom: 9,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              OraTypography.bodyEmphasis(Colors.white).copyWith(
-                            fontSize: 14,
-                            height: 1.1,
-                          ),
-                        ),
-                        Text(
-                          subtitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: OraTypography.caption(
-                            const Color(0xD9FFFFFF),
-                          ).copyWith(fontSize: 10.5, height: 1.15),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
       ),
@@ -861,4 +682,3 @@ class _CategoryCard extends StatelessWidget {
     );
   }
 }
-

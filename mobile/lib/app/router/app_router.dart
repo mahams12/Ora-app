@@ -10,6 +10,8 @@ import '../../features/driver/presentation/views/driver_shell_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/maps/poc/maplibre_poc_view.dart';
 import '../../features/passenger/presentation/views/home_shell_view.dart';
+import '../../features/super_app/presentation/views/module_coming_soon_view.dart';
+import '../../features/super_app/presentation/views/rides_hub_view.dart';
 import '../../features/ride/presentation/views/active_ride_view.dart';
 import '../../features/ride/presentation/views/offers_inbox_view.dart';
 import '../../features/ride/presentation/views/ride_history_detail_view.dart';
@@ -61,6 +63,35 @@ GoRouter createAppRouter({
         path: AppRoutes.home,
         name: 'home',
         builder: (context, state) => const HomeShellView(),
+      ),
+      GoRoute(
+        path: AppRoutes.ridesHub,
+        name: 'rides-hub',
+        builder: (context, state) => const RidesHubView(),
+      ),
+      GoRoute(
+        path: AppRoutes.logistics,
+        name: 'logistics',
+        builder: (context, state) => const ModuleComingSoonView(
+          title: 'Logistics',
+          imageAsset: 'assets/marketplace/modules/logistics.webp',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.rental,
+        name: 'rental',
+        builder: (context, state) => const ModuleComingSoonView(
+          title: 'Rental',
+          imageAsset: 'assets/marketplace/modules/rental.webp',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.services,
+        name: 'services',
+        builder: (context, state) => const ModuleComingSoonView(
+          title: 'Services',
+          imageAsset: 'assets/marketplace/modules/services.webp',
+        ),
       ),
       GoRoute(
         path: AppRoutes.mapLibrePoc,

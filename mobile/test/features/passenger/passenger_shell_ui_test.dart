@@ -127,7 +127,7 @@ void main() {
     expect(find.text('ORA'), findsWidgets);
     expect(find.text('Where are you headed?'), findsOneWidget);
     expect(find.text('Earn on ORA'), findsOneWidget);
-    expect(find.text('City rides'), findsOneWidget);
+    expect(find.text('Explore ORA'), findsOneWidget);
     expect(find.textContaining('Intercity trips'), findsOneWidget);
     expect(find.byType(BottomNavigationBar), findsNothing);
     expect(find.text('Account'), findsNothing);
