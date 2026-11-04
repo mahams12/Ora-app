@@ -9,6 +9,7 @@ import '../../../../core/errors/failure_mapper.dart';
 import '../../../../core/notifications/ride_fcm_nudge.dart';
 import '../../../../core/storage/idempotency_nonce_store.dart';
 import '../../../ride/domain/entities/ride.dart';
+import '../../../ride/domain/repositories/ride_repository.dart';
 import '../../../ride/domain/use_cases/ride_use_cases.dart';
 import '../../../ride/presentation/active_ride/active_ride_display.dart';
 import '../../../ride/presentation/view_models/active_ride_view_model.dart';
@@ -29,6 +30,17 @@ enum DriverRideMutation {
   complete,
   cancel,
   close,
+  // Ora Courier — exception + return mutations.
+  failDelivery,
+  retryDelivery,
+  startReturn,
+  completeReturn,
+  // Ora Courier v2 — code-free stop + settlement mutations.
+  stopArrive,
+  stopConfirm,
+  stopFail,
+  stopQuote,
+  settle,
 }
 
 class DriverAssignedRideUiState {
@@ -82,18 +94,56 @@ class DriverAssignedRideUiState {
 
   bool get canCancel =>
       ride != null &&
-      driverCanCancel(ride!.state) &&
+      driverCanCancel(ride!.state, courier: ride!.isDelivery) &&
       !isMutating &&
       phase != DriverAssignedRidePhase.mutating;
 
   bool get canClose =>
       ride != null &&
-      driverCanClose(ride!.state) &&
+      driverCanClose(ride!.state, courier: ride!.isDelivery) &&
       !isMutating &&
       phase != DriverAssignedRidePhase.mutating;
 
-  String? get primaryActionLabel =>
-      ride == null ? null : driverPrimaryActionLabel(ride!.state);
+  // Ora Courier — exception actions.
+  bool get canFailDelivery =>
+      ride != null &&
+      driverCanFailDelivery(ride!.state, courier: ride!.isDelivery) &&
+      !isMutating &&
+      phase != DriverAssignedRidePhase.mutating;
+
+  bool get canRetryDelivery =>
+      ride != null &&
+      driverCanRetryDelivery(ride!.state, courier: ride!.isDelivery) &&
+      !isMutating &&
+      phase != DriverAssignedRidePhase.mutating;
+
+  bool get canStartReturn =>
+      ride != null &&
+      driverCanStartReturn(ride!.state, courier: ride!.isDelivery) &&
+      !isMutating &&
+      phase != DriverAssignedRidePhase.mutating;
+
+  bool get canConfirmReturn =>
+      ride != null &&
+      driverCanConfirmReturn(ride!.state, courier: ride!.isDelivery) &&
+      !isMutating &&
+      phase != DriverAssignedRidePhase.mutating;
+
+  String? get primaryActionLabel {
+    final ride = this.ride;
+    if (ride == null) return null;
+    if (ride.isCourierV2) {
+      // v2 progression is per-stop — only the en-route leg uses the
+      // primary button; the stop checklist carries the rest.
+      return ride.state.toUpperCase() == 'DRIVER_ASSIGNED'
+          ? 'Mark en route'
+          : null;
+    }
+    return driverPrimaryActionLabel(
+      ride.state,
+      courier: ride.isDelivery,
+    );
+  }
 
   DriverAssignedRideUiState copyWith({
     DriverAssignedRidePhase? phase,
@@ -133,9 +183,14 @@ class DriverAssignedRideViewModel
   late final CompleteRideUseCase _completeRide;
   late final CancelRideUseCase _cancelRide;
   late final CloseRideUseCase _closeRide;
+  late final FailDeliveryUseCase _failDelivery;
+  late final RetryDeliveryUseCase _retryDelivery;
+  late final StartReturnUseCase _startReturn;
+  late final CompleteReturnUseCase _completeReturn;
   late final FailureMapper _failures;
   late final ActiveRidePollingPolicy _policy;
   late final IdempotencyNonceStore _nonceStore;
+  late final RideRepository _repo;
 
   Timer? _pollTimer;
   Timer? _nudgeDebounce;
@@ -152,6 +207,11 @@ class DriverAssignedRideViewModel
   String? _completeOpKey;
   String? _cancelOpKey;
   String? _closeOpKey;
+  String? _failDeliveryOpKey;
+  String? _retryDeliveryOpKey;
+  String? _startReturnOpKey;
+  String? _completeReturnOpKey;
+  final Map<String, String> _v2OpKeys = {};
   int _fetchSeq = 0;
   int _mutationGen = 0;
 
@@ -171,9 +231,14 @@ class DriverAssignedRideViewModel
     _completeRide = ref.read(completeRideUseCaseProvider);
     _cancelRide = ref.read(cancelRideUseCaseProvider);
     _closeRide = ref.read(closeRideUseCaseProvider);
+    _failDelivery = ref.read(failDeliveryUseCaseProvider);
+    _retryDelivery = ref.read(retryDeliveryUseCaseProvider);
+    _startReturn = ref.read(startReturnUseCaseProvider);
+    _completeReturn = ref.read(completeReturnUseCaseProvider);
     _failures = ref.read(failureMapperProvider);
     _policy = ref.read(activeRidePollingPolicyProvider);
     _nonceStore = ref.read(idempotencyNonceStoreProvider);
+    _repo = ref.read(rideRepositoryProvider);
 
     // NOTIF-RIDE-NUDGE: push ⇒ "poll now" hint for this ride only; HTTP
     // polling stays the authoritative fallback and is untouched.
@@ -406,17 +471,27 @@ class DriverAssignedRideViewModel
     });
   }
 
+  /// Runs the primary lifecycle action for the current state. For courier
+  /// OTP-gated transitions (pickup/delivery/return) the view must call the
+  /// OTP methods directly after collecting the code — the primary button
+  /// opens the code sheet instead.
   Future<void> runPrimaryAction() async {
     final ride = state.ride;
     if (ride == null || state.isMutating) return;
     final s = ride.state.toUpperCase();
+    if (ride.isCourierV2) {
+      // v2 progression is per-stop — the stop checklist carries the
+      // arrive/confirm/fail buttons; here we only handle the en-route leg.
+      if (s == 'DRIVER_ASSIGNED') await markEnRoute();
+      return;
+    }
     if (s == 'DRIVER_ASSIGNED') {
       await markEnRoute();
     } else if (s == 'DRIVER_EN_ROUTE') {
       await markArrived();
-    } else if (s == 'DRIVER_ARRIVED') {
+    } else if (!ride.isCourier && s == 'DRIVER_ARRIVED') {
       await startRide();
-    } else if (s == 'RIDE_STARTED') {
+    } else if (!ride.isCourier && s == 'RIDE_STARTED') {
       await completeRide();
     }
   }
@@ -459,7 +534,8 @@ class DriverAssignedRideViewModel
         ),
       );
 
-  Future<void> startRide() => _runMutation(
+  Future<void> startRide({String? otp, String? pickupPhotoUrl}) =>
+      _runMutation(
         kind: DriverRideMutation.start,
         allowed: (ride) => driverCanStart(ride.state),
         opKey: () {
@@ -474,11 +550,13 @@ class DriverAssignedRideViewModel
         call: (ride, key) => _startRide(
           rideId: rideId,
           expectedVersion: ride.version,
+          otp: otp,
+          pickupPhotoUrl: pickupPhotoUrl,
           operationKey: key,
         ),
       );
 
-  Future<void> completeRide() => _runMutation(
+  Future<void> completeRide({String? otp}) => _runMutation(
         kind: DriverRideMutation.complete,
         allowed: (ride) => driverCanComplete(ride.state),
         opKey: () {
@@ -493,13 +571,15 @@ class DriverAssignedRideViewModel
         call: (ride, key) => _completeRide(
           rideId: rideId,
           expectedVersion: ride.version,
+          otp: otp,
           operationKey: key,
         ),
       );
 
   Future<void> cancel({String? reason}) => _runMutation(
         kind: DriverRideMutation.cancel,
-        allowed: (ride) => driverCanCancel(ride.state),
+        allowed: (ride) =>
+            driverCanCancel(ride.state, courier: ride.isDelivery),
         opKey: () {
           _cancelOpKey ??= 'ride:cancel:$rideId:${const Uuid().v4()}';
           return _cancelOpKey!;
@@ -518,7 +598,8 @@ class DriverAssignedRideViewModel
 
   Future<void> closeRide() => _runMutation(
         kind: DriverRideMutation.close,
-        allowed: (ride) => driverCanClose(ride.state),
+        allowed: (ride) =>
+            driverCanClose(ride.state, courier: ride.isDelivery),
         opKey: () {
           _closeOpKey ??= 'ride:close:$rideId:${const Uuid().v4()}';
           return _closeOpKey!;
@@ -531,6 +612,220 @@ class DriverAssignedRideViewModel
         call: (ride, key) => _closeRide(
           rideId: rideId,
           expectedVersion: ride.version,
+          operationKey: key,
+        ),
+      );
+
+  // ── Ora Courier — exception + return mutations ──────────────────────────
+
+  Future<void> failDelivery({required String reason}) => _runMutation(
+        kind: DriverRideMutation.failDelivery,
+        allowed: (ride) =>
+            driverCanFailDelivery(ride.state, courier: ride.isDelivery),
+        opKey: () {
+          _failDeliveryOpKey ??=
+              'ride:delivery_fail:$rideId:${const Uuid().v4()}';
+          return _failDeliveryOpKey!;
+        },
+        clearOpKey: () {
+          final old = _failDeliveryOpKey;
+          _failDeliveryOpKey = null;
+          return old;
+        },
+        call: (ride, key) => _failDelivery(
+          rideId: rideId,
+          expectedVersion: ride.version,
+          reason: reason,
+          operationKey: key,
+        ),
+      );
+
+  Future<void> retryDelivery() => _runMutation(
+        kind: DriverRideMutation.retryDelivery,
+        allowed: (ride) =>
+            driverCanRetryDelivery(ride.state, courier: ride.isDelivery),
+        opKey: () {
+          _retryDeliveryOpKey ??=
+              'ride:delivery_retry:$rideId:${const Uuid().v4()}';
+          return _retryDeliveryOpKey!;
+        },
+        clearOpKey: () {
+          final old = _retryDeliveryOpKey;
+          _retryDeliveryOpKey = null;
+          return old;
+        },
+        call: (ride, key) => _retryDelivery(
+          rideId: rideId,
+          expectedVersion: ride.version,
+          operationKey: key,
+        ),
+      );
+
+  Future<void> startReturn() => _runMutation(
+        kind: DriverRideMutation.startReturn,
+        allowed: (ride) =>
+            driverCanStartReturn(ride.state, courier: ride.isDelivery),
+        opKey: () {
+          _startReturnOpKey ??=
+              'ride:return_start:$rideId:${const Uuid().v4()}';
+          return _startReturnOpKey!;
+        },
+        clearOpKey: () {
+          final old = _startReturnOpKey;
+          _startReturnOpKey = null;
+          return old;
+        },
+        call: (ride, key) => _startReturn(
+          rideId: rideId,
+          expectedVersion: ride.version,
+          operationKey: key,
+        ),
+      );
+
+  Future<void> completeReturn({String? otp}) => _runMutation(
+        kind: DriverRideMutation.completeReturn,
+        allowed: (ride) =>
+            driverCanConfirmReturn(ride.state, courier: ride.isDelivery),
+        opKey: () {
+          _completeReturnOpKey ??=
+              'ride:return_complete:$rideId:${const Uuid().v4()}';
+          return _completeReturnOpKey!;
+        },
+        clearOpKey: () {
+          final old = _completeReturnOpKey;
+          _completeReturnOpKey = null;
+          return old;
+        },
+        call: (ride, key) => _completeReturn(
+          rideId: rideId,
+          expectedVersion: ride.version,
+          otp: otp,
+          operationKey: key,
+        ),
+      );
+
+  // ── Ora Courier v2 — code-free stop progression ───────────────────────
+
+  bool _isV2Actionable(Ride ride) =>
+      ride.isCourierV2 && !isDriverJobTerminalState(ride.state);
+
+  String _v2OpKey(String purpose) => _v2OpKeys.putIfAbsent(
+        purpose,
+        () => 'ride:$purpose:$rideId:${const Uuid().v4()}',
+      );
+
+  /// Ora Courier v2 — next per-stop driver action for the current stop.
+  /// Returns null when no stop action applies right now.
+  String? v2PrimaryAction(Ride ride) {
+    final stop = ride.currentStop;
+    if (!_isV2Actionable(ride) || stop == null) return null;
+    return switch (stop.status) {
+      'PENDING' => 'arrive',
+      'ARRIVED' =>
+        stop.type == 'SHOP' && (stop.quote?.isEmpty ?? true) ? 'quote' : 'confirm',
+      _ => null,
+    };
+  }
+
+  /// Driver arrives at the current itinerary stop (any PICKUP/SHOP/DROPOFF).
+  Future<void> arriveStop(int seq) => _runMutation(
+        kind: DriverRideMutation.stopArrive,
+        allowed: (ride) =>
+            _isV2Actionable(ride) && ride.currentStop?.seq == seq,
+        opKey: () => _v2OpKey('stop_arrive:$seq'),
+        clearOpKey: () {
+          final old = _v2OpKeys['stop_arrive:$seq'];
+          _v2OpKeys.remove('stop_arrive:$seq');
+          return old;
+        },
+        call: (ride, key) => _repo.arriveStop(
+          rideId: rideId,
+          seq: seq,
+          expectedVersion: ride.version,
+          operationKey: key,
+        ),
+      );
+
+  /// Driver completes the current stop — PICKUP "collected", SHOP "purchased"
+  /// (requires `purchaseTotalMinor` ≤ approved quote), DROPOFF "delivered".
+  Future<void> confirmStop(int seq, {int? purchaseTotalMinor}) =>
+      _runMutation(
+        kind: DriverRideMutation.stopConfirm,
+        allowed: (ride) => _isV2Actionable(ride),
+        opKey: () => _v2OpKey('stop_confirm:$seq'),
+        clearOpKey: () {
+          final old = _v2OpKeys['stop_confirm:$seq'];
+          _v2OpKeys.remove('stop_confirm:$seq');
+          return old;
+        },
+        call: (ride, key) => _repo.confirmStop(
+          rideId: rideId,
+          seq: seq,
+          expectedVersion: ride.version,
+          purchaseTotalMinor: purchaseTotalMinor,
+          operationKey: key,
+        ),
+      );
+
+  /// Driver reports a failed stop — server enum reason; the itinerary may
+  /// continue to remaining stops (partial fulfillment) or close out.
+  Future<void> failStop(int seq, {required String reason}) => _runMutation(
+        kind: DriverRideMutation.stopFail,
+        allowed: (ride) => _isV2Actionable(ride),
+        opKey: () => _v2OpKey('stop_fail:$seq'),
+        clearOpKey: () {
+          final old = _v2OpKeys['stop_fail:$seq'];
+          _v2OpKeys.remove('stop_fail:$seq');
+          return old;
+        },
+        call: (ride, key) => _repo.failStop(
+          rideId: rideId,
+          seq: seq,
+          expectedVersion: ride.version,
+          reason: reason,
+          operationKey: key,
+        ),
+      );
+
+  /// buy_deliver — driver submits an itemized quote on an arrived SHOP stop;
+  /// the customer must approve before the purchase can be confirmed.
+  Future<void> submitStopQuote(
+    int seq,
+    List<Map<String, Object?>> items,
+  ) =>
+      _runMutation(
+        kind: DriverRideMutation.stopQuote,
+        allowed: (ride) => _isV2Actionable(ride),
+        opKey: () => _v2OpKey('stop_quote:$seq'),
+        clearOpKey: () {
+          final old = _v2OpKeys['stop_quote:$seq'];
+          _v2OpKeys.remove('stop_quote:$seq');
+          return old;
+        },
+        call: (ride, key) => _repo.submitStopQuote(
+          rideId: rideId,
+          seq: seq,
+          expectedVersion: ride.version,
+          items: items,
+          operationKey: key,
+        ),
+      );
+
+  /// Ora Courier v2 — driver-reported cash collection (PAID/UNPAID/PARTIAL);
+  /// never presented as platform-verified payment.
+  Future<void> reportSettlement(String status) => _runMutation(
+        kind: DriverRideMutation.settle,
+        allowed: _isV2Actionable,
+        opKey: () => _v2OpKey('settlement'),
+        clearOpKey: () {
+          final old = _v2OpKeys['settlement'];
+          _v2OpKeys.remove('settlement');
+          return old;
+        },
+        call: (ride, key) => _repo.reportSettlement(
+          rideId: rideId,
+          expectedVersion: ride.version,
+          status: status,
           operationKey: key,
         ),
       );

@@ -70,10 +70,9 @@ class AuthViewModel extends Notifier<AuthFlowState> {
   // ── OTP verify ────────────────────────────────────────────────────────────
 
   Future<void> verifyOtp({required String code}) async {
-    final current = state;
-    if (current is! AuthFlowOtpSent) return;
+    final session = _otpSessionFrom(state);
+    if (session == null) return;
 
-    final session = current.session;
     state = AuthFlowVerifyingOtp(session: session);
     _logger.info('Verifying OTP', metadata: {'op': 'verify_otp'});
 
@@ -88,10 +87,8 @@ class AuthViewModel extends Notifier<AuthFlowState> {
   // ── OTP resend ────────────────────────────────────────────────────────────
 
   Future<void> resendOtp() async {
-    final current = state;
-    if (current is! AuthFlowOtpSent) return;
-
-    final session = current.session;
+    final session = _otpSessionFrom(state);
+    if (session == null) return;
     if (session.isCoolingDown) {
       state = AuthFlowResendCooldown(
         session: session,
@@ -135,6 +132,23 @@ class AuthViewModel extends Notifier<AuthFlowState> {
   }
 
   // ── Private helpers ───────────────────────────────────────────────────────
+
+  /// Recovers the live OTP session across error states — after a wrong code
+  /// the state is AuthFlowError(previousState: OtpSent) and the user must
+  /// still be able to retry verify / resend instead of a dead screen.
+  OtpSession? _otpSessionFrom(AuthFlowState s) {
+    return switch (s) {
+      AuthFlowOtpSent(:final session) => session,
+      AuthFlowResendCooldown(:final session) => session,
+      AuthFlowError(:final previousState)
+          when previousState is AuthFlowOtpSent ||
+              previousState is AuthFlowResendCooldown =>
+        previousState is AuthFlowOtpSent
+            ? previousState.session
+            : (previousState as AuthFlowResendCooldown).session,
+      _ => null,
+    };
+  }
 
   void _applyVerificationResult(PhoneVerificationResult result) {
     switch (result) {

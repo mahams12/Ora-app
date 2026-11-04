@@ -2,6 +2,7 @@ import type { Firestore } from 'firebase-admin/firestore';
 import {
   GEO_DRIVERS_KEY,
   N3_FRESHNESS_MAX_AGE_MS,
+  N3_MAX_FIX_AGE_MS,
   N3_MAX_ACCURACY_M,
   N3_REDIS_GEO_COUNT,
   driverOnlineKey,
@@ -20,6 +21,9 @@ export const N3_BUSY_RIDE_STATES = [
   'DRIVER_EN_ROUTE',
   'DRIVER_ARRIVED',
   'RIDE_STARTED',
+  // Ora Courier — parcel in driver custody (incl. failed delivery + return leg).
+  'DELIVERY_FAILED',
+  'RETURNING',
 ] as const;
 
 export const N3_DEFAULT_RADIUS_KM = 10;
@@ -32,7 +36,7 @@ export const N3_MIN_LIMIT = 1;
 /**
  * assignedDriverId chunk size for the batch busy prefetch. Firestore expands
  * every `in` into disjunctions with a hard cap of 30 per query, and multiple
- * `in` filters multiply: chunkSize × busyStateCount ≤ 30 → 7 × 4 = 28.
+ * `in` filters multiply: chunkSize × busyStateCount ≤ 30 → 5 × 6 = 30.
  */
 export const N3_BUSY_PREFETCH_IN_CHUNK_SIZE = Math.floor(
   30 / N3_BUSY_RIDE_STATES.length,
@@ -306,9 +310,22 @@ function parseMarker(raw: string): DriverOnlineMarker | null {
   }
 }
 
-function isFresh(lastLocationTs: number, nowMs: number): boolean {
-  const age = nowMs - lastLocationTs;
-  return age >= 0 && age <= N3_FRESHNESS_MAX_AGE_MS;
+function isFresh(marker: DriverOnlineMarker, nowMs: number): boolean {
+  const age = nowMs - marker.lastLocationTs;
+  if (age < 0) return false;
+  // Honest-position cap — independent of presence freshness. A keepalived
+  // marker may carry a fresh freshUntilMs while its lastLocationTs is the
+  // real (older) GPS fix; beyond N3_MAX_FIX_AGE_MS the position is no
+  // longer credible for matching or invite-time eligibility.
+  if (age > N3_MAX_FIX_AGE_MS) return false;
+  // Per-driver expiry when the marker carries one (adaptive freshness);
+  // fixed 15s window otherwise — identical to the legacy check.
+  const until =
+    typeof marker.freshUntilMs === 'number' &&
+    Number.isFinite(marker.freshUntilMs)
+      ? marker.freshUntilMs
+      : marker.lastLocationTs + N3_FRESHNESS_MAX_AGE_MS;
+  return nowMs <= until;
 }
 
 /** First-seen GEO order; duplicate member IDs appear once. */
@@ -338,6 +355,13 @@ export class NearbyDriversService {
   constructor(
     private readonly db: Firestore,
     private readonly redis: RedisGeoClient | null,
+    /**
+     * LOCATION_ADAPTIVE_FRESHNESS — when true the geo query filters on the
+     * per-driver freshUntilMs twin instead of a fixed 15s lastLocationTs
+     * floor. Requires markers written by the matching service version
+     * (freshUntilMs twin is emitted on every marker write).
+     */
+    private readonly adaptiveFreshness: boolean = false,
   ) {}
 
   async findNearby(input: {
@@ -369,9 +393,13 @@ export class NearbyDriversService {
         count: N3_REDIS_GEO_COUNT,
         // Server-side freshness floor where the store supports it (Firestore
         // range filter — skips stale docs before they are billed as reads).
-        // Redis ignores it; the marker check below enforces freshness either
-        // way, so semantics are identical across both stores.
-        minLastLocationTs: nowMs - N3_FRESHNESS_MAX_AGE_MS,
+        // Adaptive mode filters on the per-driver freshUntilMs twin so
+        // variable cadences stay filterable; legacy mode keeps the fixed
+        // 15s floor. Marker checks below enforce freshness either way, so
+        // semantics are identical across both stores and both modes.
+        ...(this.adaptiveFreshness
+          ? { minFreshUntilMs: nowMs }
+          : { minLastLocationTs: nowMs - N3_FRESHNESS_MAX_AGE_MS }),
       });
     } catch (err) {
       logSafe('N3_REDIS_GEORADIUS_FAILED', {
@@ -451,7 +479,7 @@ export class NearbyDriversService {
         diag.rejected.marker_malformed += 1;
         continue;
       }
-      if (!isFresh(marker.lastLocationTs, nowMs)) {
+      if (!isFresh(marker, nowMs)) {
         diag.rejected.marker_not_fresh += 1;
         continue;
       }
@@ -527,7 +555,7 @@ export class NearbyDriversService {
     if (!markerRaw) return false;
     const marker = parseMarker(markerRaw);
     if (!marker) return false;
-    if (!isFresh(marker.lastLocationTs, nowMs)) return false;
+    if (!isFresh(marker, nowMs)) return false;
     if (marker.accuracy > N3_MAX_ACCURACY_M) return false;
 
     return this.isAuthoritativelyEligible(driverId);

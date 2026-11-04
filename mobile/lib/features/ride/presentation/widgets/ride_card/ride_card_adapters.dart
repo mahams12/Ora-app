@@ -21,6 +21,7 @@ class RideCardAdapters {
     required bool offerDisabled,
     required VoidCallback onAccept,
     VoidCallback? onDecline,
+    VoidCallback? onTap,
   }) {
     final distance = _formatDistanceKm(ride.distanceKm);
     final duration = _formatDurationMin(ride.estimatedDurationMin);
@@ -51,6 +52,8 @@ class RideCardAdapters {
       fareCaption: 'Trip fare',
       distanceLabel: distance,
       durationLabel: duration,
+      // Ora Courier — non-contact parcel summary on the service slot.
+      serviceLabel: _openRideServiceLabel(ride),
       paymentLabel: _paymentLabel(ride.paymentMethod),
       categoryLabel: category.$1,
       categoryTone: category.$2,
@@ -77,6 +80,7 @@ class RideCardAdapters {
           isPrimary: true,
         ),
       ],
+      onTap: onTap,
       semanticsLabel: 'Ride id ${ride.rideId}',
     );
   }
@@ -93,6 +97,7 @@ class RideCardAdapters {
     required bool responding,
     required VoidCallback onAccept,
     required VoidCallback onDecline,
+    VoidCallback? onTap,
   }) {
     final secondsLeft = remaining.inSeconds.clamp(0, 1 << 30);
     final actionable = invite.isActionable && secondsLeft > 0;
@@ -122,9 +127,10 @@ class RideCardAdapters {
           formatOfferAmountMinor(invite.passengerOfferMinor, invite.currency),
       fareCaption: 'Trip fare',
       distanceLabel: distance,
-      serviceLabel: invite.serviceType.trim().isEmpty
-          ? null
-          : historyServiceTypeLabel(invite.serviceType),
+      // Ora Courier — invite surfaces the parcel summary in the service
+      // slot: "Courier · small · 2 kg × 1". Contacts stay hidden until the
+      // driver is actually assigned (server-side projection rule).
+      serviceLabel: _inviteServiceLabel(invite),
       categoryLabel: category.$1,
       categoryTone: category.$2,
       carAsset: _carAssetFor(invite.rideId),
@@ -153,6 +159,7 @@ class RideCardAdapters {
           progress: actionable ? progress : null,
         ),
       ],
+      onTap: onTap,
       semanticsLabel:
           'Dispatch invitation ${invite.rideId}, ${actionable ? '$secondsLeft seconds left' : 'expired'}',
     );
@@ -240,9 +247,7 @@ class RideCardAdapters {
       fareCaption: kind == RideCardStatusKind.danger
           ? 'Cancelled'
           : kind == RideCardStatusKind.success
-              ? (_paymentLabel(ride.paymentMethod) == null
-                  ? null
-                  : 'Paid (${_paymentLabel(ride.paymentMethod)})')
+              ? _settlementCaption(ride)
               : null,
       distanceLabel: distance,
       durationLabel: null,
@@ -310,6 +315,62 @@ class RideCardAdapters {
       ],
       semanticsLabel: '${snapshotName ?? 'Driver offer'}, $amount, ${offer.status}',
     );
+  }
+
+  static List<String> _courierParcelParts(Map<String, Object?> p) {
+    final size = (p['size'] ?? '').toString().toLowerCase();
+    final weight = p['weightKg']?.toString();
+    final qty = p['quantity']?.toString();
+    return <String>[
+      if (size.isNotEmpty) size,
+      if (weight != null) '${weight}kg',
+      if (qty != null && qty != '1') '×$qty',
+    ];
+  }
+
+  /// Ora Courier v2 — stop count + per-shop budget hints so the driver can
+  /// judge the job before accepting/offering.
+  static List<String> _v2Parts({
+    required List<RideStop>? stops,
+    required Map<String, Object?>? shopping,
+  }) {
+    final parts = <String>[];
+    if (stops != null && stops.length > 2) {
+      parts.add('${stops.length} stops');
+    }
+    final budget = shopping?['totalBudgetMinor'];
+    if (budget is int && budget > 0) {
+      parts.add('budget Rs ${budget ~/ 100}');
+    }
+    if (stops != null && shopping != null) {
+      final shopCount = stops.where((s) => s.type == 'SHOP').length;
+      if (shopCount > 0) parts.add('$shopCount shops');
+    }
+    return parts;
+  }
+
+  static String? _openRideServiceLabel(OpenRide ride) {
+    final base = ride.serviceType.trim().isEmpty
+        ? null
+        : historyServiceTypeLabel(ride.serviceType);
+    final parts = <String>[
+      if (base != null) base,
+      ..._v2Parts(stops: ride.stops, shopping: ride.shopping),
+      if (ride.parcel != null) ..._courierParcelParts(ride.parcel!),
+    ];
+    return parts.isEmpty ? base : parts.join(' · ');
+  }
+
+  static String? _inviteServiceLabel(DriverInvite invite) {
+    final base = invite.serviceType.trim().isEmpty
+        ? null
+        : historyServiceTypeLabel(invite.serviceType);
+    final parts = <String>[
+      if (base != null) base,
+      ..._v2Parts(stops: invite.stops, shopping: invite.shopping),
+      if (invite.parcel != null) ..._courierParcelParts(invite.parcel!),
+    ];
+    return parts.isEmpty ? base : parts.join(' · ');
   }
 
   static String? _relativeAge({
@@ -399,6 +460,25 @@ class RideCardAdapters {
   static String? _formatDurationMin(int? minutes) {
     if (minutes == null) return null;
     return '$minutes min';
+  }
+
+  /// Settlement-aware fare caption — never claims "Paid" unless the server
+  /// settlement says SETTLED. Rides with no settlement block keep the old
+  /// payment-method caption.
+  static String? _settlementCaption(Ride ride) {
+    final settlement = ride.settlement;
+    final status = settlement == null
+        ? null
+        : (settlement['status'] as String?)?.toUpperCase();
+    final method = _paymentLabel(ride.paymentMethod);
+    if (status == 'DISPUTED') return 'Payment disputed';
+    if (status == 'SETTLED') {
+      return method == null ? 'Paid' : 'Paid ($method)';
+    }
+    if (status == 'PENDING') {
+      return method == null ? 'Payment pending' : 'Pending ($method)';
+    }
+    return method == null ? null : 'Paid ($method)';
   }
 
   static String? _paymentLabel(String? method) {

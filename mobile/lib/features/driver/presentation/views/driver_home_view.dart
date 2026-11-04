@@ -6,6 +6,7 @@ import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/utils/responsive.dart';
+import '../widgets/driver_home_map.dart';
 
 /// Prototype-faithful driver home (teal header + map stub + quick actions).
 ///
@@ -67,7 +68,7 @@ class DriverHomeView extends StatelessWidget {
           ),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              const _MapStub(),
+              const DriverHomeMap(),
               const SizedBox(height: OraSpacing.md),
               _AvailabilityCard(
                 isOnline: availabilityOnline,
@@ -331,72 +332,6 @@ class _DriverHero extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _MapStub extends StatelessWidget {
-  const _MapStub();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 150,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(OraRadius.card),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [OraColors.navyElevated, OraColors.surfaceStrong],
-        ),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          Positioned(
-            top: 60,
-            left: 0,
-            right: 0,
-            child: Container(height: 5, color: const Color(0x1FFFFFFF)),
-          ),
-          Positioned(
-            top: 0,
-            bottom: 0,
-            left: 120,
-            child: Container(width: 5, color: const Color(0x1FFFFFFF)),
-          ),
-          Positioned(
-            top: 60,
-            left: 150,
-            child: Container(
-              width: 12,
-              height: 12,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: OraColors.teal,
-              ),
-            ),
-          ),
-          Positioned(
-            left: 12,
-            bottom: 12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xE612182B),
-                borderRadius: BorderRadius.circular(OraRadius.sm),
-              ),
-              child: Text(
-                'Map zones · coming later',
-                style: OraTypography.caption(Colors.white).copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

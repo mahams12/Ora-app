@@ -11,6 +11,7 @@ import { createDriversRouter } from './drivers/routes';
 import { createDeviceTokensRouter } from './routes/device_tokens';
 import { createLocationRouter } from './location/routes';
 import { DriverEligibilityCache } from './location/location_update_service';
+import { DriverAvailabilityService } from './drivers/driver_availability_service';
 import { createInternalWorkerMiddleware } from './middleware/internal_worker';
 import { sendApiError } from './http/errors';
 import { createRequestIdMiddleware } from './http/request_id';
@@ -67,6 +68,21 @@ export interface CreateAppOptions {
    * e.g. `new DriverEligibilityCache(0)` disables caching.
    */
   eligibilityCache?: DriverEligibilityCache;
+  /**
+   * LOCATION_ADAPTIVE_FRESHNESS — N3 matching filters on the per-driver
+   * freshUntilMs twin instead of a fixed 15s window (Phase A).
+   */
+  adaptiveFreshness?: boolean;
+  /**
+   * LOCATION_IDLE_MERGED_CURSOR — idle presence packets validate the stream
+   * cursor inside the geoDrivers marker write (Phase B; one tx per packet).
+   */
+  idleMergedCursor?: boolean;
+  /**
+   * PRICING_RULES_CACHE_TTL_MS — in-process TTL for pricing rule docs
+   * (0/undefined = uncached; rules are admin-seeded and rarely change).
+   */
+  pricingRulesCacheTtlMs?: number;
 }
 
 export function createApp(options: CreateAppOptions) {
@@ -79,6 +95,8 @@ export function createApp(options: CreateAppOptions) {
   app.get('/healthz', (_req, res) => {
     res.status(200).json({ ok: true, service: 'ora-auth-service' });
   });
+
+
 
   const requireAuth = createAuthMiddleware(options.auth, {
     requireAppCheck: options.requireAppCheck,
@@ -105,7 +123,20 @@ export function createApp(options: CreateAppOptions) {
   const eligibilityCache =
     options.eligibilityCache ?? new DriverEligibilityCache();
 
-  app.use('/v1/auth', requireAuth, rateLimit, createAuthRouter(options.db));
+  // Shared availability service: /v1/auth/mode uses it to durably take a
+  // driver offline when switching to passenger mode (ghost-driver guard).
+  const availability = new DriverAvailabilityService(
+    options.db,
+    geo,
+    (driverId) => eligibilityCache.invalidate(driverId),
+  );
+
+  app.use(
+    '/v1/auth',
+    requireAuth,
+    rateLimit,
+    createAuthRouter(options.db, availability),
+  );
 
   // Phase 2E: ride core vertical slice — modular monolith on auth-service.
   app.use(
@@ -120,8 +151,11 @@ export function createApp(options: CreateAppOptions) {
     '/v1/drivers',
     requireAuth,
     rateLimit,
-    createDriversRouter(options.db, geo, (driverId) =>
-      eligibilityCache.invalidate(driverId),
+    createDriversRouter(
+      options.db,
+      geo,
+      (driverId) => eligibilityCache.invalidate(driverId),
+      availability,
     ),
   );
 
@@ -144,6 +178,7 @@ export function createApp(options: CreateAppOptions) {
       tripLocationRtdb,
       eligibilityCache,
       options.streamStore ?? null,
+      { idleMergedCursor: options.idleMergedCursor },
     ),
   );
 
@@ -166,7 +201,9 @@ export function createApp(options: CreateAppOptions) {
       '/v1/pricing',
       requireAuth,
       estimateRateLimit,
-      createPricingRouter(options.db, routing),
+      createPricingRouter(options.db, routing, {
+        rulesCacheTtlMs: options.pricingRulesCacheTtlMs,
+      }),
     );
   } else {
     app.use('/v1/pricing', requireAuth, estimateRateLimit, (req, res) => {
@@ -180,6 +217,24 @@ export function createApp(options: CreateAppOptions) {
     });
   }
 
+  // Ora Courier v2 — client-visible delivery config (limits only; no secrets).
+  app.get('/v1/delivery-config', requireAuth, async (req, res) => {
+    const { loadDeliveryConfig } = await import(
+      './delivery/delivery_config.js'
+    );
+    const cfg = await loadDeliveryConfig(options.db);
+    res.json({
+      data: {
+        maxStops: cfg.maxStops,
+        maxShoppingBudgetMinor: cfg.maxShoppingBudgetMinor,
+        disputeWindowHours: cfg.disputeWindowHours,
+        enableBuyDeliver: cfg.enableBuyDeliver,
+        enableCourierV2: cfg.enableCourierV2,
+        prohibitedList: cfg.prohibitedList,
+      },
+    });
+  });
+
   const workerToken =
     options.internalWorkerToken ?? process.env.ORA_INTERNAL_WORKER_TOKEN;
   app.use(
@@ -191,6 +246,7 @@ export function createApp(options: CreateAppOptions) {
       options.fcmSender ?? null,
       tripLocationRtdb,
       options.streamStore ?? null,
+      { adaptiveFreshness: options.adaptiveFreshness },
     ),
   );
 

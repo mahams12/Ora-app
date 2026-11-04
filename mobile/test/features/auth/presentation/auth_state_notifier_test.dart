@@ -79,6 +79,21 @@ class _FakeAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<UserProfile> switchMode({required String mode}) async {
+    return profile!;
+  }
+
+  @override
+  Future<Map<String, dynamic>> submitDriverOnboarding({
+    required String vehicleType,
+    String? vehicleModel,
+    String? plateNumber,
+    String? homeCity,
+  }) async {
+    return const {'driverStatus': 'pending'};
+  }
+
+  @override
   Future<void> logout() async {
     logoutCalls++;
     current = null;

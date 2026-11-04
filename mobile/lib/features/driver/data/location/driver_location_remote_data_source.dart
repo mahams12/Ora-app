@@ -62,6 +62,11 @@ abstract class DriverLocationRemoteDataSource {
   /// driver's idle stream and projects presence into the geo index. Online
   /// drivers need this to stay discoverable between trips.
   ///
+  /// [publishIntervalMs] declares the caller's current cadence — the server
+  /// derives per-driver marker freshness from it when
+  /// LOCATION_ADAPTIVE_FRESHNESS is on (ignored otherwise).
+  /// [presenceKeepalive] marks a re-asserted last-known position.
+  ///
   /// Default returns unsupported so pre-existing fakes stay valid; the HTTP
   /// adapter overrides it.
   Future<LocationPublishResult> publishIdleLocation({
@@ -70,6 +75,8 @@ abstract class DriverLocationRemoteDataSource {
     required DriverLocationFix fix,
     required CancelToken cancelToken,
     RequestContext? context,
+    int? publishIntervalMs,
+    bool presenceKeepalive = false,
   }) async {
     return const LocationPublishFailed(
       kind: LocationPublishFailureKind.unknown,
@@ -110,6 +117,8 @@ class ApiDriverLocationRemoteDataSource
     required DriverLocationFix fix,
     required CancelToken cancelToken,
     RequestContext? context,
+    int? publishIntervalMs,
+    bool presenceKeepalive = false,
   }) async {
     return _publish(
       rideId: null,
@@ -118,6 +127,8 @@ class ApiDriverLocationRemoteDataSource
       fix: fix,
       cancelToken: cancelToken,
       context: context,
+      publishIntervalMs: publishIntervalMs,
+      presenceKeepalive: presenceKeepalive,
     );
   }
 
@@ -128,6 +139,8 @@ class ApiDriverLocationRemoteDataSource
     required DriverLocationFix fix,
     required CancelToken cancelToken,
     RequestContext? context,
+    int? publishIntervalMs,
+    bool presenceKeepalive = false,
   }) async {
     final heading = fix.headingDegrees;
     final body = <String, Object?>{
@@ -146,6 +159,8 @@ class ApiDriverLocationRemoteDataSource
       'provider': 'gps',
       if (fix.altitudeMeters != null && fix.altitudeMeters!.isFinite)
         'altitude': fix.altitudeMeters,
+      if (publishIntervalMs != null) 'publishIntervalMs': publishIntervalMs,
+      if (presenceKeepalive) 'presenceKeepalive': true,
     };
 
     try {

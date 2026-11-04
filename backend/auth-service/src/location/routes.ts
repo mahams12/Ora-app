@@ -13,13 +13,18 @@ export function createLocationRouter(
   tripLocationRtdb?: import('../rtdb/types').TripLocationRtdb | null,
   eligibilityCache?: import('./location_update_service').DriverEligibilityCache,
   streamStore?: import('./stream_store').LocationStreamStore | null,
+  locationOptions?: { idleMergedCursor?: boolean },
 ): Router {
   const router = Router();
   const locations = new LocationUpdateService(
     db,
     geoProjection ?? null,
     tripLocationRtdb ?? null,
-    { eligibilityCache, streamStore: streamStore ?? undefined },
+    {
+      eligibilityCache,
+      streamStore: streamStore ?? undefined,
+      idleMergedCursor: locationOptions?.idleMergedCursor,
+    },
   );
 
   router.post('/update', async (req: AuthedRequest, res) => {

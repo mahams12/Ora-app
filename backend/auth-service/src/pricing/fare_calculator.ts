@@ -171,6 +171,20 @@ export function assertPricingRuleUsable(rules: PricingRuleDoc): void {
       'offerMinRatio must not exceed offerMaxRatio.',
     );
   }
+
+  // Ora Courier v2 — optional minor-unit surcharges must be non-negative ints.
+  for (const [field, v] of [
+    ['perStopFeeMinor', rules.perStopFeeMinor],
+    ['shoppingServiceFeeMinor', rules.shoppingServiceFeeMinor],
+  ] as const) {
+    if (v !== undefined && (!Number.isInteger(v) || v < 0)) {
+      throw new PricingError(
+        'PRICING_UNAVAILABLE',
+        503,
+        `Pricing rule field ${field} is malformed.`,
+      );
+    }
+  }
 }
 
 export function computeOfferBoundsMinor(

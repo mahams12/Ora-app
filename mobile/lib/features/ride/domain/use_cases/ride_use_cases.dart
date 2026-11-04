@@ -31,12 +31,14 @@ class ListRidesUseCase {
     String? cursor,
     String? status,
     String? serviceType,
+    String? as,
   }) =>
       _repository.listRides(
         limit: limit,
         cursor: cursor,
         status: status,
         serviceType: serviceType,
+        as: as,
       );
 }
 
@@ -206,11 +208,15 @@ class StartRideUseCase {
   Future<Ride> call({
     required String rideId,
     int? expectedVersion,
+    String? otp,
+    String? pickupPhotoUrl,
     required String operationKey,
   }) =>
       _repository.startRide(
         rideId: rideId,
         expectedVersion: expectedVersion,
+        otp: otp,
+        pickupPhotoUrl: pickupPhotoUrl,
         operationKey: operationKey,
       );
 }
@@ -223,11 +229,89 @@ class CompleteRideUseCase {
   Future<Ride> call({
     required String rideId,
     int? expectedVersion,
+    String? otp,
     required String operationKey,
   }) =>
       _repository.completeRide(
         rideId: rideId,
         expectedVersion: expectedVersion,
+        otp: otp,
+        operationKey: operationKey,
+      );
+}
+
+/// Ora Courier — report a failed delivery attempt.
+class FailDeliveryUseCase {
+  const FailDeliveryUseCase(this._repository);
+
+  final RideRepository _repository;
+
+  Future<Ride> call({
+    required String rideId,
+    int? expectedVersion,
+    required String reason,
+    required String operationKey,
+  }) =>
+      _repository.failDelivery(
+        rideId: rideId,
+        expectedVersion: expectedVersion,
+        reason: reason,
+        operationKey: operationKey,
+      );
+}
+
+/// Ora Courier — retry delivery after a failed attempt.
+class RetryDeliveryUseCase {
+  const RetryDeliveryUseCase(this._repository);
+
+  final RideRepository _repository;
+
+  Future<Ride> call({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  }) =>
+      _repository.retryDelivery(
+        rideId: rideId,
+        expectedVersion: expectedVersion,
+        operationKey: operationKey,
+      );
+}
+
+/// Ora Courier — start returning the parcel to the sender.
+class StartReturnUseCase {
+  const StartReturnUseCase(this._repository);
+
+  final RideRepository _repository;
+
+  Future<Ride> call({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  }) =>
+      _repository.startReturn(
+        rideId: rideId,
+        expectedVersion: expectedVersion,
+        operationKey: operationKey,
+      );
+}
+
+/// Ora Courier — sender confirms parcel return (return code).
+class CompleteReturnUseCase {
+  const CompleteReturnUseCase(this._repository);
+
+  final RideRepository _repository;
+
+  Future<Ride> call({
+    required String rideId,
+    int? expectedVersion,
+    String? otp,
+    required String operationKey,
+  }) =>
+      _repository.completeReturn(
+        rideId: rideId,
+        expectedVersion: expectedVersion,
+        otp: otp,
         operationKey: operationKey,
       );
 }

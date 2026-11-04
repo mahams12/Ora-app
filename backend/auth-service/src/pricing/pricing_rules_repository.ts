@@ -137,6 +137,14 @@ export function parsePricingRuleDoc(
       raw.offerMaxRatio === undefined
         ? DEFAULT_OFFER_MAX_RATIO
         : requireFiniteNumber(raw, 'offerMaxRatio'),
+    perStopFeeMinor:
+      raw.perStopFeeMinor === undefined
+        ? undefined
+        : requireFiniteNumber(raw, 'perStopFeeMinor'),
+    shoppingServiceFeeMinor:
+      raw.shoppingServiceFeeMinor === undefined
+        ? undefined
+        : requireFiniteNumber(raw, 'shoppingServiceFeeMinor'),
   };
 
   assertPricingRuleUsable(doc);
@@ -144,7 +152,26 @@ export function parsePricingRuleDoc(
 }
 
 export class PricingRulesRepository {
-  constructor(private readonly db: Firestore) {}
+  private readonly cacheTtlMs: number;
+  private readonly cache = new Map<
+    string,
+    { rule: PricingRuleDoc; expiresAtMs: number }
+  >();
+  private hits = 0;
+  private misses = 0;
+
+  constructor(
+    private readonly db: Firestore,
+    options?: { cacheTtlMs?: number },
+  ) {
+    // Default 0 = uncached (legacy behavior). Rules are admin-seeded and
+    // change rarely; a short TTL cuts one billed read per estimate.
+    this.cacheTtlMs = options?.cacheTtlMs ?? 0;
+  }
+
+  cacheStats(): { hits: number; misses: number; size: number } {
+    return { hits: this.hits, misses: this.misses, size: this.cache.size };
+  }
 
   /**
    * Load the active rule for city + category.
@@ -157,6 +184,13 @@ export class PricingRulesRepository {
     const city = resolvePricingRuleCity(input.city);
     const category = normalizePricingCategory(input.category);
     const ruleId = pricingRuleDocId(city, category);
+
+    const cached = this.cache.get(ruleId);
+    if (cached && cached.expiresAtMs > Date.now()) {
+      this.hits += 1;
+      return cached.rule;
+    }
+    this.misses += 1;
 
     const snap = await this.db
       .collection(PRICING_RULES_COLLECTION)
@@ -183,6 +217,12 @@ export class PricingRulesRepository {
       );
     }
 
+    if (this.cacheTtlMs > 0) {
+      this.cache.set(ruleId, {
+        rule,
+        expiresAtMs: Date.now() + this.cacheTtlMs,
+      });
+    }
     return rule;
   }
 }
@@ -209,6 +249,10 @@ export function buildPricingRuleSeed(input: {
   offerMinRatio?: number;
   offerMaxRatio?: number;
   active?: boolean;
+  /** Ora Courier v2 — fixed surcharge per stop beyond the first and last. */
+  perStopFeeMinor?: number;
+  /** Ora Courier v2 — fixed Buy & Deliver service surcharge. */
+  shoppingServiceFeeMinor?: number;
 }): PricingRuleDoc {
   const city = resolvePricingRuleCity(input.city);
   const category = normalizePricingCategory(input.category);
@@ -227,6 +271,12 @@ export function buildPricingRuleSeed(input: {
     maxFare: input.maxFare,
     offerMinRatio: input.offerMinRatio ?? DEFAULT_OFFER_MIN_RATIO,
     offerMaxRatio: input.offerMaxRatio ?? DEFAULT_OFFER_MAX_RATIO,
+    ...(input.perStopFeeMinor !== undefined
+      ? { perStopFeeMinor: input.perStopFeeMinor }
+      : {}),
+    ...(input.shoppingServiceFeeMinor !== undefined
+      ? { shoppingServiceFeeMinor: input.shoppingServiceFeeMinor }
+      : {}),
   };
   if (doc.active) {
     assertPricingRuleUsable(doc);

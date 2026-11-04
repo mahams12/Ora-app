@@ -28,6 +28,8 @@ export function toPublicProfile(doc: Record<string, unknown>, uid: string): User
     (doc.driverStatus as UserProfile['driverStatus']) ?? 'none';
   const isActive = doc.isActive !== false;
   const banned = doc.banned === true;
+  // Legacy docs predate activeMode — they behaved as passenger.
+  const activeMode = doc.activeMode === 'driver' ? 'driver' : 'passenger';
 
   return {
     uid,
@@ -35,6 +37,7 @@ export function toPublicProfile(doc: Record<string, unknown>, uid: string): User
     displayName,
     role,
     driverStatus,
+    activeMode,
     isActive,
     banned,
     profileComplete: deriveProfileComplete({

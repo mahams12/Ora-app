@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/di/providers.dart';
+import '../../domain/location/driver_location_fix.dart';
 import '../../domain/location/driver_location_lifecycle.dart';
 import '../../domain/location/driver_location_status.dart';
 import '../../domain/location/driver_trip_location_publisher.dart';
@@ -14,6 +15,7 @@ class DriverLocationSession
     extends AutoDisposeFamilyNotifier<DriverLocationStatusKind, String> {
   late DriverLocationLifecycleController _controller;
   late DriverTripLocationPublisher _publisher;
+  late StateController<bool> _tripActive;
   var _alive = true;
 
   /// Test/metrics access to the session-owned publisher.
@@ -22,6 +24,7 @@ class DriverLocationSession
   @override
   DriverLocationStatusKind build(String arg) {
     _alive = true;
+    _tripActive = ref.read(driverTripLocationActiveProvider.notifier);
     _publisher = DriverTripLocationPublisher(
       rideId: arg,
       remote: ref.read(driverLocationRemoteDataSourceProvider),
@@ -37,15 +40,18 @@ class DriverLocationSession
       },
       onAcceptedFix: (fix) {
         if (!_alive) return;
+        ref.read(driverTripLatestFixProvider(arg).notifier).state = fix;
         _publisher.onAcceptedFix(fix);
       },
       onWatchStarted: () {
         if (!_alive) return;
         _publisher.onWatchStarted();
+        _tripActive.state = true;
       },
       onWatchStopped: (reason) {
         if (!_alive) return;
         _publisher.onWatchStopped(reason);
+        _tripActive.state = false;
       },
     );
 
@@ -55,6 +61,13 @@ class DriverLocationSession
       _alive = false;
       _publisher.dispose();
       _controller.dispose();
+      // ref.read is illegal inside onDispose — use the notifier captured in
+      // build. If the whole container is tearing down the write is moot.
+      try {
+        _tripActive.state = false;
+      } on StateError {
+        // Container disposed — the flag dies with it.
+      }
     });
 
     ref.listen<String?>(
@@ -131,3 +144,16 @@ final driverLocationSessionProvider = NotifierProvider.autoDispose
     .family<DriverLocationSession, DriverLocationStatusKind, String>(
       DriverLocationSession.new,
     );
+
+/// Latest accepted local GPS fix for one assigned ride. Display-only — the
+/// driver job map renders the driver's own position from this instead of
+/// round-tripping the RTDB listener the passenger uses.
+final driverTripLatestFixProvider = StateProvider.autoDispose
+    .family<DriverLocationFix?, String>((ref, rideId) => null);
+
+/// Whether a trip location publisher is actively streaming for any ride.
+/// Consumed by the adaptive presence publisher to suppress redundant idle
+/// publishes while trip packets keep the shared geo marker fresh.
+final driverTripLocationActiveProvider = StateProvider<bool>(
+  (ref) => false,
+);

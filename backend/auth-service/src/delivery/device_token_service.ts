@@ -158,7 +158,9 @@ export class DeviceTokenService {
     body: unknown;
   }): Promise<{ httpStatus: number; data: { uid: string; tokenId: string } }> {
     const actor = await loadActor(this.db, input.caller.uid);
-    if (actor.role !== 'passenger') {
+    // Dual-role accounts (Switch to Driver): an approved driver acting in
+    // passenger mode may also register passenger tokens.
+    if (actor.role !== 'passenger' && actor.driverStatus !== 'approved') {
       throw new DriverDomainError(
         'FORBIDDEN',
         403,
@@ -192,7 +194,7 @@ export class DeviceTokenService {
     body: unknown;
   }): Promise<{ httpStatus: number; data: { uid: string; cleared: boolean } }> {
     const actor = await loadActor(this.db, input.caller.uid);
-    if (actor.role !== 'passenger') {
+    if (actor.role !== 'passenger' && actor.driverStatus !== 'approved') {
       throw new DriverDomainError(
         'FORBIDDEN',
         403,

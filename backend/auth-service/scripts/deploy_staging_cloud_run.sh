@@ -50,6 +50,13 @@ ENV_VARS="FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID},REQUIRE_APP_CHECK=${REQUIRE
 if [[ -n "${FIREBASE_DATABASE_URL:-}" ]]; then
   ENV_VARS="${ENV_VARS},FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL}"
 fi
+# Cost-optimization flags — forwarded only when explicitly set; unset keeps
+# legacy behavior bit-identical (all default OFF in code).
+for flag in LOCATION_ADAPTIVE_FRESHNESS LOCATION_IDLE_MERGED_CURSOR PRICING_RULES_CACHE_TTL_MS; do
+  if [[ -n "${!flag:-}" ]]; then
+    ENV_VARS="${ENV_VARS},${flag}=${!flag}"
+  fi
+done
 
 MAPS_SECRET_NAME="${MAPS_SECRET_NAME:-ora-staging-google-maps-server-key}"
 WORKER_SECRET_NAME="${WORKER_SECRET_NAME:-ora-staging-internal-worker-token}"
@@ -71,7 +78,6 @@ DEPLOY_ARGS=(
   --timeout=300
   --port=8080
   --clear-vpc-connector
-  --remove-secrets=REDIS_URL
 )
 
 DEPLOY_ARGS+=(--set-env-vars="$ENV_VARS" --set-secrets="$SECRETS_LIST")

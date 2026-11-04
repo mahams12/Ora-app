@@ -35,9 +35,10 @@ function sendPricingError(
 export function createPricingRouter(
   db: Firestore,
   routing: RoutingProvider,
+  options?: { rulesCacheTtlMs?: number },
 ): Router {
   const router = Router();
-  const estimates = new PricingEstimateService(db, routing);
+  const estimates = new PricingEstimateService(db, routing, options);
 
   router.post('/estimate', async (req: AuthedRequest, res) => {
     if (!req.caller) {

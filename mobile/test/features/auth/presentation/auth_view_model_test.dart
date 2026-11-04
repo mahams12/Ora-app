@@ -169,6 +169,72 @@ void main() {
       expect(state, isA<AuthFlowError>());
       expect((state as AuthFlowError).message, contains('Too many'));
     });
+
+    test('retry after wrong code still verifies (session from error state)', () async {
+      const user = AuthUser(
+        uid: 'uid-1',
+        phoneNumber: '+923001234567',
+        isEmailVerified: false,
+      );
+      const session = OtpSession(
+        sessionId: 'vid-1',
+        phoneE164: '+923001234567',
+        otpState: OtpState.otpSent,
+      );
+
+      var attempt = 0;
+      when(() => verifyOtp(session: any(named: 'session'), otpCode: any(named: 'otpCode')))
+          .thenAnswer((_) async {
+        attempt++;
+        if (attempt == 1) throw const AppFailure.invalidOtp();
+        return user;
+      });
+
+      final container = makeContainer();
+      addTearDown(container.dispose);
+      final vm = container.read(authViewModelProvider.notifier);
+      // ignore: invalid_use_of_protected_member
+      vm.state = const AuthFlowOtpSent(session: session);
+
+      await vm.verifyOtp(code: '000000');
+      expect(container.read(authViewModelProvider), isA<AuthFlowError>());
+
+      // Second attempt must not be dead — the verify button stays live.
+      await vm.verifyOtp(code: '123456');
+      verify(() => verifyOtp(
+          session: any(named: 'session'), otpCode: any(named: 'otpCode'))).called(2);
+      expect(container.read(authViewModelProvider), isA<AuthFlowAuthenticated>());
+    });
+
+    test('resend still works from error state', () async {
+      const session = OtpSession(
+        sessionId: 'vid-1',
+        phoneE164: '+923001234567',
+        otpState: OtpState.otpSent,
+      );
+      when(() => resendOtp(session: any(named: 'session'))).thenAnswer(
+        (_) async => const PhoneCodeSent(
+          OtpSession(
+            sessionId: 'vid-2',
+            phoneE164: '+923001234567',
+            otpState: OtpState.otpSent,
+          ),
+        ),
+      );
+
+      final container = makeContainer();
+      addTearDown(container.dispose);
+      final vm = container.read(authViewModelProvider.notifier);
+      // ignore: invalid_use_of_protected_member
+      vm.state = const AuthFlowError(
+        message: 'Incorrect code.',
+        previousState: AuthFlowOtpSent(session: session),
+      );
+
+      await vm.resendOtp();
+      verify(() => resendOtp(session: any(named: 'session'))).called(1);
+      expect(container.read(authViewModelProvider), isA<AuthFlowOtpSent>());
+    });
   });
 
   group('AuthViewModel.resendOtp', () {

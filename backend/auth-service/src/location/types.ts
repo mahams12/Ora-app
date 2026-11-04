@@ -32,4 +32,16 @@ export interface ParsedLocationUpdate {
   timestampMs: number;
   provider: string;
   altitude: number | null;
+  /**
+   * Adaptive freshness — client-declared publish cadence (clamped to
+   * N3_MIN/MAX_PUBLISH_INTERVAL_MS). Honored only when
+   * LOCATION_ADAPTIVE_FRESHNESS is on; otherwise ignored entirely.
+   */
+  publishIntervalMs: number | null;
+  /**
+   * Presence keepalive — the client re-asserted a still-accurate last-known
+   * position with a fresh timestamp because no newer GPS fix exists. Marker
+   * records it for observability; semantics identical to a normal update.
+   */
+  presenceKeepalive: boolean;
 }

@@ -29,6 +29,8 @@ import '../../features/auth/domain/use_cases/request_otp_use_case.dart';
 import '../../features/auth/domain/use_cases/resend_otp_use_case.dart';
 import '../../features/auth/domain/use_cases/resolve_auth_profile_use_case.dart';
 import '../../features/auth/domain/use_cases/restore_session_use_case.dart';
+import '../../features/auth/domain/use_cases/submit_driver_onboarding_use_case.dart';
+import '../../features/auth/domain/use_cases/switch_mode_use_case.dart';
 import '../../features/auth/domain/use_cases/update_display_name_use_case.dart';
 import '../../features/auth/domain/use_cases/verify_otp_use_case.dart';
 import '../../features/auth/presentation/view_models/auth_state_notifier.dart';
@@ -45,6 +47,7 @@ import '../../features/driver/data/availability/driver_availability_remote_data_
 import '../../features/driver/data/location/driver_location_remote_data_source.dart';
 import '../../features/driver/data/location/geolocator_driver_location_source.dart';
 import '../../features/driver/domain/location/driver_location_source.dart';
+import '../../features/ride/data/location/device_geocoder_place_search.dart';
 import '../../features/ride/data/location/fallback_place_search.dart';
 import '../../features/ride/data/location/geocoding_device_geocoder.dart';
 import '../../features/ride/data/location/geolocator_device_location.dart';
@@ -188,10 +191,16 @@ final placeSearchPortProvider = Provider<PlaceSearchPort>((ref) {
   // No Places key (local/test builds) → free OSM Nominatim as primary, so
   // search + reverse geocode still work on devices without an Android
   // Geocoder backend (e.g. some MIUI ROMs). Zero cost, zero keys.
+  // Secondary keeps search working when the primary is unreachable —
+  // device geocoder for Nominatim-primary builds, Nominatim behind Places.
+  // All legs are bounded by FallbackPlaceSearch's hard timeout.
   return FallbackPlaceSearch(
     primary: key.trim().isEmpty
         ? NominatimPlaceSearch()
         : GooglePlacesHttpSearch(apiKey: key),
+    secondary: key.trim().isEmpty
+        ? DeviceGeocoderPlaceSearch()
+        : NominatimPlaceSearch(),
     deviceGeocoder: GeocodingDeviceGeocoder(),
   );
 });
@@ -285,6 +294,24 @@ final startRideUseCaseProvider = Provider<StartRideUseCase>(
 
 final completeRideUseCaseProvider = Provider<CompleteRideUseCase>(
   (ref) => CompleteRideUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+// Ora Courier — delivery exceptions + return-to-sender.
+
+final failDeliveryUseCaseProvider = Provider<FailDeliveryUseCase>(
+  (ref) => FailDeliveryUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final retryDeliveryUseCaseProvider = Provider<RetryDeliveryUseCase>(
+  (ref) => RetryDeliveryUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final startReturnUseCaseProvider = Provider<StartReturnUseCase>(
+  (ref) => StartReturnUseCase(ref.watch(rideRepositoryProvider)),
+);
+
+final completeReturnUseCaseProvider = Provider<CompleteReturnUseCase>(
+  (ref) => CompleteReturnUseCase(ref.watch(rideRepositoryProvider)),
 );
 
 final submitRatingUseCaseProvider = Provider<SubmitRatingUseCase>(
@@ -408,6 +435,15 @@ final getCurrentUserUseCaseProvider = Provider<GetCurrentUserUseCase>(
 
 final resolveAuthProfileUseCaseProvider = Provider<ResolveAuthProfileUseCase>(
   (ref) => ResolveAuthProfileUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final switchModeUseCaseProvider = Provider<SwitchModeUseCase>(
+  (ref) => SwitchModeUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final submitDriverOnboardingUseCaseProvider =
+    Provider<SubmitDriverOnboardingUseCase>(
+  (ref) => SubmitDriverOnboardingUseCase(ref.watch(authRepositoryProvider)),
 );
 
 final updateDisplayNameUseCaseProvider = Provider<UpdateDisplayNameUseCase>(

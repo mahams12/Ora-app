@@ -284,6 +284,11 @@ class DriverInvitesViewModel
           : DriverInvitesPhase.ready,
       items: items,
     );
+    // Poll-driven invite signal for the adaptive presence boost — covers the
+    // non-FCM discovery path so the boost does not depend on push delivery.
+    if (items.any((i) => i.isActionable)) {
+      ref.read(driverInviteActivityProvider.notifier).state = _now();
+    }
     _ensureTicker();
   }
 
@@ -304,4 +309,11 @@ class DriverInvitesViewModel
 final driverInvitesViewModelProvider = NotifierProvider.autoDispose<
     DriverInvitesViewModel, DriverInvitesUiState>(
   DriverInvitesViewModel.new,
+);
+
+/// Last moment dispatch-invite activity was observed (FCM nudge or
+/// poll-discovered actionable invite). Consumed by the adaptive presence
+/// publisher to tighten its cadence while a driver may be under dispatch.
+final driverInviteActivityProvider = StateProvider<DateTime?>(
+  (ref) => null,
 );

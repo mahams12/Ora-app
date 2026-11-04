@@ -13,6 +13,57 @@ class LatLngPoint {
   final String? address;
 }
 
+/// Ora Courier v2 — one ordered itinerary stop (server projection).
+class RideStop {
+  const RideStop({
+    required this.seq,
+    required this.type,
+    required this.location,
+    required this.status,
+    this.label,
+    this.instructions,
+    this.items,
+    this.shopBudgetMinor,
+    this.arrivedAt,
+    this.doneAt,
+    this.failedAt,
+    this.failureReason,
+    this.confirmedNearMeters,
+    this.quote,
+    this.purchase,
+  });
+
+  final int seq;
+
+  /// PICKUP | SHOP | DROPOFF.
+  final String type;
+  final LatLngPoint location;
+
+  /// PENDING | ARRIVED | WAITING_APPROVAL | DONE | FAILED | SKIPPED.
+  final String status;
+  final String? label;
+  final String? instructions;
+
+  /// buy_deliver — customer shopping list on SHOP stops.
+  final List<Map<String, Object?>>? items;
+  final int? shopBudgetMinor;
+  final String? arrivedAt;
+  final String? doneAt;
+  final String? failedAt;
+  final String? failureReason;
+  final int? confirmedNearMeters;
+
+  /// buy_deliver — driver quote: {items, totalMinor, quotedAt, approvedAt, rejectedAt}.
+  final Map<String, Object?>? quote;
+
+  /// buy_deliver — confirmed purchase: {totalMinor, confirmedAt}.
+  final Map<String, Object?>? purchase;
+
+  bool get isDone => status == 'DONE';
+  bool get isFailed => status == 'FAILED' || status == 'SKIPPED';
+  bool get awaitingApproval => status == 'WAITING_APPROVAL';
+}
+
 /// Immutable ride snapshot from GET/POST ride APIs.
 class Ride {
   const Ride({
@@ -48,6 +99,22 @@ class Ride {
     this.closedAt,
     this.cancelledBy,
     this.cancellationReason,
+    this.parcel,
+    this.otpCodes,
+    this.pickupPhotoUrl,
+    this.deliveryFailedAt,
+    this.deliveryFailedReason,
+    this.returnStartedAt,
+    this.returnedAt,
+    this.courierProtocolVersion,
+    this.stops,
+    this.currentStopIndex,
+    this.shopping,
+    this.settlement,
+    this.evidence,
+    this.partialFulfillment,
+    this.disputeStatus,
+    this.disputeId,
   });
 
   final String rideId;
@@ -87,6 +154,63 @@ class Ride {
   final String? cancellationReason;
   final String createdAt;
   final String updatedAt;
+
+  /// Ora Courier — parcel manifest (present only when
+  /// [serviceType] == 'courier'). Raw server projection.
+  final Map<String, Object?>? parcel;
+
+  /// Ora Courier — confirmation codes, exposed to the passenger only.
+  /// Keys: pickup, delivery, return, expiresAt, pickupUsedAt,
+  /// deliveryUsedAt, returnUsedAt.
+  final Map<String, Object?>? otpCodes;
+
+  /// Ora Courier — optional condition photo taken at pickup.
+  final String? pickupPhotoUrl;
+
+  /// Ora Courier — delivery failure bookkeeping.
+  final String? deliveryFailedAt;
+  final String? deliveryFailedReason;
+
+  /// Ora Courier — return-to-sender bookkeeping.
+  final String? returnStartedAt;
+  final String? returnedAt;
+
+  /// Ora Courier v2 — 1 = OTP-era, 2 = code-free stops protocol.
+  final int? courierProtocolVersion;
+
+  /// Ora Courier v2 — ordered itinerary (present on v2 bookings).
+  final List<RideStop>? stops;
+  final int? currentStopIndex;
+
+  /// buy_deliver — {totalBudgetMinor, approvedTotalMinor, spentMinor,
+  /// serviceFeeMinor, paymentArrangement, attestationAcceptedAt}.
+  final Map<String, Object?>? shopping;
+
+  /// Ora Courier v2 — server-computed cash breakdown + driver-reported status.
+  final Map<String, Object?>? settlement;
+
+  /// Ora Courier v2 — {confirms: [...], customerAckAt}.
+  final Map<String, Object?>? evidence;
+  final bool? partialFulfillment;
+  final String? disputeStatus;
+  final String? disputeId;
+
+  bool get isCourier => serviceType == 'courier';
+  bool get isBuyDeliver => serviceType == 'buy_deliver';
+  bool get isDelivery => isCourier || isBuyDeliver;
+
+  /// True when this booking uses the code-free v2 protocol.
+  bool get isCourierV2 => courierProtocolVersion == 2 && stops != null;
+
+  /// The next actionable stop, if any.
+  RideStop? get currentStop {
+    final idx = currentStopIndex;
+    final list = stops;
+    if (idx == null || list == null || idx < 0 || idx >= list.length) {
+      return null;
+    }
+    return list[idx];
+  }
 }
 
 /// Paginated ride history page from GET /v1/rides.
@@ -121,6 +245,9 @@ class OpenRide {
     required this.createdAt,
     this.distanceKm,
     this.estimatedDurationMin,
+    this.parcel,
+    this.stops,
+    this.shopping,
   });
 
   final String rideId;
@@ -138,6 +265,13 @@ class OpenRide {
   final int? estimatedDurationMin;
   final String expiresAt;
   final String createdAt;
+
+  /// Ora Courier — non-contact parcel summary on open discovery.
+  final Map<String, Object?>? parcel;
+
+  /// Ora Courier v2 — itinerary summary for driver offer evaluation.
+  final List<RideStop>? stops;
+  final Map<String, Object?>? shopping;
 }
 
 /// Paginated open-ride discovery page from GET /v1/rides/open.
@@ -174,6 +308,9 @@ class DriverInvite {
     this.respondedAt,
     this.offerId,
     this.distanceKm,
+    this.parcel,
+    this.stops,
+    this.shopping,
   });
 
   final String rideId;
@@ -191,6 +328,13 @@ class DriverInvite {
   final String? respondedAt;
   final String? offerId;
   final double? distanceKm;
+
+  /// Ora Courier — driver-visible parcel summary (no contact info).
+  final Map<String, Object?>? parcel;
+
+  /// Ora Courier v2 — itinerary + shopping budget for invite evaluation.
+  final List<RideStop>? stops;
+  final Map<String, Object?>? shopping;
 
   bool get isActionable => status == 'ACTIVE';
 }

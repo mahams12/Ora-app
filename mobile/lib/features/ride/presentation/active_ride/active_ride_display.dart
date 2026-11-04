@@ -12,6 +12,9 @@ String activeRideTitle(String state) {
     'CANCELLED' => 'Ride cancelled',
     'EXPIRED' => 'Request expired',
     'NO_SHOW' => 'No-show recorded',
+    'RETURNING' => 'Returning to sender',
+    'RETURNED' => 'Parcel returned',
+    'DELIVERY_FAILED' => 'Delivery failed',
     'SEARCHING' || 'OFFERS_AVAILABLE' => 'Looking for offers',
     _ => 'Ride update',
   };
@@ -42,6 +45,16 @@ String activeRideMessage(String state) {
       'This request expired on the server. Offers are no longer available.',
     'NO_SHOW' =>
       'The server recorded a no-show. No fees or penalties are invented here.',
+    // Ora Courier — exception lifecycle.
+    'RETURNING' =>
+      'The courier is returning the parcel to the sender. The return code '
+          'below confirms handover.',
+    'RETURNED' =>
+      'The parcel was returned to the sender and confirmed with the return '
+          'code.',
+    'DELIVERY_FAILED' =>
+      'The courier recorded a failed delivery attempt. You can arrange a '
+          'return or contact support.',
     'SEARCHING' || 'OFFERS_AVAILABLE' =>
       'This ride is still in the offers marketplace.',
     _ =>
@@ -55,7 +68,8 @@ bool isActiveRidePollingState(String state) {
       s == 'DRIVER_EN_ROUTE' ||
       s == 'DRIVER_ARRIVED' ||
       s == 'RIDE_STARTED' ||
-      s == 'RIDE_COMPLETED';
+      s == 'RIDE_COMPLETED' ||
+      s == 'RETURNING';
 }
 
 bool isActiveRideTerminalState(String state) {
@@ -63,11 +77,17 @@ bool isActiveRideTerminalState(String state) {
   return s == 'CANCELLED' ||
       s == 'EXPIRED' ||
       s == 'NO_SHOW' ||
-      s == 'RIDE_CLOSED';
+      s == 'RIDE_CLOSED' ||
+      // Ora Courier terminal states.
+      s == 'RETURNED' ||
+      s == 'DELIVERY_FAILED';
 }
 
-/// Passenger may cancel through RIDE_STARTED (server-enforced).
-bool passengerCanCancel(String state) {
+/// Passenger may cancel through RIDE_STARTED (server-enforced). For courier
+/// rides the server refuses cancellation once the parcel is picked up —
+/// the caller must gate RIDE_STARTED on serviceType.
+bool passengerCanCancel(String state, {bool courier = false}) {
+  if (courier && state.toUpperCase() == 'RIDE_STARTED') return false;
   final s = state.toUpperCase();
   return s == 'SEARCHING' ||
       s == 'OFFERS_AVAILABLE' ||
@@ -77,8 +97,12 @@ bool passengerCanCancel(String state) {
       s == 'RIDE_STARTED';
 }
 
-bool passengerCanClose(String state) =>
-    state.toUpperCase() == 'RIDE_COMPLETED';
+/// RIDE_COMPLETED for all services; RETURNED only exists for courier and
+/// is closeable per the server state machine.
+bool passengerCanClose(String state) {
+  final s = state.toUpperCase();
+  return s == 'RIDE_COMPLETED' || s == 'RETURNED';
+}
 
 bool isMarketplaceRideState(String state) {
   final s = state.toUpperCase();

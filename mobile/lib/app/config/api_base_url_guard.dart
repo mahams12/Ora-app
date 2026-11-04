@@ -39,6 +39,17 @@ String resolveApiBaseUrl({
     throw ArgumentError('API base URL must use http or https.');
   }
 
+  // All data sources call '/auth/register'-style paths — the base URL must
+  // already include the version prefix or every request 404s at bootstrap.
+  final path = uri.path.endsWith('/')
+      ? uri.path.substring(0, uri.path.length - 1)
+      : uri.path;
+  if (!path.endsWith('/v1')) {
+    throw ArgumentError(
+      'API base URL must end in /v1 (got "$trimmed").',
+    );
+  }
+
   return trimmed.endsWith('/')
       ? trimmed.substring(0, trimmed.length - 1)
       : trimmed;

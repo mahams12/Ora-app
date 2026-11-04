@@ -10,6 +10,7 @@ import '../../../../core/errors/failure_mapper.dart';
 import '../../../../core/notifications/ride_fcm_nudge.dart';
 import '../../../../core/storage/idempotency_nonce_store.dart';
 import '../../domain/entities/ride.dart';
+import '../../domain/repositories/ride_repository.dart';
 import '../../domain/use_cases/ride_use_cases.dart';
 import '../active_ride/active_ride_display.dart';
 
@@ -51,6 +52,7 @@ class ActiveRideUiState {
     this.isPolling = false,
     this.isCancelling = false,
     this.isClosing = false,
+    this.isActing = false,
     this.errorMessage,
     this.infoMessage,
     this.connectivityDegraded = false,
@@ -62,17 +64,23 @@ class ActiveRideUiState {
   final bool isPolling;
   final bool isCancelling;
   final bool isClosing;
+
+  /// Ora Courier v2 — quote-response/acknowledge/dispute in flight.
+  final bool isActing;
   final String? errorMessage;
   final String? infoMessage;
   final bool connectivityDegraded;
 
   String get rideState => ride?.state ?? '';
 
-  bool get isMutating => isCancelling || isClosing;
+  bool get isMutating => isCancelling || isClosing || isActing;
 
   bool get canCancel =>
       ride != null &&
-      passengerCanCancel(ride!.state) &&
+      passengerCanCancel(
+        ride!.state,
+        courier: ride!.serviceType == 'courier',
+      ) &&
       !isMutating &&
       phase != ActiveRidePhase.mutating;
 
@@ -89,6 +97,7 @@ class ActiveRideUiState {
     bool? isPolling,
     bool? isCancelling,
     bool? isClosing,
+    bool? isActing,
     String? errorMessage,
     String? infoMessage,
     bool? connectivityDegraded,
@@ -102,6 +111,7 @@ class ActiveRideUiState {
       isPolling: isPolling ?? this.isPolling,
       isCancelling: isCancelling ?? this.isCancelling,
       isClosing: isClosing ?? this.isClosing,
+      isActing: isActing ?? this.isActing,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       infoMessage: clearInfo ? null : (infoMessage ?? this.infoMessage),
       connectivityDegraded:
@@ -119,6 +129,7 @@ class ActiveRideViewModel
   late final FailureMapper _failures;
   late final ActiveRidePollingPolicy _policy;
   late final IdempotencyNonceStore _nonceStore;
+  late final RideRepository _repo;
 
   Timer? _pollTimer;
   Timer? _clockTimer;
@@ -132,6 +143,7 @@ class ActiveRideViewModel
   int _attempt = 0;
   String? _cancelOpKey;
   String? _closeOpKey;
+  final Map<String, String> _actOpKeys = {};
   int _fetchSeq = 0;
   int _mutationGen = 0;
 
@@ -153,6 +165,7 @@ class ActiveRideViewModel
     _failures = ref.read(failureMapperProvider);
     _policy = ref.read(activeRidePollingPolicyProvider);
     _nonceStore = ref.read(idempotencyNonceStoreProvider);
+    _repo = ref.read(rideRepositoryProvider);
 
     // NOTIF-RIDE-NUDGE: push ⇒ "poll now" hint for this ride only; HTTP
     // polling stays the authoritative fallback and is untouched.
@@ -440,7 +453,13 @@ class ActiveRideViewModel
   Future<void> cancel({String? reason}) async {
     if (!_alive) return;
     final ride = state.ride;
-    if (ride == null || !passengerCanCancel(ride.state)) return;
+    if (ride == null ||
+        !passengerCanCancel(
+          ride.state,
+          courier: ride.serviceType == 'courier',
+        )) {
+      return;
+    }
     if (state.isMutating) return;
 
     final gen = ++_mutationGen;
@@ -541,6 +560,105 @@ class ActiveRideViewModel
         }
       }
     }
+  }
+
+  // ── Ora Courier v2 — passenger actions ────────────────────────────────
+
+  /// Shared runner for v2 passenger mutations — same poll-pause / apply /
+  /// reconcile / resume discipline as [cancel] and [closeRide].
+  Future<void> _runDeliveryAction(
+    String purpose,
+    Future<Ride> Function(String operationKey, int expectedVersion) run,
+  ) async {
+    if (!_alive) return;
+    final ride = state.ride;
+    if (ride == null || state.isMutating) return;
+
+    final gen = ++_mutationGen;
+    final opKey = _actOpKeys.putIfAbsent(
+      purpose,
+      () => 'ride:$purpose:$rideId:${const Uuid().v4()}',
+    );
+    state = state.copyWith(
+      phase: ActiveRidePhase.mutating,
+      isActing: true,
+      clearError: true,
+      clearInfo: true,
+    );
+    _pollTimer?.cancel();
+    _pollTimer = null;
+
+    try {
+      final updated = await run(opKey, ride.version);
+      if (!_alive || gen != _mutationGen) return;
+      if (shouldAcceptRideSnapshot(updated, state.ride)) {
+        state = state.copyWith(isActing: false);
+        _applyRide(updated, softError: false);
+      } else {
+        state = state.copyWith(isActing: false);
+        await refresh(force: true);
+      }
+    } catch (error, stack) {
+      if (!_alive || gen != _mutationGen) return;
+      final failure = _failures.fromException(error, stack);
+      state = state.copyWith(errorMessage: failure.userMessage);
+      await refresh(force: true);
+    } finally {
+      if (_alive && gen == _mutationGen && state.isActing) {
+        state = state.copyWith(
+          isActing: false,
+          phase: state.ride != null &&
+                  isActiveRideTerminalState(state.ride!.state)
+              ? ActiveRidePhase.ended
+              : ActiveRidePhase.active,
+        );
+        if (!_lifetimeExpired && !_terminalStopped) {
+          _scheduleNext();
+        }
+      }
+    }
+  }
+
+  /// buy_deliver — approve or reject the driver's itemized shop quote.
+  Future<void> respondToStopQuote(int seq, {required bool approve}) {
+    return _runDeliveryAction(
+      'quote-response:$seq',
+      (opKey, version) => _repo.respondToStopQuote(
+        rideId: rideId,
+        seq: seq,
+        expectedVersion: version,
+        approve: approve,
+        operationKey: opKey,
+      ),
+    );
+  }
+
+  /// Ora Courier v2 — optional "got it" acknowledgement (audit timestamp).
+  Future<void> acknowledgeDelivery() {
+    return _runDeliveryAction(
+      'ack',
+      (opKey, version) => _repo.acknowledgeDelivery(
+        rideId: rideId,
+        expectedVersion: version,
+        operationKey: opKey,
+      ),
+    );
+  }
+
+  /// Ora Courier v2 — open a dispute (post-conclusion, bounded window).
+  Future<void> reportIssue({
+    required String category,
+    required String message,
+  }) {
+    return _runDeliveryAction(
+      'dispute',
+      (opKey, version) => _repo.createDispute(
+        rideId: rideId,
+        category: category,
+        message: message,
+        operationKey: opKey,
+      ),
+    );
   }
 
   Future<void> _handleMutationFailure(

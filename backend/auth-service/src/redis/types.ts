@@ -46,6 +46,13 @@ export interface RedisGeoClient {
      * marker checks still enforce freshness identically).
      */
     minLastLocationTs?: number;
+    /**
+     * Adaptive-freshness variant: only return docs whose stored per-driver
+     * freshUntilMs is strictly in the future. Firestore client applies it as
+     * a range filter on the freshUntilMs twin (written on every marker doc);
+     * takes precedence over minLastLocationTs when both are provided.
+     */
+    minFreshUntilMs?: number;
   }): Promise<GeoRadiusHit[]>;
   get(key: string): Promise<string | null>;
   /** Batch string GET (MGET); values align 1:1 with keys. */
@@ -77,7 +84,28 @@ export interface RedisGeoClient {
       longitude: number;
       markerValue: string | null;
     }) => 'write' | 'skip';
+    /**
+     * Merged idle-stream cursor (cost-optimization Phase B): when present the
+     * implementation validates + advances the idle stream cursor inside the
+     * SAME write/transaction as the marker+geo update, replacing the separate
+     * locationStreams/{driverId} cursor accept. Violations throw
+     * LocationDomainError (SEQUENCE_VIOLATION) — they must NOT be swallowed
+     * like ordinary projection failures.
+     */
+    idleCursor?: {
+      locationStreamId: string;
+      locationSeq: number;
+      updatedAtIso: string;
+      expiresAtIso: string;
+    };
   }): Promise<'written' | 'skipped'>;
+  /**
+   * Capability marker: the projectLocation implementation honors idleCursor
+   * (merged idle-stream validation inside the write transaction). Callers
+   * MUST NOT pass idleCursor to clients that don't declare this — cursor
+   * validation would be silently skipped.
+   */
+  supportsIdleCursor?: boolean;
   /**
    * Optional storage-hygiene sweep — physically remove fully-expired
    * presence records. Matching never depends on this (TTL is enforced on
@@ -95,6 +123,37 @@ export const N3_REDIS_GEO_COUNT = 100;
 /** N3 freshness window (independent of N2C 30s marker TTL). */
 export const N3_FRESHNESS_MAX_AGE_MS = 15_000;
 
+/**
+ * Adaptive freshness (cost-optimization Phase A). When
+ * LOCATION_ADAPTIVE_FRESHNESS is on and the client declares its current
+ * publish interval, marker expiry is computed per driver as
+ * lastLocationTs + interval + grace instead of a fixed 15s window.
+ * Grace covers one missed publish + transport latency — bounded so a dead
+ * driver can never linger in matching past interval + grace.
+ */
+export const N3_FRESHNESS_GRACE_MS = 15_000;
+export const N3_MIN_PUBLISH_INTERVAL_MS = 4_000;
+export const N3_MAX_PUBLISH_INTERVAL_MS = 60_000;
+
+/**
+ * Honest-position bound — the maximum age of the underlying GPS fix a
+ * marker may claim for matching/eligibility. Independent of presence
+ * freshness: a keepalive re-asserts an OLD fix (original timestamp) to keep
+ * the driver's presence alive; this cap is what stops a stale position
+ * from being treated as a current location at invite time. Sized to the
+ * client keepaliveMaxFixAge (90 s) + transport margin.
+ */
+export const N3_MAX_FIX_AGE_MS = 120_000;
+
+/** Clamp a client-declared publish interval into the accepted range. */
+export function clampPublishIntervalMs(raw: unknown): number | null {
+  if (typeof raw !== 'number' || !Number.isFinite(raw)) return null;
+  return Math.min(
+    N3_MAX_PUBLISH_INTERVAL_MS,
+    Math.max(N3_MIN_PUBLISH_INTERVAL_MS, Math.round(raw)),
+  );
+}
+
 /** N3 max accepted location accuracy (metres). */
 export const N3_MAX_ACCURACY_M = 50;
 
@@ -106,6 +165,16 @@ export interface DriverOnlineMarker {
   locationStreamId: string;
   locationSeq: number;
   acceptedAt: string;
+  /**
+   * Adaptive freshness — server-computed marker expiry
+   * (lastLocationTs + declared interval + grace). Present only when the
+   * client declared publishIntervalMs and LOCATION_ADAPTIVE_FRESHNESS is on.
+   */
+  freshUntilMs?: number;
+  /** Client-declared publish cadence actually honored (clamped). */
+  publishIntervalMs?: number;
+  /** Presence keepalive — client re-asserted a stale-coord fix (adaptive only). */
+  keepalive?: boolean;
 }
 
 export const DRIVER_ONLINE_TTL_SECONDS = 30;

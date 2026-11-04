@@ -26,10 +26,15 @@ export function createInternalRouter(
   fcm: FcmSender | null = null,
   tripLocationRtdb: import('../rtdb/types').TripLocationRtdb | null = null,
   streamStore: import('../location/stream_store').LocationStreamStore | null = null,
+  options?: { adaptiveFreshness?: boolean },
 ): Router {
   const router = Router();
   const rides = new RideService(db, tripLocationRtdb, streamStore);
-  const nearby = new NearbyDriversService(db, redis);
+  const nearby = new NearbyDriversService(
+    db,
+    redis,
+    options?.adaptiveFreshness === true,
+  );
   const dispatch = new DispatchWaveService(db, nearby);
   const fcmSender = fcm ?? createNullFcmSender();
   const dispatchFcm = new DispatchFcmProjector(db, fcmSender);
@@ -441,6 +446,155 @@ export function createInternalRouter(
       });
       sendRideDomainError(req, res, err);
     }
+  });
+
+  /**
+   * Cost-optimization Phase D — coalesced sweep entrypoint. One scheduled
+   * invocation runs every per-minute sweep sequentially in a single request,
+   * replacing 7 separate Cloud Run Job executions (~7,600/day → ~1,440/day).
+   *
+   * Guarantees preserved per sweep: each step keeps its own `limit` and
+   * internal deadline semantics; failures are isolated (one failing sweep
+   * cannot abort the others); all underlying sweeps are idempotent — a retry
+   * or overlapping invocation only repeats bounded, state-checked work.
+   *
+   * Traffic-aware guard: dispatch-wave progression strictly requires
+   * SEARCHING rides, so a single cheap probe (state==SEARCHING limit 1)
+   * skips that sweep when no ride can advance. Time-driven sweeps (ride
+   * expiry, offer expiry, no-show, FCM outbox, storage cleanup) always run —
+   * their work exists independent of traffic and skipping them could break
+   * deadlines.
+   *
+   * Response contract: 200 only when every executed sweep succeeded. Any
+   * step failure yields 503 with the same per-sweep `results` + `failures`
+   * payload — Cloud Scheduler retries are safe because every sweep is
+   * idempotent, and failed executions surface in job metrics/alerting
+   * instead of hiding behind HTTP 200. Monitoring contract: alert on
+   * non-2xx / `SWEEPS_ALL` log entries with non-empty `failures`.
+   */
+  router.post('/sweeps/all', async (req, res) => {
+    const started = Date.now();
+    const requestId = getRequestId(req);
+
+    const limitRaw = req.query.limit;
+    let limit: number | undefined;
+    if (limitRaw != null) {
+      const parsed = Number(String(limitRaw));
+      if (!Number.isInteger(parsed) || parsed < 1) {
+        sendApiError(
+          req,
+          res,
+          400,
+          'VALIDATION_ERROR',
+          'limit must be a positive integer.',
+        );
+        return;
+      }
+      limit = parsed;
+    }
+
+    const guards = String(req.query.guards ?? 'true') !== 'false';
+    const cleanup = String(req.query.cleanup ?? 'true') !== 'false';
+    const results: Record<string, unknown> = {};
+    const failures: string[] = [];
+
+    const run = async (
+      name: string,
+      fn: () => Promise<unknown>,
+    ): Promise<void> => {
+      const t0 = Date.now();
+      try {
+        results[name] = await fn();
+        logSafe('SWEEPS_ALL_STEP', {
+          requestId,
+          step: name,
+          outcome: 'ok',
+          durationMs: Date.now() - t0,
+        });
+      } catch (err) {
+        failures.push(name);
+        results[name] = {
+          error: err instanceof Error ? err.name : 'unknown',
+        };
+        logSafe('SWEEPS_ALL_STEP', {
+          requestId,
+          step: name,
+          outcome: 'failed',
+          errorType: err instanceof Error ? err.name : 'unknown',
+          durationMs: Date.now() - t0,
+        });
+      }
+    };
+
+    // SEARCHING probe — mirrors the dispatch sweep's own first query. When
+    // no ride is searching, dispatch cannot have work this tick.
+    let searchingActive = true;
+    if (guards) {
+      try {
+        const probe = await db
+          .collection('rides')
+          .where('state', '==', 'SEARCHING')
+          .limit(1)
+          .get();
+        searchingActive = !probe.empty;
+      } catch (err) {
+        // Probe failure must not skip the sweep — fail open (run it).
+        logSafe('SWEEPS_ALL_PROBE_FAILED', {
+          requestId,
+          errorType: err instanceof Error ? err.name : 'unknown',
+        });
+        searchingActive = true;
+      }
+    }
+
+    if (searchingActive) {
+      await run('dispatch', () =>
+        dispatch.sweepDispatch({ correlationId: requestId, limit }),
+      );
+    } else {
+      results.dispatch = { skipped: 'no_searching_rides' };
+    }
+
+    await run('expire', () =>
+      rides.sweepExpiredRides({ correlationId: requestId, limit }),
+    );
+    await run('offerExpire', () =>
+      rides.sweepExpiredOffers({ correlationId: requestId, limit }),
+    );
+    await run('noShow', () =>
+      rides.sweepNoShowRides({ correlationId: requestId, limit }),
+    );
+    await run('dispatchFcm', () =>
+      dispatchFcm.sweep({ correlationId: requestId, limit }),
+    );
+    await run('rideStateFcm', () =>
+      rideStateFcm.sweep({ correlationId: requestId, limit }),
+    );
+    if (typeof redis?.sweepExpired === 'function') {
+      await run('geoPresence', async () => ({
+        removed: await redis.sweepExpired!(),
+      }));
+    }
+    if (cleanup) {
+      await run('expiresAtCleanup', () =>
+        expiresAtCleanup.runCleanup({ limit }),
+      );
+    }
+
+    logSafe('SWEEPS_ALL', {
+      operation: 'SWEEPS_ALL',
+      requestId,
+      searchingActive,
+      failures,
+      durationMs: Date.now() - started,
+    });
+    // Never report success when a sweep failed — scheduler retries are
+    // safe (all sweeps idempotent) and failed executions are observable.
+    sendRideData(req, res, failures.length > 0 ? 503 : 200, {
+      searchingActive,
+      results,
+      failures,
+    });
   });
 
   /** Phase 2 storage — worker-only TTL cleanup (idempotency, pricing snapshots, location stream cursors). */

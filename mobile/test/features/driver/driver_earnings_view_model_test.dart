@@ -79,6 +79,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((invocation) async {
       final cursor = invocation.namedArguments[#cursor] as String?;
@@ -106,6 +107,7 @@ void main() {
         cursor: null,
         status: 'completed',
         serviceType: null,
+        as: any(named: 'as'),
       ),
     ).called(1);
     // Non-completed filters must never be sent from this surface.
@@ -115,6 +117,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: 'all',
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     );
   });
@@ -163,6 +166,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((_) async {
       calls++;
@@ -238,6 +242,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer(
       (_) async => RideListPage(

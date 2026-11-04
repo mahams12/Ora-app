@@ -50,6 +50,11 @@ class _OtpEntryViewState extends ConsumerState<OtpEntryView> {
       AuthFlowVerifyingOtp(:final session) => session,
       AuthFlowResendingOtp(:final session) => session,
       AuthFlowResendCooldown(:final session) => session,
+      AuthFlowError(:final previousState) => switch (previousState) {
+          AuthFlowOtpSent(:final session) => session,
+          AuthFlowResendCooldown(:final session) => session,
+          _ => null,
+        },
       _ => null,
     };
 

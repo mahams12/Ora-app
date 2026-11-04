@@ -1,10 +1,18 @@
 import { LocationDomainError, type ParsedLocationUpdate } from './types';
+import { clampPublishIntervalMs } from '../redis/types';
 import { logSafe } from '../http/errors';
 
 const MAX_ACCURACY_M = 50;
 const MAX_SPEED_KMH = 200;
 const STALE_PAST_MS = 15_000;
 const FUTURE_SKEW_MS = 5_000;
+/**
+ * presenceKeepalive packets carry the ORIGINAL fix timestamp (honest GPS
+ * age) — presence freshness is derived from acceptedAt, not the fix time.
+ * Bounded so a keepalive can never smuggle an ancient position: the
+ * eligibility fix-age cap (N3_MAX_FIX_AGE_MS) plus clock/transit margin.
+ */
+const KEEPALIVE_MAX_FIX_AGE_MS = 130_000;
 
 /** Soft Pakistan bbox — warn only; never hard-reject. */
 const PK_LAT_MIN = 23.5;
@@ -128,9 +136,11 @@ export function parseAndValidateLocationBody(
 
   const provider = asNonEmptyString(b.provider, 'provider');
   const timestampMs = parseTimestampMs(b.timestamp);
+  const isKeepalive = b.presenceKeepalive === true;
 
   if (
-    timestampMs < nowMs - STALE_PAST_MS ||
+    timestampMs <
+      nowMs - (isKeepalive ? KEEPALIVE_MAX_FIX_AGE_MS : STALE_PAST_MS) ||
     timestampMs > nowMs + FUTURE_SKEW_MS
   ) {
     throw new LocationDomainError(
@@ -171,5 +181,7 @@ export function parseAndValidateLocationBody(
     timestampMs,
     provider,
     altitude,
+    publishIntervalMs: clampPublishIntervalMs(b.publishIntervalMs),
+    presenceKeepalive: isKeepalive,
   };
 }

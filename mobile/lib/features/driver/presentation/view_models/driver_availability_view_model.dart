@@ -3,7 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/di/providers.dart';
 import '../../../../core/errors/failure_mapper.dart';
 import '../../data/availability/driver_availability_remote_data_source.dart';
+import '../../domain/location/driver_location_fix.dart';
 import '../../domain/location/driver_presence_publisher.dart';
+import '../location/driver_location_session.dart';
+import 'driver_invites_view_model.dart';
+
+/// Compile-time adaptive presence flag (cost-optimization Phase A).
+/// Build with --dart-define=ORA_ADAPTIVE_PRESENCE=true. Default false keeps
+/// the legacy fixed-10s publisher bit-identical.
+const bool kAdaptivePresence = bool.fromEnvironment('ORA_ADAPTIVE_PRESENCE');
 
 class DriverAvailabilityUiState {
   const DriverAvailabilityUiState({
@@ -117,11 +125,35 @@ class DriverPresenceController extends Notifier<bool> {
       remote: ref.read(driverLocationRemoteDataSourceProvider),
       source: ref.read(driverLocationSourceProvider),
       logger: ref.read(appLoggerProvider),
+      policy: kAdaptivePresence
+          ? const PresencePublishPolicy.adaptive()
+          : const PresencePublishPolicy(),
+      onLatestFix: (fix) {
+        ref.read(driverPresenceLatestFixProvider.notifier).state = fix;
+      },
     );
     ref.onDispose(_publisher.dispose);
     ref.listen<bool>(
       driverAvailabilityProvider.select((s) => s.isOnline),
-      (prev, next) => _publisher.onAvailability(online: next),
+      (prev, next) {
+        _publisher.onAvailability(online: next);
+        if (!next) {
+          ref.read(driverPresenceLatestFixProvider.notifier).state = null;
+        }
+      },
+    );
+    // Pending-invite boost — fires on the FCM nudge AND on poll-discovered
+    // actionable invites, whichever arrives (never required for freshness).
+    ref.listen<DateTime?>(
+      driverInviteActivityProvider,
+      (prev, next) {
+        if (next != null) _publisher.onInviteActivity();
+      },
+    );
+    // Pause idle publishes while the trip publisher streams the same marker.
+    ref.listen<bool>(
+      driverTripLocationActiveProvider,
+      (prev, next) => _publisher.setTripPublishing(next),
     );
     return false;
   }
@@ -134,10 +166,19 @@ class DriverPresenceController extends Notifier<bool> {
     }
   }
 
-  void onSignedOut() => _publisher.onSignedOut();
+  void onSignedOut() {
+    _publisher.onSignedOut();
+    ref.read(driverPresenceLatestFixProvider.notifier).state = null;
+  }
 }
 
 final driverPresenceProvider =
     NotifierProvider<DriverPresenceController, bool>(
   DriverPresenceController.new,
 );
+
+/// Latest idle-presence GPS fix while the driver is online. Display-only —
+/// the driver home map consumes it so it never opens a second GPS watch.
+/// Cleared on offline/sign-out.
+final driverPresenceLatestFixProvider =
+    StateProvider<DriverLocationFix?>((ref) => null);

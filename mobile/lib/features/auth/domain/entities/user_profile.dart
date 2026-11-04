@@ -10,6 +10,7 @@ class UserProfile {
     this.displayName,
     this.role,
     this.driverStatus,
+    this.activeMode,
     this.isActive = true,
     this.banned = false,
     this.profileComplete = false,
@@ -24,6 +25,10 @@ class UserProfile {
 
   /// Server-authoritative driver status (relevant only for driver role).
   final String? driverStatus;
+
+  /// Server-authoritative operating mode (Switch to Driver):
+  /// 'passenger' | 'driver'. Restored after app restart from GET /v1/auth/me.
+  final String? activeMode;
 
   final bool isActive;
   final bool banned;

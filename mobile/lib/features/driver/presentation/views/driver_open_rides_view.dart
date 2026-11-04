@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 
+import '../../../../app/di/providers.dart';
 import '../../../../app/theme/ora_colors.dart';
+import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
@@ -11,7 +14,9 @@ import '../../../../core/utils/responsive.dart';
 import '../../../ride/domain/entities/ride.dart';
 import '../../../ride/domain/models/ride_category_option.dart';
 import '../../../ride/presentation/history/ride_history_display.dart';
+import '../../../ride/presentation/models/ride_map_preview_model.dart';
 import '../../../ride/presentation/widgets/ride_card/ride_card.dart';
+import '../../../ride/presentation/widgets/ride_map_preview.dart';
 import '../open_ride_display.dart';
 import '../view_models/driver_direct_offer_view_model.dart';
 import '../view_models/driver_invites_view_model.dart';
@@ -274,6 +279,7 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
                   offerDisabled: state.isOffering,
                   onAccept: () => _openOfferSheet(ride),
                   onDecline: () => vm.dismissRideLocally(ride.rideId),
+                  onTap: () => _openOfferSheet(ride),
                 ),
               ),
             );
@@ -313,6 +319,27 @@ class _OpenRidesFilterRow extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Real pickup→destination preview for the offer sheet — same MapLibre model
+/// as the passenger request preview, built from the authoritative open-ride
+/// coordinates (no route polyline; backend does not expose one on discovery).
+RideMapPreviewModel _offerPreviewModel(OpenRide ride) {
+  final pickup = gmaps.LatLng(ride.pickup.lat, ride.pickup.lng);
+  final destination = gmaps.LatLng(ride.destination.lat, ride.destination.lng);
+  return RideMapPreviewModel(
+    routeIdentity: RideMapPreviewModel.buildRouteIdentity(
+      pickup: pickup,
+      destination: destination,
+    ),
+    status: RideMapPreviewStatus.ready,
+    pickup: pickup,
+    destination: destination,
+    pickupLabel: rideCardLocationLabel(ride.pickup),
+    destinationLabel: rideCardLocationLabel(ride.destination),
+    distanceKm: ride.distanceKm,
+    durationMin: ride.estimatedDurationMin?.toDouble(),
+  );
 }
 
 class _OpenRideOfferSheet extends ConsumerStatefulWidget {
@@ -380,6 +407,15 @@ class _OpenRideOfferSheetState extends ConsumerState<_OpenRideOfferSheet> {
             Text(
               'Submit offer',
               style: OraTypography.headline(OraColors.textPrimary),
+            ),
+            const SizedBox(height: OraSpacing.sm),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(OraRadius.md),
+              child: RideMapPreview(
+                model: _offerPreviewModel(ride),
+                height: 180,
+                enableMaps: ref.watch(activeRideMapsEnabledProvider),
+              ),
             ),
             const SizedBox(height: OraSpacing.md),
             Wrap(

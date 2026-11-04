@@ -48,7 +48,10 @@ class PassengerPlacesUiState {
 /// rebuilds the notifier and re-loads from that account's scoped keys, so
 /// lists can never leak across accounts even if the store weren't cleared.
 class PassengerPlacesViewModel extends Notifier<PassengerPlacesUiState> {
-  late final PassengerPlacesStore _store;
+  /// Read via getter — this Notifier is session-scoped (not autoDispose), so
+  /// Riverpod re-runs build() on the SAME instance when the watched profile
+  /// changes; a `late final` field would throw on the second assignment.
+  PassengerPlacesStore get _store => ref.read(passengerPlacesStoreProvider);
 
   /// Current account uid — read (not watched) inside methods; build() watches
   /// the profile so an account change rebuilds and re-loads cleanly.
@@ -56,7 +59,6 @@ class PassengerPlacesViewModel extends Notifier<PassengerPlacesUiState> {
 
   @override
   PassengerPlacesUiState build() {
-    _store = ref.read(passengerPlacesStoreProvider);
     final uid = ref.watch(sessionUserProfileProvider)?.uid;
     if (uid != null) {
       Future.microtask(() => _load(uid));

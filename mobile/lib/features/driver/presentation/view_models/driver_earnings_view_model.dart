@@ -210,6 +210,7 @@ class DriverEarningsViewModel
         limit: _pageLimit,
         cursor: cursor,
         status: driverEarningsCompletedStatus,
+        as: 'driver',
       );
       if (seq != _requestSeq) return false;
 

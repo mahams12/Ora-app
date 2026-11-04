@@ -64,6 +64,21 @@ abstract interface class AuthRepository {
   /// Updates the authenticated user's displayName (`PATCH /v1/auth/profile`).
   Future<UserProfile> updateDisplayName({required String displayName});
 
+  /// Switches the server-authoritative operating mode (`POST /v1/auth/mode`).
+  /// [mode] is 'passenger' or 'driver'. Throws AppFailure.conflict with codes
+  /// DRIVER_ONBOARDING_REQUIRED / DRIVER_APPROVAL_PENDING / ACTIVE_JOB, or
+  /// AppFailure.forbidden for DRIVER_SUSPENDED.
+  Future<UserProfile> switchMode({required String mode});
+
+  /// Submits the first-time driver application (`POST /v1/drivers/onboarding`).
+  /// Returns the raw response (`data.driverStatus`).
+  Future<Map<String, dynamic>> submitDriverOnboarding({
+    required String vehicleType,
+    String? vehicleModel,
+    String? plateNumber,
+    String? homeCity,
+  });
+
   /// Clears all auth state: Firebase sign-out, secure storage wipe.
   Future<void> logout();
 }

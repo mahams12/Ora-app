@@ -11,6 +11,7 @@ export type RideListStatus = (typeof RIDE_LIST_STATUSES)[number];
 export const RIDE_LIST_SERVICE_TYPES = [
   'ride',
   'courier',
+  'buy_deliver',
   'intercity',
   'move',
 ] as const;
@@ -148,8 +149,9 @@ export function parseRideListQuery(query: Record<string, unknown>): {
   cursor: string | undefined;
   status: RideListStatus;
   serviceType: RideListServiceType | undefined;
+  as: RideListQueryRole | undefined;
 } {
-  const allowed = new Set(['limit', 'cursor', 'status', 'serviceType']);
+  const allowed = new Set(['limit', 'cursor', 'status', 'serviceType', 'as']);
   const extra = Object.keys(query).filter((k) => !allowed.has(k));
   if (extra.length > 0) {
     throw new RideDomainError(
@@ -207,15 +209,32 @@ export function parseRideListQuery(query: Record<string, unknown>): {
       throw new RideDomainError(
         'VALIDATION_ERROR',
         400,
-        'serviceType must be one of: ride, courier, intercity, move.',
+        'serviceType must be one of: ride, courier, buy_deliver, intercity, move.',
       );
     }
     serviceType = serviceTypeRaw as RideListServiceType;
   }
 
-  return { limit, cursor, status, serviceType };
+  // `as` lets a dual-role account pick which history view to list
+  // (Switch to Driver). The service layer still enforces eligibility.
+  const asRaw = singleQueryValue(query.as, 'as');
+  let asRole: RideListQueryRole | undefined;
+  if (asRaw !== undefined) {
+    if (asRaw !== 'passenger' && asRaw !== 'driver') {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        "as must be one of: passenger, driver.",
+      );
+    }
+    asRole = asRaw;
+  }
+
+  return { limit, cursor, status, serviceType, as: asRole };
 }
 
 export function completedStates(): string[] {
-  return ['RIDE_COMPLETED', 'RIDE_CLOSED'];
+  // RETURNED counts as a finished courier job for history + earnings
+  // (driver completed the return leg and was confirmed by the sender).
+  return ['RIDE_COMPLETED', 'RIDE_CLOSED', 'RETURNED'];
 }

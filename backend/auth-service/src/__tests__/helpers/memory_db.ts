@@ -52,6 +52,37 @@ export function memoryDb() {
     return data;
   }
 
+  /**
+   * Resolves Firestore dot-path update keys (`a.b.c`) into a nested merge —
+   * matches server SDK semantics so tests see the same doc shape production
+   * writes produce.
+   */
+  function mergeWithDotPaths(
+    base: Record<string, unknown>,
+    patch: Record<string, unknown>,
+  ): Record<string, unknown> {
+    const out: Record<string, unknown> = { ...base };
+    for (const [key, value] of Object.entries(patch)) {
+      if (!key.includes('.')) {
+        out[key] = value;
+        continue;
+      }
+      const parts = key.split('.');
+      let cursor = out;
+      for (let i = 0; i < parts.length - 1; i += 1) {
+        const next = cursor[parts[i]];
+        if (next == null || typeof next !== 'object' || Array.isArray(next)) {
+          cursor[parts[i]] = {};
+        } else {
+          cursor[parts[i]] = { ...(next as Record<string, unknown>) };
+        }
+        cursor = cursor[parts[i]] as Record<string, unknown>;
+      }
+      cursor[parts[parts.length - 1]] = value;
+    }
+    return out;
+  }
+
   function makeDoc(collection: string, id: string): DocRef {
     const path = `${collection}/${id}`;
     const ref: DocRef = {
@@ -77,7 +108,10 @@ export function memoryDb() {
       async update(value: Record<string, unknown>) {
         const existing = store.get(path);
         if (!existing) throw new Error('NOT_FOUND');
-        store.set(path, applyDeletes({ ...existing, ...value }));
+        store.set(
+          path,
+          applyDeletes(mergeWithDotPaths(existing, value)),
+        );
       },
       async delete() {
         store.delete(path);
@@ -366,15 +400,22 @@ export function memoryDb() {
             }
             return ref.get();
           },
-          set(ref: DocRef, value: Record<string, unknown>) {
-            pending.set(ref.path, { ...value });
+          set(
+            ref: DocRef,
+            value: Record<string, unknown>,
+            options?: { merge?: boolean },
+          ) {
+            const base = options?.merge
+              ? (pending.get(ref.path) ?? store.get(ref.path) ?? {})
+              : {};
+            pending.set(ref.path, { ...base, ...value });
           },
           update(ref: DocRef, value: Record<string, unknown>) {
             const base = pending.has(ref.path)
               ? pending.get(ref.path)
               : store.get(ref.path);
             if (!base) throw new Error('NOT_FOUND');
-            pending.set(ref.path, { ...base, ...value });
+            pending.set(ref.path, mergeWithDotPaths(base, value));
           },
         };
         const result = await fn(tx as never);

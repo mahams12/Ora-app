@@ -4,6 +4,7 @@ import type { AuthedRequest } from '../middleware/auth';
 import { getRequestId } from '../http/request_id';
 import { sendApiError, logSafe } from '../http/errors';
 import { DriverAvailabilityService } from './driver_availability_service';
+import { DriverOnboardingService } from './driver_onboarding_service';
 import { sendDriverData, sendDriverDomainError } from './http';
 import { DriverDomainError } from './types';
 import { DeviceTokenService } from '../delivery/device_token_service';
@@ -15,14 +16,90 @@ export function createDriversRouter(
     driverId: string,
     state: import('./types').AvailabilityState,
   ) => void,
+  availabilityService?: DriverAvailabilityService,
 ): Router {
   const router = Router();
-  const availability = new DriverAvailabilityService(
-    db,
-    geoProjection ?? null,
-    onAvailabilityTransition,
-  );
+  const availability =
+    availabilityService ??
+    new DriverAvailabilityService(
+      db,
+      geoProjection ?? null,
+      onAvailabilityTransition,
+    );
+  const onboarding = new DriverOnboardingService(db);
   const deviceTokens = new DeviceTokenService(db);
+
+  /**
+   * POST /v1/drivers/onboarding — first-time driver application
+   * (Switch to Driver flow). Idempotent: 'none' → 'pending'; existing
+   * pending/approved/suspended statuses are returned unchanged.
+   */
+  router.post('/onboarding', async (req: AuthedRequest, res) => {
+    if (!req.caller) {
+      sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');
+      return;
+    }
+    const idempotencyKey = req.header('Idempotency-Key');
+    if (!idempotencyKey || idempotencyKey.trim().length < 8) {
+      sendApiError(
+        req,
+        res,
+        400,
+        'IDEMPOTENCY_KEY_REQUIRED',
+        'Idempotency-Key header (min 8 chars) is required.',
+      );
+      return;
+    }
+    const allowed = new Set([
+      'vehicleType',
+      'vehicleModel',
+      'plateNumber',
+      'homeCity',
+    ]);
+    const body = req.body;
+    if (body == null || typeof body !== 'object' || Array.isArray(body)) {
+      sendApiError(
+        req,
+        res,
+        400,
+        'VALIDATION_ERROR',
+        'Request body must be a JSON object.',
+      );
+      return;
+    }
+    const extra = Object.keys(body).filter((k) => !allowed.has(k));
+    if (extra.length > 0) {
+      sendApiError(req, res, 400, 'VALIDATION_ERROR', 'Unknown fields.');
+      return;
+    }
+    const started = Date.now();
+    try {
+      const result = await onboarding.submit({
+        caller: req.caller,
+        vehicleType: body.vehicleType,
+        vehicleModel: body.vehicleModel,
+        plateNumber: body.plateNumber,
+        homeCity: body.homeCity,
+      });
+      logSafe('DRIVER_ONBOARDING', {
+        operation: 'DRIVER_ONBOARDING',
+        requestId: getRequestId(req),
+        actorId: req.caller.uid,
+        driverStatus: result.body.data.driverStatus,
+        durationMs: Date.now() - started,
+      });
+      sendDriverData(req, res, result.httpStatus, result.body.data);
+    } catch (err) {
+      logSafe('DRIVER_ONBOARDING', {
+        operation: 'DRIVER_ONBOARDING',
+        requestId: getRequestId(req),
+        actorId: req.caller.uid,
+        durationMs: Date.now() - started,
+        errorCode: err instanceof DriverDomainError ? err.code : 'INTERNAL',
+      });
+      sendDriverDomainError(req, res, err);
+    }
+  });
 
   router.post('/go-online', async (req: AuthedRequest, res) => {
     if (!req.caller) {

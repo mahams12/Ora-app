@@ -222,6 +222,9 @@ class DispatchFcmService {
   }
 
   void _refreshOpenRides(WidgetRef ref) {
+    // Record invite activity for the adaptive presence boost — fires on the
+    // nudge itself so the cadence tightens even before the refresh lands.
+    ref.read(driverInviteActivityProvider.notifier).state = DateTime.now();
     unawaited(
       ref.read(driverOpenRidesViewModelProvider.notifier).refresh(),
     );

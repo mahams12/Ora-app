@@ -11,6 +11,7 @@ import 'package:ora/features/auth/domain/entities/auth_user.dart';
 import 'package:ora/features/auth/domain/entities/user_profile.dart';
 import 'package:ora/features/auth/domain/use_cases/get_current_user_use_case.dart';
 import 'package:ora/features/auth/domain/use_cases/logout_use_case.dart';
+import 'package:ora/features/auth/domain/use_cases/switch_mode_use_case.dart';
 import 'package:ora/features/auth/presentation/view_models/auth_state_notifier.dart';
 import 'package:ora/features/auth/presentation/view_models/auth_view_state.dart';
 import 'package:ora/features/auth/presentation/view_models/session_user_profile.dart';
@@ -24,6 +25,8 @@ class MockLogoutUseCase extends Mock implements LogoutUseCase {}
 class MockGetCurrentUserUseCase extends Mock implements GetCurrentUserUseCase {}
 
 class MockListRidesUseCase extends Mock implements ListRidesUseCase {}
+
+class MockSwitchModeUseCase extends Mock implements SwitchModeUseCase {}
 
 class _RefreshingAuthNotifier extends AuthStateNotifier {
   @override
@@ -55,6 +58,18 @@ void main() {
     final logout = MockLogoutUseCase();
     final getUser = MockGetCurrentUserUseCase();
     final listRides = MockListRidesUseCase();
+    final switchMode = MockSwitchModeUseCase();
+    when(() => switchMode(mode: any(named: 'mode'))).thenAnswer(
+      (_) async => const UserProfile(
+        uid: 'SRjL7BJgCKTduhtpjtYMRZMq5fD2',
+        phoneNumber: '+923012345677',
+        displayName: 'Hello',
+        role: 'driver',
+        driverStatus: 'approved',
+        activeMode: 'driver',
+        profileComplete: true,
+      ),
+    );
     when(() => logout()).thenAnswer((_) async {});
     when(() => getUser()).thenAnswer(
       (_) async => const AuthUser(
@@ -70,6 +85,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((_) async => const RideListPage(rides: [], nextCursor: null));
 
@@ -78,6 +94,7 @@ void main() {
         logoutUseCaseProvider.overrideWithValue(logout),
         getCurrentUserUseCaseProvider.overrideWithValue(getUser),
         listRidesUseCaseProvider.overrideWithValue(listRides),
+        switchModeUseCaseProvider.overrideWithValue(switchMode),
         authStateNotifierProvider.overrideWith(_RefreshingAuthNotifier.new),
       ],
     );

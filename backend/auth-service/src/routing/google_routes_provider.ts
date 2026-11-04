@@ -9,6 +9,7 @@ import {
   RoutingError,
   type ComputeDriveRouteInput,
   type DriveRouteResult,
+  type MultiLegRouteResult,
   type RoutingProvider,
 } from './types';
 
@@ -20,7 +21,7 @@ export const GOOGLE_ROUTES_COMPUTE_URL =
  * map preview. Polyline is display-only and must never affect fare math.
  */
 export const GOOGLE_ROUTES_FIELD_MASK =
-  'routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline';
+  'routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline,routes.legs.distanceMeters,routes.legs.duration';
 
 const DEFAULT_TIMEOUT_MS = 12_000;
 
@@ -256,6 +257,163 @@ export class GoogleRoutesProvider implements RoutingProvider {
     const encodedPolyline = extractOptionalEncodedPolyline(first);
 
     return {
+      distanceKm,
+      durationMin,
+      ...(encodedPolyline != null ? { encodedPolyline } : {}),
+      provider: 'google_routes',
+    };
+  }
+
+  /** Ora Courier v2 — multi-stop route via Google Routes `intermediates`. */
+  async computeRoute(input: {
+    waypoints: { lat: number; lng: number }[];
+  }): Promise<MultiLegRouteResult> {
+    const waypoints = input.waypoints;
+    if (!Array.isArray(waypoints) || waypoints.length < 2) {
+      throw new RoutingError(
+        'VALIDATION_ERROR',
+        400,
+        'waypoints must contain at least 2 points.',
+      );
+    }
+    if (waypoints.length > 25) {
+      throw new RoutingError(
+        'VALIDATION_ERROR',
+        400,
+        'waypoints must contain at most 25 points.',
+      );
+    }
+    waypoints.forEach((p, i) => {
+      assertFiniteCoordinate(p?.lat, `waypoints[${i}].lat`);
+      assertFiniteCoordinate(p?.lng, `waypoints[${i}].lng`);
+    });
+
+    const toLatLng = (p: { lat: number; lng: number }) => ({
+      location: { latLng: { latitude: p.lat, longitude: p.lng } },
+    });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), this.timeoutMs);
+
+    let response: Response;
+    try {
+      response = await this.fetchImpl(this.computeUrl, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': this.apiKey,
+          'X-Goog-FieldMask': GOOGLE_ROUTES_FIELD_MASK,
+        },
+        body: JSON.stringify({
+          origin: toLatLng(waypoints[0]),
+          destination: toLatLng(waypoints[waypoints.length - 1]),
+          intermediates: waypoints.slice(1, -1).map(toLatLng),
+          travelMode: 'DRIVE',
+        }),
+      });
+    } catch {
+      throw new RoutingError(
+        'PRICING_UNAVAILABLE',
+        503,
+        'Pricing isn\'t available right now.',
+      );
+    } finally {
+      clearTimeout(timer);
+    }
+
+    if (response.status >= 500) {
+      throw new RoutingError(
+        'PRICING_UNAVAILABLE',
+        503,
+        'Pricing isn\'t available right now.',
+      );
+    }
+
+    let payload: unknown;
+    try {
+      payload = await response.json();
+    } catch {
+      throw new RoutingError(
+        'PRICING_UNAVAILABLE',
+        503,
+        'Pricing isn\'t available right now.',
+      );
+    }
+
+    if (response.status >= 400) {
+      const status = response.status;
+      if (status === 403 || status === 401 || status === 429) {
+        throw new RoutingError(
+          'PRICING_UNAVAILABLE',
+          503,
+          'Pricing isn\'t available right now.',
+        );
+      }
+      throw new RoutingError(
+        'ROUTE_UNAVAILABLE',
+        422,
+        'Unable to determine a route for those points.',
+      );
+    }
+
+    const routes = (payload as { routes?: unknown } | null)?.routes;
+    const first = Array.isArray(routes) ? routes[0] : null;
+    if (first == null || typeof first !== 'object' || Array.isArray(first)) {
+      throw new RoutingError(
+        'ROUTE_UNAVAILABLE',
+        422,
+        'Unable to determine a route for those points.',
+      );
+    }
+
+    const rawLegs = (first as { legs?: unknown }).legs;
+    const expectedLegs = waypoints.length - 1;
+    let legs: { distanceKm: number; durationMin: number }[] | null = null;
+    if (Array.isArray(rawLegs) && rawLegs.length === expectedLegs) {
+      legs = [];
+      for (const leg of rawLegs) {
+        const m = (leg as { distanceMeters?: unknown }).distanceMeters;
+        const d = (leg as { duration?: unknown }).duration;
+        if (typeof m !== 'number' || !Number.isFinite(m)) {
+          legs = null;
+          break;
+        }
+        legs.push({
+          distanceKm: metersToKm(m),
+          durationMin: parseGoogleDurationToMinutes(d),
+        });
+      }
+    }
+
+    // Leg-level data absent/malformed → fall back to route totals split evenly
+    // (totals remain authoritative for fare; legs are display/diagnostic).
+    let distanceKm: number;
+    let durationMin: number;
+    if (legs) {
+      distanceKm = legs.reduce((s, l) => s + l.distanceKm, 0);
+      durationMin = legs.reduce((s, l) => s + l.durationMin, 0);
+    } else {
+      const m = (first as { distanceMeters?: unknown }).distanceMeters;
+      if (typeof m !== 'number' || !Number.isFinite(m)) {
+        throw new RoutingError(
+          'PRICING_UNAVAILABLE',
+          503,
+          'Pricing isn\'t available right now.',
+        );
+      }
+      distanceKm = metersToKm(m);
+      durationMin = parseGoogleDurationToMinutes(
+        (first as { duration?: unknown }).duration,
+      );
+      legs = new Array(expectedLegs).fill(null).map(() => ({
+        distanceKm: distanceKm / expectedLegs,
+        durationMin: durationMin / expectedLegs,
+      }));
+    }
+
+    const encodedPolyline = extractOptionalEncodedPolyline(first);
+    return {
+      legs,
       distanceKm,
       durationMin,
       ...(encodedPolyline != null ? { encodedPolyline } : {}),

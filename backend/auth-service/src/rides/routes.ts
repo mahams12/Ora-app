@@ -451,6 +451,167 @@ export function createRidesRouter(
     }
   });
 
+  // ── Ora Courier — delivery exceptions + return-to-sender ─────────────
+  const courierProgression = (
+    method: (input: {
+      caller: NonNullable<AuthedRequest['caller']>;
+      rideId: string;
+      body: unknown;
+      idempotencyKeyHeader: string | undefined;
+      correlationId: string;
+    }) => Promise<{ httpStatus: number; body: unknown }>,
+    logName: string,
+  ) =>
+    async (req: AuthedRequest, res: Parameters<typeof sendApiError>[1]) => {
+      if (!req.caller) {
+        sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');
+        return;
+      }
+      try {
+        const result = await method({
+          caller: req.caller,
+          rideId: req.params.rideId,
+          body: req.body,
+          idempotencyKeyHeader: req.header('Idempotency-Key') ?? undefined,
+          correlationId: getRequestId(req),
+        });
+        sendRideData(
+          req,
+          res,
+          result.httpStatus,
+          (result.body as { data: unknown }).data,
+        );
+      } catch (err) {
+        logSafe(logName, {
+          requestId: getRequestId(req),
+          errorType: err instanceof Error ? err.name : 'unknown',
+          code: err instanceof RideDomainError ? err.code : undefined,
+        });
+        sendRideDomainError(req, res, err);
+      }
+    };
+
+  router.post(
+    '/:rideId/delivery-failed',
+    courierProgression(
+      (input) => rides.failDelivery(input),
+      'delivery_fail_failed',
+    ),
+  );
+  router.post(
+    '/:rideId/retry-delivery',
+    courierProgression(
+      (input) => rides.retryDelivery(input),
+      'delivery_retry_failed',
+    ),
+  );
+  router.post(
+    '/:rideId/return-start',
+    courierProgression(
+      (input) => rides.startReturn(input),
+      'return_start_failed',
+    ),
+  );
+  router.post(
+    '/:rideId/return-complete',
+    courierProgression(
+      (input) => rides.completeReturn(input),
+      'return_complete_failed',
+    ),
+  );
+
+  // ── Ora Courier v2 — code-free multi-stop progression ────────────────
+  const stopAction = (
+    method: (input: {
+      caller: NonNullable<AuthedRequest['caller']>;
+      rideId: string;
+      seq: number;
+      body: unknown;
+      idempotencyKeyHeader: string | undefined;
+      correlationId: string;
+    }) => Promise<{ httpStatus: number; body: unknown }>,
+    logName: string,
+  ) =>
+    async (req: AuthedRequest, res: Parameters<typeof sendApiError>[1]) => {
+      if (!req.caller) {
+        sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');
+        return;
+      }
+      const seq = Number(req.params.seq);
+      if (!Number.isInteger(seq) || seq < 0) {
+        sendApiError(req, res, 400, 'VALIDATION_ERROR', 'Invalid stop seq.');
+        return;
+      }
+      try {
+        const result = await method({
+          caller: req.caller,
+          rideId: req.params.rideId,
+          seq,
+          body: req.body,
+          idempotencyKeyHeader: req.header('Idempotency-Key') ?? undefined,
+          correlationId: getRequestId(req),
+        });
+        sendRideData(
+          req,
+          res,
+          result.httpStatus,
+          (result.body as { data: unknown }).data,
+        );
+      } catch (err) {
+        logSafe(logName, {
+          requestId: getRequestId(req),
+          errorType: err instanceof Error ? err.name : 'unknown',
+          code: err instanceof RideDomainError ? err.code : undefined,
+        });
+        sendRideDomainError(req, res, err);
+      }
+    };
+
+  router.post(
+    '/:rideId/stops/:seq/arrive',
+    stopAction((input) => rides.arriveAtStop(input), 'stop_arrive_failed'),
+  );
+  router.post(
+    '/:rideId/stops/:seq/confirm',
+    stopAction((input) => rides.confirmStop(input), 'stop_confirm_failed'),
+  );
+  router.post(
+    '/:rideId/stops/:seq/fail',
+    stopAction((input) => rides.failStop(input), 'stop_fail_failed'),
+  );
+  router.post(
+    '/:rideId/stops/:seq/quote',
+    stopAction((input) => rides.submitStopQuote(input), 'stop_quote_failed'),
+  );
+  router.post(
+    '/:rideId/stops/:seq/quote-response',
+    stopAction(
+      (input) => rides.respondToStopQuote(input),
+      'stop_quote_respond_failed',
+    ),
+  );
+  router.post(
+    '/:rideId/settlement',
+    courierProgression(
+      (input) => rides.reportSettlement(input),
+      'settlement_report_failed',
+    ),
+  );
+  router.post(
+    '/:rideId/acknowledge',
+    courierProgression(
+      (input) => rides.acknowledgeDelivery(input),
+      'delivery_ack_failed',
+    ),
+  );
+  router.post(
+    '/:rideId/disputes',
+    courierProgression(
+      (input) => rides.createDispute(input),
+      'dispute_open_failed',
+    ),
+  );
+
   router.post('/:rideId/close', async (req: AuthedRequest, res) => {
     if (!req.caller) {
       sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');

@@ -10,6 +10,8 @@ import '../../../auth/presentation/view_models/session_user_profile.dart';
 import '../../../saved_places/domain/entities/passenger_places.dart';
 import '../../../saved_places/presentation/view_models/passenger_places_view_model.dart';
 import '../../domain/entities/ride.dart';
+import '../../domain/models/delivery_stop_draft.dart';
+import '../../domain/models/parcel_draft.dart';
 import '../../domain/models/passenger_city.dart';
 import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/models/ride_category_option.dart';
@@ -79,14 +81,24 @@ enum RideRequestBlockReason {
   incomplete,
   pricingUnavailable,
   locationUnavailable,
+  parcelIncomplete,
 }
 
 /// Service kinds this UI exposes. Backend validates `ride|courier|intercity|move`;
-/// courier/move stay "coming later" (different product semantics).
-const kRideRequestServiceTypes = <String>{'ride', 'intercity'};
+/// `move` stays "coming later" (different product semantics).
+const kRideRequestServiceTypes = <String>{
+  'ride',
+  'intercity',
+  'courier',
+  'buy_deliver',
+};
 
-String rideRequestServiceTypeLabel(String serviceType) =>
-    serviceType == 'intercity' ? 'Intercity' : 'City ride';
+String rideRequestServiceTypeLabel(String serviceType) => switch (serviceType) {
+      'intercity' => 'Intercity',
+      'courier' => 'Send parcel',
+      'buy_deliver' => 'Buy & Deliver',
+      _ => 'City ride',
+    };
 
 enum LocationField { pickup, destination }
 
@@ -122,6 +134,13 @@ class RideRequestUiState {
     this.passengerOfferMinor,
     this.passengerOfferDraftText = '',
     this.passengerOfferError,
+    this.parcel = const ParcelDraft(),
+    this.stops = const [],
+    this.shoppingBudgetText = '',
+    this.attestationAccepted = false,
+    this.maxStops = 5,
+    this.maxShoppingBudgetMinor = 300000,
+    this.deliveryConfigLoaded = false,
   });
 
   final RideRequestPhase phase;
@@ -174,6 +193,64 @@ class RideRequestUiState {
 
   /// Validation message for the draft; null when draft is valid.
   final String? passengerOfferError;
+
+  /// Ora Courier — parcel manifest draft (only meaningful when
+  /// [serviceType] == 'courier').
+  final ParcelDraft parcel;
+
+  /// Ora Courier v2 — intermediate waypoints between pickup and
+  /// destination (PICKUP/DROPOFF for courier, SHOP for buy_deliver).
+  final List<DeliveryStopDraft> stops;
+
+  /// buy_deliver — total shopping budget in whole rupees (text draft).
+  final String shoppingBudgetText;
+
+  /// buy_deliver — restricted-items attestation (server requires true).
+  final bool attestationAccepted;
+
+  /// Server-driven limits from GET /v1/delivery-config (defaults applied
+  /// until the fetch lands so the UI never blocks on it).
+  final int maxStops;
+  final int maxShoppingBudgetMinor;
+  final bool deliveryConfigLoaded;
+
+  bool get isCourier => serviceType == 'courier';
+  bool get isBuyDeliver => serviceType == 'buy_deliver';
+  bool get isDelivery => isCourier || isBuyDeliver;
+
+  /// Ora Courier — create must include a complete parcel manifest.
+  bool get hasValidParcel => !isCourier || parcel.isValid;
+
+  /// Intermediate stop capacity: pickup + destination + [stops] ≤ maxStops.
+  /// buy_deliver derives its origin from the first SHOP stop, so only the
+  /// destination endpoint sits outside [stops].
+  bool get canAddStop =>
+      stops.length < (isBuyDeliver ? maxStops : maxStops - 2);
+
+  /// Every stop draft must have resolved coordinates; SHOP drafts also need
+  /// at least one valid item line.
+  bool get allStopsValid => stops.every((s) => s.isValid);
+
+  /// buy_deliver — at least one SHOP stop, a positive budget within the
+  /// configured cap, and the restricted-items attestation.
+  int? get shoppingBudgetMinor {
+    final parsed = int.tryParse(shoppingBudgetText.trim());
+    if (parsed == null || parsed <= 0) return null;
+    return parsed * 100;
+  }
+
+  bool get hasValidShopping {
+    if (!isBuyDeliver) return true;
+    final budget = shoppingBudgetMinor;
+    return stops.any((s) => s.type == 'SHOP' && s.isValid) &&
+        budget != null &&
+        budget <= maxShoppingBudgetMinor &&
+        attestationAccepted;
+  }
+
+  /// Stop/shopping completeness gate used by canSubmitRideRequest.
+  bool get hasValidDeliveryItinerary =>
+      allStopsValid && hasValidShopping;
 
   bool get hasPickupText => pickupText.trim().isNotEmpty;
   bool get hasDestinationText => destinationText.trim().isNotEmpty;
@@ -248,6 +325,13 @@ class RideRequestUiState {
     int? passengerOfferMinor,
     String? passengerOfferDraftText,
     String? passengerOfferError,
+    ParcelDraft? parcel,
+    List<DeliveryStopDraft>? stops,
+    String? shoppingBudgetText,
+    bool? attestationAccepted,
+    int? maxStops,
+    int? maxShoppingBudgetMinor,
+    bool? deliveryConfigLoaded,
     bool clearBlock = false,
     bool clearError = false,
     bool clearCreated = false,
@@ -265,6 +349,7 @@ class RideRequestUiState {
     bool clearCitySlug = false,
     bool clearPricing = false,
     bool clearPassengerOffer = false,
+    bool clearPassengerOfferDraft = false,
     bool clearPassengerOfferError = false,
   }) {
     return RideRequestUiState(
@@ -327,11 +412,20 @@ class RideRequestUiState {
       passengerOfferMinor: clearPassengerOffer
           ? null
           : (passengerOfferMinor ?? this.passengerOfferMinor),
-      passengerOfferDraftText:
-          passengerOfferDraftText ?? this.passengerOfferDraftText,
+      passengerOfferDraftText: clearPassengerOfferDraft
+          ? ''
+          : (passengerOfferDraftText ?? this.passengerOfferDraftText),
       passengerOfferError: clearPassengerOfferError
           ? null
           : (passengerOfferError ?? this.passengerOfferError),
+      parcel: parcel ?? this.parcel,
+      stops: stops ?? this.stops,
+      shoppingBudgetText: shoppingBudgetText ?? this.shoppingBudgetText,
+      attestationAccepted: attestationAccepted ?? this.attestationAccepted,
+      maxStops: maxStops ?? this.maxStops,
+      maxShoppingBudgetMinor:
+          maxShoppingBudgetMinor ?? this.maxShoppingBudgetMinor,
+      deliveryConfigLoaded: deliveryConfigLoaded ?? this.deliveryConfigLoaded,
     );
   }
 }
@@ -369,6 +463,10 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   /// serviceType used for the last successful estimate — the API response does
   /// not echo it, so we track it to keep the stale-estimate guard honest.
   String _estimateServiceType = 'ride';
+
+  /// Waypoint signature of the last estimate — changing stops must not
+  /// silently reuse a two-leg price for a multi-leg itinerary.
+  String _estimateStopsSignature = '';
   Timer? _pickupDebounce;
   Timer? _destinationDebounce;
 
@@ -492,6 +590,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     }
 
     state = next;
+    _syncBuyDeliverPickup();
     _refreshCitySuggestion();
     if (state.canAdvanceToReview) {
       unawaited(requestPricingEstimate());
@@ -626,8 +725,206 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       clearBlock: true,
       clearError: true,
     );
+    if (normalized == 'courier' || normalized == 'buy_deliver') {
+      unawaited(ensureDeliveryConfig());
+    }
+    _syncBuyDeliverPickup();
     _scheduleDraftPersist();
     unawaited(requestPricingEstimate());
+  }
+
+  /// Ora Courier — a single courier pricing category per city; the parcel
+  /// size drives the negotiated offer, not a vehicle-class selector.
+  /// Buy & Deliver prices on the same delivery category.
+  String get _effectiveCategoryId =>
+      state.isDelivery ? 'courier' : state.categoryId;
+
+  /// Ora Courier — parcel form edits; validity is enforced at submit.
+  void updateParcel(ParcelDraft parcel) {
+    if (!state.isCourier) return;
+    state = state.copyWith(parcel: parcel, clearBlock: true, clearError: true);
+  }
+
+  // ── Ora Courier v2 — stop drafts + shopping ──────────────────────────
+
+  final String _stopSessionToken = const Uuid().v4();
+
+  /// Places autocomplete for the stop-editor sheet — the sheet keeps its own
+  /// suggestion list, so this bypasses the pickup/destination field wiring.
+  Future<List<PlaceSuggestion>> searchStopPlaces(String query) {
+    return _placeSearch.autocomplete(
+      query: query,
+      sessionToken: _stopSessionToken,
+    );
+  }
+
+  /// Resolve a stop-editor suggestion to authoritative coordinates.
+  Future<ResolvedPassengerLocation> resolveStopPlace(PlaceSuggestion s) {
+    return _placeSearch.resolvePlace(
+      placeId: s.placeId,
+      sessionToken: _stopSessionToken,
+    );
+  }
+
+  void addStopDraft(DeliveryStopDraft draft) {
+    if (!state.isDelivery || !state.canAddStop) return;
+    _invalidatePricing();
+    state = state.copyWith(
+      stops: [...state.stops, draft],
+      clearBlock: true,
+      clearError: true,
+    );
+    _syncBuyDeliverPickup();
+    _scheduleDraftPersist();
+    unawaited(requestPricingEstimate());
+  }
+
+  void updateStopDraft(int index, DeliveryStopDraft draft) {
+    if (!state.isDelivery || index < 0 || index >= state.stops.length) {
+      return;
+    }
+    _invalidatePricing();
+    final next = [...state.stops];
+    next[index] = draft;
+    state = state.copyWith(
+      stops: next,
+      clearBlock: true,
+      clearError: true,
+    );
+    _syncBuyDeliverPickup();
+    _scheduleDraftPersist();
+    unawaited(requestPricingEstimate());
+  }
+
+  void removeStopDraft(int index) {
+    if (index < 0 || index >= state.stops.length) return;
+    _invalidatePricing();
+    final next = [...state.stops]..removeAt(index);
+    state = state.copyWith(
+      stops: next,
+      clearBlock: true,
+      clearError: true,
+    );
+    _syncBuyDeliverPickup();
+    _scheduleDraftPersist();
+    unawaited(requestPricingEstimate());
+  }
+
+  /// buy_deliver — the ride origin is the FIRST shop's location; there is no
+  /// separate pickup field. Derives (or clears) confirmedPickup + pickupText
+  /// whenever shops change so estimate/create/map stay consistent with the
+  /// backend contract (stops[0] must equal pickup).
+  void _syncBuyDeliverPickup() {
+    if (!state.isBuyDeliver) return;
+    DeliveryStopDraft? first;
+    for (final s in state.stops) {
+      if (s.type == 'SHOP' && s.hasLocation) {
+        first = s;
+        break;
+      }
+    }
+    if (first == null) {
+      if (state.confirmedPickup != null || state.pickupText.isNotEmpty) {
+        state = state.copyWith(
+          clearConfirmedPickup: true,
+          pickupText: '',
+        );
+      }
+      return;
+    }
+    final shop = first;
+    state = state.copyWith(
+      confirmedPickup: ResolvedPassengerLocation(
+        lat: shop.lat!,
+        lng: shop.lng!,
+        source: PassengerLocationSource.place,
+        address:
+            shop.locationText.isNotEmpty ? shop.locationText : null,
+        displayName: shop.label.isNotEmpty ? shop.label : null,
+      ),
+      pickupText: shop.locationText.isNotEmpty
+          ? shop.locationText
+          : (shop.label.isNotEmpty ? shop.label : 'Shop'),
+    );
+  }
+
+  void setShoppingBudgetText(String value) {
+    if (!state.isBuyDeliver) return;
+    state = state.copyWith(
+      shoppingBudgetText: value,
+      clearBlock: true,
+      clearError: true,
+    );
+    _scheduleDraftPersist();
+  }
+
+  void setAttestationAccepted(bool value) {
+    if (!state.isBuyDeliver) return;
+    state = state.copyWith(
+      attestationAccepted: value,
+      clearBlock: true,
+      clearError: true,
+    );
+    _scheduleDraftPersist();
+  }
+
+  /// Ordered waypoints for estimate/create: pickup + intermediates +
+  /// destination. Returns null until both endpoints are confirmed.
+  /// buy_deliver: the FIRST shop IS the origin — no separate pickup waypoint.
+  List<DeliveryStopDraft>? _fullItinerary() {
+    final destination = state.confirmedDestination;
+    if (state.isBuyDeliver) {
+      if (destination == null || state.stops.isEmpty) return null;
+      return [
+        ...state.stops,
+        DeliveryStopDraft(
+          type: 'DROPOFF',
+          locationText:
+              destination.address ?? state.destinationText,
+          lat: destination.lat,
+          lng: destination.lng,
+          label: 'Destination',
+        ),
+      ];
+    }
+    final pickup = state.confirmedPickup;
+    if (pickup == null || destination == null) return null;
+    return [
+      DeliveryStopDraft(
+        type: 'PICKUP',
+        locationText: pickup.address ?? state.pickupText,
+        lat: pickup.lat,
+        lng: pickup.lng,
+        label: 'Pickup',
+      ),
+      ...state.stops,
+      DeliveryStopDraft(
+        type: 'DROPOFF',
+        locationText: destination.address ?? state.destinationText,
+        lat: destination.lat,
+        lng: destination.lng,
+        label: 'Destination',
+      ),
+    ];
+  }
+
+  /// Server-driven delivery limits (maxStops, shopping cap, flags) — safe to
+  /// call on entry for delivery service types; silent on failure since the
+  /// backend enforces authoritative values anyway.
+  Future<void> ensureDeliveryConfig() async {
+    if (state.deliveryConfigLoaded) return;
+    try {
+      final cfg = await ref.read(rideRepositoryProvider).getDeliveryConfig();
+      state = state.copyWith(
+        maxStops: (cfg['maxStops'] as num?)?.toInt() ?? state.maxStops,
+        maxShoppingBudgetMinor:
+            (cfg['maxShoppingBudgetMinor'] as num?)?.toInt() ??
+                state.maxShoppingBudgetMinor,
+        deliveryConfigLoaded: true,
+      );
+    } catch (_) {
+      // Defaults stay; the server remains the enforcement point.
+    }
   }
 
   void setCitySlug(String slug) {
@@ -1325,6 +1622,10 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     );
   }
 
+  /// Replace ONLY the pricing/offer surface — every other field (stops,
+  /// shopping, name-unresolved flags, pin target, delivery config…) must
+  /// survive an estimate refresh. copyWith prevents the silent field-loss
+  /// a hand-rolled reconstruction caused (stops were wiped per estimate).
   RideRequestUiState _withPricingSurface({
     required PricingStatus pricingStatus,
     PricingEstimate? pricingEstimate,
@@ -1334,33 +1635,19 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     String? passengerOfferDraftText,
     String? passengerOfferError,
   }) {
-    return RideRequestUiState(
-      phase: state.phase,
-      pickupText: state.pickupText,
-      destinationText: state.destinationText,
-      categoryId: state.categoryId,
-      serviceType: state.serviceType,
-      paymentMethod: state.paymentMethod,
-      blockReason: state.blockReason,
-      errorMessage: state.errorMessage,
-      createdRide: state.createdRide,
-      pickupSuggestions: state.pickupSuggestions,
-      destinationSuggestions: state.destinationSuggestions,
-      proposedPickup: state.proposedPickup,
-      proposedDestination: state.proposedDestination,
-      confirmedPickup: state.confirmedPickup,
-      confirmedDestination: state.confirmedDestination,
-      pickupBusy: state.pickupBusy,
-      destinationBusy: state.destinationBusy,
-      pickupLookupError: state.pickupLookupError,
-      destinationLookupError: state.destinationLookupError,
-      citySlug: state.citySlug,
+    final cleared = state.copyWith(
+      clearPricing: true,
+      clearPassengerOffer: true,
+      clearPassengerOfferDraft: true,
+      clearPassengerOfferError: true,
+    );
+    return cleared.copyWith(
       pricingStatus: pricingStatus,
       pricingEstimate: pricingEstimate,
       pricingFailureKind: pricingFailureKind,
       pricingFailureMessage: pricingFailureMessage,
       passengerOfferMinor: passengerOfferMinor,
-      passengerOfferDraftText: passengerOfferDraftText ?? '',
+      passengerOfferDraftText: passengerOfferDraftText,
       passengerOfferError: passengerOfferError,
     );
   }
@@ -1435,10 +1722,17 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     final pickup = state.confirmedPickup!;
     final destination = state.confirmedDestination!;
 
+    final itinerary =
+        state.isDelivery ? _fullItinerary() : null;
+    final stopsSignature = itinerary
+            ?.map((s) => '${s.lat},${s.lng}')
+            .join('|') ??
+        '';
     if (!force &&
         state.hasUsablePricing &&
-        state.pricingEstimate?.category == state.categoryId &&
-        _estimateServiceType == state.serviceType) {
+        state.pricingEstimate?.category == _effectiveCategoryId &&
+        _estimateServiceType == state.serviceType &&
+        _estimateStopsSignature == stopsSignature) {
       return;
     }
 
@@ -1460,13 +1754,18 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
           destinationLat: destination.lat,
           destinationLng: destination.lng,
           destinationAddress: destination.address,
-          category: state.categoryId,
+          category: _effectiveCategoryId,
           city: city,
           serviceType: state.serviceType,
+          stops: itinerary
+              ?.where((s) => s.hasLocation)
+              .map((s) => <String, double>{'lat': s.lat!, 'lng': s.lng!})
+              .toList(),
         ),
       );
       if (generation != _pricingGen) return;
       _estimateServiceType = state.serviceType;
+      _estimateStopsSignature = stopsSignature;
       // New snapshot: keep prior offer only if still in-bounds; else recommended.
       final reconciled = _reconcileOfferForEstimate(estimate);
       state = _withPricingSurface(
@@ -1509,6 +1808,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     if (state.citySlug == null || state.citySlug!.isEmpty) return false;
     if (state.pricingStatus == PricingStatus.loading) return false;
     if (!_usesInjectedPricing && !state.hasValidPassengerOffer) return false;
+    if (!state.hasValidParcel) return false;
+    if (!state.hasValidDeliveryItinerary) return false;
     return capabilities.canCreateRide;
   }
 
@@ -1535,6 +1836,13 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     if (!caps.hasResolvedLocations) {
       return RideRequestBlockReason.locationUnavailable;
     }
+    // Ora Courier — the parcel manifest is part of the booking contract.
+    if (state.isCourier && !state.parcel.isValid) {
+      return RideRequestBlockReason.parcelIncomplete;
+    }
+    if (state.isDelivery && !state.hasValidDeliveryItinerary) {
+      return RideRequestBlockReason.parcelIncomplete;
+    }
     return null;
   }
 
@@ -1549,6 +1857,9 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       RideRequestBlockReason.locationUnavailable =>
         'Location isn\'t available yet. Ora will not invent pickup or '
             'destination coordinates.',
+      RideRequestBlockReason.parcelIncomplete =>
+        state.parcel.firstError ??
+            'Complete the parcel details to continue.',
     };
   }
 
@@ -1669,13 +1980,29 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
             'lng': destination.lng,
             if (destination.address != null) 'address': destination.address,
           },
-          'category': state.categoryId,
+          'category': _effectiveCategoryId,
           'serviceType': state.serviceType,
           'city': city,
           'passengerOfferMinor': offerMinor,
           'pricingSnapshotId': snapshotId,
           'paymentMethod': state.paymentMethod,
           'passengerCount': 1,
+          // Ora Courier — the parcel manifest is required for courier
+          // bookings and forbidden on every other service type.
+          if (state.isCourier) 'parcel': state.parcel.toApiMap(),
+          // Ora Courier v2 — ordered itinerary (pickup + intermediates +
+          // destination). All new courier/B&D bookings are code-free v2.
+          if (state.isDelivery && _fullItinerary() != null)
+            'stops': _fullItinerary()!
+                .map((s) => s.toApiMap())
+                .toList(),
+          // buy_deliver — booking-level shopping budget + attestation.
+          if (state.isBuyDeliver)
+            'shopping': <String, Object?>{
+              'totalBudgetMinor': state.shoppingBudgetMinor,
+              'attestationAccepted': state.attestationAccepted,
+              'paymentArrangement': 'RIDER_CASH',
+            },
         },
         operationKey: _createOperationKey!,
       );

@@ -163,6 +163,14 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Ora Courier v2 — disputes + delivery config are server-only.
+    match /disputes/{id} {
+      allow read, write: if false;
+    }
+    match /deliveryConfig/{id} {
+      allow read, write: if false;
+    }
+
     // Catch-all: deny everything else (fail-closed).
     match /{document=**} {
       allow read, write: if false;

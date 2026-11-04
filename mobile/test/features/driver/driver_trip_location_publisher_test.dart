@@ -419,6 +419,8 @@ class _FakeRemote implements DriverLocationRemoteDataSource {
     required DriverLocationFix fix,
     required CancelToken cancelToken,
     RequestContext? context,
+    int? publishIntervalMs,
+    bool presenceKeepalive = false,
   }) async {
     return const LocationPublishFailed(
       kind: LocationPublishFailureKind.unknown,

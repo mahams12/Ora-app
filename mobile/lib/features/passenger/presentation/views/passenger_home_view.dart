@@ -193,6 +193,10 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
                   null,
                   serviceType: 'intercity',
                 ),
+                onCourier: () => widget.onRequestRideEntry(
+                  null,
+                  serviceType: 'courier',
+                ),
                 onUnavailable: widget.onUnavailableFeature,
               ),
               const SizedBox(height: OraSpacing.lg),
@@ -498,11 +502,13 @@ class _ServicesGrid extends StatelessWidget {
   const _ServicesGrid({
     required this.onCityRides,
     required this.onIntercity,
+    required this.onCourier,
     required this.onUnavailable,
   });
 
   final VoidCallback onCityRides;
   final VoidCallback onIntercity;
+  final VoidCallback onCourier;
   final ValueChanged<String> onUnavailable;
 
   @override
@@ -546,7 +552,7 @@ class _ServicesGrid extends StatelessWidget {
             imageAsset: AppConstants.serviceCourierAsset,
             icon: Icons.inventory_2_outlined,
             badgeColor: OraColors.accentPurple,
-            onTap: () => onUnavailable('Courier'),
+            onTap: onCourier,
           ),
           _ServiceImageTile(
             title: 'Move',

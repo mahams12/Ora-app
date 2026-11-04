@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geocoding/geocoding.dart' as geo;
@@ -134,6 +135,108 @@ void main() {
           ),
         ),
       );
+    });
+
+    const timeout = Duration(milliseconds: 60);
+    const suggestion = PlaceSuggestion(
+      placeId: 'geo:31.5:74.3:mall',
+      primaryText: 'mall',
+    );
+
+    test('autocomplete: primary failure falls back to secondary', () async {
+      final s = FallbackPlaceSearch(
+        primary: _FakeSearchPort(
+          autocompleteError: const PlaceSearchException(
+            PlaceSearchFailureKind.network,
+          ),
+        ),
+        secondary:
+            _FakeSearchPort(autocompleteResult: const [suggestion]),
+        deviceGeocoder: device(label: null),
+        timeout: timeout,
+      );
+      final out =
+          await s.autocomplete(query: 'mall', sessionToken: 't');
+      expect(out, [suggestion]);
+    });
+
+    test(
+      'autocomplete: hung primary times out then secondary answers',
+      () async {
+        final s = FallbackPlaceSearch(
+          primary: _FakeSearchPort(hang: true),
+          secondary:
+              _FakeSearchPort(autocompleteResult: const [suggestion]),
+          deviceGeocoder: device(label: null),
+          timeout: timeout,
+        );
+        final out = await s.autocomplete(query: 'mall', sessionToken: 't');
+        expect(out, [suggestion]);
+      },
+    );
+
+    test('autocomplete: both providers down surfaces primary error',
+        () async {
+      final s = FallbackPlaceSearch(
+        primary: _FakeSearchPort(hang: true),
+        secondary: _FakeSearchPort(
+          autocompleteError: const PlaceSearchException(
+            PlaceSearchFailureKind.unavailable,
+          ),
+        ),
+        deviceGeocoder: device(label: null),
+        timeout: timeout,
+      );
+      await expectLater(
+        s.autocomplete(query: 'mall', sessionToken: 't'),
+        throwsA(
+          isA<PlaceSearchException>().having(
+            (e) => e.kind,
+            'kind',
+            PlaceSearchFailureKind.network, // timeout → network
+          ),
+        ),
+      );
+    });
+
+    test('resolvePlace: primary failure falls back to secondary', () async {
+      const resolved = ResolvedPassengerLocation(
+        lat: 31.5,
+        lng: 74.3,
+        address: 'Emporium Mall',
+        source: PassengerLocationSource.place,
+      );
+      final s = FallbackPlaceSearch(
+        primary: _FakeSearchPort(
+          resolveError:
+              const PlaceSearchException(PlaceSearchFailureKind.network),
+        ),
+        secondary: _FakeSearchPort(resolveResult: resolved),
+        deviceGeocoder: device(label: null),
+        timeout: timeout,
+      );
+      final r =
+          await s.resolvePlace(placeId: 'geo:1:2:x', sessionToken: 't');
+      expect(r.address, 'Emporium Mall');
+    });
+
+    test('reverseGeocode: hung primary times out, secondary names it',
+        () async {
+      final s = FallbackPlaceSearch(
+        primary: _FakeSearchPort(hang: true),
+        secondary: _FakeSearchPort(
+          reverseResult: const ResolvedPassengerLocation(
+            lat: 31.5,
+            lng: 74.3,
+            address: 'Johar Town, Lahore',
+            source: PassengerLocationSource.gps,
+          ),
+        ),
+        deviceGeocoder: device(label: null),
+        timeout: timeout,
+      );
+      final r = await s.reverseGeocode(lat: 31.5, lng: 74.3);
+      expect(r.address, 'Johar Town, Lahore');
     });
   });
 
@@ -372,6 +475,52 @@ class _ToggleablePlaces extends _FailingPlaces {
       source: PassengerLocationSource.gps,
     );
   }
+}
+
+class _FakeSearchPort implements PlaceSearchPort {
+  _FakeSearchPort({
+    this.hang = false,
+    this.autocompleteResult,
+    this.autocompleteError,
+    this.resolveResult,
+    this.resolveError,
+    this.reverseResult,
+    this.reverseError,
+  });
+  final bool hang;
+  final List<PlaceSuggestion>? autocompleteResult;
+  final Object? autocompleteError;
+  final ResolvedPassengerLocation? resolveResult;
+  final Object? resolveError;
+  final ResolvedPassengerLocation? reverseResult;
+  final Object? reverseError;
+
+  Future<T> _run<T>(T? result, Object? error) {
+    if (hang) return Completer<T>().future; // never completes
+    if (error != null) return Future.error(error);
+    return Future.value(result as T);
+  }
+
+  @override
+  Future<List<PlaceSuggestion>> autocomplete({
+    required String query,
+    required String sessionToken,
+  }) =>
+      _run(autocompleteResult ?? const <PlaceSuggestion>[], autocompleteError);
+
+  @override
+  Future<ResolvedPassengerLocation> resolvePlace({
+    required String placeId,
+    required String sessionToken,
+  }) =>
+      _run(resolveResult, resolveError);
+
+  @override
+  Future<ResolvedPassengerLocation> reverseGeocode({
+    required double lat,
+    required double lng,
+  }) =>
+      _run(reverseResult, reverseError);
 }
 
 class _FailingPricing implements PricingEstimatePort {

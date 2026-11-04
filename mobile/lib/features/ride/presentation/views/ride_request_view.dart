@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,8 @@ import '../../../../core/utils/responsive.dart';
 import '../../../saved_places/domain/entities/passenger_places.dart';
 import '../../../saved_places/presentation/view_models/passenger_places_view_model.dart';
 import '../../../saved_places/presentation/widgets/passenger_places_sections.dart';
+import '../../domain/models/delivery_stop_draft.dart';
+import '../../domain/models/parcel_draft.dart';
 import '../../domain/models/passenger_city.dart';
 import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/models/ride_category_option.dart';
@@ -233,6 +237,7 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
           RideRequestBlockReason.incomplete => 'Almost there',
           RideRequestBlockReason.pricingUnavailable => 'Pricing unavailable',
           RideRequestBlockReason.locationUnavailable => 'Location unavailable',
+          RideRequestBlockReason.parcelIncomplete => 'Parcel details needed',
         };
         _showGateSheet(title, vm.messageFor(reason)).then((_) {
           if (mounted) vm.clearBlocked();
@@ -328,6 +333,7 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                           onSelectCategory: vm.selectCategory,
                                           onSelectServiceType:
                                               vm.selectServiceType,
+                                          onUpdateParcel: vm.updateParcel,
                                           onEditLocations: vm.goToCompose,
                                           onSubmit: vm.submit,
                                           onRetryPricing: vm.retryPricing,
@@ -344,6 +350,7 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                         )
                                       : _ComposePane(
                                           state: state,
+                                          vm: vm,
                                           padding: padding,
                                           scrollController:
                                               _composeScrollController,
@@ -357,6 +364,7 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                               vm.setDestinationText,
                                           onSelectServiceType:
                                               vm.selectServiceType,
+                                          onUpdateParcel: vm.updateParcel,
                                           onUseCurrentLocation:
                                               vm.useCurrentLocationForPickup,
                                           onSelectPickupSuggestion: (s) =>
@@ -429,6 +437,7 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
 class _ComposePane extends StatelessWidget {
   const _ComposePane({
     required this.state,
+    required this.vm,
     required this.padding,
     required this.scrollController,
     required this.destinationProposalKey,
@@ -437,6 +446,7 @@ class _ComposePane extends StatelessWidget {
     required this.onPickupChanged,
     required this.onDestinationChanged,
     required this.onSelectServiceType,
+    required this.onUpdateParcel,
     required this.onUseCurrentLocation,
     required this.onSelectPickupSuggestion,
     required this.onSelectDestinationSuggestion,
@@ -458,6 +468,10 @@ class _ComposePane extends StatelessWidget {
   });
 
   final RideRequestUiState state;
+
+  /// Ora Courier v2 — stop editor needs the view-model's place-search
+  /// methods; parcel/stop/shopping mutations go through it directly.
+  final RideRequestViewModel vm;
   final double padding;
   final ScrollController scrollController;
   final GlobalKey destinationProposalKey;
@@ -466,6 +480,7 @@ class _ComposePane extends StatelessWidget {
   final ValueChanged<String> onPickupChanged;
   final ValueChanged<String> onDestinationChanged;
   final ValueChanged<String> onSelectServiceType;
+  final ValueChanged<ParcelDraft> onUpdateParcel;
   final VoidCallback onUseCurrentLocation;
   final ValueChanged<PlaceSuggestion> onSelectPickupSuggestion;
   final ValueChanged<PlaceSuggestion> onSelectDestinationSuggestion;
@@ -566,31 +581,54 @@ class _ComposePane extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        OraTextField(
-                          controller: pickupController,
-                          label: 'Pickup',
-                          hint: 'Search pickup place',
-                          textInputAction: TextInputAction.next,
-                          textCapitalization: TextCapitalization.words,
-                          prefixIcon: Icons.radio_button_checked,
-                          onChanged: onPickupChanged,
-                        ),
-                        const SizedBox(height: OraSpacing.xs),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextButton.icon(
-                            onPressed:
-                                state.pickupBusy ? null : onUseCurrentLocation,
-                            icon: const Icon(Icons.my_location, size: 18),
-                            label: const Text('Use current location'),
+                        // BUY & DELIVER: no separate pickup — the ride
+                        // origin is the first shop entered below.
+                        if (state.isBuyDeliver)
+                          const Padding(
+                            padding: EdgeInsets.only(
+                              bottom: OraSpacing.sm,
+                            ),
+                            child: OraListRow(
+                              title: 'Pickup is your first shop',
+                              subtitle:
+                                  'Buy & Deliver starts at the first shop you add below — no separate pickup needed.',
+                              leading: Icon(
+                                Icons.storefront_outlined,
+                                color: OraColors.tealBright,
+                                size: 20,
+                              ),
+                              showDivider: false,
+                            ),
+                          )
+                        else ...[
+                          OraTextField(
+                            controller: pickupController,
+                            label: 'Pickup',
+                            hint: 'Search pickup place',
+                            textInputAction: TextInputAction.next,
+                            textCapitalization: TextCapitalization.words,
+                            prefixIcon: Icons.radio_button_checked,
+                            onChanged: onPickupChanged,
                           ),
-                        ),
-                        if (state.pickupBusy)
+                          const SizedBox(height: OraSpacing.xs),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton.icon(
+                              onPressed: state.pickupBusy
+                                  ? null
+                                  : onUseCurrentLocation,
+                              icon: const Icon(Icons.my_location, size: 18),
+                              label: const Text('Use current location'),
+                            ),
+                          ),
+                        ],
+                        if (!state.isBuyDeliver && state.pickupBusy)
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: OraSpacing.xs),
                             child: LinearProgressIndicator(minHeight: 2),
                           ),
-                        if (state.pickupLookupError != null)
+                        if (!state.isBuyDeliver &&
+                            state.pickupLookupError != null)
                           Padding(
                             padding: const EdgeInsets.only(bottom: OraSpacing.xs),
                             child: Text(
@@ -598,22 +636,24 @@ class _ComposePane extends StatelessWidget {
                               style: OraTypography.caption(OraColors.danger),
                             ),
                           ),
-                        ...state.pickupSuggestions.map(
-                          (s) => OraListRow(
-                            title: s.primaryText,
-                            subtitle: s.secondaryText,
-                            leading: const Icon(
-                              Icons.place_outlined,
-                              color: OraColors.tealBright,
-                              size: 20,
+                        if (!state.isBuyDeliver)
+                          ...state.pickupSuggestions.map(
+                            (s) => OraListRow(
+                              title: s.primaryText,
+                              subtitle: s.secondaryText,
+                              leading: const Icon(
+                                Icons.place_outlined,
+                                color: OraColors.tealBright,
+                                size: 20,
+                              ),
+                              onTap: () => onSelectPickupSuggestion(s),
+                              showDivider: true,
                             ),
-                            onTap: () => onSelectPickupSuggestion(s),
-                            showDivider: true,
                           ),
-                        ),
                         // SAVED-PLACES: instant pickup reuse — shown only for
                         // an untouched field (no text/proposal/confirmation).
-                        if (!state.hasPickupText &&
+                        if (!state.isBuyDeliver &&
+                            !state.hasPickupText &&
                             state.proposedPickup == null &&
                             !state.hasConfirmedPickup &&
                             !state.pickupBusy) ...[
@@ -640,7 +680,8 @@ class _ComposePane extends StatelessWidget {
                             showDivider: false,
                           ),
                         ],
-                        if (state.proposedPickup != null &&
+                        if (!state.isBuyDeliver &&
+                            state.proposedPickup != null &&
                             !state.hasConfirmedPickup)
                           _ProposalCard(
                             title: 'Confirm pickup',
@@ -744,11 +785,15 @@ class _ComposePane extends StatelessWidget {
               ),
               const SizedBox(height: OraSpacing.sm),
               _StatusChip(
-                label: state.hasConfirmedPickup
-                    ? 'Pickup confirmed'
-                    : state.proposedPickup != null
-                        ? 'Pickup selected · confirm needed'
-                        : 'Pickup needed',
+                label: state.isBuyDeliver
+                    ? (state.hasConfirmedPickup
+                        ? 'Pickup starts at first shop'
+                        : 'Add a shop to set pickup')
+                    : state.hasConfirmedPickup
+                        ? 'Pickup confirmed'
+                        : state.proposedPickup != null
+                            ? 'Pickup selected · confirm needed'
+                            : 'Pickup needed',
                 ok: state.hasConfirmedPickup,
               ),
               const SizedBox(height: OraSpacing.xs),
@@ -760,6 +805,23 @@ class _ComposePane extends StatelessWidget {
                         : 'Destination needed',
                 ok: state.hasConfirmedDestination,
               ),
+              // Ora Courier — parcel manifest form (courier only).
+              if (state.isCourier) ...[
+                const SizedBox(height: OraSpacing.lg),
+                _ParcelSection(
+                  parcel: state.parcel,
+                  onChanged: onUpdateParcel,
+                ),
+              ],
+              // Ora Courier v2 — intermediate stops + B&D shopping.
+              if (state.isDelivery) ...[
+                const SizedBox(height: OraSpacing.lg),
+                _DeliveryStopsSection(state: state, vm: vm),
+              ],
+              if (state.isBuyDeliver) ...[
+                const SizedBox(height: OraSpacing.md),
+                _ShoppingSection(state: state, vm: vm),
+              ],
             ],
           ),
         ),
@@ -915,6 +977,7 @@ class _ReviewPane extends StatelessWidget {
     required this.canSubmit,
     required this.onSelectCategory,
     required this.onSelectServiceType,
+    required this.onUpdateParcel,
     required this.onEditLocations,
     required this.onSubmit,
     required this.onRetryPricing,
@@ -928,6 +991,7 @@ class _ReviewPane extends StatelessWidget {
   final bool canSubmit;
   final ValueChanged<String> onSelectCategory;
   final ValueChanged<String> onSelectServiceType;
+  final ValueChanged<ParcelDraft> onUpdateParcel;
   final VoidCallback onEditLocations;
   final VoidCallback onSubmit;
   final VoidCallback onRetryPricing;
@@ -979,9 +1043,15 @@ class _ReviewPane extends StatelessWidget {
               ),
               const SizedBox(height: OraSpacing.sm),
               OraSectionHeader(
-                title: 'Select a ride',
+                title: state.isBuyDeliver
+                    ? 'Buy & Deliver'
+                    : state.isCourier
+                        ? 'Parcel delivery'
+                        : 'Select a ride',
                 action: Text(
-                  '${kRideCategoryOptions.length} options',
+                  state.isDelivery
+                      ? 'Same-day delivery'
+                      : '${kRideCategoryOptions.length} options',
                   style: OraTypography.caption(OraColors.textMuted),
                 ),
               ),
@@ -1026,12 +1096,33 @@ class _ReviewPane extends StatelessWidget {
                 citySlug: state.citySlug,
                 onSelectCity: onSelectCity,
               ),
-              const SizedBox(height: OraSpacing.md),
-              RideCategorySelector(
-                selectedId: state.categoryId,
-                onSelect: onSelectCategory,
-                selectedPriceLabel: _selectedPriceLabel,
-              ),
+              // Ora Courier — parcel manifest is part of the booking. The
+              // ride-category selector is hidden: courier has one vehicle
+              // class ('courier'); parcel size drives the offer instead.
+              if (state.isCourier) ...[
+                const SizedBox(height: OraSpacing.md),
+                _ParcelSummaryCard(
+                  parcel: state.parcel,
+                  onChanged: onUpdateParcel,
+                ),
+              ],
+              // Ora Courier v2 — ordered itinerary + B&D shopping summary.
+              if (state.isDelivery) ...[
+                const SizedBox(height: OraSpacing.md),
+                _ItinerarySummaryCard(state: state),
+              ],
+              if (state.isBuyDeliver) ...[
+                const SizedBox(height: OraSpacing.md),
+                _ShoppingSummaryCard(state: state),
+              ],
+              if (!state.isDelivery) ...[
+                const SizedBox(height: OraSpacing.md),
+                RideCategorySelector(
+                  selectedId: state.categoryId,
+                  onSelect: onSelectCategory,
+                  selectedPriceLabel: _selectedPriceLabel,
+                ),
+              ],
               const SizedBox(height: OraSpacing.md),
               Row(
                 children: [
@@ -1066,7 +1157,11 @@ class _ReviewPane extends StatelessWidget {
             OraSpacing.md + MediaQuery.paddingOf(context).bottom,
           ),
           child: OraButton(
-            label: 'Request ${cat.name}',
+            label: state.isBuyDeliver
+                ? 'Request Buy & Deliver'
+                : state.isCourier
+                    ? 'Request courier'
+                    : 'Request ${cat.name}',
             onPressed: canSubmit ? onSubmit : null,
           ),
         ),
@@ -1345,14 +1440,15 @@ class _ServiceTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Wrap(
+      spacing: OraSpacing.xs,
+      runSpacing: OraSpacing.xs,
       children: [
         OraChip(
           label: rideRequestServiceTypeLabel('ride'),
           selected: selected == 'ride',
           onTap: () => onSelect('ride'),
         ),
-        const SizedBox(width: OraSpacing.xs),
         OraChip(
           label: rideRequestServiceTypeLabel('intercity'),
           selected: selected == 'intercity',
@@ -1363,7 +1459,951 @@ class _ServiceTypeSelector extends StatelessWidget {
             color: OraColors.textSecondary,
           ),
         ),
+        OraChip(
+          label: rideRequestServiceTypeLabel('courier'),
+          selected: selected == 'courier',
+          onTap: () => onSelect('courier'),
+          leading: const Icon(
+            Icons.inventory_2_outlined,
+            size: 16,
+            color: OraColors.textSecondary,
+          ),
+        ),
+        OraChip(
+          label: rideRequestServiceTypeLabel('buy_deliver'),
+          selected: selected == 'buy_deliver',
+          onTap: () => onSelect('buy_deliver'),
+          leading: const Icon(
+            Icons.shopping_bag_outlined,
+            size: 16,
+            color: OraColors.textSecondary,
+          ),
+        ),
       ],
+    );
+  }
+}
+
+// ── Ora Courier ─────────────────────────────────────────────────────────────
+
+/// Courier parcel manifest form — shown in the compose pane when
+/// serviceType == 'courier'. Server re-validates every field on create.
+class _ParcelSection extends StatelessWidget {
+  const _ParcelSection({required this.parcel, required this.onChanged});
+
+  final ParcelDraft parcel;
+  final ValueChanged<ParcelDraft> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Parcel details',
+            style: OraTypography.title(OraColors.textPrimary),
+          ),
+          const SizedBox(height: OraSpacing.xxs),
+          Text(
+            'The courier confirms each stop in the app — no codes needed. '
+            'You can acknowledge receipt or report an issue afterwards.',
+            style: OraTypography.caption(OraColors.textMuted),
+          ),
+          const SizedBox(height: OraSpacing.md),
+          OraTextField(
+            label: 'Sender name',
+            hint: 'Who hands over the parcel',
+            initialValue: parcel.senderName,
+            textInputAction: TextInputAction.next,
+            textCapitalization: TextCapitalization.words,
+            onChanged: (v) => onChanged(parcel.copyWith(senderName: v)),
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          OraTextField(
+            label: 'Sender phone',
+            hint: '+92 3XX XXXXXXX',
+            initialValue: parcel.senderPhone,
+            keyboardType: TextInputType.phone,
+            textInputAction: TextInputAction.next,
+            onChanged: (v) => onChanged(parcel.copyWith(senderPhone: v)),
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          OraTextField(
+            label: 'Receiver name',
+            hint: 'Who receives the parcel',
+            initialValue: parcel.receiverName,
+            textInputAction: TextInputAction.next,
+            textCapitalization: TextCapitalization.words,
+            onChanged: (v) => onChanged(parcel.copyWith(receiverName: v)),
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          OraTextField(
+            label: 'Receiver phone',
+            hint: '+92 3XX XXXXXXX',
+            initialValue: parcel.receiverPhone,
+            keyboardType: TextInputType.phone,
+            textInputAction: TextInputAction.next,
+            onChanged: (v) => onChanged(parcel.copyWith(receiverPhone: v)),
+          ),
+          const SizedBox(height: OraSpacing.md),
+          Text(
+            'Parcel type',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          Wrap(
+            spacing: OraSpacing.xs,
+            runSpacing: OraSpacing.xs,
+            children: [
+              for (final c in kParcelCategories)
+                OraChip(
+                  label: c[0].toUpperCase() + c.substring(1),
+                  selected: parcel.parcelCategory == c,
+                  onTap: () => onChanged(parcel.copyWith(parcelCategory: c)),
+                ),
+            ],
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          Text(
+            'Size',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          Wrap(
+            spacing: OraSpacing.xs,
+            children: [
+              for (final s in kParcelSizes)
+                OraChip(
+                  label: switch (s) {
+                    'SMALL' => 'Small · up to 5 kg',
+                    'MEDIUM' => 'Medium · up to 15 kg',
+                    _ => 'Large · up to 30 kg',
+                  },
+                  selected: parcel.size == s,
+                  onTap: () => onChanged(parcel.copyWith(size: s)),
+                ),
+            ],
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          Row(
+            children: [
+              Expanded(
+                child: OraTextField(
+                  label: 'Weight (kg)',
+                  hint: 'e.g. 2.5',
+                  initialValue: parcel.weightText,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  textInputAction: TextInputAction.next,
+                  onChanged: (v) =>
+                      onChanged(parcel.copyWith(weightText: v)),
+                ),
+              ),
+              const SizedBox(width: OraSpacing.sm),
+              Expanded(
+                child: OraTextField(
+                  label: 'Quantity',
+                  hint: '1',
+                  initialValue: parcel.quantityText,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  onChanged: (v) =>
+                      onChanged(parcel.copyWith(quantityText: v)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          OraTextField(
+            label: 'Description',
+            hint: 'What is in the parcel?',
+            initialValue: parcel.description,
+            textCapitalization: TextCapitalization.sentences,
+            onChanged: (v) => onChanged(parcel.copyWith(description: v)),
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          OraTextField(
+            label: 'Handling instructions (optional)',
+            hint: 'e.g. keep upright, fragile',
+            initialValue: parcel.handlingInstructions,
+            textCapitalization: TextCapitalization.sentences,
+            onChanged: (v) =>
+                onChanged(parcel.copyWith(handlingInstructions: v)),
+          ),
+          const SizedBox(height: OraSpacing.md),
+          Text(
+            'Not allowed: ${kParcelProhibitedItems.join(' · ')}',
+            style: OraTypography.caption(OraColors.textMuted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Courier parcel summary — shown on the review pane in place of the
+/// ride-category selector. Inline size correction stays possible.
+class _ParcelSummaryCard extends StatelessWidget {
+  const _ParcelSummaryCard({required this.parcel, required this.onChanged});
+
+  final ParcelDraft parcel;
+  final ValueChanged<ParcelDraft> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Parcel',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          if (parcel.isValid)
+            Text(
+              '${parcel.description.trim()} — '
+              '${parcel.size.toLowerCase()} · '
+              '${parcel.weightKg} kg × ${parcel.quantity} · '
+              '${parcel.parcelCategory}',
+              style: OraTypography.bodyEmphasis(OraColors.textPrimary),
+            )
+          else
+            Text(
+              parcel.firstError ?? 'Parcel details are incomplete.',
+              style: OraTypography.body(OraColors.goldSoft),
+            ),
+          const SizedBox(height: OraSpacing.xxs),
+          Text(
+            '${parcel.senderName.trim()} → ${parcel.receiverName.trim()}',
+            style: OraTypography.caption(OraColors.textMuted),
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          Wrap(
+            spacing: OraSpacing.xs,
+            children: [
+              for (final s in kParcelSizes)
+                OraChip(
+                  label: s.toLowerCase(),
+                  selected: parcel.size == s,
+                  onTap: () => onChanged(parcel.copyWith(size: s)),
+                ),
+            ],
+          ),
+          if (!parcel.isValid) ...[
+            const SizedBox(height: OraSpacing.xs),
+            Text(
+              'Go back to complete sender, receiver and parcel details.',
+              style: OraTypography.caption(OraColors.textMuted),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ── Ora Courier v2 — multi-stop + Buy & Deliver ──────────────────────────────
+
+/// Intermediate-stop editor section (courier: extra pickups/drop-offs;
+/// buy_deliver: shops). Cap = server maxStops minus the two endpoints.
+class _DeliveryStopsSection extends StatelessWidget {
+  const _DeliveryStopsSection({required this.state, required this.vm});
+
+  final RideRequestUiState state;
+  final RideRequestViewModel vm;
+
+  Future<void> _editStop(
+    BuildContext context, {
+    required String type,
+    int? index,
+  }) async {
+    final draft = await showModalBottomSheet<DeliveryStopDraft>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: OraColors.surfaceElevated,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(OraRadius.xxl),
+        ),
+      ),
+      builder: (_) => _StopEditorSheet(
+        vm: vm,
+        type: type,
+        initial: index != null ? state.stops[index] : null,
+      ),
+    );
+    if (draft == null) return;
+    if (index != null) {
+      vm.updateStopDraft(index, draft);
+    } else {
+      vm.addStopDraft(draft);
+    }
+  }
+
+  IconData _iconFor(String type) => switch (type) {
+        'SHOP' => Icons.storefront_outlined,
+        'DROPOFF' => Icons.flag_outlined,
+        _ => Icons.inventory_2_outlined,
+      };
+
+  String _labelFor(String type) => switch (type) {
+        'SHOP' => 'Shop',
+        'DROPOFF' => 'Drop-off',
+        _ => 'Pickup',
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final stops = state.stops;
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            state.isBuyDeliver ? 'Shops & stops' : 'Extra stops',
+            style: OraTypography.title(OraColors.textPrimary),
+          ),
+          const SizedBox(height: OraSpacing.xxs),
+          Text(
+            state.isBuyDeliver
+                ? 'Add the shops the driver should visit, in order. '
+                    'You approve the itemized prices before anything is bought.'
+                : 'Add up to ${state.maxStops - 2} extra pickups or drop-offs '
+                    'between your start and destination. The driver completes '
+                    'them in order — no codes needed.',
+            style: OraTypography.caption(OraColors.textMuted),
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          for (var i = 0; i < stops.length; i++)
+            OraListRow(
+              title: stops[i].label.isNotEmpty
+                  ? stops[i].label
+                  : _labelFor(stops[i].type),
+              subtitle: [
+                if (stops[i].locationText.isNotEmpty) stops[i].locationText,
+                if (stops[i].type == 'SHOP')
+                  '${stops[i].items.where((e) => e.isValid).length} items'
+                      '${stops[i].shopBudgetMinor != null ? ' · cap Rs ${stops[i].shopBudgetMinor! ~/ 100}' : ''}',
+                if (!stops[i].hasLocation) 'Location needed',
+              ].join(' · '),
+              leading: Icon(
+                _iconFor(stops[i].type),
+                size: 20,
+                color: stops[i].isValid
+                    ? OraColors.tealBright
+                    : OraColors.danger,
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.close, size: 18),
+                color: OraColors.textMuted,
+                onPressed: () => vm.removeStopDraft(i),
+              ),
+              onTap: () => _editStop(context, type: stops[i].type, index: i),
+              showDivider: true,
+            ),
+          if (state.canAddStop) ...[
+            if (state.isBuyDeliver)
+              OraListRow(
+                title: 'Add a shop',
+                subtitle: 'Search a store and list what to buy',
+                leading: const Icon(
+                  Icons.add_business_outlined,
+                  size: 20,
+                  color: OraColors.primary,
+                ),
+                onTap: () => _editStop(context, type: 'SHOP'),
+              )
+            else ...[
+              OraListRow(
+                title: 'Add a pickup',
+                subtitle: 'Another parcel collection point',
+                leading: const Icon(
+                  Icons.add_location_alt_outlined,
+                  size: 20,
+                  color: OraColors.tealBright,
+                ),
+                onTap: () => _editStop(context, type: 'PICKUP'),
+              ),
+              OraListRow(
+                title: 'Add a drop-off',
+                subtitle: 'Deliver to another address on the way',
+                leading: const Icon(
+                  Icons.flag_outlined,
+                  size: 20,
+                  color: OraColors.primary,
+                ),
+                onTap: () => _editStop(context, type: 'DROPOFF'),
+              ),
+            ],
+          ] else
+            Text(
+              'Maximum ${state.maxStops} stops reached.',
+              style: OraTypography.caption(OraColors.textMuted),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bottom-sheet editor for one intermediate stop. Location is picked via the
+/// same Places search the pickup/destination fields use — coordinates are
+/// authoritative; the label is display-only.
+class _StopEditorSheet extends StatefulWidget {
+  const _StopEditorSheet({
+    required this.vm,
+    required this.type,
+    this.initial,
+  });
+
+  final RideRequestViewModel vm;
+
+  /// PICKUP | SHOP | DROPOFF.
+  final String type;
+  final DeliveryStopDraft? initial;
+
+  @override
+  State<_StopEditorSheet> createState() => _StopEditorSheetState();
+}
+
+class _StopEditorSheetState extends State<_StopEditorSheet> {
+  late final TextEditingController _search;
+  late final TextEditingController _label;
+  late final TextEditingController _instructions;
+  late final TextEditingController _budget;
+  late List<ShopItemDraft> _items;
+  late final List<Key> _itemKeys;
+  List<PlaceSuggestion> _suggestions = const [];
+  Timer? _debounce;
+  double? _lat;
+  double? _lng;
+  bool _resolving = false;
+
+  bool get _isShop => widget.type == 'SHOP';
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initial;
+    _search = TextEditingController(text: initial?.locationText ?? '');
+    _label = TextEditingController(text: initial?.label ?? '');
+    _instructions =
+        TextEditingController(text: initial?.instructions ?? '');
+    _budget = TextEditingController(
+      text: initial?.shopBudgetMinor != null
+          ? '${initial!.shopBudgetMinor! ~/ 100}'
+          : '',
+    );
+    _items = List.of(initial?.items ?? const <ShopItemDraft>[]);
+    if (_isShop && _items.isEmpty) _items.add(const ShopItemDraft());
+    // Item objects are immutable and replaced on every keystroke, so they
+    // cannot be used as row keys — a changed key remounts the row and drops
+    // keyboard focus mid-typing. Keep a stable key per row instead.
+    _itemKeys = [for (var i = 0; i < _items.length; i++) UniqueKey()];
+    _lat = initial?.lat;
+    _lng = initial?.lng;
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _search.dispose();
+    _label.dispose();
+    _instructions.dispose();
+    _budget.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    setState(() {
+      _lat = null;
+      _lng = null;
+    });
+    final query = value.trim();
+    if (query.length < 2) {
+      setState(() => _suggestions = const []);
+      return;
+    }
+    _debounce = Timer(const Duration(milliseconds: 350), () async {
+      try {
+        final results = await widget.vm.searchStopPlaces(query);
+        if (mounted) setState(() => _suggestions = results);
+      } catch (_) {
+        if (mounted) setState(() => _suggestions = const []);
+      }
+    });
+  }
+
+  Future<void> _selectSuggestion(PlaceSuggestion s) async {
+    setState(() {
+      _resolving = true;
+      _suggestions = const [];
+    });
+    try {
+      final resolved = await widget.vm.resolveStopPlace(s);
+      if (!mounted) return;
+      setState(() {
+        _lat = resolved.lat;
+        _lng = resolved.lng;
+        _search.text = resolved.address ?? s.displayText;
+        if (_label.text.trim().isEmpty) {
+          _label.text = s.primaryText;
+        }
+      });
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not resolve that place.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _resolving = false);
+    }
+  }
+
+  DeliveryStopDraft _buildDraft() {
+    final budgetRupees = int.tryParse(_budget.text.trim());
+    return DeliveryStopDraft(
+      type: widget.type,
+      locationText: _search.text.trim(),
+      lat: _lat,
+      lng: _lng,
+      label: _label.text.trim(),
+      instructions: _instructions.text.trim(),
+      items: _items,
+      shopBudgetMinor:
+          _isShop && budgetRupees != null && budgetRupees > 0
+              ? budgetRupees * 100
+              : null,
+    );
+  }
+
+  bool get _canSave => _buildDraft().isValid;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = switch (widget.type) {
+      'SHOP' => 'Add a shop',
+      'DROPOFF' => 'Add a drop-off',
+      _ => 'Add a pickup',
+    };
+    final bottom = MediaQuery.viewInsetsOf(context).bottom;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        OraSpacing.md,
+        OraSpacing.md,
+        OraSpacing.md,
+        OraSpacing.md + bottom,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: OraTypography.title(OraColors.textPrimary)),
+            const SizedBox(height: OraSpacing.md),
+            OraTextField(
+              controller: _search,
+              label: _isShop ? 'Shop location' : 'Stop location',
+              hint: 'Search a place',
+              textInputAction: TextInputAction.search,
+              prefixIcon: Icons.search,
+              onChanged: _onSearchChanged,
+            ),
+            if (_resolving)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: OraSpacing.xs),
+                child: LinearProgressIndicator(minHeight: 2),
+              ),
+            ..._suggestions.map(
+              (s) => OraListRow(
+                title: s.primaryText,
+                subtitle: s.secondaryText,
+                leading: const Icon(
+                  Icons.place_outlined,
+                  size: 20,
+                  color: OraColors.tealBright,
+                ),
+                onTap: () => _selectSuggestion(s),
+                showDivider: true,
+              ),
+            ),
+            if (_lat != null)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: OraSpacing.xxs),
+                child: _StatusChip(label: 'Location confirmed', ok: true),
+              ),
+            const SizedBox(height: OraSpacing.sm),
+            OraTextField(
+              controller: _label,
+              label: 'Name (optional)',
+              hint: _isShop ? 'e.g. Al-Fatah, DHA Pharmacy' : 'e.g. Office',
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: OraSpacing.sm),
+            OraTextField(
+              controller: _instructions,
+              label: 'Instructions (optional)',
+              hint: 'Anything the driver should know',
+            ),
+            if (_isShop) ...[
+              const SizedBox(height: OraSpacing.md),
+              Text(
+                'Shopping list',
+                style: OraTypography.label(OraColors.textSecondary),
+              ),
+              const SizedBox(height: OraSpacing.xs),
+              for (var i = 0; i < _items.length; i++)
+                _ShopItemRow(
+                  key: _itemKeys[i],
+                  item: _items[i],
+                  onChanged: (item) => setState(() => _items[i] = item),
+                  onRemove: _items.length > 1
+                      ? () => setState(() {
+                            _items.removeAt(i);
+                            _itemKeys.removeAt(i);
+                          })
+                      : null,
+                ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () => setState(() {
+                    _items.add(const ShopItemDraft());
+                    _itemKeys.add(UniqueKey());
+                  }),
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Add item'),
+                ),
+              ),
+              const SizedBox(height: OraSpacing.xs),
+              OraTextField(
+                controller: _budget,
+                label: 'Shop budget — Rs (optional)',
+                hint: 'Max spend at this shop',
+                keyboardType: TextInputType.number,
+              ),
+            ],
+            const SizedBox(height: OraSpacing.md),
+            SizedBox(
+              width: double.infinity,
+              child: OraButton(
+                label: 'Save stop',
+                onPressed: _canSave
+                    ? () => Navigator.of(context).pop(_buildDraft())
+                    : null,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ShopItemRow extends StatefulWidget {
+  const _ShopItemRow({
+    super.key,
+    required this.item,
+    required this.onChanged,
+    this.onRemove,
+  });
+
+  final ShopItemDraft item;
+  final ValueChanged<ShopItemDraft> onChanged;
+  final VoidCallback? onRemove;
+
+  @override
+  State<_ShopItemRow> createState() => _ShopItemRowState();
+}
+
+class _ShopItemRowState extends State<_ShopItemRow> {
+  late final TextEditingController _name;
+  late final TextEditingController _qty;
+  late final TextEditingController _note;
+
+  @override
+  void initState() {
+    super.initState();
+    _name = TextEditingController(text: widget.item.name);
+    _qty = TextEditingController(text: '${widget.item.quantity}');
+    _note = TextEditingController(text: widget.item.note);
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _qty.dispose();
+    _note.dispose();
+    super.dispose();
+  }
+
+  void _emit() {
+    widget.onChanged(
+      ShopItemDraft(
+        name: _name.text,
+        quantity: int.tryParse(_qty.text.trim()) ?? 1,
+        note: _note.text,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: OraSpacing.xs),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 3,
+            child: OraTextField(
+              controller: _name,
+              hint: 'Item name',
+              textCapitalization: TextCapitalization.words,
+              onChanged: (_) => _emit(),
+            ),
+          ),
+          const SizedBox(width: OraSpacing.xs),
+          SizedBox(
+            width: 64,
+            child: OraTextField(
+              controller: _qty,
+              hint: 'Qty',
+              keyboardType: TextInputType.number,
+              onChanged: (_) => _emit(),
+            ),
+          ),
+          const SizedBox(width: OraSpacing.xs),
+          Expanded(
+            flex: 2,
+            child: OraTextField(
+              controller: _note,
+              hint: 'Note',
+              onChanged: (_) => _emit(),
+            ),
+          ),
+          if (widget.onRemove != null)
+            IconButton(
+              icon: const Icon(Icons.close, size: 18),
+              color: OraColors.textMuted,
+              onPressed: widget.onRemove,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// buy_deliver — booking-level shopping budget, restricted-items attestation,
+/// and the cash disclosure.
+class _ShoppingSection extends StatelessWidget {
+  const _ShoppingSection({required this.state, required this.vm});
+
+  final RideRequestUiState state;
+  final RideRequestViewModel vm;
+
+  @override
+  Widget build(BuildContext context) {
+    final capRupees = state.maxShoppingBudgetMinor ~/ 100;
+    final budget = state.shoppingBudgetMinor;
+    final overCap = budget != null && budget > state.maxShoppingBudgetMinor;
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Shopping budget',
+            style: OraTypography.title(OraColors.textPrimary),
+          ),
+          const SizedBox(height: OraSpacing.xxs),
+          Text(
+            'You pay the driver in cash for the items plus the delivery '
+            'fare. The driver sends you itemized prices for approval '
+            'before buying — the total can never exceed your budget.',
+            style: OraTypography.caption(OraColors.textMuted),
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          OraTextField(
+            label: 'Total budget — Rs (max $capRupees)',
+            hint: 'e.g. 1500',
+            initialValue: state.shoppingBudgetText,
+            keyboardType: TextInputType.number,
+            onChanged: vm.setShoppingBudgetText,
+          ),
+          if (overCap)
+            Padding(
+              padding: const EdgeInsets.only(top: OraSpacing.xs),
+              child: Text(
+                'Budget is capped at Rs $capRupees for rider-paid shopping.',
+                style: OraTypography.caption(OraColors.danger),
+              ),
+            ),
+          const SizedBox(height: OraSpacing.sm),
+          InkWell(
+            onTap: () => vm.setAttestationAccepted(!state.attestationAccepted),
+            borderRadius: BorderRadius.circular(OraRadius.sm),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  state.attestationAccepted
+                      ? Icons.check_box
+                      : Icons.check_box_outline_blank,
+                  size: 20,
+                  color: state.attestationAccepted
+                      ? OraColors.tealBright
+                      : OraColors.textMuted,
+                ),
+                const SizedBox(width: OraSpacing.xs),
+                Expanded(
+                  child: Text(
+                    'My list contains no prohibited, controlled, '
+                    'prescription-only, or age-restricted items.',
+                    style: OraTypography.caption(OraColors.textSecondary),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Review-pane itinerary summary — ordered waypoint list between pickup and
+/// destination, plus per-stop shopping item counts for buy_deliver.
+class _ItinerarySummaryCard extends StatelessWidget {
+  const _ItinerarySummaryCard({required this.state});
+
+  final RideRequestUiState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final stops = state.stops;
+    if (stops.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    IconData iconFor(String type) => switch (type) {
+          'SHOP' => Icons.storefront_outlined,
+          'DROPOFF' => Icons.flag_outlined,
+          _ => Icons.inventory_2_outlined,
+        };
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${stops.length + 2} stops',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          for (final s in stops)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                children: [
+                  Icon(
+                    iconFor(s.type),
+                    size: 16,
+                    color: OraColors.tealBright,
+                  ),
+                  const SizedBox(width: OraSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      [
+                        if (s.label.isNotEmpty) s.label else s.locationText,
+                        if (s.type == 'SHOP')
+                          '(${s.items.where((i) => i.isValid).length} items)',
+                      ].join(' '),
+                      style: OraTypography.body(OraColors.textPrimary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Review-pane cash breakdown for buy_deliver — delivery offer + shopping
+/// budget + disclosed service fee (server-computed when available).
+class _ShoppingSummaryCard extends StatelessWidget {
+  const _ShoppingSummaryCard({required this.state});
+
+  final RideRequestUiState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final budget = state.shoppingBudgetMinor;
+    final serviceFee = state.pricingEstimate?.serviceFeeMinor;
+    final stopFees = state.pricingEstimate?.stopFeesMinor;
+    String fmt(int minor) =>
+        formatOfferAmountMinor(minor, state.pricingEstimate?.currency ?? 'PKR');
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Cash on delivery',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          _MoneyRow(
+            label: 'Shopping budget',
+            value: budget != null ? fmt(budget) : '—',
+          ),
+          if (serviceFee != null && serviceFee > 0)
+            _MoneyRow(label: 'Service fee', value: fmt(serviceFee)),
+          if (stopFees != null && stopFees > 0)
+            _MoneyRow(label: 'Extra-stop fee', value: fmt(stopFees)),
+          const SizedBox(height: OraSpacing.xxs),
+          Text(
+            'Paid to the driver in cash after you approve itemized prices. '
+            'Delivery fare is your negotiated offer above.',
+            style: OraTypography.caption(OraColors.textMuted),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MoneyRow extends StatelessWidget {
+  const _MoneyRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: OraTypography.body(OraColors.textSecondary)),
+          Text(
+            value,
+            style: OraTypography.bodyEmphasis(OraColors.textPrimary),
+          ),
+        ],
+      ),
     );
   }
 }

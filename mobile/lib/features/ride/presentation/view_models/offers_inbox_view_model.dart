@@ -58,6 +58,7 @@ class OffersInboxUiState {
     this.assignment,
     this.errorMessage,
     this.infoMessage,
+    this.isCancelling = false,
   });
 
   final OffersInboxPhase phase;
@@ -69,6 +70,7 @@ class OffersInboxUiState {
   final RideAssignment? assignment;
   final String? errorMessage;
   final String? infoMessage;
+  final bool isCancelling;
 
   String get rideId => ride?.rideId ?? '';
 
@@ -77,6 +79,15 @@ class OffersInboxUiState {
   bool get canRefresh =>
       phase != OffersInboxPhase.selecting &&
       phase != OffersInboxPhase.initialLoading;
+
+  /// Passenger may abort while the request is still dispatching — i.e. before
+  /// any driver is assigned. Terminal/assigned states are handled elsewhere.
+  bool get canCancel {
+    final s = rideState.toUpperCase();
+    return (s == 'SEARCHING' || s == 'OFFERS_AVAILABLE') &&
+        phase != OffersInboxPhase.selecting &&
+        !isCancelling;
+  }
 
   List<RideOffer> get pendingOffers =>
       offers.where(isOfferSelectable).toList(growable: false);
@@ -91,6 +102,7 @@ class OffersInboxUiState {
     RideAssignment? assignment,
     String? errorMessage,
     String? infoMessage,
+    bool? isCancelling,
     bool clearSelecting = false,
     bool clearError = false,
     bool clearInfo = false,
@@ -107,6 +119,7 @@ class OffersInboxUiState {
       assignment: clearAssignment ? null : (assignment ?? this.assignment),
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       infoMessage: clearInfo ? null : (infoMessage ?? this.infoMessage),
+      isCancelling: isCancelling ?? this.isCancelling,
     );
   }
 }
@@ -117,6 +130,7 @@ class OffersInboxViewModel
   late final GetRideUseCase _getRide;
   late final ListOffersUseCase _listOffers;
   late final SelectOfferUseCase _selectOffer;
+  late final CancelRideUseCase _cancelRide;
   late final FailureMapper _failures;
   late final OfferPollingPolicy _policy;
   late final IdempotencyNonceStore _nonceStore;
@@ -130,6 +144,7 @@ class OffersInboxViewModel
   int _attempt = 0;
   int _fetchSeq = 0;
   final Map<String, String> _selectOperationKeys = {};
+  String? _cancelOpKey;
 
   String get rideId => arg;
 
@@ -143,6 +158,7 @@ class OffersInboxViewModel
     _getRide = ref.read(getRideUseCaseProvider);
     _listOffers = ref.read(listOffersUseCaseProvider);
     _selectOffer = ref.read(selectOfferUseCaseProvider);
+    _cancelRide = ref.read(cancelRideUseCaseProvider);
     _failures = ref.read(failureMapperProvider);
     _policy = ref.read(offerPollingPolicyProvider);
     _nonceStore = ref.read(idempotencyNonceStoreProvider);
@@ -474,6 +490,52 @@ class OffersInboxViewModel
       if (!_alive) return;
       final failure = _failures.fromException(error, stack);
       await _handleSelectFailure(failure, offerId: offerId);
+    }
+  }
+
+  /// Abort the request while it is still dispatching. The server is
+  /// authoritative — a successful cancel returns a CANCELLED ride which the
+  /// normal snapshot path routes into the terminal pane.
+  Future<void> cancel() async {
+    if (!_alive || !state.canCancel || state.ride == null) return;
+
+    _cancelOpKey ??= 'ride:cancel:$rideId:${const Uuid().v4()}';
+    _timer?.cancel();
+    _timer = null;
+    state = state.copyWith(
+      isCancelling: true,
+      isPolling: false,
+      clearError: true,
+      clearInfo: true,
+    );
+
+    try {
+      final updated = await _cancelRide(
+        rideId: rideId,
+        operationKey: _cancelOpKey!,
+      );
+      if (!_alive) return;
+      state = state.copyWith(isCancelling: false);
+      _applyServerSnapshot(ride: updated, offers: state.offers);
+      if (_alive && state.phase != OffersInboxPhase.terminal) {
+        await refresh(force: true);
+      }
+    } catch (error, stack) {
+      if (!_alive) return;
+      final failure = _failures.fromException(error, stack);
+      state = state.copyWith(isCancelling: false);
+      // Reconcile first, then surface the failure so the refresh can't clear it.
+      await refresh(force: true);
+      if (!_alive) return;
+      if (state.phase != OffersInboxPhase.terminal) {
+        state = state.copyWith(errorMessage: failure.userMessage);
+      }
+      if (state.phase != OffersInboxPhase.terminal &&
+          !_lifetimeExpired &&
+          !_terminalStopped) {
+        state = state.copyWith(isPolling: true);
+        _scheduleNext();
+      }
     }
   }
 

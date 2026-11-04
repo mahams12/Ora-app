@@ -1,7 +1,9 @@
 import { FieldValue, Timestamp, type Firestore } from 'firebase-admin/firestore';
 import { logSafe } from '../http/errors';
+import { LocationDomainError } from '../location/types';
 import {
   GEO_DRIVERS_KEY,
+  N3_FRESHNESS_MAX_AGE_MS,
   type GeoRadiusHit,
   type RedisGeoClient,
 } from './types';
@@ -94,7 +96,12 @@ function kmToLngDegrees(km: number, atLat: number): number {
   const cos = Math.cos((atLat * Math.PI) / 180);
   // Near the poles the longitude span is effectively unlimited.
   if (Math.abs(cos) < 1e-6) return 180;
-  return Math.min(180, km / (111.32 * cos));
+  // Geodesic bound: Δlon = asin(sin(δ)/cos φ) with δ the angular radius.
+  // The linear km/(111.32·cos) approximation under-covers at box edges
+  // (≈1e-4°) and can drop drivers sitting exactly on the circle arc.
+  const ratio = Math.sin(km / 6371) / cos;
+  if (ratio >= 1) return 180;
+  return Math.min(180, (Math.asin(ratio) * 180) / Math.PI + 1e-4);
 }
 
 export function createFirestoreGeoClient(
@@ -141,10 +148,12 @@ export function createFirestoreGeoClient(
     // against markerValue for every hit.
     let lastLocationTs: number | null = null;
     let accuracy: number | null = null;
+    let freshUntilMs: number | null = null;
     try {
       const parsed = JSON.parse(value) as {
         lastLocationTs?: unknown;
         accuracy?: unknown;
+        freshUntilMs?: unknown;
       };
       if (
         typeof parsed.lastLocationTs === 'number' &&
@@ -155,14 +164,29 @@ export function createFirestoreGeoClient(
       if (typeof parsed.accuracy === 'number' && Number.isFinite(parsed.accuracy)) {
         accuracy = parsed.accuracy;
       }
+      if (
+        typeof parsed.freshUntilMs === 'number' &&
+        Number.isFinite(parsed.freshUntilMs)
+      ) {
+        freshUntilMs = parsed.freshUntilMs;
+      }
     } catch {
       // Non-JSON marker (opaque value) — no queryable twins; N3 parseMarker
       // will reject it the same way it rejects malformed markers today.
     }
+    // Queryable per-driver freshness twin. Defaults to the fixed 15s window so
+    // markers written without adaptive fields behave byte-identically to the
+    // legacy lastLocationTs filter (freshUntilMs = lastLocationTs + 15s).
+    const effectiveFreshUntilMs =
+      freshUntilMs ??
+      (lastLocationTs != null
+        ? lastLocationTs + N3_FRESHNESS_MAX_AGE_MS
+        : null);
     return {
       markerValue: value,
       markerExpiresAtMs: expiresAtMs,
       lastLocationTs,
+      freshUntilMs: effectiveFreshUntilMs,
       accuracy,
       // Timestamp twin so a Firestore TTL policy on `expiresAt` can physically
       // remove fully-expired docs (reads already enforce TTL via
@@ -182,6 +206,8 @@ export function createFirestoreGeoClient(
       return 1;
     },
 
+    supportsIdleCursor: true,
+
     async projectLocation(input) {
       if (!isGeoKey(input.key)) return 'skipped';
       const ref = geoCol.doc(input.member);
@@ -190,7 +216,7 @@ export function createFirestoreGeoClient(
       // single transaction — concurrent same-driver packets (idle and trip
       // publishers overlap at mode transitions) can no longer interleave a
       // stale write between the guard check and the set.
-      if (!input.markerGuard) {
+      if (!input.markerGuard && !input.idleCursor) {
         await ref.set(
           {
             driverId: input.member,
@@ -205,22 +231,87 @@ export function createFirestoreGeoClient(
       return db.runTransaction(async (tx) => {
         const snap = await tx.get(ref);
         const data = snap.exists ? (snap.data() ?? {}) : null;
-        const decision = input.markerGuard!({
-          latitude: typeof data?.lat === 'number' ? data.lat : NaN,
-          longitude: typeof data?.lng === 'number' ? data.lng : NaN,
-          markerValue: data ? liveMarkerValue(data) : null,
-        });
-        if (decision === 'skip') return 'skipped';
-        tx.set(
-          ref,
-          {
-            driverId: input.member,
-            lat: input.latitude,
-            lng: input.longitude,
-            ...markerFields(input.markerValue, input.markerTtlSeconds),
-          },
-          { merge: true },
-        );
+
+        const write: Record<string, unknown> = {
+          driverId: input.member,
+          lat: input.latitude,
+          lng: input.longitude,
+          ...markerFields(input.markerValue, input.markerTtlSeconds),
+        };
+
+        // Merged idle-stream cursor (Phase B): identical semantics to
+        // FirestoreLocationStreamStore.accept — CLOSED rejects, same-stream
+        // requires strictly increasing seq, previousStreamIds rejects late
+        // packets, a new stream replaces the active one. Fields are ls*-
+        // prefixed so they never collide with geo/marker twins. Violations
+        // throw LocationDomainError — callers propagate them as 422.
+        const cur = input.idleCursor;
+        if (cur) {
+          const streamState =
+            typeof data?.lsStreamState === 'string'
+              ? data.lsStreamState
+              : 'ACTIVE';
+          if (streamState === 'CLOSED') {
+            throw new LocationDomainError(
+              'SEQUENCE_VIOLATION',
+              422,
+              'Location stream is closed.',
+            );
+          }
+          const active =
+            typeof data?.lsActiveStreamId === 'string'
+              ? data.lsActiveStreamId
+              : '';
+          const last =
+            typeof data?.lsLastAcceptedSeq === 'number'
+              ? data.lsLastAcceptedSeq
+              : -1;
+          const previous =
+            Array.isArray(data?.lsPreviousStreamIds) &&
+            data.lsPreviousStreamIds.every((x) => typeof x === 'string')
+              ? ([...data.lsPreviousStreamIds] as string[])
+              : [];
+
+          if (active === cur.locationStreamId) {
+            if (cur.locationSeq <= last) {
+              throw new LocationDomainError(
+                'SEQUENCE_VIOLATION',
+                422,
+                'locationSeq must be greater than last accepted sequence.',
+              );
+            }
+            write.lsActiveStreamId = cur.locationStreamId;
+            write.lsLastAcceptedSeq = cur.locationSeq;
+            write.lsStreamState = 'ACTIVE';
+            write.lsUpdatedAt = cur.updatedAtIso;
+            write.lsExpiresAt = cur.expiresAtIso;
+          } else {
+            if (previous.includes(cur.locationStreamId)) {
+              throw new LocationDomainError(
+                'SEQUENCE_VIOLATION',
+                422,
+                'Location stream is no longer active.',
+              );
+            }
+            if (active) previous.push(active);
+            write.lsActiveStreamId = cur.locationStreamId;
+            write.lsLastAcceptedSeq = cur.locationSeq;
+            write.lsStreamState = 'ACTIVE';
+            write.lsPreviousStreamIds = previous.slice(-5);
+            write.lsUpdatedAt = cur.updatedAtIso;
+            write.lsExpiresAt = cur.expiresAtIso;
+          }
+        }
+
+        if (input.markerGuard) {
+          const decision = input.markerGuard({
+            latitude: typeof data?.lat === 'number' ? data.lat : NaN,
+            longitude: typeof data?.lng === 'number' ? data.lng : NaN,
+            markerValue: data ? liveMarkerValue(data) : null,
+          });
+          if (decision === 'skip') return 'skipped';
+        }
+        tx.set(ref, write, { merge: true });
         return 'written';
       });
     },
@@ -249,7 +340,14 @@ export function createFirestoreGeoClient(
     async georadius(input) {
       if (!isGeoKey(input.key)) return [];
       const latDelta = kmToLatDegrees(input.radiusKm);
-      const lngDelta = kmToLngDegrees(input.radiusKm, input.latitude);
+      // The longitude box must be computed at the circle's edge closest to
+      // a pole — cos(lat) shrinks toward the poles, so the center-lat cos
+      // under-covers the northern/southern arc and can miss edge drivers.
+      const edgeLat = Math.min(
+        89.9,
+        Math.abs(input.latitude) + latDelta,
+      );
+      const lngDelta = kmToLngDegrees(input.radiusKm, edgeLat);
       const minLat = Math.max(-90, input.latitude - latDelta);
       const maxLat = Math.min(90, input.latitude + latDelta);
       const minLng = input.longitude - lngDelta;
@@ -258,6 +356,7 @@ export function createFirestoreGeoClient(
       // haversine filter below keeps only true in-radius hits.
       const wrapped = minLng < -180 || maxLng > 180;
       const minTs = input.minLastLocationTs;
+      const minFreshUntil = input.minFreshUntilMs;
 
       type Box = {
         minLat: number;
@@ -282,7 +381,11 @@ export function createFirestoreGeoClient(
             .where('lng', '>=', box.minLng)
             .where('lng', '<=', box.maxLng);
         }
-        if (minTs != null) {
+        if (minFreshUntil != null) {
+          // Per-driver freshness twin — each doc carries its own expiry so
+          // variable publish cadences stay filterable server-side.
+          query = query.where('freshUntilMs', '>', minFreshUntil);
+        } else if (minTs != null) {
           // Server-side freshness floor — docs without a parseable marker
           // timestamp never match, identical outcome to the N3 marker_missing/
           // marker_not_fresh rejections but without paying a document read.
@@ -422,11 +525,13 @@ export function createFirestoreGeoClient(
         const ref = geoCol.doc(markerDocId(key));
         try {
           // Remove ONLY the marker fields — mirrors Redis DEL on the string
-          // key leaving GEO membership intact until zrem.
+          // key leaving GEO membership intact until zrem. Merged-cursor ls*
+          // fields are deliberately retained — they are not marker state.
           await ref.update({
             markerValue: FieldValue.delete(),
             markerExpiresAtMs: FieldValue.delete(),
             lastLocationTs: FieldValue.delete(),
+            freshUntilMs: FieldValue.delete(),
             accuracy: FieldValue.delete(),
             expiresAt: FieldValue.delete(),
           });
