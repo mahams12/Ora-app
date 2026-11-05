@@ -30,9 +30,9 @@ const _suggestedSubcategoryIds = [
 const _serviceCategoryIcons = <String, IconData>{
   'home_repair': Icons.home_repair_service,
   'cleaning': Icons.cleaning_services,
-  'pest': Icons.pest_control,
+  'pest_control': Icons.pest_control,
   'beauty': Icons.face_retouching_natural,
-  'solar_garden': Icons.solar_power,
+  'solar_garden_property': Icons.solar_power,
   'professional': Icons.business_center,
   'education': Icons.school,
   'health': Icons.medical_services,
