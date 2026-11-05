@@ -113,6 +113,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Choose a ride'));
     await tester.pumpAndSettle();
+    expect(find.text('6 options'), findsOneWidget);
 
     const categoryNames = [
       'Zip',
