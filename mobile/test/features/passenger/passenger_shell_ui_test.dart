@@ -13,6 +13,7 @@ import 'package:ora/features/passenger/presentation/views/home_shell_view.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';
 import 'package:ora/features/ride/domain/use_cases/ride_use_cases.dart';
 import 'package:ora/features/ride/presentation/views/ride_request_view.dart';
+import 'package:ora/features/super_app/presentation/views/rides_hub_view.dart';
 
 class MockLogoutUseCase extends Mock implements LogoutUseCase {}
 
@@ -33,6 +34,10 @@ Widget _wrapShell({
       GoRoute(
         path: AppRoutes.home,
         builder: (_, __) => const HomeShellView(),
+      ),
+      GoRoute(
+        path: AppRoutes.ridesHub,
+        builder: (_, __) => const RidesHubView(),
       ),
       GoRoute(
         path: AppRoutes.rideRequest,
@@ -127,8 +132,9 @@ void main() {
     expect(find.text('ORA'), findsWidgets);
     expect(find.text('Where are you headed?'), findsOneWidget);
     expect(find.text('Earn on ORA'), findsOneWidget);
-    expect(find.text('City rides'), findsOneWidget);
+    expect(find.text('Explore ORA'), findsOneWidget);
     expect(find.textContaining('Intercity trips'), findsOneWidget);
+    expect(find.text('Choose a ride'), findsNothing);
     expect(find.byType(BottomNavigationBar), findsNothing);
     expect(find.text('Account'), findsNothing);
 
@@ -153,6 +159,7 @@ void main() {
       200,
       scrollable: find.byType(Scrollable).first,
     );
+    expect(find.text('Saved places'), findsOneWidget);
     expect(find.text('Work'), findsOneWidget);
     expect(find.text('Quick actions'), findsOneWidget);
     expect(find.text('Safety'), findsOneWidget);
@@ -210,13 +217,15 @@ void main() {
     );
   });
 
-  testWidgets('category tap opens compose with gate intact', (tester) async {
+  testWidgets('Rides module opens the hub category flow', (tester) async {
     final createRide = MockCreateRideUseCase();
     await tester.pumpWidget(
       _wrapShell(overrides: _baseOverrides(createRide: createRide)),
     );
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text('Rides').first);
+    await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
       find.text('Choose a ride'),
       120,
@@ -290,13 +299,7 @@ void main() {
     await tester.pumpWidget(_wrapShell(overrides: _baseOverrides()));
     await tester.pumpAndSettle();
     expect(find.textContaining('Rs '), findsNothing);
-
-    await tester.scrollUntilVisible(
-      find.text('Choose a ride'),
-      120,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('Fare on request'), findsWidgets);
+    expect(find.text('Choose a ride'), findsNothing);
+    expect(find.text('Fare on request'), findsNothing);
   });
 }
