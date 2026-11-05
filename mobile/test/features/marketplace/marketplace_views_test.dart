@@ -131,6 +131,8 @@ void main() {
       ),
       findsOneWidget,
     );
+    expect(find.byIcon(serviceSubcategoryIcon('makeup')), findsOneWidget);
+    expect(find.byIcon(Icons.miscellaneous_services_outlined), findsNothing);
     await tester.tap(find.text('Bridal & party makeup'));
     for (var frame = 0; frame < 6; frame++) {
       await tester.pump(const Duration(milliseconds: 50));

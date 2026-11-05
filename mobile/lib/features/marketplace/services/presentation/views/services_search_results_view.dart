@@ -11,6 +11,7 @@ import '../../../catalogue/catalogue_provider.dart';
 import '../../../catalogue/catalogue_search.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../widgets/services_module_navigation.dart';
+import '../widgets/service_subcategory_icons.dart';
 
 class ServicesSearchResultsView extends ConsumerWidget {
   const ServicesSearchResultsView({required this.query, super.key});
@@ -119,7 +120,7 @@ class _SearchResultTile extends StatelessWidget {
         leading: Icon(
           subcategory == null
               ? Icons.category_outlined
-              : Icons.miscellaneous_services_outlined,
+              : serviceSubcategoryIcon(subcategory.id),
           color: OraColors.info,
         ),
         title: Text(label),

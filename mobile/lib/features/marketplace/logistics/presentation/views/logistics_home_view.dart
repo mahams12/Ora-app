@@ -13,6 +13,17 @@ import '../../../shared/widgets/illustrated_category_card.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/marketplace_search_field.dart';
 
+const _logisticsCategoryIcons = <String, IconData>{
+  'bikes': Icons.two_wheeler,
+  'three_wheeler': Icons.electric_rickshaw,
+  'pickups': Icons.local_shipping,
+  'vans': Icons.airport_shuttle,
+  'trucks': Icons.local_shipping,
+  'trailers': Icons.rv_hookup,
+  'specialized': Icons.construction,
+  'freight': Icons.sailing,
+};
+
 class LogisticsHomeView extends ConsumerStatefulWidget {
   const LogisticsHomeView({super.key});
 
@@ -134,6 +145,9 @@ class _LogisticsHomeViewState extends ConsumerState<LogisticsHomeView> {
                         imageAsset: 'assets/marketplace/${category.image}',
                         title: category.name,
                         countLine: '${category.types.length} vehicle types',
+                        badgeIcon:
+                            _logisticsCategoryIcons[category.id] ??
+                            Icons.category_outlined,
                         height: 184,
                         onTap: () => context.push(
                           AppRoutes.logisticsCategoryPath(category.id),

@@ -27,6 +27,20 @@ const _suggestedSubcategoryIds = [
   'mobile_car_wash',
 ];
 
+const _serviceCategoryIcons = <String, IconData>{
+  'home_repair': Icons.home_repair_service,
+  'cleaning': Icons.cleaning_services,
+  'pest': Icons.pest_control,
+  'beauty': Icons.face_retouching_natural,
+  'solar_garden': Icons.solar_power,
+  'professional': Icons.business_center,
+  'education': Icons.school,
+  'health': Icons.medical_services,
+  'family_pet': Icons.pets,
+  'automobile': Icons.car_repair,
+  'daily_life': Icons.local_laundry_service,
+};
+
 class ServicesHomeView extends ConsumerStatefulWidget {
   const ServicesHomeView({super.key});
 
@@ -114,6 +128,9 @@ class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
                                 '${category.subcategories.length} services',
                             width: 168,
                             height: 176,
+                            badgeIcon:
+                                _serviceCategoryIcons[category.id] ??
+                                Icons.category_outlined,
                             onTap: () => context.push(
                               AppRoutes.servicesCategoryPath(category.id),
                             ),
