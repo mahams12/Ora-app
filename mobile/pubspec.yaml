@@ -52,6 +52,9 @@ flutter:
     - assets/branding/services/courier.jpg
     - assets/branding/services/move.jpg
     - assets/marketplace/modules/
+    - assets/marketplace/catalogue_v1.json
+    - assets/marketplace/logistics/
+    - assets/marketplace/services/
     - assets/branding/ride_card/
     - assets/branding/ride_card/icons/
     # Ride Request half-screen MapLibre preview (Ora dark style + markers).

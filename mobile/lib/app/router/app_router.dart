@@ -10,7 +10,17 @@ import '../../features/driver/presentation/views/driver_shell_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/maps/poc/maplibre_poc_view.dart';
 import '../../features/passenger/presentation/views/home_shell_view.dart';
-import '../../features/super_app/presentation/views/module_coming_soon_view.dart';
+import '../../features/marketplace/logistics/presentation/views/logistics_category_view.dart';
+import '../../features/marketplace/logistics/presentation/views/logistics_home_view.dart';
+import '../../features/marketplace/logistics/presentation/views/logistics_search_results_view.dart';
+import '../../features/marketplace/logistics/presentation/views/quote_request_form.dart';
+import '../../features/marketplace/rental/presentation/views/rental_home_view.dart';
+import '../../features/marketplace/services/presentation/views/service_providers_view.dart';
+import '../../features/marketplace/services/presentation/views/services_category_view.dart';
+import '../../features/marketplace/services/presentation/views/services_empty_view.dart';
+import '../../features/marketplace/services/presentation/views/services_home_view.dart';
+import '../../features/marketplace/services/presentation/views/services_search_results_view.dart';
+import '../../features/marketplace/services/presentation/widgets/services_module_navigation.dart';
 import '../../features/super_app/presentation/views/rides_hub_view.dart';
 import '../../features/ride/presentation/views/active_ride_view.dart';
 import '../../features/ride/presentation/views/offers_inbox_view.dart';
@@ -70,28 +80,77 @@ GoRouter createAppRouter({
         builder: (context, state) => const RidesHubView(),
       ),
       GoRoute(
-        path: AppRoutes.logistics,
-        name: 'logistics',
-        builder: (context, state) => const ModuleComingSoonView(
-          title: 'Logistics',
-          imageAsset: 'assets/marketplace/modules/logistics.webp',
+        path: AppRoutes.logisticsSearch,
+        name: 'logistics-search',
+        builder: (context, state) => LogisticsSearchResultsView(
+          query: state.uri.queryParameters['q'] ?? '',
         ),
       ),
       GoRoute(
-        path: AppRoutes.rental,
-        name: 'rental',
-        builder: (context, state) => const ModuleComingSoonView(
-          title: 'Rental',
-          imageAsset: 'assets/marketplace/modules/rental.webp',
+        path: AppRoutes.logisticsQuote,
+        name: 'logistics-quote',
+        builder: (context, state) => QuoteRequestForm(
+          categoryId: state.pathParameters['categoryId'] ?? '',
+          typeId: state.pathParameters['typeId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.logisticsCategory,
+        name: 'logistics-category',
+        builder: (context, state) => LogisticsCategoryView(
+          categoryId: state.pathParameters['categoryId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.logistics,
+        name: 'logistics',
+        builder: (context, state) => const LogisticsHomeView(),
+      ),
+      GoRoute(
+        path: AppRoutes.servicesSearch,
+        name: 'services-search',
+        builder: (context, state) => ServicesSearchResultsView(
+          query: state.uri.queryParameters['q'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.servicesBookings,
+        name: 'services-bookings',
+        builder: (context, state) => const ServicesEmptyView(
+          destination: ServicesNavigationDestination.bookings,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.servicesSaved,
+        name: 'services-saved',
+        builder: (context, state) => const ServicesEmptyView(
+          destination: ServicesNavigationDestination.saved,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.servicesSubcategory,
+        name: 'services-subcategory',
+        builder: (context, state) => ServiceProvidersView(
+          categoryId: state.pathParameters['categoryId'] ?? '',
+          subcategoryId: state.pathParameters['subId'] ?? '',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.servicesCategory,
+        name: 'services-category',
+        builder: (context, state) => ServicesCategoryView(
+          categoryId: state.pathParameters['categoryId'] ?? '',
         ),
       ),
       GoRoute(
         path: AppRoutes.services,
         name: 'services',
-        builder: (context, state) => const ModuleComingSoonView(
-          title: 'Services',
-          imageAsset: 'assets/marketplace/modules/services.webp',
-        ),
+        builder: (context, state) => const ServicesHomeView(),
+      ),
+      GoRoute(
+        path: AppRoutes.rental,
+        name: 'rental',
+        builder: (context, state) => const RentalHomeView(),
       ),
       GoRoute(
         path: AppRoutes.mapLibrePoc,
@@ -112,10 +171,7 @@ GoRouter createAppRouter({
         builder: (context, state) {
           final rideId = state.uri.queryParameters['rideId'] ?? '';
           final rideState = state.uri.queryParameters['state'] ?? 'SEARCHING';
-          return RideRequestCreatedView(
-            rideId: rideId,
-            serverState: rideState,
-          );
+          return RideRequestCreatedView(rideId: rideId, serverState: rideState);
         },
       ),
       GoRoute(
@@ -153,23 +209,20 @@ GoRouter createAppRouter({
       GoRoute(
         path: AppRoutes.driverHome,
         name: 'driver-home',
-        builder: (context, state) => const DriverShellView(
-          initialTab: DriverShellPage.home,
-        ),
+        builder: (context, state) =>
+            const DriverShellView(initialTab: DriverShellPage.home),
       ),
       GoRoute(
         path: AppRoutes.driverOpen,
         name: 'driver-open',
-        builder: (context, state) => const DriverShellView(
-          initialTab: DriverShellPage.open,
-        ),
+        builder: (context, state) =>
+            const DriverShellView(initialTab: DriverShellPage.open),
       ),
       GoRoute(
         path: AppRoutes.driverRides,
         name: 'driver-rides',
-        builder: (context, state) => const DriverShellView(
-          initialTab: DriverShellPage.assigned,
-        ),
+        builder: (context, state) =>
+            const DriverShellView(initialTab: DriverShellPage.assigned),
       ),
       GoRoute(
         path: AppRoutes.driverRide,
@@ -182,15 +235,11 @@ GoRouter createAppRouter({
       GoRoute(
         path: AppRoutes.driverDirectOffer,
         name: 'driver-direct-offer',
-        builder: (context, state) => const DriverShellView(
-          initialTab: DriverShellPage.offer,
-        ),
+        builder: (context, state) =>
+            const DriverShellView(initialTab: DriverShellPage.offer),
       ),
     ],
-    errorBuilder: (context, state) => Scaffold(
-      body: Center(
-        child: Text('Route not found: ${state.uri}'),
-      ),
-    ),
+    errorBuilder: (context, state) =>
+        Scaffold(body: Center(child: Text('Route not found: ${state.uri}'))),
   );
 }
