@@ -11,8 +11,11 @@ import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/ora_card.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/responsive.dart';
+import '../widgets/ride_category_strip.dart';
 import '../widgets/ride_service_tiles.dart';
 import '../widgets/service_coming_later_sheet.dart';
+import '../widgets/saved_places_section.dart';
+import '../widgets/unavailable_feature_sheet.dart';
 
 class RidesHubView extends StatelessWidget {
   const RidesHubView({super.key});
@@ -63,6 +66,21 @@ class RidesHubView extends StatelessWidget {
                         unawaited(showServiceComingLaterSheet(context, 'Move')),
                     courierStatusLabel: 'Coming later',
                     moveStatusLabel: 'Coming later',
+                  ),
+                  const SizedBox(height: OraSpacing.lg),
+                  RideCategoryStrip(
+                    selectedId: null,
+                    onSelect: (categoryId) => unawaited(
+                      context.push<void>(
+                        AppRoutes.rideRequestUri(category: categoryId),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: OraSpacing.lg),
+                  SavedPlacesSection(
+                    onUnavailable: (feature) => unawaited(
+                      showUnavailableFeatureSheet(context, feature),
+                    ),
                   ),
                   const SizedBox(height: OraSpacing.lg),
                   Semantics(

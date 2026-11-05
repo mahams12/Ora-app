@@ -17,6 +17,7 @@ class OraModuleCard extends StatefulWidget {
     required this.imageAsset,
     required this.route,
     required this.accent,
+    required this.badgeIcon,
     super.key,
   });
 
@@ -25,6 +26,7 @@ class OraModuleCard extends StatefulWidget {
   final String imageAsset;
   final String route;
   final Color accent;
+  final IconData badgeIcon;
 
   @override
   State<OraModuleCard> createState() => _OraModuleCardState();
@@ -79,34 +81,39 @@ class _OraModuleCardState extends State<OraModuleCard> {
                     height: 164,
                     child: Stack(
                       children: [
-                        Positioned(
-                          top: 4,
-                          right: 4,
+                        Positioned.fill(
                           child: Image.asset(
                             widget.imageAsset,
-                            width: 84,
-                            height: 84,
-                            cacheWidth: 256,
-                            fit: BoxFit.contain,
+                            cacheWidth: 480,
+                            fit: BoxFit.cover,
                             filterQuality: FilterQuality.medium,
                           ),
                         ),
-                        Positioned(
-                          top: 12,
-                          left: 12,
-                          child: Container(
-                            width: 28,
-                            height: 28,
+                        const Positioned.fill(
+                          child: DecoratedBox(
                             decoration: BoxDecoration(
-                              color: widget.accent.withValues(alpha: 0.16),
-                              borderRadius: BorderRadius.circular(
-                                OraRadius.pill,
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Color(0x00000000), Color(0xD9000000)],
                               ),
                             ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: const Color(0xF2FFFFFF),
+                              borderRadius: BorderRadius.circular(9),
+                            ),
                             child: Icon(
-                              Icons.arrow_forward_rounded,
+                              widget.badgeIcon,
                               color: widget.accent,
-                              size: 16,
+                              size: 17,
                             ),
                           ),
                         ),
@@ -122,16 +129,14 @@ class _OraModuleCardState extends State<OraModuleCard> {
                                 widget.title,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: OraTypography.bodyEmphasis(
-                                  OraColors.textPrimary,
-                                ),
+                                style: OraTypography.bodyEmphasis(Colors.white),
                               ),
                               Text(
                                 widget.subtitle,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: OraTypography.caption(
-                                  OraColors.textSecondary,
+                                  const Color(0xE6FFFFFF),
                                 ),
                               ),
                             ],

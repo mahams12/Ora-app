@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/di/providers.dart';
 import '../../../../app/router/routes.dart';
 import '../../../../app/theme/ora_colors.dart';
-import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/widgets/widgets.dart';
+import '../../../super_app/presentation/widgets/unavailable_feature_sheet.dart';
 import '../../../auth/presentation/view_models/session_user_profile.dart';
 import 'passenger_home_view.dart';
 import '../../../../features/ride/presentation/views/ride_history_view.dart';
@@ -76,27 +76,7 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
 
   Future<void> _showUnavailable(String feature) {
     _closeDrawer();
-    return showOraBottomSheet<void>(
-      context: context,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          OraSectionHeader(
-            eyebrow: 'Coming later',
-            title: feature,
-            description:
-                '$feature is planned for Ora but is not wired to the backend '
-                'in this build. Nothing is faked.',
-          ),
-          const SizedBox(height: OraSpacing.lg),
-          OraButton(
-            label: 'Got it',
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    );
+    return showUnavailableFeatureSheet(context, feature);
   }
 
   void _openDriverTools() {

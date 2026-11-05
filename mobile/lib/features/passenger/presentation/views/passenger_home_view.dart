@@ -8,61 +8,9 @@ import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../super_app/presentation/widgets/ora_module_grid.dart';
+import '../../../super_app/presentation/widgets/ride_category_strip.dart';
+import '../../../super_app/presentation/widgets/saved_places_section.dart';
 import '../view_models/home_view_model.dart';
-
-/// Visual-only ride category (fares come from backend estimate — never fabricated).
-class _RideCategory {
-  const _RideCategory({
-    required this.id,
-    required this.name,
-    required this.blurb,
-    required this.icon,
-  });
-
-  final String id;
-  final String name;
-  final String blurb;
-  final IconData icon;
-}
-
-const _categories = <_RideCategory>[
-  _RideCategory(
-    id: 'zip',
-    name: 'Zip',
-    blurb: 'Bike, fastest way',
-    icon: Icons.two_wheeler_rounded,
-  ),
-  _RideCategory(
-    id: 'trio',
-    name: 'Trio',
-    blurb: 'Rickshaw, 3 seats',
-    icon: Icons.airport_shuttle_rounded,
-  ),
-  _RideCategory(
-    id: 'easy',
-    name: 'Easy',
-    blurb: 'Compact',
-    icon: Icons.directions_car_rounded,
-  ),
-  _RideCategory(
-    id: 'breeze',
-    name: 'Breeze',
-    blurb: 'AC comfort car',
-    icon: Icons.ac_unit_rounded,
-  ),
-  _RideCategory(
-    id: 'executive',
-    name: 'Executive',
-    blurb: 'Big trunk · events',
-    icon: Icons.airport_shuttle_outlined,
-  ),
-  _RideCategory(
-    id: 'premium',
-    name: 'Premium',
-    blurb: 'Luxury feel ride',
-    icon: Icons.workspace_premium_rounded,
-  ),
-];
 
 /// Authenticated passenger Home — matches the Ora HTML prototype shell.
 class PassengerHomeView extends StatefulWidget {
@@ -190,71 +138,17 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
               const SizedBox(height: OraSpacing.sm),
               const OraModuleGrid(),
               const SizedBox(height: OraSpacing.lg),
-              OraSectionHeader(
-                title: 'Choose a ride',
-                action: Text(
-                  '${_categories.length} options',
-                  style: OraTypography.caption(OraColors.textMuted),
-                ),
-              ),
-              const SizedBox(height: OraSpacing.sm),
-              SizedBox(
-                height: 156,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _categories.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(width: OraSpacing.sm),
-                  itemBuilder: (context, index) {
-                    final cat = _categories[index];
-                    final selected = cat.id == _selectedCategoryId;
-                    return _CategoryCard(
-                      category: cat,
-                      selected: selected,
-                      onTap: () {
-                        setState(() => _selectedCategoryId = cat.id);
-                        widget.onRequestRideEntry(cat.id);
-                      },
-                    );
-                  },
-                ),
+              RideCategoryStrip(
+                selectedId: _selectedCategoryId,
+                onSelect: (categoryId) {
+                  setState(() => _selectedCategoryId = categoryId);
+                  widget.onRequestRideEntry(categoryId);
+                },
               ),
               const SizedBox(height: OraSpacing.lg),
-              OraSectionHeader(
-                title: 'Saved places',
-                action: GestureDetector(
-                  onTap: () => widget.onUnavailableFeature('Saved places'),
-                  child: Text(
-                    'See all',
-                    style: OraTypography.caption(OraColors.primary).copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: OraSpacing.sm),
-              OraCard(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: OraSpacing.sm,
-                  vertical: OraSpacing.xxs,
-                ),
-                child: Column(
-                  children: [
-                    _SavedPlaceRow(
-                      icon: Icons.home_rounded,
-                      title: 'Home',
-                      subtitle: 'DHA Phase 5, Lahore',
-                      onTap: () => widget.onRequestRideEntry(null),
-                    ),
-                    const Divider(height: 1, color: OraColors.border),
-                    _SavedPlaceRow(
-                      icon: Icons.work_outline_rounded,
-                      title: 'Work',
-                      subtitle: 'MM Alam Road, Gulberg',
-                      onTap: () => widget.onRequestRideEntry(null),
-                    ),
-                  ],
-                ),
+              SavedPlacesSection(
+                onUnavailable: widget.onUnavailableFeature,
+                onSavedPlaceTap: () => widget.onRequestRideEntry(null),
               ),
               const SizedBox(height: OraSpacing.lg),
               const OraSectionHeader(title: 'Quick actions'),
@@ -297,7 +191,6 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
     );
   }
 }
-
 
 class _HomeHeroHeader extends StatelessWidget {
   const _HomeHeroHeader({
@@ -489,71 +382,6 @@ class _PromoCard extends StatelessWidget {
   }
 }
 
-class _SavedPlaceRow extends StatelessWidget {
-  const _SavedPlaceRow({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(OraRadius.md),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0x0FFFFFFF),
-              ),
-              child: Icon(icon, size: 18, color: OraColors.textSecondary),
-            ),
-            const SizedBox(width: 13),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: OraTypography.bodyEmphasis(OraColors.textPrimary)
-                        .copyWith(fontSize: 13.5),
-                  ),
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: OraTypography.caption(OraColors.textMuted)
-                        .copyWith(fontSize: 11.5),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: OraColors.textMuted,
-              size: 16,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _QuickActionTile extends StatelessWidget {
   const _QuickActionTile({
     required this.icon,
@@ -599,83 +427,6 @@ class _QuickActionTile extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CategoryCard extends StatelessWidget {
-  const _CategoryCard({
-    required this.category,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final _RideCategory category;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 128,
-      child: Material(
-        color: selected ? OraColors.primaryMuted : OraColors.surfaceElevated,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: selected ? OraColors.primary : OraColors.border,
-                width: selected ? 1.5 : 1,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  category.icon,
-                  color:
-                      selected ? OraColors.primary : OraColors.textSecondary,
-                  size: 20,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  category.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: OraTypography.bodyEmphasis(OraColors.textPrimary)
-                      .copyWith(fontSize: 13.5, height: 1.1),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  category.blurb,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: OraTypography.caption(OraColors.textMuted).copyWith(
-                    fontSize: 11,
-                    height: 1.15,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Fare on request',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: OraTypography.caption(OraColors.primary).copyWith(
-                    fontSize: 11,
-                    height: 1.1,
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),

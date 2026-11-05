@@ -93,11 +93,90 @@ void main() {
     await tester.pumpWidget(_app(router));
     await tester.pumpAndSettle();
 
-    await tester.tap(
-      find.text('Logistics — trucks, cargo & freight catalogue'),
+    final logisticsCard = find.text(
+      'Logistics — trucks, cargo & freight catalogue',
     );
+    await tester.ensureVisible(logisticsCard);
+    await tester.pumpAndSettle();
+    await tester.tap(logisticsCard);
     await tester.pumpAndSettle();
     expect(find.text('/logistics'), findsOneWidget);
+  });
+
+  testWidgets('Rides hub shows all categories and Saved places', (
+    tester,
+  ) async {
+    final router = _router();
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(_app(router));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Choose a ride'));
+    await tester.pumpAndSettle();
+
+    const categoryNames = [
+      'Zip',
+      'Trio',
+      'Easy',
+      'Breeze',
+      'Executive',
+      'Premium',
+    ];
+    final seenCategories = <String>{};
+    final categoryList = find.byType(ListView);
+    for (var i = 0; i < 8; i++) {
+      for (final name in categoryNames) {
+        if (find.text(name).evaluate().isNotEmpty) {
+          seenCategories.add(name);
+        }
+      }
+      await tester.drag(categoryList, const Offset(-260, 0));
+      await tester.pumpAndSettle();
+    }
+    expect(seenCategories, containsAll(categoryNames));
+
+    await tester.ensureVisible(find.text('Saved places'));
+    await tester.pumpAndSettle();
+    expect(find.text('Saved places'), findsOneWidget);
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Work'), findsOneWidget);
+  });
+
+  testWidgets('Rides hub Zip opens its ride request URI', (tester) async {
+    final router = _router();
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(_app(router));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Choose a ride'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Zip'));
+    await tester.pumpAndSettle();
+    expect(find.text('/rides/request?category=zip'), findsOneWidget);
+  });
+
+  testWidgets('Rides hub saved places use the unavailable sheet', (
+    tester,
+  ) async {
+    final router = _router();
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(_app(router));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Saved places'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'Home is planned for Ora but is not wired to the backend '
+        'in this build. Nothing is faked.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Got it'), findsOneWidget);
   });
 
   testWidgets('Rides hub fits compact and large phone sizes', (tester) async {
