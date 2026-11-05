@@ -8,12 +8,11 @@ import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../super_app/presentation/widgets/ora_module_grid.dart';
-import '../../../super_app/presentation/widgets/ride_category_strip.dart';
 import '../../../super_app/presentation/widgets/saved_places_section.dart';
 import '../view_models/home_view_model.dart';
 
 /// Authenticated passenger Home — matches the Ora HTML prototype shell.
-class PassengerHomeView extends StatefulWidget {
+class PassengerHomeView extends StatelessWidget {
   const PassengerHomeView({
     required this.state,
     required this.onOpenDrawer,
@@ -37,29 +36,22 @@ class PassengerHomeView extends StatefulWidget {
   final ValueChanged<String> onUnavailableFeature;
 
   @override
-  State<PassengerHomeView> createState() => _PassengerHomeViewState();
-}
-
-class _PassengerHomeViewState extends State<PassengerHomeView> {
-  String _selectedCategoryId = 'easy';
-
-  @override
   Widget build(BuildContext context) {
     final padding = Responsive.horizontalPadding(context);
 
-    if (widget.state.loadStatus == HomeLoadStatus.loading &&
-        widget.state.displayName == null) {
+    if (state.loadStatus == HomeLoadStatus.loading &&
+        state.displayName == null) {
       return const Center(
         child: OraLoadingIndicator(message: 'Loading your home…'),
       );
     }
 
-    if (widget.state.loadStatus == HomeLoadStatus.error &&
-        widget.state.displayName == null) {
+    if (state.loadStatus == HomeLoadStatus.error &&
+        state.displayName == null) {
       return OraErrorState(
         title: 'Home unavailable',
-        message: widget.state.loadError ?? 'Something went wrong.',
-        onRetry: widget.onRetryProfile,
+        message: state.loadError ?? 'Something went wrong.',
+        onRetry: onRetryProfile,
       );
     }
 
@@ -68,10 +60,10 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
       slivers: [
         SliverToBoxAdapter(
           child: _HomeHeroHeader(
-            state: widget.state,
-            onOpenDrawer: widget.onOpenDrawer,
-            onOpenProfile: widget.onOpenProfile,
-            onSearchTap: () => widget.onRequestRideEntry(null),
+            state: state,
+            onOpenDrawer: onOpenDrawer,
+            onOpenProfile: onOpenProfile,
+            onSearchTap: () => onRequestRideEntry(null),
           ),
         ),
         SliverPadding(
@@ -84,14 +76,14 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               _PromoCard(
-                onTap: () => widget.onRequestRideEntry(
+                onTap: () => onRequestRideEntry(
                   null,
                   serviceType: 'intercity',
                 ),
               ),
               const SizedBox(height: OraSpacing.md),
               OraCard(
-                onTap: widget.onSwitchToDriver,
+                onTap: onSwitchToDriver,
                 padding: const EdgeInsets.all(OraSpacing.md),
                 child: Row(
                   children: [
@@ -138,17 +130,9 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
               const SizedBox(height: OraSpacing.sm),
               const OraModuleGrid(),
               const SizedBox(height: OraSpacing.lg),
-              RideCategoryStrip(
-                selectedId: _selectedCategoryId,
-                onSelect: (categoryId) {
-                  setState(() => _selectedCategoryId = categoryId);
-                  widget.onRequestRideEntry(categoryId);
-                },
-              ),
-              const SizedBox(height: OraSpacing.lg),
               SavedPlacesSection(
-                onUnavailable: widget.onUnavailableFeature,
-                onSavedPlaceTap: () => widget.onRequestRideEntry(null),
+                onUnavailable: onUnavailableFeature,
+                onSavedPlaceTap: () => onRequestRideEntry(null),
               ),
               const SizedBox(height: OraSpacing.lg),
               const OraSectionHeader(title: 'Quick actions'),
@@ -160,7 +144,7 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
                       icon: Icons.history_rounded,
                       label: 'My rides',
                       color: OraColors.info,
-                      onTap: widget.onOpenRides,
+                      onTap: onOpenRides,
                     ),
                   ),
                   const SizedBox(width: OraSpacing.sm),
@@ -169,7 +153,7 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
                       icon: Icons.account_balance_wallet_rounded,
                       label: 'Wallet',
                       color: OraColors.tealBright,
-                      onTap: () => widget.onUnavailableFeature('Wallet'),
+                      onTap: () => onUnavailableFeature('Wallet'),
                     ),
                   ),
                   const SizedBox(width: OraSpacing.sm),
@@ -178,8 +162,7 @@ class _PassengerHomeViewState extends State<PassengerHomeView> {
                       icon: Icons.shield_rounded,
                       label: 'Safety',
                       color: OraColors.goldSoft,
-                      onTap: () =>
-                          widget.onUnavailableFeature('Safety centre'),
+                      onTap: () => onUnavailableFeature('Safety centre'),
                     ),
                   ),
                 ],
