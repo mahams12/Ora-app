@@ -1,11 +1,13 @@
 # ORA Super-App Expansion: Audit and Implementation Plan
 
-**Status:** Steps 1–2 approved (frontend only). Step 1 implemented (PR #2). Steps 3+ (vendor, admin, Storage, marketplace booking backend) not started and need separate approval.
+**Status:** Steps 1–2 approved and implemented on separate frontend-only branches. No marketplace backend, Firestore, Storage, dispatch, pricing or billing changes are included. Steps 3+ (vendor, admin, Storage, marketplace booking backend) are not started and need separate approval.
 
 **Progress log**
-- Local `cost-optimization-local` work backed up to `backup/cost-optimization-local-2026-11-04` (142 files; `google-services.test.json` excluded). Baseline on that branch: 23 passenger-home / ride-request Flutter tests fail that pass on `master` (`pumpAndSettle` timeouts), so Steps 1–2 are built on `master` (latest verified code) until that is resolved.
-- Step 1: `OraModuleGrid` on home, `/rides` hub (City + Intercity unchanged; Courier + Move remain Coming later), placeholder `/logistics` `/rental` `/services`. analyze: no new issues; flutter test: 789 pass / 1 pre-existing master failure.
-**Audited revision:** `master` @ `7449cc7` (GitHub). Your local branch `cost-optimization-local` (143 uncommitted files, not pushed) was **not** audited. See §0.
+- Historical baseline: the initial Step 1 implementation was based on the then-verified `master` audit below; the approved work continued as separate Step 1, Step 2 and redesign branches.
+- Step 1: `OraModuleGrid` on home and `/rides` hub; the final Home omits "Choose a ride", while the hub retains its 6-category shared strip and Saved places. City + Intercity ride actions remain unchanged; Courier + Move remain Coming later.
+- Step 2: bundled catalogues are Logistics 8/42, Services 11/88 and Rental 8/37. Browse/search routes use local data, locally bundled CC0/PDM photos and honest empty states; production providers/listings/operators are empty and logistics quotation remains disabled.
+- Redesign: shared Rides / Logistics / Rental / Services / Wallet bar; photo-backed 13-option Rides hub with typed actions; rental category route and local keyword search; Services photo-card sections and provider-empty route. Home has no "Choose a ride" strip; Saved places remains on Home and the Rides hub. The drawer, including "Switch to driver mode", is preserved.
+**Historical audit revision:** `master` @ `7449cc7` (GitHub). The local `cost-optimization-local` branch state at that time (143 uncommitted files, not pushed) was **not** audited. See §0.
 
 ---
 
@@ -25,11 +27,13 @@
 ## 1. Codebase audit (current state)
 
 ### 1.1 Mobile (Flutter, Riverpod, go_router, MVVM)
-- **Features:** `auth`, `onboarding`, `passenger`, `ride`, `driver`, `maps`, `saved_places`. `payments` and `safety` are empty placeholders.
-- **Routes** (`lib/app/router/routes.dart`): `/`, `/auth/phone`, `/auth/otp`, `/onboarding`, `/home`, `/rides/request`, `/rides/requested`, `/rides/:id/{offers,active,detail,rate}`, `/driver`, `/driver/{open,rides,rides/:id,offer}`, `/devtools/maplibre-poc`.
+- **Features:** `auth`, `onboarding`, `passenger`, `ride`, `driver`, `maps`, `saved_places`, `super_app`, and frontend-only marketplace `logistics`, `rental`, `services`. `payments` and `safety` remain placeholders.
+- **Routes** (`lib/app/router/routes.dart`): ride and driver routes plus `/rides`, `/logistics`, `/logistics/category/:categoryId`, `/rental`, `/rental/category/:categoryId`, `/services`, `/services/category/:categoryId`, and local search/provider routes.
 - **Guard** (`route_guards.dart`): auth-status state machine. `/driver/*` requires `isApprovedDriver` from server `/me`.
-- **Home** (`passenger_home_view.dart`, 864 lines): hero header with drawer and avatar, "Where are you headed?", promo card, "Earn on ORA", **Services grid** (`_ServicesGrid`, 4 image tiles), "Choose a ride" (6 categories: zip, trio, easy, breeze, executive, premium), Saved places (static Home/Work rows), Quick actions (My rides, Wallet *(coming later)*, Safety *(coming later)*).
-- **Services grid status today:**
+- **Home** (`passenger_home_view.dart`): drawer/avatar header, ride-location entry, photo hero, four photo-backed module cards, Saved places, quick actions and the existing driver-mode entry. "Choose a ride" appears on the Rides hub, not Home.
+- **Rides hub:** existing `RideServiceTiles` callbacks are preserved; a typed 13-item photo grid routes supported categories to the same ride-request screen, Intercity to the existing service route, and future categories to a coming-later sheet. Saved places also appears here.
+- **Module navigation:** Rides, Logistics, Rental and Services replace the current module route; Wallet uses the drawer's unavailable sheet.
+- **Existing ride tile status:**
 
   | Tile | Behaviour | Backend |
   |------|-----------|---------|
@@ -38,7 +42,7 @@
   | Courier | "Coming later" sheet | `serviceType=courier` is accepted by validation, but the UI is not exposed |
   | Move | "Coming later" sheet | Same as Courier (`move`) |
 
-- **Drawer** (`home_shell_view.dart`): Home, My rides, Saved places / Wallet / Refer / Safety / Settings / Help *(all coming later)*, Switch to driver mode (re-fetches `/me`), MapLibre PoC, Log out.
+- **Drawer** (`home_shell_view.dart`): Home, My rides, Saved places / Wallet / Refer / Safety / Settings / Help *(existing unavailable actions)*, Switch to driver mode (re-fetches `/me`), MapLibre PoC, Log out. Items and order are unchanged by the module navigation work.
 - **Design system** (`lib/app/theme/`): `OraColors`, typography (Sora + Inter), spacing, radius, elevation, motion, and widgets (`OraCard`, `OraButton`, `OraChip`, `OraBottomSheet`, `OraDrawer`, `OraEmptyState`, `OraErrorState`, `OraStarRating`, `OraTextField`, `OraSectionHeader`, `OraListRow`, `OraLoadingIndicator`). The new modules will reuse all of these.
 - **Not present:** `cloud_firestore` (all data goes through the backend API), `firebase_storage`, image picker, network-image cache, chat.
 - **Tests:** about 776 Flutter tests (last recorded full run 776/776), plus 2 integration tests.
@@ -69,7 +73,7 @@
 
 ### 2.1 Principles
 - **API-mediated everything** (same as rides): the mobile app calls new `/v1/marketplace/*` endpoints, and Firestore rules stay deny-all for every new collection. Admin approval is enforced by the backend **and** by the rules (clients can't write anything), so hidden buttons are never the only control. This avoids adding `cloud_firestore` to the app (smaller app, no listeners).
-- **Static catalogues are bundled** (Logistics: 8 categories / 42 types; Services: 11 categories / 88 subcategories) as one versioned JSON (`catalogue_v1.json`). The app reads it as an asset, and the backend imports the same IDs for validation. A contract test fails if the two copies drift. Browsing and searching the catalogues costs **0 Firestore reads**.
+- **Static catalogues are bundled** (Logistics: 8 categories / 42 types; Services: 11 categories / 88 subcategories; Rental: 8 categories / 37 subcategories) in `catalogue_v1.json`. The current client reads them locally; no marketplace API or Firestore reads are made.
 - **One shared vendor system, three business models.** Each vendor profile is keyed `vendors/{uid}_{kind}` with `kind ∈ rental|service|logistics`, so one user can hold several roles and duplicate profiles are impossible. Passenger and driver data in `users/{uid}` is never modified.
 - **Uploads through backend-issued V4 signed URLs:** the client PUTs with the existing `dio`, so no Storage SDK is needed. Storage rules deny all client access to `vendor-private/**`. Public listing images live under `listing-public/**` with authenticated read only.
 - **Notifications:** new outbox event types (`vendor.status_changed`, `booking.*`, `inquiry.message`) go through the existing FCM projector. No polling and no live listeners. Lists refresh on screen open and pull-to-refresh.
@@ -108,7 +112,7 @@ A `requireAdmin` middleware loads `users/{uid}.role === 'admin'`, the same sourc
 
 | Class | Features |
 |-------|----------|
-| **A. Frontend-only** | 4-module home cards; Rides hub (re-hosting existing City/Intercity entries, with Courier/Move/Logistics labelled honestly); Logistics catalogue browse (8 categories / 42 types); Services catalogue browse plus local debounced search with synonyms (11 / 88); marketplace widget kit; Rental UI shell with honest empty and "coming soon" states |
+| **A. Frontend-only** | Four-module home and shared module bar; typed 13-entry Rides hub (existing City/Intercity flows preserved); Logistics browse (8/42) with disabled quote CTA and no operator fixtures; Services browse/search (11/88) with photo cards and provider-empty state; Rental browse/search (8/37) with listing-empty states; marketplace widget kit |
 | **B. Existing backend only** | Rides hub City and Intercity flows (unchanged); profile and drawer; FCM projector reused for new events |
 | **C. New backend, collections, rules, indexes, admin** | Vendor onboarding and approval; admin section; rental listings, search, detail, favorites; rental booking requests plus transactional confirmation; inquiries; service offerings, provider search, bookings, quotes, reviews; logistics quote requests and operator quotes; reports and moderation |
 | **D. External or operational approval** | Cloud Storage (Blaze); restoring staging billing; payments and wallet (none implemented, so bookings are "pay vendor directly" and labelled as such); CNIC verification against NADRA (manual admin review only, with no automated KYC); licence checks for regulated services (manual admin review); instant dispatch for logistics road vehicles (needs vehicle-type eligibility in matching, which is frozen and needs separate approval); air, rail and sea freight (quote-only, no real providers) |
@@ -118,11 +122,12 @@ A `requireAdmin` middleware loads `users/{uid}.role === 'admin'`, the same sourc
 ---
 
 ## 4. UI design approach
-- **Illustrations:** **Microsoft Fluent Emoji 3D** (MIT licence, free) covers every module and category visual in one consistent 3D style. Examples: car, delivery truck, house, toolbox, wrench, high voltage, broom/bucket, lipstick, stethoscope, ship, airplane, helicopter, locomotive, crane, auto-rickshaw, bicycle, motorcycle, pickup. Exported as **WebP** at 1x/2x/3x (about 4–12 KB each) and bundled locally, with the licence file included. Individual services get Material Symbols icons tinted in category colours, so 88 extra bitmaps aren't needed.
-- **Module cards:** 2×2 grid, rounded `OraRadius`, existing ORA navy/gold palette with a gradient per module, `OraElevation` shadow, 3D illustration overflowing the top-right corner, scale-on-press of 0.97 over 120 ms (`OraMotion`). The rest of the home screen (header, search, promo, Earn, Choose a ride, Saved places, Quick actions) is **unchanged**.
-- **Services module:** follows the reference service app (search bar, category carousel, "Popular services" carousel, featured and nearby providers once real ones exist), with a module bottom nav: Explore · Bookings · Inbox · Saved · Profile.
-- **Rental module:** Booking.com-style cards (large image, heart, title, rating badge, review count, location line, short description, price per unit, View details / Contact vendor), plus a filter sheet and sort.
-- **Performance:** `ListView.builder`/slivers, `cached_network_image` (free, widely used) with `memCacheWidth`, server-generated thumbnails (backend resizes on upload confirm), 20-item pages with infinite scroll, and 300 ms debounce on search.
+- **Visuals:** real locally bundled CC0/Public Domain Mark photographs, never emoji or cartoon illustrations. Ora navy/gold/teal colors and Sora/Inter typography remain authoritative. Category and service tiles use a full-bleed cover photo, bottom contrast gradient, white labels and compact icon badges.
+- **Home and Rides:** Home keeps the current drawer and ride entry, adds a photo hero, four photo module cards and Saved places, and omits "Choose a ride". Rides keeps existing service-tile callbacks and has a typed 13-option photo grid plus Saved places.
+- **Services:** search, an 11-category icon row and one lazy category section per catalogue category; each of the 88 subcategories uses its own photo tile when a suitable unique CC0/PDM photo is available, otherwise it shows a neutral placeholder rather than reusing a category or another subcategory's image. Provider screens accept injected summaries for later integration; production routes pass an empty list.
+- **Rental and Logistics:** Rental uses local keyword search, eight catalogue-backed categories and an honest "No verified listings yet" state. Logistics lists the complete vehicle catalogue, shows an empty operator section and never submits its disabled quotation form.
+- **Navigation and responsiveness:** shared Rides / Logistics / Rental / Services / Wallet bar; module changes use replacement navigation and Wallet uses the existing unavailable sheet. Scrollable sections, bounded tablet widths, semantics and ellipsis protect small screens and scaled text.
+- **Honesty:** no fake listings, providers, operators, prices, ratings, bookings or availability are shown. Unsupported actions remain disabled or use an unavailable/coming-later sheet. No vendor registration, Storage or marketplace booking is part of these steps.
 
 ---
 
@@ -131,7 +136,7 @@ A `requireAdmin` middleware loads `users/{uid}.role === 'admin'`, the same sourc
 | Step | PR | Contents | Class |
 |------|----|----------|-------|
 | 1 | **Home + Rides hub** | Replace `_ServicesGrid` with `OraModuleGrid` (Rides, Logistics, Rental, Services). New `/rides` hub with City, Intercity (same calls as today), Courier (still Coming later), Logistics (→ catalogue). New routes `/logistics`, `/rental`, `/services` (shells). Widget tests for every tile's navigation. | A, B |
-| 2 | **Catalogues** | `catalogue_v1.json`; Logistics home → category → vehicle type → quote-request form (submit disabled with "Available soon" until Step 6); Services home → category → subcategory → provider list (honest empty state); unified local search with synonyms (tests: "AC gas", "pipe leakage", "wedding"); shared marketplace widget kit | A |
+| 2 | **Catalogues** | `catalogue_v1.json` for Logistics (8/42), Services (11/88) and Rental (8/37); photo-backed category/subcategory browse; local keyword search; Rental category route and filter options; honest empty listing/provider/operator states; disabled Logistics quote form; shared marketplace widget kit | A |
 | 3 | **Vendor foundation + Admin** | Backend: `vendors`, `vendorPrivate`, `vendorDocuments`, signed upload URLs, `storage.rules`, `requireAdmin`, audit log, `/me` additive `vendorRoles[]`. Mobile: shared onboarding stepper (kind-parameterized), status screen, drawer entry "Become a host / provider / operator", Admin section (applications, documents, approve / reject / request info / suspend). Rules and contract tests. | C, D(Storage) |
 | 4 | **Rental listings** | Vendor listing editor and image upload, admin listing moderation, public list/search/filter/sort/detail APIs with pagination and indexes, favorites; wire the Rental UI | C |
 | 5 | **Rental booking + inquiries** | Availability calendar, booking request → vendor accept → transactional confirm with night locks, cancellation, inquiry threads, vendor dashboard (properties, requests, inquiries), FCM events, concurrency tests | C |

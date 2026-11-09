@@ -80,7 +80,8 @@ Live proof column: **PASS** (claimed in phase closure docs on disk), **SCRIPT EX
 | N4 | Dispatch / matching waves | **IMPLEMENTED** (MVP) — invite ledger 5/10/15; pickup lat/lng → N3; no auto-assign | `dispatch_wave_service.ts`, internal dispatch-sweep/tick | `dispatch.test.ts`, `run_phase_n4_unit_proof` | SCRIPT EXISTS (`test:dispatch-live-proof`) | **D1** delivery freeze |
 | D1 | Dispatch invite delivery (FCM wake) | **IMPLEMENTED (VERIFIED 2026-10-14)** — projector scans `PENDING` first, reclaims expired-lease `CLAIMED` in leftover budget (terminal backlog starvation fix) | `delivery/*`, `POST .../device-tokens`, `POST .../outbox/dispatch-fcm-sweep` | `delivery_d1.test.ts` (incl. ordering tests S1–S8), `run_phase_d1_unit_proof` | PASS — `FCM_ORDERING_FIX_PHYSICAL_VERIFY_REPORT.json` (staging physical) | Continuous ops only |
 | Ph 4–5 | Location resolve + pricing estimate + **passenger fare edit (5D)** | **GREEN incl. 5C device + 5D physical** | Flutter GPS+Places+estimate UI + editable offer within bounds; server Routes+estimate+snapshot+offer validation | fare/routes/estimate + Flutter tests | 4A DEVICE GREEN; 5B live Routes GREEN; **5C device PASS** (`p5c_device_proof_report.json`); **5D physical PASS** (`passenger_fare_offer_physical_followup_report.json`, custom Rs 860 vs rec 850) | — |
-| MK1 | Super-app home: four modules (Rides / Logistics / Rental / Services) + Rides hub | **IMPLEMENTED (frontend only)** — City/Intercity unchanged; Courier & Move remain Coming Later; Logistics/Rental/Services routes are honest placeholders | `features/super_app/*`, `/rides` `/logistics` `/rental` `/services` | `test/features/super_app/*` | NOT RUN on device (web-preview screenshots only) | MK2 catalogues |
+| MK1 | Super-app home: four modules (Rides / Logistics / Rental / Services) + Rides hub | **IMPLEMENTED (frontend only)** — photo-backed module home and shared navigation; typed 13-entry Rides hub; City/Intercity workflows unchanged; unsupported actions remain unavailable | `features/super_app/*`, `/rides` `/logistics` `/rental` `/services` | `test/features/super_app/*`, passenger shell tests | Web preview only | MK2 catalogues |
+| MK2 | Logistics, Services and Rental catalogue browsing | **IMPLEMENTED (frontend only)** — bundled Logistics 8/42, Services 11/88 and Rental 8/37; local search, CC0/PDM photo cards where suitable unique sources are available, neutral placeholders otherwise, and honest empty states; quote CTA disabled | `features/marketplace/*`, `assets/marketplace/catalogue_v1.json` | `test/features/marketplace/*` | Web preview only | Separate backend approval |
 | Ph 3, 6–15 | Remaining product (payments, safety, etc.) | **PLANNED** | stubs / docs | mobile stubs | NONE | After Ph 4–5 / product priority |
 
 Phase documentation for N1/N2A/N2C/N3/N4/D1: [`docs/implementation/n-series/`](implementation/n-series/).  
@@ -96,10 +97,10 @@ Plan: [`implementation/marketplace/ORA_MARKETPLACE_AUDIT_AND_PLAN.md`](implement
 | Step | Scope | Status |
 | ---- | ----- | ------ |
 | 1 | Four-module home + Rides hub | IMPLEMENTED (frontend only, PR #2) |
-| 2 | Logistics + Services catalogues, Rental shell (no backend submissions, no fake listings) | IN PROGRESS |
+| 2 | Logistics, Services and Rental catalogues (no backend submissions or fake listings) | IMPLEMENTED (frontend only, redesign branch) |
 | 3+ | Vendor registration, admin, Storage, marketplace booking backend | NOT STARTED — needs approval (Storage requires Blaze) |
 
-No marketplace backend routes, Firestore collections, rules or indexes exist yet. Ride matching, geo projection and pricing are untouched by this work.
+The home and module screens use the Ora navy/gold/teal theme, Sora/Inter typography and locally bundled CC0/PDM photos. Logistics quotations remain disabled; production provider/listing/operator lists show honest empty states. The shared module bar routes to Rides, Logistics, Rental and Services; Wallet opens the existing unavailable sheet. No marketplace backend routes, Firestore collections, rules or indexes were added. Ride matching, geo projection, pricing and passenger/driver workflows are untouched by this work.
 
 ---
 
