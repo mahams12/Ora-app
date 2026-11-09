@@ -20,6 +20,7 @@ class AppRoutes {
   static const logisticsCategory = '/logistics/:categoryId';
   static const logisticsQuote = '/logistics/:categoryId/:typeId/quote';
   static const rental = '/rental';
+  static const rentalCategory = '/rental/category/:categoryId';
   static const services = '/services';
   static const servicesSearch = '/services/search';
   static const servicesBookings = '/services/bookings';
@@ -80,6 +81,17 @@ class AppRoutes {
   static String logisticsQuotePath(String categoryId, String typeId) =>
       '/logistics/${Uri.encodeComponent(categoryId)}/'
       '${Uri.encodeComponent(typeId)}/quote';
+
+  static String rentalCategoryPath(
+    String categoryId, {
+    String? subcategoryId,
+  }) => Uri(
+    path: '/rental/category/${Uri.encodeComponent(categoryId)}',
+    queryParameters: {
+      if (subcategoryId != null && subcategoryId.isNotEmpty)
+        'subcategory': subcategoryId,
+    },
+  ).toString();
 
   static String logisticsSearchPath(String query) =>
       Uri(path: logisticsSearch, queryParameters: {'q': query}).toString();

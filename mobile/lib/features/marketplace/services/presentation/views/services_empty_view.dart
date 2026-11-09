@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../app/theme/ora_colors.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
+import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../widgets/services_module_navigation.dart';
 
 class ServicesEmptyView extends StatelessWidget {
@@ -15,7 +16,9 @@ class ServicesEmptyView extends StatelessWidget {
     return Scaffold(
       backgroundColor: OraColors.background,
       appBar: AppBar(title: Text(isBookings ? 'Bookings' : 'Saved')),
-      bottomNavigationBar: ServicesModuleNavigation(selected: destination),
+      bottomNavigationBar: const OraModuleBottomBar(
+        selected: OraModuleDestination.services,
+      ),
       body: MarketplaceEmptyState(
         title: isBookings ? 'No bookings yet' : 'No saved services yet',
         message: isBookings

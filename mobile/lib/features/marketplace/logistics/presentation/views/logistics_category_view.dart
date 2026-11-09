@@ -11,6 +11,7 @@ import '../../../catalogue/catalogue_provider.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/status_pill.dart';
+import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
 class LogisticsCategoryView extends ConsumerWidget {
   const LogisticsCategoryView({required this.categoryId, super.key});
@@ -24,6 +25,9 @@ class LogisticsCategoryView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Vehicle types')),
+      bottomNavigationBar: const OraModuleBottomBar(
+        selected: OraModuleDestination.logistics,
+      ),
       body: catalogue.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => const MarketplaceEmptyState(

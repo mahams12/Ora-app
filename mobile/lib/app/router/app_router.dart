@@ -14,6 +14,7 @@ import '../../features/marketplace/logistics/presentation/views/logistics_catego
 import '../../features/marketplace/logistics/presentation/views/logistics_home_view.dart';
 import '../../features/marketplace/logistics/presentation/views/logistics_search_results_view.dart';
 import '../../features/marketplace/logistics/presentation/views/quote_request_form.dart';
+import '../../features/marketplace/rental/presentation/views/rental_category_view.dart';
 import '../../features/marketplace/rental/presentation/views/rental_home_view.dart';
 import '../../features/marketplace/services/presentation/views/service_providers_view.dart';
 import '../../features/marketplace/services/presentation/views/services_category_view.dart';
@@ -133,6 +134,7 @@ GoRouter createAppRouter({
         builder: (context, state) => ServiceProvidersView(
           categoryId: state.pathParameters['categoryId'] ?? '',
           subcategoryId: state.pathParameters['subId'] ?? '',
+          providers: const [],
         ),
       ),
       GoRoute(
@@ -146,6 +148,14 @@ GoRouter createAppRouter({
         path: AppRoutes.services,
         name: 'services',
         builder: (context, state) => const ServicesHomeView(),
+      ),
+      GoRoute(
+        path: AppRoutes.rentalCategory,
+        name: 'rental-category',
+        builder: (context, state) => RentalCategoryView(
+          categoryId: state.pathParameters['categoryId'] ?? '',
+          subcategoryId: state.uri.queryParameters['subcategory'],
+        ),
       ),
       GoRoute(
         path: AppRoutes.rental,

@@ -7,11 +7,13 @@ import '../../../../../app/theme/ora_colors.dart';
 import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
+import '../../../../../app/theme/widgets/ora_section_header.dart';
 import '../../../../../core/utils/responsive.dart';
 import '../../../catalogue/catalogue_provider.dart';
 import '../../../shared/widgets/illustrated_category_card.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/marketplace_search_field.dart';
+import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
 const _logisticsCategoryIcons = <String, IconData>{
   'bikes': Icons.two_wheeler,
@@ -41,6 +43,9 @@ class _LogisticsHomeViewState extends ConsumerState<LogisticsHomeView> {
     return Scaffold(
       backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Logistics')),
+      bottomNavigationBar: const OraModuleBottomBar(
+        selected: OraModuleDestination.logistics,
+      ),
       body: catalogue.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => const MarketplaceEmptyState(
@@ -63,6 +68,8 @@ class _LogisticsHomeViewState extends ConsumerState<LogisticsHomeView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const _LogisticsHero(),
+                        const SizedBox(height: OraSpacing.md),
                         Text(
                           'Move anything, from a parcel to a container',
                           style: OraTypography.headline(OraColors.textPrimary),
@@ -129,7 +136,7 @@ class _LogisticsHomeViewState extends ConsumerState<LogisticsHomeView> {
                     padding,
                     0,
                     padding,
-                    OraSpacing.xxl,
+                    OraSpacing.lg,
                   ),
                   sliver: SliverGrid(
                     gridDelegate:
@@ -156,9 +163,86 @@ class _LogisticsHomeViewState extends ConsumerState<LogisticsHomeView> {
                     }, childCount: data.logistics.length),
                   ),
                 ),
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(
+                    padding,
+                    0,
+                    padding,
+                    OraSpacing.xxl,
+                  ),
+                  sliver: const SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        OraSectionHeader(title: 'Operators near you'),
+                        SizedBox(height: OraSpacing.sm),
+                        MarketplaceEmptyState(
+                          title: 'No verified operators yet',
+                          message:
+                              'Verified logistics operators will appear here '
+                              'when they are available.',
+                          icon: Icons.local_shipping_outlined,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LogisticsHero extends StatelessWidget {
+  const _LogisticsHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(OraRadius.card),
+      child: SizedBox(
+        height: 168,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/marketplace/modules/logistics.webp',
+              cacheWidth: 720,
+              fit: BoxFit.cover,
+            ),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                  colors: [Color(0x000A1025), Color(0xE60A1025)],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(OraSpacing.md),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Logistics',
+                    style: OraTypography.headline(Colors.white),
+                  ),
+                  const SizedBox(height: OraSpacing.xxs),
+                  Text(
+                    'Move goods with a vehicle that fits.',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: OraTypography.body(Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

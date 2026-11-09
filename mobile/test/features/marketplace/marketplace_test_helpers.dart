@@ -24,13 +24,23 @@ Future<GoRouter> pumpMarketplaceRoute(
   WidgetTester tester, {
   required String location,
   required MarketplaceCatalogue catalogue,
+  double textScale = 1,
 }) async {
   final router = createAppRouter(initialLocation: location);
   addTearDown(router.dispose);
   await tester.pumpWidget(
     ProviderScope(
       overrides: [catalogueProvider.overrideWith((ref) async => catalogue)],
-      child: MaterialApp.router(theme: OraTheme.dark(), routerConfig: router),
+      child: MaterialApp.router(
+        theme: OraTheme.dark(),
+        routerConfig: router,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child!,
+        ),
+      ),
     ),
   );
   for (var frame = 0; frame < 6; frame++) {

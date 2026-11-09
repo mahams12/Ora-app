@@ -9,8 +9,8 @@ import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../core/utils/responsive.dart';
 import '../../../catalogue/catalogue_provider.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
-import '../widgets/service_subcategory_icons.dart';
-import '../widgets/services_module_navigation.dart';
+import '../widgets/subcategory_photo_card.dart';
+import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
 class ServicesCategoryView extends ConsumerWidget {
   const ServicesCategoryView({required this.categoryId, super.key});
@@ -24,8 +24,8 @@ class ServicesCategoryView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Services')),
-      bottomNavigationBar: const ServicesModuleNavigation(
-        selected: ServicesNavigationDestination.explore,
+      bottomNavigationBar: const OraModuleBottomBar(
+        selected: OraModuleDestination.services,
       ),
       body: catalogue.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -65,39 +65,29 @@ class ServicesCategoryView extends ConsumerWidget {
                     ),
                   ),
                   Expanded(
-                    child: ListView.separated(
+                    child: GridView.builder(
                       padding: EdgeInsets.fromLTRB(
                         padding,
                         0,
                         padding,
                         OraSpacing.lg,
                       ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: OraSpacing.sm,
+                            mainAxisSpacing: OraSpacing.sm,
+                            childAspectRatio: 168 / 124,
+                          ),
                       itemCount: category.subcategories.length,
-                      separatorBuilder: (_, __) =>
-                          const SizedBox(height: OraSpacing.xxs),
                       itemBuilder: (context, index) {
                         final subcategory = category.subcategories[index];
-                        return Semantics(
-                          button: true,
-                          label: subcategory.name,
-                          child: Card(
-                            color: OraColors.navyElevated,
-                            child: ListTile(
-                              leading: Icon(
-                                serviceSubcategoryIcon(subcategory.id),
-                                color: OraColors.info,
-                              ),
-                              title: Text(subcategory.name),
-                              trailing: const Icon(
-                                Icons.chevron_right_rounded,
-                                color: OraColors.textMuted,
-                              ),
-                              onTap: () => context.push(
-                                AppRoutes.servicesSubcategoryPath(
-                                  category.id,
-                                  subcategory.id,
-                                ),
-                              ),
+                        return SubcategoryPhotoCard(
+                          subcategory: subcategory,
+                          onTap: () => context.push(
+                            AppRoutes.servicesSubcategoryPath(
+                              category.id,
+                              subcategory.id,
                             ),
                           ),
                         );

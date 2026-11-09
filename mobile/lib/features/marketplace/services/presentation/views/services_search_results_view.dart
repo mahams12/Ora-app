@@ -10,8 +10,8 @@ import '../../../../../app/theme/ora_typography.dart';
 import '../../../catalogue/catalogue_provider.dart';
 import '../../../catalogue/catalogue_search.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
-import '../widgets/services_module_navigation.dart';
 import '../widgets/service_subcategory_icons.dart';
+import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
 class ServicesSearchResultsView extends ConsumerWidget {
   const ServicesSearchResultsView({required this.query, super.key});
@@ -24,8 +24,8 @@ class ServicesSearchResultsView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Service search')),
-      bottomNavigationBar: const ServicesModuleNavigation(
-        selected: ServicesNavigationDestination.explore,
+      bottomNavigationBar: const OraModuleBottomBar(
+        selected: OraModuleDestination.services,
       ),
       body: catalogue.when(
         loading: () => const Center(child: CircularProgressIndicator()),

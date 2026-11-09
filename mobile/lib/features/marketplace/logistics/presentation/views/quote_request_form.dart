@@ -8,6 +8,7 @@ import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../app/theme/widgets/ora_button.dart';
 import '../../../../../core/utils/responsive.dart';
 import '../../../../auth/presentation/view_models/session_user_profile.dart';
+import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../catalogue/catalogue_provider.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 
@@ -414,27 +415,33 @@ class _QuoteRequestFormState extends ConsumerState<QuoteRequestForm> {
           );
         },
       ),
-      bottomNavigationBar: SafeArea(
-        minimum: EdgeInsets.fromLTRB(
-          padding,
-          OraSpacing.xs,
-          padding,
-          OraSpacing.xs,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Nothing will be sent',
-              style: OraTypography.caption(OraColors.textMuted),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              padding,
+              OraSpacing.xs,
+              padding,
+              OraSpacing.xs,
             ),
-            const SizedBox(height: OraSpacing.xs),
-            const OraButton(
-              label: 'Quotation requests open soon',
-              onPressed: null,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Nothing will be sent',
+                  style: OraTypography.caption(OraColors.textMuted),
+                ),
+                const SizedBox(height: OraSpacing.xs),
+                const OraButton(
+                  label: 'Quotation requests open soon',
+                  onPressed: null,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const OraModuleBottomBar(selected: OraModuleDestination.logistics),
+        ],
       ),
     );
   }
