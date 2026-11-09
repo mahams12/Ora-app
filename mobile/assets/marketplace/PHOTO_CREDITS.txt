@@ -1,4 +1,4 @@
-Marketplace photo provenance. CC0/PDM images are from Openverse; Pexels images use the Pexels License (free commercial use, attribution not required). Plumbing and phone-repair prototype images were embedded in the user-provided design preview and are used per the task brief.
+Marketplace photo provenance. CC0/PDM images are from Openverse; Pexels images use the Pexels License (free commercial use, attribution not required).
 
 modules/logistics.webp | CC0 | flickr | https://www.flickr.com/photos/99460566@N06/36674235645 | original (1023, 681)
 modules/rental.webp | PDM | flickr | https://www.flickr.com/photos/96511847@N04/9200569261 | original (1024, 683)
@@ -148,9 +148,9 @@ services/subs/medical_equipment.webp | CC0 | flickr | https://www.flickr.com/pho
 services/subs/mobile_mechanic.webp | Pexels License (free commercial use; attribution not required) | Pexels | https://www.pexels.com/photo/crop-ethnic-taxi-drivers-checking-transport-hood-on-road-5835424/ | quality 82, 19954 bytes
 services/subs/oil_ac.webp | PDM | flickr | https://www.flickr.com/photos/39955793@N07/40752904880 | restored candidate 180531-M-MR595-1121 | quality 82, 23034 bytes
 services/subs/pet_care.webp | CC0 | flickr | https://www.flickr.com/photos/185514373@N06/49061090381 | restored candidate Pet Grooming Brush Effectively Reduces Shedding by Up to 95% Professional Deshedding Tool for Dogs & Cats | quality 82, 11012 bytes
-services/subs/phone_repair.webp | User-provided prototype | /home/ubuntu/ora_mockup/ORA_design_preview.html#sub_phone_repair.webp | embedded WebP 480x360 | quality 82, 21470 bytes
+services/subs/phone_repair.webp | UNVERIFIED | openverse (original credit line lost) | source URL unknown | restored 480x360 copy | TODO: confirm licence or replace before release
 services/subs/photo_video.webp | Pexels License (free commercial use; attribution not required) | Pexels | https://www.pexels.com/photo/professional-filmmaker-operating-a-video-camera-33873545/ | quality 82, 24050 bytes
-services/subs/plumbing.webp | User-provided prototype | /home/ubuntu/ora_mockup/ORA_design_preview.html#sub_plumbing.webp | embedded WebP 480x360 | quality 82, 18338 bytes
+services/subs/plumbing.webp | CC0 | wikimedia | https://commons.wikimedia.org/w/index.php?curid=24565327 | original 1096x894 | query: pipe wrench plumber | File:Plumber uses two wrenches to tighten a fitting.jpg | restored 480x360 copy
 services/subs/pool.webp | CC0 | rawpixel | https://www.rawpixel.com/image/5947883/free-public-domain-cc0-photo | restored candidate None | quality 82, 18608 bytes
 services/subs/recruitment_hr.webp | PDM | flickr | https://www.flickr.com/photos/151887236@N05/37991703115 | restored candidate 2017. Regional forest entomologist Iral Ragenovich (left) receiving a 2017 'Inspiring Woman' award from Toya Bligen. Iral's award was for mentoring and coaching both men and women throughout her career. Regional Office, Portland, Oregon. | quality 82, 16292 bytes
 services/subs/renovation.webp | Pexels License (free commercial use; attribution not required) | Pexels | https://www.pexels.com/photo/crop-man-doing-renovation-in-room-5691639/ | quality 82, 12632 bytes
