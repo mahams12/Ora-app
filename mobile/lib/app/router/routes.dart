@@ -16,8 +16,16 @@ class AppRoutes {
   /// Passenger's ride services hub.
   static const ridesHub = '/rides';
   static const logistics = '/logistics';
+  static const logisticsSearch = '/logistics/search';
+  static const logisticsCategory = '/logistics/:categoryId';
+  static const logisticsQuote = '/logistics/:categoryId/:typeId/quote';
   static const rental = '/rental';
   static const services = '/services';
+  static const servicesSearch = '/services/search';
+  static const servicesBookings = '/services/bookings';
+  static const servicesSaved = '/services/saved';
+  static const servicesCategory = '/services/:categoryId';
+  static const servicesSubcategory = '/services/:categoryId/:subId';
 
   /// Passenger ride compose (Slice D).
   static const rideRequest = '/rides/request';
@@ -65,6 +73,26 @@ class AppRoutes {
       if (service != null && service.isNotEmpty) 'service': service,
     },
   ).toString();
+
+  static String logisticsCategoryPath(String categoryId) =>
+      '/logistics/${Uri.encodeComponent(categoryId)}';
+
+  static String logisticsQuotePath(String categoryId, String typeId) =>
+      '/logistics/${Uri.encodeComponent(categoryId)}/'
+      '${Uri.encodeComponent(typeId)}/quote';
+
+  static String logisticsSearchPath(String query) =>
+      Uri(path: logisticsSearch, queryParameters: {'q': query}).toString();
+
+  static String servicesCategoryPath(String categoryId) =>
+      '/services/${Uri.encodeComponent(categoryId)}';
+
+  static String servicesSubcategoryPath(String categoryId, String subId) =>
+      '/services/${Uri.encodeComponent(categoryId)}/'
+      '${Uri.encodeComponent(subId)}';
+
+  static String servicesSearchPath(String query) =>
+      Uri(path: servicesSearch, queryParameters: {'q': query}).toString();
 
   static String activeRidePath(String rideId) =>
       '/rides/${Uri.encodeComponent(rideId)}/active';
