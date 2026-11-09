@@ -7,13 +7,14 @@ import '../../../../app/router/routes.dart';
 import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../super_app/presentation/widgets/unavailable_feature_sheet.dart';
+import '../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../auth/presentation/view_models/session_user_profile.dart';
 import 'passenger_home_view.dart';
 import '../../../../features/ride/presentation/views/ride_history_view.dart';
 
 enum PassengerShellPage { home, rides }
 
-/// Authenticated passenger shell — prototype drawer navigation (no bottom bar).
+/// Authenticated passenger shell with the existing prototype drawer.
 class HomeShellView extends ConsumerStatefulWidget {
   const HomeShellView({super.key});
 
@@ -28,8 +29,9 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => _syncPassengerFcmToken());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _syncPassengerFcmToken(),
+    );
   }
 
   /// NOTIF-RS-PUSH — passengers register an FCM token so ride-state nudges
@@ -89,22 +91,26 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
     // Role/driverStatus can change server-side after bootstrap (e.g. ops approval).
     // Refresh authoritative GET /v1/auth/me before gating driver shell entry.
     try {
-      await ref.read(authStateNotifierProvider.notifier).refreshCanonicalProfile();
+      await ref
+          .read(authStateNotifierProvider.notifier)
+          .refreshCanonicalProfile();
     } catch (_) {
       // Fall through — gate uses last known session profile.
     }
 
     final profile = ref.read(sessionUserProfileProvider);
-    ref.read(appLoggerProvider).info(
-      'driver_mode_gate',
-      metadata: {
-        'uid': profile?.uid,
-        'role': profile?.role,
-        'driverStatus': profile?.driverStatus,
-        'profileComplete': profile?.profileComplete,
-        'isApprovedDriver': profile?.isApprovedDriver == true,
-      },
-    );
+    ref
+        .read(appLoggerProvider)
+        .info(
+          'driver_mode_gate',
+          metadata: {
+            'uid': profile?.uid,
+            'role': profile?.role,
+            'driverStatus': profile?.driverStatus,
+            'profileComplete': profile?.profileComplete,
+            'isApprovedDriver': profile?.isApprovedDriver == true,
+          },
+        );
 
     if (profile?.isApprovedDriver == true) {
       _openDriverTools();
@@ -135,6 +141,11 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: OraColors.background,
+      bottomNavigationBar: OraModuleBottomBar(
+        selected: _page == PassengerShellPage.rides
+            ? OraModuleDestination.rides
+            : null,
+      ),
       drawer: OraDrawerShell(
         avatarInitials: homeState.avatarInitials,
         displayName: displayName,

@@ -14,6 +14,7 @@ import 'package:ora/features/ride/domain/entities/ride.dart';
 import 'package:ora/features/ride/domain/use_cases/ride_use_cases.dart';
 import 'package:ora/features/ride/presentation/views/ride_request_view.dart';
 import 'package:ora/features/super_app/presentation/views/rides_hub_view.dart';
+import 'package:ora/features/super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
 class MockLogoutUseCase extends Mock implements LogoutUseCase {}
 
@@ -31,10 +32,7 @@ Widget _wrapShell({
   final router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(
-        path: AppRoutes.home,
-        builder: (_, __) => const HomeShellView(),
-      ),
+      GoRoute(path: AppRoutes.home, builder: (_, __) => const HomeShellView()),
       GoRoute(
         path: AppRoutes.ridesHub,
         builder: (_, __) => const RidesHubView(),
@@ -55,10 +53,7 @@ Widget _wrapShell({
         size: size,
         textScaler: TextScaler.linear(textScale),
       ),
-      child: MaterialApp.router(
-        theme: OraTheme.dark(),
-        routerConfig: router,
-      ),
+      child: MaterialApp.router(theme: OraTheme.dark(), routerConfig: router),
     ),
   );
 }
@@ -123,7 +118,7 @@ void main() {
     registerFallbackValue('');
   });
 
-  testWidgets('passenger shell renders Home and drawer (no bottom nav)', (
+  testWidgets('passenger shell renders Home, module bar, and drawer', (
     tester,
   ) async {
     await tester.pumpWidget(_wrapShell(overrides: _baseOverrides()));
@@ -131,11 +126,13 @@ void main() {
 
     expect(find.text('ORA'), findsWidgets);
     expect(find.text('Where are you headed?'), findsOneWidget);
-    expect(find.text('Earn on ORA'), findsOneWidget);
     expect(find.text('Explore ORA'), findsOneWidget);
-    expect(find.textContaining('Intercity trips'), findsOneWidget);
+    expect(find.text('Travel beyond the city'), findsOneWidget);
     expect(find.text('Choose a ride'), findsNothing);
-    expect(find.byType(BottomNavigationBar), findsNothing);
+    expect(find.text('Logistics'), findsWidgets);
+    expect(find.text('Services'), findsWidgets);
+    expect(find.text('Wallet'), findsWidgets);
+    expect(find.byType(OraModuleBottomBar), findsOneWidget);
     expect(find.text('Account'), findsNothing);
 
     await _openDrawer(tester);
@@ -179,6 +176,19 @@ void main() {
     expect(find.textContaining('not wired yet'), findsNothing);
     expect(find.text('All'), findsOneWidget);
     expect(find.text('Completed'), findsOneWidget);
+  });
+
+  testWidgets('passenger home fits 360px with larger text', (tester) async {
+    await tester.pumpWidget(
+      _wrapShell(
+        overrides: _baseOverrides(),
+        size: const Size(360, 640),
+        textScale: 1.3,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.byType(OraModuleBottomBar), findsOneWidget);
   });
 
   testWidgets('drawer Log out is available', (tester) async {
@@ -226,15 +236,13 @@ void main() {
 
     await tester.tap(find.text('Rides').first);
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('Choose a ride'),
-      120,
-      scrollable: find.byType(Scrollable).first,
+    await tester.drag(
+      find.byType(CustomScrollView).last,
+      const Offset(0, -360),
     );
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -120));
     await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Zip'));
+    await tester.ensureVisible(find.text('Bike'));
+    await tester.tap(find.text('Bike'));
     await tester.pumpAndSettle();
     expect(find.byType(RideRequestView), findsOneWidget);
     verifyNever(
@@ -266,7 +274,12 @@ void main() {
     await tester.pumpAndSettle();
 
     await _openDrawer(tester);
-    await tester.tap(find.text('Wallet'));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(OraDrawerShell),
+        matching: find.text('Wallet'),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.textContaining('not wired to the backend'), findsOneWidget);
   });
@@ -285,10 +298,7 @@ void main() {
 
   testWidgets('tablet width layout has no overflow', (tester) async {
     await tester.pumpWidget(
-      _wrapShell(
-        size: const Size(768, 1024),
-        overrides: _baseOverrides(),
-      ),
+      _wrapShell(size: const Size(768, 1024), overrides: _baseOverrides()),
     );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);

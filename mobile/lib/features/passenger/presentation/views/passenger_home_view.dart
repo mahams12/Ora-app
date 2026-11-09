@@ -29,7 +29,7 @@ class PassengerHomeView extends StatelessWidget {
   final VoidCallback onOpenDrawer;
   final VoidCallback onRetryProfile;
   final void Function(String? categoryId, {String? serviceType})
-      onRequestRideEntry;
+  onRequestRideEntry;
   final VoidCallback onOpenProfile;
   final VoidCallback onOpenRides;
   final VoidCallback onSwitchToDriver;
@@ -46,8 +46,7 @@ class PassengerHomeView extends StatelessWidget {
       );
     }
 
-    if (state.loadStatus == HomeLoadStatus.error &&
-        state.displayName == null) {
+    if (state.loadStatus == HomeLoadStatus.error && state.displayName == null) {
       return OraErrorState(
         title: 'Home unavailable',
         message: state.loadError ?? 'Something went wrong.',
@@ -76,56 +75,9 @@ class PassengerHomeView extends StatelessWidget {
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               _PromoCard(
-                onTap: () => onRequestRideEntry(
-                  null,
-                  serviceType: 'intercity',
-                ),
+                onTap: () => onRequestRideEntry(null, serviceType: 'intercity'),
               ),
               const SizedBox(height: OraSpacing.md),
-              OraCard(
-                onTap: onSwitchToDriver,
-                padding: const EdgeInsets.all(OraSpacing.md),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: OraColors.navy,
-                        borderRadius: BorderRadius.circular(OraRadius.sm),
-                      ),
-                      child: const Icon(
-                        Icons.directions_car_filled_rounded,
-                        color: OraColors.primary,
-                        size: 18,
-                      ),
-                    ),
-                    const SizedBox(width: OraSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Earn on ${AppConstants.appName}',
-                            style: OraTypography.bodyEmphasis(
-                              OraColors.textPrimary,
-                            ),
-                          ),
-                          Text(
-                            'Passenger & driver — switch anytime',
-                            style: OraTypography.caption(OraColors.textMuted),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Icon(
-                      Icons.chevron_right_rounded,
-                      color: OraColors.textMuted,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: OraSpacing.lg),
               const OraSectionHeader(title: 'Explore ORA'),
               const SizedBox(height: OraSpacing.sm),
               const OraModuleGrid(),
@@ -167,6 +119,8 @@ class PassengerHomeView extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: OraSpacing.lg),
+              _DriverModeCard(onTap: onSwitchToDriver),
             ]),
           ),
         ),
@@ -205,9 +159,7 @@ class _HomeHeroHeader extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [OraColors.navy, OraColors.navyElevated],
         ),
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(30),
-        ),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
       ),
       child: SafeArea(
         bottom: false,
@@ -226,10 +178,9 @@ class _HomeHeroHeader extends StatelessWidget {
                   child: Text(
                     AppConstants.appName,
                     textAlign: TextAlign.center,
-                    style: OraTypography.title(OraColors.textPrimary).copyWith(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.4,
-                    ),
+                    style: OraTypography.title(
+                      OraColors.textPrimary,
+                    ).copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.4),
                   ),
                 ),
                 InkWell(
@@ -325,41 +276,119 @@ class _PromoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Ink(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                OraColors.navy,
-                OraColors.navyElevated,
-                Color(0xFF1B75AE),
-              ],
-              stops: [0, 0.55, 1],
+    return Semantics(
+      button: true,
+      label: 'Intercity rides',
+      onTap: onTap,
+      child: Material(
+        color: OraColors.navy,
+        borderRadius: BorderRadius.circular(OraRadius.lg),
+        child: InkWell(
+          excludeFromSemantics: true,
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(OraRadius.lg),
+          child: SizedBox(
+            height: 176,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(OraRadius.lg),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    AppConstants.serviceIntercityAsset,
+                    cacheWidth: 800,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.medium,
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerRight,
+                        end: Alignment.centerLeft,
+                        colors: [Color(0x000A1025), Color(0xE60A1025)],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(OraSpacing.md),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'INTERCITY',
+                          style: OraTypography.sectionTitle(OraColors.goldSoft),
+                        ),
+                        const SizedBox(height: OraSpacing.xxs),
+                        Text(
+                          'Travel beyond the city',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: OraTypography.title(Colors.white),
+                        ),
+                        const SizedBox(height: OraSpacing.xxs),
+                        Text(
+                          'Continue with the existing Intercity ride flow.',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: OraTypography.caption(Colors.white70),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'NOW AVAILABLE',
-                style: OraTypography.sectionTitle(OraColors.goldSoft),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Intercity trips across Pakistan cities',
-                style: OraTypography.title(OraColors.textPrimary),
-              ),
-            ],
-          ),
         ),
+      ),
+    );
+  }
+}
+
+class _DriverModeCard extends StatelessWidget {
+  const _DriverModeCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return OraCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: OraColors.navy,
+              borderRadius: BorderRadius.circular(OraRadius.sm),
+            ),
+            child: const Icon(
+              Icons.directions_car_filled_rounded,
+              color: OraColors.primary,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: OraSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Earn on ${AppConstants.appName}',
+                  style: OraTypography.bodyEmphasis(OraColors.textPrimary),
+                ),
+                Text(
+                  'Passenger & driver — switch anytime',
+                  style: OraTypography.caption(OraColors.textMuted),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.chevron_right_rounded, color: OraColors.textMuted),
+        ],
       ),
     );
   }

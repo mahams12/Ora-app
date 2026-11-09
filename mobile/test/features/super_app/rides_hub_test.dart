@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ora/app/router/routes.dart';
 import 'package:ora/app/theme/theme.dart';
+import 'package:ora/features/ride/domain/models/ride_category_option.dart';
+import 'package:ora/features/super_app/domain/ride_type_catalogue.dart';
 import 'package:ora/features/super_app/presentation/views/rides_hub_view.dart';
 
 GoRouter _router() => GoRouter(
@@ -25,8 +27,30 @@ GoRouter _router() => GoRouter(
   ],
 );
 
-Widget _app(GoRouter router) =>
-    MaterialApp.router(theme: OraTheme.dark(), routerConfig: router);
+Widget _app(GoRouter router, {double textScale = 1}) => MaterialApp.router(
+  theme: OraTheme.dark(),
+  routerConfig: router,
+  builder: (context, child) => MediaQuery(
+    data: MediaQuery.of(
+      context,
+    ).copyWith(textScaler: TextScaler.linear(textScale)),
+    child: child!,
+  ),
+);
+
+Future<void> _scrollHubTo(
+  WidgetTester tester,
+  Finder item, {
+  int swipes = 1,
+}) async {
+  final scrollView = find.byType(CustomScrollView).first;
+  for (var index = 0; index < swipes; index++) {
+    await tester.drag(scrollView, const Offset(0, -360));
+    await tester.pumpAndSettle();
+  }
+  await tester.ensureVisible(item);
+  await tester.pumpAndSettle();
+}
 
 void main() {
   testWidgets('City and Intercity keep the home tile request URIs', (
@@ -93,17 +117,46 @@ void main() {
     await tester.pumpWidget(_app(router));
     await tester.pumpAndSettle();
 
-    final logisticsCard = find.text(
-      'Logistics — trucks, cargo & freight catalogue',
-    );
-    await tester.ensureVisible(logisticsCard);
-    await tester.pumpAndSettle();
+    final logisticsCard = find.text('Explore Logistics');
+    await _scrollHubTo(tester, logisticsCard, swipes: 8);
     await tester.tap(logisticsCard);
     await tester.pumpAndSettle();
     expect(find.text('/logistics'), findsOneWidget);
   });
 
-  testWidgets('Rides hub shows all categories and Saved places', (
+  test('ride type catalogue keeps typed actions and category IDs', () {
+    expect(kRideTypeCatalogue, hasLength(13));
+    expect(kRideTypeCatalogue.map((option) => option.name), [
+      'Bike',
+      'Rickshaw',
+      'Mini',
+      'AC',
+      'Premium',
+      'Business class',
+      'For Events',
+      '6-Seater',
+      '7-Seater',
+      'Van',
+      'Bus',
+      'Intercity',
+      'Women-Only Rides',
+    ]);
+    final categoryIds = kRideCategoryOptions.map((option) => option.id).toSet();
+    for (final option in kRideTypeCatalogue) {
+      final action = option.action;
+      if (action is RideCategoryAction) {
+        expect(categoryIds, contains(action.categoryId));
+      }
+    }
+    expect(
+      kRideTypeCatalogue
+          .singleWhere((option) => option.id == 'intercity')
+          .action,
+      isA<RideIntercityAction>(),
+    );
+  });
+
+  testWidgets('Rides hub shows all ride types and Saved places', (
     tester,
   ) async {
     final router = _router();
@@ -113,28 +166,34 @@ void main() {
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Choose a ride'));
     await tester.pumpAndSettle();
-    expect(find.text('6 options'), findsOneWidget);
 
-    const categoryNames = [
-      'Zip',
-      'Trio',
-      'Easy',
-      'Breeze',
-      'Executive',
+    const rideNames = [
+      'Bike',
+      'Rickshaw',
+      'Mini',
+      'AC',
       'Premium',
+      'Business class',
+      'For Events',
+      '6-Seater',
+      '7-Seater',
+      'Van',
+      'Bus',
+      'Intercity',
+      'Women-Only Rides',
     ];
-    final seenCategories = <String>{};
-    final categoryList = find.byType(ListView);
-    for (var i = 0; i < 8; i++) {
-      for (final name in categoryNames) {
+    final seenRideTypes = <String>{};
+    final scrollable = find.byType(CustomScrollView).first;
+    for (var i = 0; i < 10; i++) {
+      for (final name in rideNames) {
         if (find.text(name).evaluate().isNotEmpty) {
-          seenCategories.add(name);
+          seenRideTypes.add(name);
         }
       }
-      await tester.drag(categoryList, const Offset(-260, 0));
+      await tester.drag(scrollable, const Offset(0, -360));
       await tester.pumpAndSettle();
     }
-    expect(seenCategories, containsAll(categoryNames));
+    expect(seenRideTypes, containsAll(rideNames));
 
     await tester.ensureVisible(find.text('Saved places'));
     await tester.pumpAndSettle();
@@ -149,12 +208,42 @@ void main() {
 
     await tester.pumpWidget(_app(router));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Choose a ride'));
-    await tester.pumpAndSettle();
+    await _scrollHubTo(tester, find.text('Bike'));
 
-    await tester.tap(find.text('Zip'));
+    await tester.tap(find.text('Bike'));
     await tester.pumpAndSettle();
     expect(find.text('/rides/request?category=zip'), findsOneWidget);
+  });
+
+  testWidgets('Rides hub Intercity uses the existing intercity route', (
+    tester,
+  ) async {
+    final router = _router();
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(_app(router));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Intercity').first);
+    await tester.pumpAndSettle();
+    expect(find.text('/rides/request?service=intercity'), findsOneWidget);
+  });
+
+  testWidgets('Rides hub Van opens the coming-later sheet', (tester) async {
+    final router = _router();
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(_app(router));
+    await tester.pumpAndSettle();
+    await _scrollHubTo(tester, find.text('Van'), swipes: 5);
+    await tester.tap(find.text('Van'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'Van is planned for Ora but is not wired to the backend '
+        'in this build. Nothing is faked.',
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Rides hub saved places use the unavailable sheet', (
@@ -165,8 +254,8 @@ void main() {
 
     await tester.pumpWidget(_app(router));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Saved places'));
-    await tester.pumpAndSettle();
+    await _scrollHubTo(tester, find.text('Saved places'), swipes: 8);
+    await tester.ensureVisible(find.text('Home'));
 
     await tester.tap(find.text('Home'));
     await tester.pumpAndSettle();
@@ -186,12 +275,16 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    for (final size in <Size>[const Size(320, 640), const Size(430, 932)]) {
+    for (final size in <Size>[
+      const Size(320, 640),
+      const Size(360, 640),
+      const Size(430, 932),
+    ]) {
       tester.view
         ..devicePixelRatio = 1
         ..physicalSize = size;
 
-      await tester.pumpWidget(_app(router));
+      await tester.pumpWidget(_app(router, textScale: 1.3));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: '$size');
     }
