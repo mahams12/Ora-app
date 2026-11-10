@@ -313,6 +313,60 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "geoDrivers",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "lastLocationTs",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "lat",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "lng",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "geoDrivers",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "lat",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "lng",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "freshUntilMs",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "geoDrivers",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "freshUntilMs",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "lat",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "lng",
+          "order": "ASCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": []

@@ -83,8 +83,28 @@ async function main() {
       `REFUSING_START: unknown GEO_BACKEND '${geoBackend}' (expected firestore|rtdb).`,
     );
   }
-  const geoProjection = new RedisGeoProjectionService(redisClient);
-  logSafe('geo_init', { configured: true, store: geoBackend });
+  // Cost-optimization flags (default off — preserve existing behavior).
+  // LOCATION_ADAPTIVE_FRESHNESS: per-driver marker expiry from declared
+  // publish cadence. LOCATION_IDLE_MERGED_CURSOR: idle stream cursor folds
+  // into the geoDrivers marker write (Firestore geo only).
+  const adaptiveFreshness =
+    (process.env.LOCATION_ADAPTIVE_FRESHNESS ?? '').trim() === 'true';
+  const idleMergedCursor =
+    (process.env.LOCATION_IDLE_MERGED_CURSOR ?? '').trim() === 'true';
+  const pricingRulesCacheTtlMs = Math.max(
+    0,
+    Number(process.env.PRICING_RULES_CACHE_TTL_MS ?? '0') || 0,
+  );
+
+  const geoProjection = new RedisGeoProjectionService(redisClient, {
+    adaptiveFreshness,
+  });
+  logSafe('geo_init', {
+    configured: true,
+    store: geoBackend,
+    adaptiveFreshness,
+    idleMergedCursor,
+  });
 
   // locationStreams cursor store: defaults to the GEO_BACKEND pairing
   // (firestore cursors ↔ firestore geo, rtdb cursors ↔ rtdb geo) but can be
@@ -145,6 +165,9 @@ async function main() {
     streamStore,
     fcmSender,
     routingProvider,
+    adaptiveFreshness,
+    idleMergedCursor,
+    pricingRulesCacheTtlMs,
     verifyAppCheck: requireAppCheck
       ? async (token) => {
           // Lazy import keeps App Check optional until production.

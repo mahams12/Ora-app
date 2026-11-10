@@ -1,7 +1,9 @@
 import { logSafe } from '../http/errors';
+import { LocationDomainError } from '../location/types';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
+  N3_FRESHNESS_GRACE_MS,
   driverOnlineKey,
   geoDriversCityKey,
   normalizeCitySlug,
@@ -25,17 +27,65 @@ export interface ProjectLocationInput {
    */
   homeCity: unknown;
   requestId?: string;
+  /**
+   * Adaptive freshness — clamped client-declared cadence. Honored only when
+   * the service was built with adaptiveFreshness: true.
+   */
+  publishIntervalMs?: number | null;
+  /** Presence keepalive flag — recorded on the marker for observability. */
+  keepalive?: boolean;
+  /**
+   * Merged idle-cursor accept (Phase B): validated inside the store's write
+   * transaction. SEQUENCE_VIOLATION errors propagate to the caller — they are
+   * the durable-accept contract, not a best-effort projection failure.
+   */
+  idleCursor?: {
+    locationStreamId: string;
+    locationSeq: number;
+    updatedAtIso: string;
+    expiresAtIso: string;
+  };
+}
+
+export interface RedisGeoProjectionOptions {
+  /**
+   * LOCATION_ADAPTIVE_FRESHNESS — when true, a declared publishIntervalMs
+   * extends the marker's freshUntilMs to lastLocationTs + interval + grace
+   * (clamped), and the marker TTL is extended to cover it.
+   */
+  adaptiveFreshness?: boolean;
 }
 
 /**
  * N2C — Redis GEO + driver:online projection (coordinate-primary).
- * Never throws to callers for Redis failures (non-authoritative).
+ * Never throws to callers for Redis failures (non-authoritative) EXCEPT
+ * LocationDomainError from merged-cursor validation — that is the durable
+ * accept contract and must surface as 422.
  *
  * Matching index: `geo:drivers`
  * Legacy dual-write: `geo:drivers:{city}` when homeCity present (rollback/compat).
  */
 export class RedisGeoProjectionService {
-  constructor(private readonly redis: RedisGeoClient | null) {}
+  private readonly adaptiveFreshness: boolean;
+
+  constructor(
+    private readonly redis: RedisGeoClient | null,
+    options: RedisGeoProjectionOptions = {},
+  ) {
+    this.adaptiveFreshness = options.adaptiveFreshness === true;
+  }
+
+  /**
+   * Whether the configured store can validate + advance the idle stream
+   * cursor inside the marker write transaction (merged Phase B path).
+   */
+  supportsIdleCursor(): boolean {
+    return (
+      this.redis != null &&
+      typeof this.redis.projectLocation === 'function' &&
+      this.redis.supportsIdleCursor === true
+    );
+  }
 
   async projectAcceptedLocation(input: ProjectLocationInput): Promise<void> {
     if (!this.redis) {
@@ -82,6 +132,28 @@ export class RedisGeoProjectionService {
         return 'write';
       };
 
+      // Adaptive freshness: per-driver marker expiry derived from the
+      // declared publish cadence. Marker TTL is extended to cover it so the
+      // marker cannot expire before its own freshUntilMs.
+      // Keepalive packets carry the ORIGINAL fix timestamp — presence is
+      // asserted "as of acceptedAt", while lastLocationTs keeps the honest
+      // GPS age for the eligibility fix-age cap.
+      const acceptedMs = Date.parse(input.acceptedAt);
+      const freshBaseMs = input.keepalive ? acceptedMs : input.lastLocationTs;
+      const freshUntilMs =
+        this.adaptiveFreshness && input.publishIntervalMs != null
+          ? freshBaseMs +
+            input.publishIntervalMs +
+            N3_FRESHNESS_GRACE_MS
+          : null;
+      const markerTtlSeconds =
+        freshUntilMs != null && Number.isFinite(acceptedMs)
+          ? Math.max(
+              DRIVER_ONLINE_TTL_SECONDS,
+              Math.ceil((freshUntilMs - acceptedMs) / 1000) + 10,
+            )
+          : DRIVER_ONLINE_TTL_SECONDS;
+
       const marker: DriverOnlineMarker = {
         driverId: input.driverId,
         lastLocationTs: input.lastLocationTs,
@@ -90,6 +162,13 @@ export class RedisGeoProjectionService {
         locationStreamId: input.locationStreamId,
         locationSeq: input.locationSeq,
         acceptedAt: input.acceptedAt,
+        ...(freshUntilMs != null
+          ? {
+              freshUntilMs,
+              publishIntervalMs: input.publishIntervalMs ?? undefined,
+            }
+          : {}),
+        ...(input.keepalive === true ? { keepalive: true } : {}),
       };
       const markerValue = JSON.stringify(marker);
 
@@ -104,8 +183,9 @@ export class RedisGeoProjectionService {
           latitude: input.lat,
           markerKey: onlineKey,
           markerValue,
-          markerTtlSeconds: DRIVER_ONLINE_TTL_SECONDS,
+          markerTtlSeconds,
           markerGuard: guard,
+          ...(input.idleCursor ? { idleCursor: input.idleCursor } : {}),
         });
         if (result === 'skipped') {
           logSafe('REDIS_GEO_SKIP', {
@@ -150,7 +230,7 @@ export class RedisGeoProjectionService {
         await this.redis.set(
           onlineKey,
           markerValue,
-          DRIVER_ONLINE_TTL_SECONDS,
+          markerTtlSeconds,
         );
         if (prevCity && prevCity !== city) {
           await this.redis.zrem(geoDriversCityKey(prevCity), input.driverId);
@@ -177,6 +257,9 @@ export class RedisGeoProjectionService {
         requestId: input.requestId ?? null,
       });
     } catch (err) {
+      // Merged-cursor violations are the durable-accept contract (422) —
+      // never downgrade them to a swallowed projection failure.
+      if (err instanceof LocationDomainError) throw err;
       logSafe('REDIS_GEO_PROJECT_FAILED', {
         driverId: input.driverId,
         requestId: input.requestId ?? null,

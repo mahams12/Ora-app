@@ -2,6 +2,7 @@ import type { Firestore } from 'firebase-admin/firestore';
 import {
   GEO_DRIVERS_KEY,
   N3_FRESHNESS_MAX_AGE_MS,
+  N3_MAX_FIX_AGE_MS,
   N3_MAX_ACCURACY_M,
   N3_REDIS_GEO_COUNT,
   driverOnlineKey,
@@ -20,6 +21,9 @@ export const N3_BUSY_RIDE_STATES = [
   'DRIVER_EN_ROUTE',
   'DRIVER_ARRIVED',
   'RIDE_STARTED',
+  // Ora Courier — parcel in driver custody (incl. failed delivery + return leg).
+  'DELIVERY_FAILED',
+  'RETURNING',
 ] as const;
 
 export const N3_DEFAULT_RADIUS_KM = 10;
@@ -32,7 +36,7 @@ export const N3_MIN_LIMIT = 1;
 /**
  * assignedDriverId chunk size for the batch busy prefetch. Firestore expands
  * every `in` into disjunctions with a hard cap of 30 per query, and multiple
- * `in` filters multiply: chunkSize × busyStateCount ≤ 30 → 7 × 4 = 28.
+ * `in` filters multiply: chunkSize × busyStateCount ≤ 30 → 5 × 6 = 30.
  */
 export const N3_BUSY_PREFETCH_IN_CHUNK_SIZE = Math.floor(
   30 / N3_BUSY_RIDE_STATES.length,
@@ -306,9 +310,22 @@ function parseMarker(raw: string): DriverOnlineMarker | null {
   }
 }
 
-function isFresh(lastLocationTs: number, nowMs: number): boolean {
-  const age = nowMs - lastLocationTs;
-  return age >= 0 && age <= N3_FRESHNESS_MAX_AGE_MS;
+function isFresh(marker: DriverOnlineMarker, nowMs: number): boolean {
+  const age = nowMs - marker.lastLocationTs;
+  if (age < 0) return false;
+  // Honest-position cap — independent of presence freshness. A keepalived
+  // marker may carry a fresh freshUntilMs while its lastLocationTs is the
+  // real (older) GPS fix; beyond N3_MAX_FIX_AGE_MS the position is no
+  // longer credible for matching or invite-time eligibility.
+  if (age > N3_MAX_FIX_AGE_MS) return false;
+  // Per-driver expiry when the marker carries one (adaptive freshness);
+  // fixed 15s window otherwise — identical to the legacy check.
+  const until =
+    typeof marker.freshUntilMs === 'number' &&
+    Number.isFinite(marker.freshUntilMs)
+      ? marker.freshUntilMs
+      : marker.lastLocationTs + N3_FRESHNESS_MAX_AGE_MS;
+  return nowMs <= until;
 }
 
 /** First-seen GEO order; duplicate member IDs appear once. */
@@ -331,6 +348,23 @@ export type N3PrefetchedAuthoritativeDocs = {
 };
 
 /**
+ * Batched invite-time revalidation snapshot (N4). Dispatch waves check
+ * candidates in nearest-first order and stop after `need` selections —
+ * loading this context for a chunk of candidates up front replaces up to
+ * 4 serial Firestore/Redis round-trips PER CANDIDATE with a fixed set of
+ * parallel reads (1 marker MGET + busy chunks + 2 getAll batches).
+ * Read volume is bounded by the chunk size; ordering and every eligibility
+ * rule are identical to the per-driver path.
+ */
+export interface N3InviteRevalidationContext {
+  /** Parsed online marker per requested driverId (null = missing/malformed). */
+  markers: Map<string, DriverOnlineMarker | null>;
+  /** Driver IDs with an in-progress ride (same busy set as findNearby). */
+  busyDriverIds: Set<string>;
+  prefetched: N3PrefetchedAuthoritativeDocs;
+}
+
+/**
  * N3 — nearby driver candidate discovery (internal worker only).
  * Coordinate-primary: GEORADIUS on `geo:drivers` — city does not gate matching.
  */
@@ -338,6 +372,13 @@ export class NearbyDriversService {
   constructor(
     private readonly db: Firestore,
     private readonly redis: RedisGeoClient | null,
+    /**
+     * LOCATION_ADAPTIVE_FRESHNESS — when true the geo query filters on the
+     * per-driver freshUntilMs twin instead of a fixed 15s lastLocationTs
+     * floor. Requires markers written by the matching service version
+     * (freshUntilMs twin is emitted on every marker write).
+     */
+    private readonly adaptiveFreshness: boolean = false,
   ) {}
 
   async findNearby(input: {
@@ -369,9 +410,13 @@ export class NearbyDriversService {
         count: N3_REDIS_GEO_COUNT,
         // Server-side freshness floor where the store supports it (Firestore
         // range filter — skips stale docs before they are billed as reads).
-        // Redis ignores it; the marker check below enforces freshness either
-        // way, so semantics are identical across both stores.
-        minLastLocationTs: nowMs - N3_FRESHNESS_MAX_AGE_MS,
+        // Adaptive mode filters on the per-driver freshUntilMs twin so
+        // variable cadences stay filterable; legacy mode keeps the fixed
+        // 15s floor. Marker checks below enforce freshness either way, so
+        // semantics are identical across both stores and both modes.
+        ...(this.adaptiveFreshness
+          ? { minFreshUntilMs: nowMs }
+          : { minLastLocationTs: nowMs - N3_FRESHNESS_MAX_AGE_MS }),
       });
     } catch (err) {
       logSafe('N3_REDIS_GEORADIUS_FAILED', {
@@ -429,12 +474,14 @@ export class NearbyDriversService {
     }
 
     const geoMemberIds = geoHits.map((hit) => hit.member);
-    const busyDriverIds = await this.prefetchBusyDriverIds(geoMemberIds, diag);
     const orderedUniqueGeoIds = uniqueGeoMemberIdsInOrder(geoHits);
-    const prefetched = await this.prefetchAuthoritativeDocuments(
-      orderedUniqueGeoIds,
-      diag,
-    );
+    // Busy-ride prefetch and authoritative doc prefetch are independent —
+    // both only need the geo member set. Run them concurrently so candidate
+    // checks don't pay two serial Firestore round-trips.
+    const [busyDriverIds, prefetched] = await Promise.all([
+      this.prefetchBusyDriverIds(geoMemberIds, diag),
+      this.prefetchAuthoritativeDocuments(orderedUniqueGeoIds, diag),
+    ]);
     diag.firestoreRpcTotal = computeN3FirestoreRpcTotal(diag);
 
     for (const hit of geoHits) {
@@ -451,7 +498,7 @@ export class NearbyDriversService {
         diag.rejected.marker_malformed += 1;
         continue;
       }
-      if (!isFresh(marker.lastLocationTs, nowMs)) {
+      if (!isFresh(marker, nowMs)) {
         diag.rejected.marker_not_fresh += 1;
         continue;
       }
@@ -491,14 +538,90 @@ export class NearbyDriversService {
   }
 
   /**
+   * Batch-load marker + busy + users/drivers docs for a set of candidate
+   * driverIds. Used by N4 dispatch to revalidate invites without a serial
+   * read chain per candidate. Marker freshness/accuracy and all
+   * authoritative checks are still applied per driver at check time.
+   */
+  async loadInviteRevalidationContext(
+    driverIds: string[],
+    opts?: { requestId?: string },
+  ): Promise<N3InviteRevalidationContext> {
+    const unique = [...new Set(driverIds)];
+    const markers = new Map<string, DriverOnlineMarker | null>();
+    const empty: N3PrefetchedAuthoritativeDocs = {
+      userByDriverId: new Map(),
+      driverByDriverId: new Map(),
+    };
+    if (unique.length === 0) {
+      return { markers, busyDriverIds: new Set(), prefetched: empty };
+    }
+    if (!this.redis) {
+      throw new NearbyDomainError(
+        'DEPENDENCY_ERROR',
+        503,
+        'Nearby candidate generation is temporarily unavailable.',
+      );
+    }
+
+    let markerValues: (string | null)[];
+    try {
+      markerValues = await this.redis.mget(
+        unique.map((id) => driverOnlineKey(id)),
+      );
+    } catch (err) {
+      logSafe('N3_REDIS_MARKER_FAILED', {
+        requestId: opts?.requestId ?? null,
+        driverId: unique[0] ?? null,
+        errorType: err instanceof Error ? err.name : 'unknown',
+      });
+      throw new NearbyDomainError(
+        'DEPENDENCY_ERROR',
+        503,
+        'Nearby candidate generation is temporarily unavailable.',
+      );
+    }
+    unique.forEach((id, i) => {
+      const raw = markerValues[i];
+      markers.set(id, raw ? parseMarker(raw) : null);
+    });
+
+    const [busyDriverIds, prefetched] = await Promise.all([
+      this.prefetchBusyDriverIds(unique),
+      this.prefetchAuthoritativeDocuments(
+        unique,
+        createEmptyN3NearbyDiagnostics(),
+      ),
+    ]);
+    return { markers, busyDriverIds, prefetched };
+  }
+
+  /**
    * N4 invite-time revalidation: Redis marker freshness/accuracy + Firestore
    * authoritative eligibility. Does NOT check city/homeCity.
+   * When `opts.revalidation` is supplied (from loadInviteRevalidationContext)
+   * all reads come from that snapshot — identical checks, no per-driver I/O.
    */
   async isStillEligibleForInvite(
     driverId: string,
-    opts?: { nowMs?: number; requestId?: string },
+    opts?: {
+      nowMs?: number;
+      requestId?: string;
+      revalidation?: N3InviteRevalidationContext;
+    },
   ): Promise<boolean> {
     const nowMs = opts?.nowMs ?? Date.now();
+
+    if (opts?.revalidation) {
+      const marker = opts.revalidation.markers.get(driverId) ?? null;
+      if (!marker) return false;
+      if (!isFresh(marker, nowMs)) return false;
+      if (marker.accuracy > N3_MAX_ACCURACY_M) return false;
+      return this.isAuthoritativelyEligible(driverId, undefined, {
+        busyDriverIds: opts.revalidation.busyDriverIds,
+        prefetched: opts.revalidation.prefetched,
+      });
+    }
 
     if (!this.redis) {
       throw new NearbyDomainError(
@@ -527,7 +650,7 @@ export class NearbyDriversService {
     if (!markerRaw) return false;
     const marker = parseMarker(markerRaw);
     if (!marker) return false;
-    if (!isFresh(marker.lastLocationTs, nowMs)) return false;
+    if (!isFresh(marker, nowMs)) return false;
     if (marker.accuracy > N3_MAX_ACCURACY_M) return false;
 
     return this.isAuthoritativelyEligible(driverId);
@@ -572,7 +695,12 @@ export class NearbyDriversService {
     return busy;
   }
 
-  /** N3 findNearby: batch users + drivers via sequential getAll (GEO-unique IDs). */
+  /**
+   * N3 findNearby / N4 invite revalidation: batch users + drivers via
+   * getAll. All chunk RPCs (both collections) run concurrently — same
+   * billed reads and RPC count, one round-trip of latency instead of
+   * 2×chunks serial awaits.
+   */
   private async prefetchAuthoritativeDocuments(
     orderedUniqueDriverIds: string[],
     diag: N3NearbyDiagnostics,
@@ -583,33 +711,38 @@ export class NearbyDriversService {
       return { userByDriverId, driverByDriverId };
     }
 
+    const jobs: Promise<void>[] = [];
     for (let i = 0; i < orderedUniqueDriverIds.length; i += N3_FIRESTORE_GETALL_MAX) {
       const chunk = orderedUniqueDriverIds.slice(i, i + N3_FIRESTORE_GETALL_MAX);
       const userRefs = chunk.map((id) => this.db.collection(USERS).doc(id));
       diag.firestoreUsersBatchRpcs += 1;
-      const userSnaps = await this.db.getAll(...userRefs);
-      diag.firestoreUsersReads += userSnaps.length;
-      for (const snap of userSnaps) {
-        userByDriverId.set(
-          snap.id,
-          snap.exists ? (snap.data() ?? {}) : null,
-        );
-      }
-    }
+      jobs.push(
+        this.db.getAll(...userRefs).then((userSnaps) => {
+          diag.firestoreUsersReads += userSnaps.length;
+          for (const snap of userSnaps) {
+            userByDriverId.set(
+              snap.id,
+              snap.exists ? (snap.data() ?? {}) : null,
+            );
+          }
+        }),
+      );
 
-    for (let i = 0; i < orderedUniqueDriverIds.length; i += N3_FIRESTORE_GETALL_MAX) {
-      const chunk = orderedUniqueDriverIds.slice(i, i + N3_FIRESTORE_GETALL_MAX);
       const driverRefs = chunk.map((id) => this.db.collection(DRIVERS).doc(id));
       diag.firestoreDriversBatchRpcs += 1;
-      const driverSnaps = await this.db.getAll(...driverRefs);
-      diag.firestoreDriversReads += driverSnaps.length;
-      for (const snap of driverSnaps) {
-        driverByDriverId.set(
-          snap.id,
-          snap.exists ? (snap.data() ?? {}) : null,
-        );
-      }
+      jobs.push(
+        this.db.getAll(...driverRefs).then((driverSnaps) => {
+          diag.firestoreDriversReads += driverSnaps.length;
+          for (const snap of driverSnaps) {
+            driverByDriverId.set(
+              snap.id,
+              snap.exists ? (snap.data() ?? {}) : null,
+            );
+          }
+        }),
+      );
     }
+    await Promise.all(jobs);
 
     return { userByDriverId, driverByDriverId };
   }
