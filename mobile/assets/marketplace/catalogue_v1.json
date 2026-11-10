@@ -3,62 +3,62 @@
   "logistics": [
     {"id": "bikes", "name": "Bikes & Two-Wheelers", "image": "logistics/bikes.webp", "blurb": "Documents & small parcels",
      "types": [
-       {"id": "bicycle", "name": "Bicycle", "keywords": ["cycle", "documents", "small parcel"]},
-       {"id": "motorcycle", "name": "Motorcycle", "keywords": ["bike", "rider", "parcel"]}]},
+       {"id": "bicycle", "name": "Bicycle", "keywords": ["cycle", "documents", "small parcel"], "image": "logistics/types/bicycle.webp"},
+       {"id": "motorcycle", "name": "Motorcycle", "keywords": ["bike", "rider", "parcel"], "image": "logistics/types/motorcycle.webp"}]},
     {"id": "three_wheeler", "name": "Three-Wheeler", "image": "logistics/three_wheeler.webp", "blurb": "Loaders for local goods",
      "types": [
-       {"id": "loader_rickshaw", "name": "Cargo / Loader Rickshaw", "keywords": ["rickshaw", "loader", "chingchi"]},
-       {"id": "qingqi_loader", "name": "Qingqi Loader", "keywords": ["qingqi", "chingchi", "loader"]}]},
+       {"id": "loader_rickshaw", "name": "Cargo / Loader Rickshaw", "keywords": ["rickshaw", "loader", "chingchi"], "image": "logistics/types/loader_rickshaw.webp"},
+       {"id": "qingqi_loader", "name": "Qingqi Loader", "keywords": ["qingqi", "chingchi", "loader"], "image": "logistics/types/qingqi_loader.webp"}]},
     {"id": "pickups", "name": "Pickups & Light Commercial", "image": "logistics/pickups.webp", "blurb": "Furniture, appliances, shop stock",
      "types": [
-       {"id": "suzuki_ravi", "name": "Suzuki Ravi", "keywords": ["ravi", "pickup", "suzuki"]},
-       {"id": "cabin_pickup", "name": "Single / Double Cabin Pickup", "keywords": ["single cabin", "double cabin", "pickup"]},
-       {"id": "small_medium_pickup", "name": "Small / Medium Pickup", "keywords": ["pickup", "light"]},
-       {"id": "shehzore", "name": "Shehzore", "keywords": ["hyundai", "shehzore", "shahzore"]},
-       {"id": "mazda_truck", "name": "Mazda Truck", "keywords": ["mazda", "truck"]}]},
+       {"id": "suzuki_ravi", "name": "Suzuki Ravi", "keywords": ["ravi", "pickup", "suzuki"], "image": "logistics/types/suzuki_ravi.webp"},
+       {"id": "cabin_pickup", "name": "Single / Double Cabin Pickup", "keywords": ["single cabin", "double cabin", "pickup"], "image": "logistics/types/cabin_pickup.webp"},
+       {"id": "small_medium_pickup", "name": "Small / Medium Pickup", "keywords": ["pickup", "light"], "image": "logistics/types/small_medium_pickup.webp"},
+       {"id": "shehzore", "name": "Shehzore", "keywords": ["hyundai", "shehzore", "shahzore"], "image": "logistics/types/shehzore.webp"},
+       {"id": "mazda_truck", "name": "Mazda Truck", "keywords": ["mazda", "truck"], "image": "logistics/types/mazda_truck.webp"}]},
     {"id": "vans", "name": "Vans & Mini Trucks", "image": "logistics/vans.webp", "blurb": "Covered and temperature-controlled",
      "types": [
-       {"id": "cargo_van", "name": "Small / Large Cargo Van", "keywords": ["van", "cargo"]},
-       {"id": "high_roof_van", "name": "High-Roof Van", "keywords": ["hiace", "high roof", "van"]},
-       {"id": "mini_truck", "name": "Mini Truck", "keywords": ["mini", "truck"]},
-       {"id": "covered_delivery_van", "name": "Covered Delivery Van", "keywords": ["covered", "delivery", "van"]},
-       {"id": "refrigerated_van", "name": "Refrigerated Van", "keywords": ["reefer", "cold", "chiller", "frozen"]},
-       {"id": "passenger_cargo_van", "name": "Passenger / Cargo Van", "keywords": ["passenger", "cargo", "van"]}]},
+       {"id": "cargo_van", "name": "Small / Large Cargo Van", "keywords": ["van", "cargo"], "image": "logistics/types/cargo_van.webp"},
+       {"id": "high_roof_van", "name": "High-Roof Van", "keywords": ["hiace", "high roof", "van"], "image": "logistics/types/high_roof_van.webp"},
+       {"id": "mini_truck", "name": "Mini Truck", "keywords": ["mini", "truck"], "image": "logistics/types/mini_truck.webp"},
+       {"id": "covered_delivery_van", "name": "Covered Delivery Van", "keywords": ["covered", "delivery", "van"], "image": "logistics/types/covered_delivery_van.webp"},
+       {"id": "refrigerated_van", "name": "Refrigerated Van", "keywords": ["reefer", "cold", "chiller", "frozen"], "image": "logistics/types/refrigerated_van.webp"},
+       {"id": "passenger_cargo_van", "name": "Passenger / Cargo Van", "keywords": ["passenger", "cargo", "van"], "image": "logistics/types/passenger_cargo_van.webp"}]},
     {"id": "trucks", "name": "Medium & Heavy Trucks", "image": "logistics/trucks.webp", "blurb": "Bulk goods and long hauls",
      "types": [
-       {"id": "truck_6_8_10", "name": "6 / 8 / 10-Wheeler Truck", "keywords": ["6 wheeler", "8 wheeler", "10 wheeler", "truck"]},
-       {"id": "truck_12_14_16", "name": "12 / 14 / 16-Wheeler Truck", "keywords": ["12 wheeler", "14 wheeler", "16 wheeler", "truck"]},
-       {"id": "heavy_duty_truck", "name": "Heavy-Duty Truck", "keywords": ["heavy", "truck"]},
-       {"id": "open_covered_truck", "name": "Open / Covered Truck", "keywords": ["open", "covered", "truck"]},
-       {"id": "flatbed_truck", "name": "Flatbed Truck", "keywords": ["flatbed", "truck"]}]},
+       {"id": "truck_6_8_10", "name": "6 / 8 / 10-Wheeler Truck", "keywords": ["6 wheeler", "8 wheeler", "10 wheeler", "truck"], "image": "logistics/types/truck_6_8_10.webp"},
+       {"id": "truck_12_14_16", "name": "12 / 14 / 16-Wheeler Truck", "keywords": ["12 wheeler", "14 wheeler", "16 wheeler", "truck"], "image": "logistics/types/truck_12_14_16.webp"},
+       {"id": "heavy_duty_truck", "name": "Heavy-Duty Truck", "keywords": ["heavy", "truck"], "image": "logistics/types/heavy_duty_truck.webp"},
+       {"id": "open_covered_truck", "name": "Open / Covered Truck", "keywords": ["open", "covered", "truck"], "image": "logistics/types/open_covered_truck.webp"},
+       {"id": "flatbed_truck", "name": "Flatbed Truck", "keywords": ["flatbed", "truck"], "image": "logistics/types/flatbed_truck.webp"}]},
     {"id": "trailers", "name": "Trailers & Container Transport", "image": "logistics/trailers.webp", "blurb": "Containers, port and industrial cargo",
      "types": [
-       {"id": "container_20_40", "name": "20ft / 40ft Container Transport", "keywords": ["container", "20ft", "40ft", "port"]},
-       {"id": "high_cube_container", "name": "High-Cube Container Transport", "keywords": ["high cube", "container"]},
-       {"id": "flatbed_lowbed_trailer", "name": "Flatbed / Lowbed Trailer", "keywords": ["flatbed", "lowbed", "trailer"]},
-       {"id": "extendable_skeletal_trailer", "name": "Extendable / Skeletal Trailer", "keywords": ["extendable", "skeletal", "trailer"]},
-       {"id": "curtain_side_trailer", "name": "Curtain-Side Trailer", "keywords": ["curtain", "trailer"]},
-       {"id": "refrigerated_trailer", "name": "Refrigerated Trailer", "keywords": ["reefer", "cold", "trailer"]},
-       {"id": "tanker_trailer", "name": "Tanker Trailer", "keywords": ["tanker", "liquid", "trailer"]}]},
+       {"id": "container_20_40", "name": "20ft / 40ft Container Transport", "keywords": ["container", "20ft", "40ft", "port"], "image": "logistics/types/container_20_40.webp"},
+       {"id": "high_cube_container", "name": "High-Cube Container Transport", "keywords": ["high cube", "container"], "image": "logistics/types/high_cube_container.webp"},
+       {"id": "flatbed_lowbed_trailer", "name": "Flatbed / Lowbed Trailer", "keywords": ["flatbed", "lowbed", "trailer"], "image": "logistics/types/flatbed_lowbed_trailer.webp"},
+       {"id": "extendable_skeletal_trailer", "name": "Extendable / Skeletal Trailer", "keywords": ["extendable", "skeletal", "trailer"], "image": "logistics/types/extendable_skeletal_trailer.webp"},
+       {"id": "curtain_side_trailer", "name": "Curtain-Side Trailer", "keywords": ["curtain", "trailer"], "image": "logistics/types/curtain_side_trailer.webp"},
+       {"id": "refrigerated_trailer", "name": "Refrigerated Trailer", "keywords": ["reefer", "cold", "trailer"], "image": "logistics/types/refrigerated_trailer.webp"},
+       {"id": "tanker_trailer", "name": "Tanker Trailer", "keywords": ["tanker", "liquid", "trailer"], "image": "logistics/types/tanker_trailer.webp"}]},
     {"id": "specialized", "name": "Specialized Vehicles & Machinery", "image": "logistics/specialized.webp", "blurb": "Construction, towing and special cargo",
      "types": [
-       {"id": "dumper_tipper", "name": "Dumper / Tipper", "keywords": ["dumper", "tipper", "sand", "gravel"]},
-       {"id": "dump_truck", "name": "Dump Truck", "keywords": ["dump", "construction"]},
-       {"id": "concrete_mixer", "name": "Concrete Mixer", "keywords": ["concrete", "mixer", "cement"]},
-       {"id": "mobile_crane", "name": "Mobile Crane", "keywords": ["crane", "lifting"]},
-       {"id": "recovery_towing", "name": "Recovery / Towing Truck", "keywords": ["tow", "towing", "recovery", "breakdown"]},
-       {"id": "car_carrier", "name": "Car Carrier", "keywords": ["car carrier", "vehicle transport"]},
-       {"id": "machinery_transporter", "name": "Heavy Machinery Transporter", "keywords": ["machinery", "excavator", "heavy"]},
-       {"id": "water_fuel_tanker", "name": "Water / Fuel Tanker", "keywords": ["water", "fuel", "tanker", "diesel"]},
-       {"id": "livestock_refrigerated", "name": "Livestock / Refrigerated Transport", "keywords": ["livestock", "animals", "cattle", "refrigerated"]},
-       {"id": "garbage_vehicle", "name": "Garbage Collection Vehicle", "keywords": ["garbage", "waste", "trash"]}]},
+       {"id": "dumper_tipper", "name": "Dumper / Tipper", "keywords": ["dumper", "tipper", "sand", "gravel"], "image": "logistics/types/dumper_tipper.webp"},
+       {"id": "dump_truck", "name": "Dump Truck", "keywords": ["dump", "construction"], "image": "logistics/types/dump_truck.webp"},
+       {"id": "concrete_mixer", "name": "Concrete Mixer", "keywords": ["concrete", "mixer", "cement"], "image": "logistics/types/concrete_mixer.webp"},
+       {"id": "mobile_crane", "name": "Mobile Crane", "keywords": ["crane", "lifting"], "image": "logistics/types/mobile_crane.webp"},
+       {"id": "recovery_towing", "name": "Recovery / Towing Truck", "keywords": ["tow", "towing", "recovery", "breakdown"], "image": "logistics/types/recovery_towing.webp"},
+       {"id": "car_carrier", "name": "Car Carrier", "keywords": ["car carrier", "vehicle transport"], "image": "logistics/types/car_carrier.webp"},
+       {"id": "machinery_transporter", "name": "Heavy Machinery Transporter", "keywords": ["machinery", "excavator", "heavy"], "image": "logistics/types/machinery_transporter.webp"},
+       {"id": "water_fuel_tanker", "name": "Water / Fuel Tanker", "keywords": ["water", "fuel", "tanker", "diesel"], "image": "logistics/types/water_fuel_tanker.webp"},
+       {"id": "livestock_refrigerated", "name": "Livestock / Refrigerated Transport", "keywords": ["livestock", "animals", "cattle", "refrigerated"], "image": "logistics/types/livestock_refrigerated.webp"},
+       {"id": "garbage_vehicle", "name": "Garbage Collection Vehicle", "keywords": ["garbage", "waste", "trash"], "image": "logistics/types/garbage_vehicle.webp"}]},
     {"id": "freight", "name": "Air, Rail & Sea Freight", "image": "logistics/freight.webp", "blurb": "National and international freight",
      "types": [
-       {"id": "cargo_aircraft", "name": "Cargo Aircraft", "keywords": ["air", "plane", "air freight"]},
-       {"id": "cargo_helicopter", "name": "Cargo Helicopter", "keywords": ["helicopter", "air"]},
-       {"id": "freight_train", "name": "Freight Train", "keywords": ["rail", "train", "railway"]},
-       {"id": "cargo_ship", "name": "Cargo Ship", "keywords": ["sea", "ship", "shipping", "ocean"]},
-       {"id": "inland_vessel", "name": "Inland Cargo Vessel", "keywords": ["river", "inland", "boat", "vessel"]}]}
+       {"id": "cargo_aircraft", "name": "Cargo Aircraft", "keywords": ["air", "plane", "air freight"], "image": "logistics/types/cargo_aircraft.webp"},
+       {"id": "cargo_helicopter", "name": "Cargo Helicopter", "keywords": ["helicopter", "air"], "image": "logistics/types/cargo_helicopter.webp"},
+       {"id": "freight_train", "name": "Freight Train", "keywords": ["rail", "train", "railway"], "image": "logistics/types/freight_train.webp"},
+       {"id": "cargo_ship", "name": "Cargo Ship", "keywords": ["sea", "ship", "shipping", "ocean"], "image": "logistics/types/cargo_ship.webp"},
+       {"id": "inland_vessel", "name": "Inland Cargo Vessel", "keywords": ["river", "inland", "boat", "vessel"], "image": "logistics/types/inland_vessel.webp"}]}
   ],
   "services": [
     {"id": "home_repair", "name": "Home Repair & Maintenance", "image": "services/home_repair.webp", "subcategories": [
@@ -163,57 +163,57 @@
   ],
   "rental": [
     {"id": "residential", "name": "Residential Properties", "image": "rental/residential.webp", "blurb": "Homes, flats and rooms for living.", "subcategories": [
-      {"id": "houses", "name": "Houses", "keywords": ["house", "home", "family home"]},
-      {"id": "apartments_flats", "name": "Apartments & Flats", "keywords": ["apartment", "flat", "flats", "condo", "unit"]},
-      {"id": "studios", "name": "Studios", "keywords": ["studio apartment", "studio flat", "single room"]},
-      {"id": "rooms_shared_rooms", "name": "Rooms & Shared Rooms", "keywords": ["room", "shared room", "roommate", "hostel room"]},
-      {"id": "portions", "name": "Portions", "keywords": ["portion", "upper portion", "lower portion", "independent portion"]}
+      {"id": "houses", "name": "Houses", "keywords": ["house", "home", "family home"], "image": "rental/subs/houses.webp"},
+      {"id": "apartments_flats", "name": "Apartments & Flats", "keywords": ["apartment", "flat", "flats", "condo", "unit"], "image": "rental/subs/apartments_flats.webp"},
+      {"id": "studios", "name": "Studios", "keywords": ["studio apartment", "studio flat", "single room"], "image": "rental/subs/studios.webp"},
+      {"id": "rooms_shared_rooms", "name": "Rooms & Shared Rooms", "keywords": ["room", "shared room", "roommate", "hostel room"], "image": "rental/subs/rooms_shared_rooms.webp"},
+      {"id": "portions", "name": "Portions", "keywords": ["portion", "upper portion", "lower portion", "independent portion"], "image": "rental/subs/portions.webp"}
     ]},
     {"id": "vacation", "name": "Vacation & Holiday Stays", "image": "rental/vacation.webp", "blurb": "Short stays and holiday homes.", "subcategories": [
-      {"id": "villas", "name": "Villas", "keywords": ["villa", "holiday villa", "private stay"]},
-      {"id": "farmhouses", "name": "Farmhouses", "keywords": ["farmhouse", "farm house", "country stay"]},
-      {"id": "cottages_cabins", "name": "Cottages & Cabins", "keywords": ["cottage", "cabin", "cottage stay"]},
-      {"id": "beach_houses", "name": "Beach Houses", "keywords": ["beach house", "seaside home", "coastal stay"]},
-      {"id": "resorts", "name": "Resorts", "keywords": ["resort", "holiday resort", "retreat"]}
+      {"id": "villas", "name": "Villas", "keywords": ["villa", "holiday villa", "private stay"], "image": "rental/subs/villas.webp"},
+      {"id": "farmhouses", "name": "Farmhouses", "keywords": ["farmhouse", "farm house", "country stay"], "image": "rental/subs/farmhouses.webp"},
+      {"id": "cottages_cabins", "name": "Cottages & Cabins", "keywords": ["cottage", "cabin", "cottage stay"], "image": "rental/subs/cottages_cabins.webp"},
+      {"id": "beach_houses", "name": "Beach Houses", "keywords": ["beach house", "seaside home", "coastal stay"], "image": "rental/subs/beach_houses.webp"},
+      {"id": "resorts", "name": "Resorts", "keywords": ["resort", "holiday resort", "retreat"], "image": "rental/subs/resorts.webp"}
     ]},
     {"id": "hotels", "name": "Hotels & Guest Accommodation", "image": "rental/hotels.webp", "blurb": "Guest rooms and serviced stays.", "subcategories": [
-      {"id": "hotel_stays", "name": "Hotels", "keywords": ["hotel", "guest room", "lodging"]},
-      {"id": "motels", "name": "Motels", "keywords": ["motel", "roadside hotel", "motor inn"]},
-      {"id": "guest_houses", "name": "Guest Houses", "keywords": ["guest house", "guesthouse", "bed and breakfast", "b&b"]},
-      {"id": "hostels", "name": "Hostels", "keywords": ["hostel", "dormitory", "backpacker stay"]},
-      {"id": "serviced_apartments", "name": "Serviced Apartments", "keywords": ["serviced apartment", "extended stay", "furnished apartment"]}
+      {"id": "hotel_stays", "name": "Hotels", "keywords": ["hotel", "guest room", "lodging"], "image": "rental/subs/hotel_stays.webp"},
+      {"id": "motels", "name": "Motels", "keywords": ["motel", "roadside hotel", "motor inn"], "image": "rental/subs/motels.webp"},
+      {"id": "guest_houses", "name": "Guest Houses", "keywords": ["guest house", "guesthouse", "bed and breakfast", "b&b"], "image": "rental/subs/guest_houses.webp"},
+      {"id": "hostels", "name": "Hostels", "keywords": ["hostel", "dormitory", "backpacker stay"], "image": "rental/subs/hostels.webp"},
+      {"id": "serviced_apartments", "name": "Serviced Apartments", "keywords": ["serviced apartment", "extended stay", "furnished apartment"], "image": "rental/subs/serviced_apartments.webp"}
     ]},
     {"id": "commercial", "name": "Commercial Properties", "image": "rental/commercial.webp", "blurb": "Business, retail and storage spaces.", "subcategories": [
-      {"id": "offices", "name": "Offices", "keywords": ["office", "office suite", "business office"]},
-      {"id": "shops_retail_spaces", "name": "Shops & Retail Spaces", "keywords": ["shop", "retail", "storefront", "commercial shop"]},
-      {"id": "showrooms", "name": "Showrooms", "keywords": ["showroom", "display space", "car showroom"]},
-      {"id": "factories", "name": "Factories", "keywords": ["factory", "industrial plant", "manufacturing space"]},
-      {"id": "warehouses", "name": "Warehouses", "keywords": ["warehouse", "distribution center", "storage warehouse"]}
+      {"id": "offices", "name": "Offices", "keywords": ["office", "office suite", "business office"], "image": "rental/subs/offices.webp"},
+      {"id": "shops_retail_spaces", "name": "Shops & Retail Spaces", "keywords": ["shop", "retail", "storefront", "commercial shop"], "image": "rental/subs/shops_retail_spaces.webp"},
+      {"id": "showrooms", "name": "Showrooms", "keywords": ["showroom", "display space", "car showroom"], "image": "rental/subs/showrooms.webp"},
+      {"id": "factories", "name": "Factories", "keywords": ["factory", "industrial plant", "manufacturing space"], "image": "rental/subs/factories.webp"},
+      {"id": "warehouses", "name": "Warehouses", "keywords": ["warehouse", "distribution center", "storage warehouse"], "image": "rental/subs/warehouses.webp"}
     ]},
     {"id": "events", "name": "Event & Function Venues", "image": "rental/events.webp", "blurb": "Spaces for gatherings and celebrations.", "subcategories": [
-      {"id": "wedding_halls", "name": "Wedding Halls", "keywords": ["wedding hall", "shaadi hall", "marriage hall", "wedding venue"]},
-      {"id": "marquees", "name": "Marquees", "keywords": ["marquee", "marquee tent", "shamiana", "event tent"]},
-      {"id": "banquet_halls", "name": "Banquet Halls", "keywords": ["banquet hall", "banquet venue", "reception hall"]},
-      {"id": "party_venues", "name": "Party Venues", "keywords": ["party venue", "event space", "celebration venue"]},
-      {"id": "outdoor_event_spaces", "name": "Outdoor Event Spaces", "keywords": ["outdoor venue", "garden venue", "open air event space"]}
+      {"id": "wedding_halls", "name": "Wedding Halls", "keywords": ["wedding hall", "shaadi hall", "marriage hall", "wedding venue"], "image": "rental/subs/wedding_halls.webp"},
+      {"id": "marquees", "name": "Marquees", "keywords": ["marquee", "marquee tent", "shamiana", "event tent"], "image": "rental/subs/marquees.webp"},
+      {"id": "banquet_halls", "name": "Banquet Halls", "keywords": ["banquet hall", "banquet venue", "reception hall"], "image": "rental/subs/banquet_halls.webp"},
+      {"id": "party_venues", "name": "Party Venues", "keywords": ["party venue", "event space", "celebration venue"], "image": "rental/subs/party_venues.webp"},
+      {"id": "outdoor_event_spaces", "name": "Outdoor Event Spaces", "keywords": ["outdoor venue", "garden venue", "open air event space"], "image": "rental/subs/outdoor_event_spaces.webp"}
     ]},
     {"id": "workspaces", "name": "Workspaces & Meeting Spaces", "image": "rental/workspaces.webp", "blurb": "Flexible places to work and meet.", "subcategories": [
-      {"id": "coworking_spaces", "name": "Coworking Spaces", "keywords": ["coworking", "co-working", "shared office"]},
-      {"id": "meeting_rooms", "name": "Meeting Rooms", "keywords": ["meeting room", "boardroom", "conference room"]},
-      {"id": "conference_halls", "name": "Conference Halls", "keywords": ["conference hall", "auditorium", "convention hall"]},
-      {"id": "training_rooms", "name": "Training Rooms", "keywords": ["training room", "classroom", "workshop room"]}
+      {"id": "coworking_spaces", "name": "Coworking Spaces", "keywords": ["coworking", "co-working", "shared office"], "image": "rental/subs/coworking_spaces.webp"},
+      {"id": "meeting_rooms", "name": "Meeting Rooms", "keywords": ["meeting room", "boardroom", "conference room"], "image": "rental/subs/meeting_rooms.webp"},
+      {"id": "conference_halls", "name": "Conference Halls", "keywords": ["conference hall", "auditorium", "convention hall"], "image": "rental/subs/conference_halls.webp"},
+      {"id": "training_rooms", "name": "Training Rooms", "keywords": ["training room", "classroom", "workshop room"], "image": "rental/subs/training_rooms.webp"}
     ]},
     {"id": "land", "name": "Land & Outdoor Spaces", "image": "rental/land.webp", "blurb": "Land and private outdoor areas.", "subcategories": [
-      {"id": "agricultural_land", "name": "Agricultural Land", "keywords": ["agricultural land", "farmland", "farm land"]},
-      {"id": "farm_plots", "name": "Farm Plots", "keywords": ["farm plot", "agricultural plot", "land plot"]},
-      {"id": "gardens", "name": "Gardens", "keywords": ["garden", "private garden", "landscaped garden"]},
-      {"id": "private_grounds", "name": "Private Grounds", "keywords": ["private grounds", "estate grounds", "outdoor grounds"]}
+      {"id": "agricultural_land", "name": "Agricultural Land", "keywords": ["agricultural land", "farmland", "farm land"], "image": "rental/subs/agricultural_land.webp"},
+      {"id": "farm_plots", "name": "Farm Plots", "keywords": ["farm plot", "agricultural plot", "land plot"], "image": "rental/subs/farm_plots.webp"},
+      {"id": "gardens", "name": "Gardens", "keywords": ["garden", "private garden", "landscaped garden"], "image": "rental/subs/gardens.webp"},
+      {"id": "private_grounds", "name": "Private Grounds", "keywords": ["private grounds", "estate grounds", "outdoor grounds"], "image": "rental/subs/private_grounds.webp"}
     ]},
     {"id": "parking_storage", "name": "Parking & Storage Properties", "image": "rental/parking_storage.webp", "blurb": "Secure parking and storage spaces.", "subcategories": [
-      {"id": "private_parking", "name": "Private Parking", "keywords": ["private parking", "parking space", "car park"]},
-      {"id": "garages", "name": "Garages", "keywords": ["garage", "private garage", "vehicle garage"]},
-      {"id": "storage_units", "name": "Storage Units", "keywords": ["storage unit", "self storage", "lockup"]},
-      {"id": "storage_facilities", "name": "Storage Facilities", "keywords": ["storage facility", "warehouse storage", "commercial storage"]}
+      {"id": "private_parking", "name": "Private Parking", "keywords": ["private parking", "parking space", "car park"], "image": "rental/subs/private_parking.webp"},
+      {"id": "garages", "name": "Garages", "keywords": ["garage", "private garage", "vehicle garage"], "image": "rental/subs/garages.webp"},
+      {"id": "storage_units", "name": "Storage Units", "keywords": ["storage unit", "self storage", "lockup"], "image": "rental/subs/storage_units.webp"},
+      {"id": "storage_facilities", "name": "Storage Facilities", "keywords": ["storage facility", "warehouse storage", "commercial storage"], "image": "rental/subs/storage_facilities.webp"}
     ]}
   ]
 }
