@@ -32,6 +32,22 @@ export class AdminTripLocationRtdb implements TripLocationRtdb {
     });
   }
 
+  async getTripLocationLatest(
+    rideId: string,
+  ): Promise<TripLocationLatest | null> {
+    const snap = await this.database.ref(tripLocationLatestPath(rideId)).get();
+    const v = snap.val();
+    if (
+      v == null ||
+      typeof v !== 'object' ||
+      typeof (v as { lat?: unknown }).lat !== 'number' ||
+      typeof (v as { lng?: unknown }).lng !== 'number'
+    ) {
+      return null;
+    }
+    return v as TripLocationLatest;
+  }
+
   async grantRideAccess(rideId: string, uid: string): Promise<void> {
     await this.database.ref(rideAccessUidPath(rideId, uid)).set(true);
   }

@@ -38,6 +38,20 @@ export const RS_EVENT_TYPES: ReadonlySet<string> = new Set([
   'ride.offer.withdrawn',
   'ride.offer.expired',
   'ride.offer.selected',
+  // Courier v2 — delivery/B&D progress pushes.
+  'delivery.stop.arrived',
+  'delivery.stop.confirmed',
+  'delivery.stop.failed',
+  'delivery.quote.ready',
+  'delivery.quote.responded',
+  'delivery.settlement.reported',
+  'delivery.acknowledged',
+  'delivery.dispute.opened',
+  // Courier v1 delivery lifecycle.
+  'ride.delivery.failed',
+  'ride.delivery.retry',
+  'ride.return.started',
+  'ride.returned',
 ]);
 
 /** Scan queries use `in` — Firestore allows ≤30 values; assert at load. */

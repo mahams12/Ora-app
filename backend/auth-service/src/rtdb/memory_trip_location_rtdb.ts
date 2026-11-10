@@ -21,6 +21,15 @@ export class MemoryTripLocationRtdb implements TripLocationRtdb {
     this.store.set(tripLocationLatestPath(rideId), { ...latest });
   }
 
+  async getTripLocationLatest(
+    rideId: string,
+  ): Promise<TripLocationLatest | null> {
+    const v = this.store.get(tripLocationLatestPath(rideId));
+    return v != null && typeof v === 'object'
+      ? (v as TripLocationLatest)
+      : null;
+  }
+
   async grantRideAccess(rideId: string, uid: string): Promise<void> {
     this.store.set(rideAccessUidPath(rideId, uid), true);
   }

@@ -26,6 +26,7 @@ const ESTIMATE_ALLOWED_KEYS = new Set([
   'city',
   'category',
   'serviceType',
+  'stops',
 ]);
 
 export interface EstimateLatLng {
@@ -46,6 +47,11 @@ export interface PricingEstimateResult {
   distanceKm: number;
   durationMin: number;
   category: string;
+  /** Ora Courier v2 — per-leg metrics when stops were supplied. */
+  legs?: { distanceKm: number; durationMin: number }[];
+  /** Ora Courier v2 — fixed surcharges included in recommendedFareMinor. */
+  stopFeesMinor?: number;
+  serviceFeeMinor?: number;
   /**
    * Optional Google encoded polyline for map preview only (MAP-1).
    * Not pricing authority — never used in fare calculation or snapshot inputs.
@@ -121,8 +127,11 @@ export class PricingEstimateService {
   constructor(
     private readonly db: Firestore,
     private readonly routing: RoutingProvider,
+    options?: { rulesCacheTtlMs?: number },
   ) {
-    this.rules = new PricingRulesRepository(db);
+    this.rules = new PricingRulesRepository(db, {
+      cacheTtlMs: options?.rulesCacheTtlMs,
+    });
   }
 
   async estimate(input: {
@@ -161,10 +170,46 @@ export class PricingEstimateService {
         throw new PricingError(
           'VALIDATION_ERROR',
           400,
-          'serviceType must be one of: ride, courier, intercity, move.',
+          'serviceType must be one of: ride, courier, buy_deliver, intercity, move.',
         );
       }
       serviceType = body.serviceType.trim();
+    }
+
+    // Ora Courier v2 — optional ordered stop waypoints (2–10). When present
+    // they ARE the route: pickup/destination must match first/last.
+    let waypoints: { lat: number; lng: number; address?: string }[] | null =
+      null;
+    if (body.stops !== undefined) {
+      if (!Array.isArray(body.stops)) {
+        throw new PricingError(
+          'VALIDATION_ERROR',
+          400,
+          'stops must be an array of 2–10 waypoints.',
+        );
+      }
+      if (body.stops.length < 2 || body.stops.length > 10) {
+        throw new PricingError(
+          'VALIDATION_ERROR',
+          400,
+          'stops must contain between 2 and 10 waypoints.',
+        );
+      }
+      waypoints = body.stops.map((s, i) =>
+        parseEstimateLatLng(s, `stops[${i}]`),
+      );
+      if (
+        waypoints[0].lat !== pickup.lat ||
+        waypoints[0].lng !== pickup.lng ||
+        waypoints[waypoints.length - 1].lat !== destination.lat ||
+        waypoints[waypoints.length - 1].lng !== destination.lng
+      ) {
+        throw new PricingError(
+          'VALIDATION_ERROR',
+          400,
+          'stops must begin at pickup and end at destination.',
+        );
+      }
     }
 
     // Fail closed before calling Google if rules are missing.
@@ -174,11 +219,37 @@ export class PricingEstimateService {
     });
 
     let route;
+    let legs: { distanceKm: number; durationMin: number }[] | undefined;
     try {
-      route = await this.routing.computeDriveRoute({
-        origin: { lat: pickup.lat, lng: pickup.lng },
-        destination: { lat: destination.lat, lng: destination.lng },
-      });
+      if (waypoints && this.routing.computeRoute) {
+        route = await this.routing.computeRoute({ waypoints });
+        legs = route.legs;
+      } else if (waypoints) {
+        // Providers without multi-leg support: sum consecutive legs.
+        const legResults = [] as {
+          distanceKm: number;
+          durationMin: number;
+        }[];
+        for (let i = 0; i + 1 < waypoints.length; i++) {
+          legResults.push(
+            await this.routing.computeDriveRoute({
+              origin: waypoints[i],
+              destination: waypoints[i + 1],
+            }),
+          );
+        }
+        legs = legResults;
+        route = {
+          distanceKm: legResults.reduce((s, l) => s + l.distanceKm, 0),
+          durationMin: legResults.reduce((s, l) => s + l.durationMin, 0),
+          provider: 'haversine' as const,
+        };
+      } else {
+        route = await this.routing.computeDriveRoute({
+          origin: { lat: pickup.lat, lng: pickup.lng },
+          destination: { lat: destination.lat, lng: destination.lng },
+        });
+      }
     } catch (err) {
       if (err instanceof RoutingError) {
         throw new PricingError(err.code, err.httpStatus, err.message);
@@ -198,6 +269,14 @@ export class PricingEstimateService {
       rules,
     });
 
+    // Ora Courier v2 — fixed surcharges on top of the distance/duration fare.
+    // Added to recommended AND both bounds so negotiation spans the full due.
+    const extraStops = Math.max(0, (waypoints?.length ?? 2) - 2);
+    const stopFeesMinor = extraStops * (rules.perStopFeeMinor ?? 0);
+    const serviceFeeMinor =
+      serviceType === 'buy_deliver' ? (rules.shoppingServiceFeeMinor ?? 0) : 0;
+    const surchargeMinor = stopFeesMinor + serviceFeeMinor;
+
     const now = input.now ?? new Date();
     const computedAt = now.toISOString();
     const expiresAt = new Date(
@@ -207,9 +286,9 @@ export class PricingEstimateService {
 
     const snapshot: PricingSnapshotDoc = {
       snapshotId,
-      recommendedFareMinor: fare.recommendedFareMinor,
-      offerBoundMinMinor: fare.offerBoundMinMinor,
-      offerBoundMaxMinor: fare.offerBoundMaxMinor,
+      recommendedFareMinor: fare.recommendedFareMinor + surchargeMinor,
+      offerBoundMinMinor: fare.offerBoundMinMinor + surchargeMinor,
+      offerBoundMaxMinor: fare.offerBoundMaxMinor + surchargeMinor,
       currency: PRICING_CURRENCY_PKR,
       pricingRulesVersion: fare.pricingRulesVersion,
       computedAt,
@@ -230,8 +309,18 @@ export class PricingEstimateService {
             ? { address: destination.address }
             : {}),
         },
+        ...(waypoints
+          ? {
+              stops: waypoints.map((w) => ({ lat: w.lat, lng: w.lng })),
+              legs,
+              stopFeesMinor,
+              serviceFeeMinor,
+            }
+          : {}),
         routeProvider: route.provider,
-        ...(route.rawRequestId ? { routeRequestId: route.rawRequestId } : {}),
+        ...('rawRequestId' in route && route.rawRequestId
+          ? { routeRequestId: route.rawRequestId }
+          : {}),
       },
     };
 
@@ -250,9 +339,9 @@ export class PricingEstimateService {
 
     return {
       pricingSnapshotId: snapshotId,
-      recommendedFareMinor: fare.recommendedFareMinor,
-      offerBoundMinMinor: fare.offerBoundMinMinor,
-      offerBoundMaxMinor: fare.offerBoundMaxMinor,
+      recommendedFareMinor: fare.recommendedFareMinor + surchargeMinor,
+      offerBoundMinMinor: fare.offerBoundMinMinor + surchargeMinor,
+      offerBoundMaxMinor: fare.offerBoundMaxMinor + surchargeMinor,
       currency: PRICING_CURRENCY_PKR,
       pricingRulesVersion: fare.pricingRulesVersion,
       computedAt,
@@ -260,6 +349,10 @@ export class PricingEstimateService {
       distanceKm: route.distanceKm,
       durationMin: route.durationMin,
       category: rules.category,
+      ...(legs ? { legs } : {}),
+      ...(surchargeMinor > 0
+        ? { stopFeesMinor, serviceFeeMinor }
+        : {}),
       ...(typeof route.encodedPolyline === 'string' &&
       route.encodedPolyline.trim().length > 0
         ? { encodedPolyline: route.encodedPolyline.trim() }

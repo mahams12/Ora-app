@@ -28,6 +28,10 @@ export interface TripLocationRtdb {
     rideId: string,
     latest: TripLocationLatest,
   ): Promise<void>;
+  /** Ora Courier v2 — read the last accepted driver fix (evidence only). */
+  getTripLocationLatest?(
+    rideId: string,
+  ): Promise<TripLocationLatest | null>;
   grantRideAccess(rideId: string, uid: string): Promise<void>;
   revokeRideAccess(rideId: string): Promise<void>;
   clearTripLocations(rideId: string): Promise<void>;

@@ -164,7 +164,7 @@ describe('google routes provider — HTTP boundary', () => {
     const provider = new GoogleRoutesProvider({
       apiKey: 'test-key',
       timeoutMs: 5,
-      fetchImpl: (async (_url, init) => {
+      fetchImpl: (async (_url: unknown, init?: { signal?: AbortSignal }) => {
         await new Promise((_, reject) => {
           init?.signal?.addEventListener('abort', () => {
             const err = new Error('aborted');
@@ -192,7 +192,7 @@ describe('google routes provider — HTTP boundary', () => {
           json: async () => {
             throw new Error('bad json');
           },
-        }) as Response) as unknown as typeof fetch,
+        }) as unknown as Response) as unknown as typeof fetch,
     });
     await expect(
       provider.computeDriveRoute({
@@ -221,9 +221,9 @@ describe('google routes provider — HTTP boundary', () => {
     }
   });
 
-  it('11. field mask includes D/T + optional display polyline', () => {
+  it('11. field mask includes D/T + optional display polyline + legs', () => {
     expect(GOOGLE_ROUTES_FIELD_MASK).toBe(
-      'routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline',
+      'routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline,routes.legs.distanceMeters,routes.legs.duration',
     );
   });
 });
