@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ora/core/constants/app_constants.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_models.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_provider.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_search.dart';
@@ -154,11 +155,31 @@ void main() {
   );
 
   test('catalogue and ride image paths exist', () {
+    for (final category in catalogue.logistics) {
+      for (final type in category.types) {
+        expect(type.image, 'logistics/types/${type.id}.webp');
+      }
+    }
+    for (final category in catalogue.rental) {
+      for (final subcategory in category.subcategories) {
+        expect(subcategory.image, 'rental/subs/${subcategory.id}.webp');
+      }
+    }
     final imagePaths = [
       ...catalogue.logistics.map((category) => category.image),
+      ...catalogue.logistics.expand(
+        (category) =>
+            category.types.map((type) => type.image ?? category.image),
+      ),
       ...catalogue.services.map((category) => category.image),
       ...catalogue.rental.map((category) => category.image),
+      ...catalogue.rental.expand(
+        (category) => category.subcategories.map(
+          (subcategory) => subcategory.image ?? category.image,
+        ),
+      ),
       ...kRideTypeCatalogue.map((option) => option.image),
+      AppConstants.homeIntercityRoadAsset,
     ];
     for (final imagePath in imagePaths) {
       expect(

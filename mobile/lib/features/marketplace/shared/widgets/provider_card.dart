@@ -11,6 +11,7 @@ class ServiceProviderSummary {
     required this.name,
     required this.specialization,
     this.photo,
+    this.location,
     this.rating,
     this.reviewCount,
     this.verifiedJobCount,
@@ -21,6 +22,7 @@ class ServiceProviderSummary {
   final String name;
   final String specialization;
   final ImageProvider? photo;
+  final String? location;
   final double? rating;
   final int? reviewCount;
   final int? verifiedJobCount;
@@ -34,11 +36,15 @@ class ProviderCard extends StatelessWidget {
     super.key,
     this.onContact,
     this.onViewProfile,
+    this.onBookmark,
+    this.isSample = false,
   });
 
   final ServiceProviderSummary model;
   final VoidCallback? onContact;
   final VoidCallback? onViewProfile;
+  final VoidCallback? onBookmark;
+  final bool isSample;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +74,12 @@ class ProviderCard extends StatelessWidget {
         .map((part) => part[0].toUpperCase())
         .join();
     return Semantics(
-      label: '${model.name}, ${model.specialization}',
+      label: [
+        model.name,
+        model.specialization,
+        if (model.location != null) model.location!,
+        if (isSample) 'Sample data',
+      ].join(', '),
       child: Container(
         padding: const EdgeInsets.all(OraSpacing.sm),
         decoration: BoxDecoration(
@@ -84,8 +95,11 @@ class ProviderCard extends StatelessWidget {
               height: 120,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(OraRadius.sm),
-                child: model.photo == null
-                    ? ColoredBox(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (model.photo == null)
+                      ColoredBox(
                         color: OraColors.infoMuted,
                         child: Center(
                           child: Text(
@@ -94,7 +108,8 @@ class ProviderCard extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Image(
+                    else
+                      Image(
                         image: model.photo!,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
@@ -108,6 +123,33 @@ class ProviderCard extends StatelessWidget {
                               ),
                             ),
                       ),
+                    if (isSample)
+                      Positioned(
+                        left: 4,
+                        top: 4,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: OraColors.gold,
+                            borderRadius: BorderRadius.circular(OraRadius.pill),
+                          ),
+                          child: Text(
+                            'SAMPLE',
+                            style:
+                                OraTypography.caption(
+                                  OraColors.primaryForeground,
+                                ).copyWith(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(width: OraSpacing.sm),
@@ -134,15 +176,32 @@ class ProviderCard extends StatelessWidget {
                               model.specialization,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: OraTypography.caption(OraColors.primary),
+                              style: OraTypography.caption(
+                                OraColors.tealBright,
+                              ),
                             ),
+                            if (model.location != null)
+                              Text(
+                                model.location!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: OraTypography.caption(
+                                  OraColors.textMuted,
+                                ),
+                              ),
                           ],
                         ),
                       ),
                       const SizedBox(width: OraSpacing.xxs),
-                      Semantics(
-                        label: 'Bookmark ${model.name}',
-                        child: const Icon(
+                      IconButton(
+                        tooltip: 'Bookmark ${model.name}',
+                        onPressed: onBookmark,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints.tightFor(
+                          width: 44,
+                          height: 44,
+                        ),
+                        icon: const Icon(
                           Icons.bookmark_border_rounded,
                           size: 20,
                           color: OraColors.textMuted,

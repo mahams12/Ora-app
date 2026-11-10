@@ -11,8 +11,10 @@ import '../../../../../app/theme/widgets/ora_section_header.dart';
 import '../../../../../core/utils/responsive.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
+import '../../../shared/demo/demo_listings.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/marketplace_search_field.dart';
+import '../../../shared/widgets/provider_card.dart';
 import '../widgets/subcategory_photo_card.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
@@ -43,6 +45,7 @@ class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
   @override
   Widget build(BuildContext context) {
     final catalogue = ref.watch(catalogueProvider);
+    final demoEnabled = ref.watch(demoListingsEnabledProvider);
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
       backgroundColor: OraColors.background,
@@ -56,145 +59,186 @@ class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
           title: 'Catalogue unavailable',
           message: 'Please try again later.',
         ),
-        data: (data) => Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 960),
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      padding,
-                      OraSpacing.md,
-                      padding,
-                      OraSpacing.md,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MarketplaceSearchField(
-                          hintText: 'Search services',
-                          onChanged: (value) => setState(() => _query = value),
-                          onSubmitted: (value) {
-                            if (value.trim().isNotEmpty) {
-                              context.push(
-                                AppRoutes.servicesSearchPath(value.trim()),
-                              );
-                            }
-                          },
-                        ),
-                        if (_query.trim().isNotEmpty) ...[
-                          const SizedBox(height: OraSpacing.xs),
-                          Text(
-                            'Press search to view matching services.',
-                            style: OraTypography.caption(OraColors.textMuted),
+        data: (data) {
+          final nearYouProviders = demoEnabled && data.services.isNotEmpty
+              ? demoServiceProviders(
+                  data.services.first.subcategories.first,
+                ).take(2).toList()
+              : const <ServiceProviderSummary>[];
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 960),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        padding,
+                        OraSpacing.md,
+                        padding,
+                        OraSpacing.md,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          MarketplaceSearchField(
+                            hintText: 'Search services',
+                            onChanged: (value) =>
+                                setState(() => _query = value),
+                            onSubmitted: (value) {
+                              if (value.trim().isNotEmpty) {
+                                context.push(
+                                  AppRoutes.servicesSearchPath(value.trim()),
+                                );
+                              }
+                            },
                           ),
-                        ],
-                        const SizedBox(height: OraSpacing.lg),
-                        const OraSectionHeader(title: 'Categories'),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 116,
-                    child: ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: padding),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: data.services.length,
-                      itemBuilder: (context, index) {
-                        final category = data.services[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(right: OraSpacing.sm),
-                          child: _ServiceCategoryTile(
-                            category: category,
-                            icon:
-                                _serviceCategoryIcons[category.id] ??
-                                Icons.category_outlined,
-                            onTap: () => context.push(
-                              AppRoutes.servicesCategoryPath(category.id),
+                          if (_query.trim().isNotEmpty) ...[
+                            const SizedBox(height: OraSpacing.xs),
+                            Text(
+                              'Press search to view matching services.',
+                              style: OraTypography.caption(OraColors.textMuted),
                             ),
-                          ),
-                        );
-                      },
+                          ],
+                          const SizedBox(height: OraSpacing.lg),
+                          const OraSectionHeader(title: 'Categories'),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(
-                    0,
-                    OraSpacing.lg,
-                    0,
-                    OraSpacing.xxl,
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 116,
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(horizontal: padding),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: data.services.length,
+                        itemBuilder: (context, index) {
+                          final category = data.services[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              right: OraSpacing.sm,
+                            ),
+                            child: _ServiceCategoryTile(
+                              category: category,
+                              icon:
+                                  _serviceCategoryIcons[category.id] ??
+                                  Icons.category_outlined,
+                              onTap: () => context.push(
+                                AppRoutes.servicesCategoryPath(category.id),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final category = data.services[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: OraSpacing.lg),
+                  if (nearYouProviders.isNotEmpty)
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(
+                        padding,
+                        OraSpacing.lg,
+                        padding,
+                        0,
+                      ),
+                      sliver: SliverToBoxAdapter(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: padding,
-                              ),
-                              child: OraSectionHeader(
-                                title: category.name,
-                                action: TextButton(
-                                  onPressed: () => context.push(
-                                    AppRoutes.servicesCategoryPath(category.id),
-                                  ),
-                                  child: const Text('See all'),
-                                ),
-                              ),
-                            ),
+                            const OraSectionHeader(title: 'Near you'),
                             const SizedBox(height: OraSpacing.sm),
-                            SizedBox(
-                              height: 124,
-                              child: ListView.builder(
-                                key: PageStorageKey<String>(
-                                  'services-${category.id}-subcategories',
-                                ),
+                            for (final provider in nearYouProviders) ...[
+                              ProviderCard(
+                                model: provider,
+                                isSample: true,
+                                onBookmark: () => showDemoBookingSheet(context),
+                                onContact: () => showDemoBookingSheet(context),
+                                onViewProfile: () =>
+                                    showDemoBookingSheet(context),
+                              ),
+                              const SizedBox(height: OraSpacing.sm),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                      0,
+                      OraSpacing.lg,
+                      0,
+                      OraSpacing.xxl,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final category = data.services[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: OraSpacing.lg),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: padding,
                                 ),
-                                scrollDirection: Axis.horizontal,
-                                itemCount: category.subcategories.length,
-                                itemBuilder: (context, subcategoryIndex) {
-                                  final subcategory =
-                                      category.subcategories[subcategoryIndex];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(
-                                      right: OraSpacing.sm,
+                                child: OraSectionHeader(
+                                  title: category.name,
+                                  action: TextButton(
+                                    onPressed: () => context.push(
+                                      AppRoutes.servicesCategoryPath(
+                                        category.id,
+                                      ),
                                     ),
-                                    child: SizedBox(
-                                      width: 168,
-                                      child: SubcategoryPhotoCard(
-                                        subcategory: subcategory,
-                                        onTap: () => context.push(
-                                          AppRoutes.servicesSubcategoryPath(
-                                            category.id,
-                                            subcategory.id,
+                                    child: const Text('See all'),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: OraSpacing.sm),
+                              SizedBox(
+                                height: 124,
+                                child: ListView.builder(
+                                  key: PageStorageKey<String>(
+                                    'services-${category.id}-subcategories',
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: padding,
+                                  ),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: category.subcategories.length,
+                                  itemBuilder: (context, subcategoryIndex) {
+                                    final subcategory = category
+                                        .subcategories[subcategoryIndex];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: OraSpacing.sm,
+                                      ),
+                                      child: SizedBox(
+                                        width: 168,
+                                        child: SubcategoryPhotoCard(
+                                          subcategory: subcategory,
+                                          onTap: () => context.push(
+                                            AppRoutes.servicesSubcategoryPath(
+                                              category.id,
+                                              subcategory.id,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }, childCount: data.services.length),
+                            ],
+                          ),
+                        );
+                      }, childCount: data.services.length),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

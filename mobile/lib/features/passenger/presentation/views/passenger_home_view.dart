@@ -62,7 +62,6 @@ class PassengerHomeView extends StatelessWidget {
             state: state,
             onOpenDrawer: onOpenDrawer,
             onOpenProfile: onOpenProfile,
-            onSearchTap: () => onRequestRideEntry(null),
           ),
         ),
         SliverPadding(
@@ -134,13 +133,11 @@ class _HomeHeroHeader extends StatelessWidget {
     required this.state,
     required this.onOpenDrawer,
     required this.onOpenProfile,
-    required this.onSearchTap,
   });
 
   final HomeUiState state;
   final VoidCallback onOpenDrawer;
   final VoidCallback onOpenProfile;
-  final VoidCallback onSearchTap;
 
   @override
   Widget build(BuildContext context) {
@@ -163,102 +160,41 @@ class _HomeHeroHeader extends StatelessWidget {
       ),
       child: SafeArea(
         bottom: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Row(
           children: [
-            Row(
-              children: [
-                IconButton(
-                  tooltip: 'Menu',
-                  onPressed: onOpenDrawer,
-                  icon: const Icon(Icons.menu_rounded),
-                  color: OraColors.textPrimary,
-                ),
-                Expanded(
-                  child: Text(
-                    AppConstants.appName,
-                    textAlign: TextAlign.center,
-                    style: OraTypography.title(
-                      OraColors.textPrimary,
-                    ).copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.4),
-                  ),
-                ),
-                InkWell(
-                  onTap: onOpenProfile,
-                  borderRadius: BorderRadius.circular(OraRadius.avatar),
-                  child: Container(
-                    width: 38,
-                    height: 38,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [OraColors.gold, OraColors.goldDeep],
-                      ),
-                    ),
-                    child: Text(
-                      state.avatarInitials,
-                      style: OraTypography.label(
-                        OraColors.primaryForeground,
-                      ).copyWith(fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                ),
-              ],
+            IconButton(
+              tooltip: 'Menu',
+              onPressed: onOpenDrawer,
+              icon: const Icon(Icons.menu_rounded),
+              color: OraColors.textPrimary,
             ),
-            const SizedBox(height: OraSpacing.md),
-            Material(
-              color: const Color(0x14FFFFFF),
-              borderRadius: BorderRadius.circular(OraRadius.lg),
-              child: InkWell(
-                onTap: onSearchTap,
-                borderRadius: BorderRadius.circular(OraRadius.lg),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: OraSpacing.md,
-                    vertical: 13,
+            Expanded(
+              child: Text(
+                AppConstants.appName,
+                textAlign: TextAlign.center,
+                style: OraTypography.title(
+                  OraColors.textPrimary,
+                ).copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.4),
+              ),
+            ),
+            InkWell(
+              onTap: onOpenProfile,
+              borderRadius: BorderRadius.circular(OraRadius.avatar),
+              child: Container(
+                width: 38,
+                height: 38,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [OraColors.gold, OraColors.goldDeep],
                   ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(OraRadius.lg),
-                    border: Border.all(color: const Color(0x1FFFFFFF)),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: OraColors.primaryMuted,
-                          borderRadius: BorderRadius.circular(9),
-                        ),
-                        child: const Icon(
-                          Icons.location_on_rounded,
-                          color: OraColors.primary,
-                          size: 16,
-                        ),
-                      ),
-                      const SizedBox(width: OraSpacing.sm),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Where are you headed?',
-                              style: OraTypography.bodyEmphasis(
-                                OraColors.textPrimary,
-                              ).copyWith(fontSize: 13.5),
-                            ),
-                            Text(
-                              'Set pickup & destination',
-                              style: OraTypography.caption(
-                                const Color(0xFFB9BDD1),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                ),
+                child: Text(
+                  state.avatarInitials,
+                  style: OraTypography.label(
+                    OraColors.primaryForeground,
+                  ).copyWith(fontWeight: FontWeight.w800),
                 ),
               ),
             ),
@@ -295,7 +231,7 @@ class _PromoCard extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.asset(
-                    AppConstants.serviceIntercityAsset,
+                    AppConstants.homeIntercityRoadAsset,
                     cacheWidth: 800,
                     fit: BoxFit.cover,
                     filterQuality: FilterQuality.medium,

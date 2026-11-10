@@ -85,16 +85,19 @@ class LogisticsVehicleType {
     required this.id,
     required this.name,
     required List<String> keywords,
+    this.image,
   }) : keywords = List.unmodifiable(keywords);
 
   final String id;
   final String name;
   final List<String> keywords;
+  final String? image;
 
   factory LogisticsVehicleType.fromJson(Map<String, dynamic> json) {
     return LogisticsVehicleType(
       id: json['id'] as String,
       name: json['name'] as String,
+      image: json['image'] as String?,
       keywords: (json['keywords'] as List<dynamic>? ?? const [])
           .cast<String>()
           .toList(growable: false),
@@ -193,16 +196,19 @@ class RentalSubcategory {
     required this.id,
     required this.name,
     required List<String> keywords,
+    this.image,
   }) : keywords = List.unmodifiable(keywords);
 
   final String id;
   final String name;
   final List<String> keywords;
+  final String? image;
 
   factory RentalSubcategory.fromJson(Map<String, dynamic> json) {
     return RentalSubcategory(
       id: json['id'] as String,
       name: json['name'] as String,
+      image: json['image'] as String?,
       keywords: (json['keywords'] as List<dynamic>? ?? const [])
           .cast<String>()
           .toList(growable: false),

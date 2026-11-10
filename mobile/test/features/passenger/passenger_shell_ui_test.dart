@@ -125,7 +125,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('ORA'), findsWidgets);
-    expect(find.text('Where are you headed?'), findsOneWidget);
+    expect(find.text('Where are you headed?'), findsNothing);
     expect(find.text('Explore ORA'), findsOneWidget);
     expect(find.text('Travel beyond the city'), findsOneWidget);
     expect(find.text('Choose a ride'), findsNothing);
@@ -159,6 +159,12 @@ void main() {
     expect(find.text('Saved places'), findsOneWidget);
     expect(find.text('Work'), findsOneWidget);
     expect(find.text('Quick actions'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Safety'),
+      120,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
     expect(find.text('Safety'), findsOneWidget);
   });
 
@@ -215,7 +221,14 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Where are you headed?'));
+    await tester.scrollUntilVisible(
+      find.text('Work'),
+      180,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(find.text('Work'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Work').first);
     await tester.pumpAndSettle();
 
     expect(find.byType(RideRequestView), findsOneWidget);
@@ -302,7 +315,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(find.textContaining('Where are you headed?'), findsOneWidget);
+    expect(find.textContaining('Where are you headed?'), findsNothing);
   });
 
   testWidgets('does not show fake fares', (tester) async {

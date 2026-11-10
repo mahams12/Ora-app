@@ -34,10 +34,13 @@ void main() {
       catalogue: catalogue,
     );
 
-    expect(find.text('Medium & Heavy Trucks'), findsOneWidget);
+    expect(find.text('Medium & Heavy Trucks near me'), findsOneWidget);
     expect(find.text('Quotation'), findsWidgets);
     final type = catalogue.logisticsCategory('trucks')!.types.first;
-    await tester.tap(find.text(type.name).first);
+    final typeCard = find.byKey(ValueKey('logistics-type-${type.id}'));
+    await tester.ensureVisible(typeCard);
+    await tester.pumpAndSettle();
+    await tester.tap(typeCard);
     for (var frame = 0; frame < 6; frame++) {
       await tester.pump(const Duration(milliseconds: 50));
     }
@@ -84,6 +87,54 @@ void main() {
     expect(find.text('Optional stop 3'), findsOneWidget);
     expect(find.text('Add optional stop'), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'demo logistics operators are labeled and actions stay sample-only',
+    (tester) async {
+      await pumpMarketplaceRoute(
+        tester,
+        location: AppRoutes.logisticsCategoryPath('trucks'),
+        catalogue: catalogue,
+        demoListingsEnabled: true,
+      );
+
+      await tester.scrollUntilVisible(
+        find.text('Operators near you'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('SAMPLE'), findsWidgets);
+      await tester.ensureVisible(find.text('Book now').first);
+      await tester.tap(find.text('Book now').first);
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          'Booking opens soon — this is sample data, nothing is booked.',
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets('demo-off logistics keeps the honest operators empty state', (
+    tester,
+  ) async {
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.logisticsCategoryPath('trucks'),
+      catalogue: catalogue,
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('Operators near you'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('No verified operators yet'), findsOneWidget);
+    expect(find.text('SAMPLE'), findsNothing);
   });
 
   testWidgets('Services home shows categories and catalogue sections', (
@@ -204,6 +255,39 @@ void main() {
     expect(find.text('No verified providers yet'), findsOneWidget);
   });
 
+  testWidgets('demo service providers show SAMPLE and safe Contact actions', (
+    tester,
+  ) async {
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.servicesSubcategoryPath('home_repair', 'plumbing'),
+      catalogue: catalogue,
+      demoListingsEnabled: true,
+    );
+
+    expect(find.text('SAMPLE'), findsWidgets);
+    await tester.ensureVisible(find.text('Contact').first);
+    await tester.tap(find.text('Contact').first);
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Booking opens soon — this is sample data, nothing is booked.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('demo-off service providers keep the honest empty state', (
+    tester,
+  ) async {
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.servicesSubcategoryPath('home_repair', 'plumbing'),
+      catalogue: catalogue,
+    );
+
+    expect(find.text('No verified providers yet'), findsOneWidget);
+    expect(find.text('SAMPLE'), findsNothing);
+  });
+
   testWidgets('service search results group wedding services and navigate', (
     tester,
   ) async {
@@ -235,7 +319,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
     }
     expect(find.byType(ServiceProvidersView), findsOneWidget);
-    expect(find.text('FIND EXPERTS'), findsOneWidget);
+    expect(find.text('Find expert Bridal & party makeup'), findsOneWidget);
     expect(find.text('Bridal & party makeup'), findsWidgets);
     expect(find.text('No verified providers yet'), findsOneWidget);
   });
@@ -322,6 +406,48 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('module homes show labeled near-you samples only when enabled', (
+    tester,
+  ) async {
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.logistics,
+      catalogue: catalogue,
+      demoListingsEnabled: true,
+    );
+    await tester.scrollUntilVisible(
+      find.text('Operators near you'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Operators near you'), findsOneWidget);
+    expect(find.text('SAMPLE'), findsWidgets);
+
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.rental,
+      catalogue: catalogue,
+      demoListingsEnabled: true,
+    );
+    await tester.scrollUntilVisible(
+      find.text('Places near you'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('SAMPLE'), findsWidgets);
+
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.services,
+      catalogue: catalogue,
+      demoListingsEnabled: true,
+    );
+    expect(find.text('Near you'), findsOneWidget);
+    expect(find.text('SAMPLE'), findsWidgets);
+  });
+
   testWidgets('rental property listing action is coming later', (tester) async {
     await pumpMarketplaceRoute(
       tester,
@@ -359,14 +485,91 @@ void main() {
     );
 
     expect(find.byType(RentalCategoryView), findsOneWidget);
-    expect(find.text('Residential Properties'), findsOneWidget);
-    expect(find.text('Apartments & Flats'), findsOneWidget);
-    await tester.tap(find.text('Houses'));
-    for (var frame = 0; frame < 6; frame++) {
-      await tester.pump(const Duration(milliseconds: 50));
-    }
+    expect(find.text('Residential Properties near me'), findsOneWidget);
+    expect(find.text('Apartments & Flats'), findsWidgets);
+    final housesId = catalogue
+        .rentalCategory('residential')!
+        .subcategories
+        .first
+        .id;
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.rentalCategoryPath(
+        'residential',
+        subcategoryId: housesId,
+      ),
+      catalogue: catalogue,
+    );
+    await tester.scrollUntilVisible(
+      find.text('Houses near you'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Houses near you'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('No verified listings yet'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('No verified listings yet'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('demo rental listings show SAMPLE and the safe arrow sheet', (
+    tester,
+  ) async {
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.rentalCategoryPath('hotels'),
+      catalogue: catalogue,
+      demoListingsEnabled: true,
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('Places near you'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('SAMPLE'), findsWidgets);
+    await tester.scrollUntilVisible(
+      find.byTooltip('Open sample listing').first,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.byTooltip('Open sample listing').first);
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Booking opens soon — this is sample data, nothing is booked.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('demo-off rental subcategory keeps photos and empty state', (
+    tester,
+  ) async {
+    final subcategoryId = catalogue
+        .rentalCategory('hotels')!
+        .subcategories
+        .first
+        .id;
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.rentalCategoryPath(
+        'hotels',
+        subcategoryId: subcategoryId,
+      ),
+      catalogue: catalogue,
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('No verified listings yet'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('No verified listings yet'), findsOneWidget);
+    expect(find.text('Property types'), findsOneWidget);
+    expect(find.text('SAMPLE'), findsNothing);
   });
 
   testWidgets('marketplace screens fit compact and large phone sizes', (
@@ -413,6 +616,50 @@ void main() {
       );
       await tester.pump();
       expect(tester.takeException(), isNull, reason: 'rental filters at $size');
+    }
+  });
+
+  testWidgets('demo listing cards fit a 360px phone at text scale 1.3', (
+    tester,
+  ) async {
+    addTearDown(() => resetMarketplaceTestSurface(tester));
+    setMarketplaceTestSurface(tester, const Size(360, 740));
+
+    final sampleRoutes = [
+      AppRoutes.logisticsCategoryPath('trucks'),
+      AppRoutes.rentalCategoryPath('hotels'),
+      AppRoutes.servicesSubcategoryPath('home_repair', 'plumbing'),
+    ];
+    for (final location in sampleRoutes) {
+      await pumpMarketplaceRoute(
+        tester,
+        location: location,
+        catalogue: catalogue,
+        demoListingsEnabled: true,
+        textScale: 1.3,
+      );
+      if (location.startsWith('/logistics/')) {
+        await tester.scrollUntilVisible(
+          find.text('Operators near you'),
+          200,
+          scrollable: find.byType(Scrollable).first,
+        );
+      } else if (location.startsWith('/rental/')) {
+        await tester.scrollUntilVisible(
+          find.text('Places near you'),
+          200,
+          scrollable: find.byType(Scrollable).first,
+        );
+      } else {
+        await tester.scrollUntilVisible(
+          find.text('Find experts'),
+          160,
+          scrollable: find.byType(Scrollable).first,
+        );
+      }
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: location);
+      await tester.pumpWidget(const SizedBox.shrink());
     }
   });
 }

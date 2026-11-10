@@ -9,15 +9,18 @@ import '../../../../../app/theme/ora_colors.dart';
 import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
+import '../../../../../app/theme/widgets/ora_section_header.dart';
 import '../../../../../core/utils/responsive.dart';
 import '../../../../super_app/presentation/widgets/service_coming_later_sheet.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
 import '../../domain/rental_catalogue_search.dart';
+import '../../../shared/demo/demo_listings.dart';
 import '../../../shared/widgets/illustrated_category_card.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/marketplace_search_field.dart';
+import '../../../shared/widgets/rental_listing_card.dart';
 import 'rental_filter_sheet.dart';
 
 class RentalHomeView extends ConsumerStatefulWidget {
@@ -61,6 +64,7 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
   Widget build(BuildContext context) {
     final padding = Responsive.horizontalPadding(context);
     final catalogue = ref.watch(catalogueProvider);
+    final demoEnabled = ref.watch(demoListingsEnabledProvider);
     return Scaffold(
       backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Rental')),
@@ -80,6 +84,12 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
               : categories
                     .where((category) => category.id == _selectedCategoryId)
                     .toList(growable: false);
+          final nearCategory = selectedCategories.isEmpty
+              ? null
+              : selectedCategories.first;
+          final nearYouListings = demoEnabled && nearCategory != null
+              ? demoRentalListings(nearCategory).take(3).toList()
+              : const <DemoRentalListing>[];
           final searchResults = _query.trim().isEmpty
               ? const <RentalSearchMatch>[]
               : RentalCatalogueSearch.search(categories, _query);
@@ -246,6 +256,63 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
                                 ),
                           );
                         }, childCount: selectedCategories.length),
+                      ),
+                    ),
+                  if (demoEnabled && nearCategory != null)
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(
+                        padding,
+                        OraSpacing.lg,
+                        0,
+                        OraSpacing.sm,
+                      ),
+                      sliver: SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: padding),
+                              child: const OraSectionHeader(
+                                title: 'Places near you',
+                              ),
+                            ),
+                            const SizedBox(height: OraSpacing.sm),
+                            SizedBox(
+                              height: 212,
+                              child: ListView.separated(
+                                padding: EdgeInsets.only(right: padding),
+                                scrollDirection: Axis.horizontal,
+                                itemCount: nearYouListings.length,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(width: OraSpacing.sm),
+                                itemBuilder: (context, index) {
+                                  final listing = nearYouListings[index];
+                                  return RentalListingCard(
+                                    width: 300,
+                                    height: 200,
+                                    isSample: true,
+                                    model: RentalListingCardModel(
+                                      title: listing.title,
+                                      location: listing.area,
+                                      imageAsset: listing.imageAsset,
+                                      rating: listing.rating,
+                                      reviewCount: listing.reviewCount,
+                                      priceLabel: listing.priceLabel,
+                                      availability: listing.amenities.join(
+                                        ' · ',
+                                      ),
+                                      amenities: listing.amenities,
+                                      tag: listing.tag,
+                                    ),
+                                    onTap: () => showDemoBookingSheet(context),
+                                    onBookmark: () =>
+                                        showDemoBookingSheet(context),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   SliverPadding(

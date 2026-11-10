@@ -57,6 +57,7 @@ flutter build apk --debug \
   --dart-define=ORA_ALLOW_HTTP_API=true \
   --dart-define=ORA_FIREBASE_EMULATOR_HOST="$EMU_HOST" \
   --dart-define=MAPLIBRE_TILE_KEY="$MAPTILER" \
+  --dart-define=ORA_DEMO_LISTINGS="${ORA_DEMO_LISTINGS:-true}" \
   ${ORA_GOOGLE_PLACES_API_KEY:+--dart-define=ORA_GOOGLE_PLACES_API_KEY="$ORA_GOOGLE_PLACES_API_KEY"}
 
 echo "APK=$MOBILE/build/app/outputs/flutter-apk/app-debug.apk"

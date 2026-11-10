@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../app/theme/ora_colors.dart';
+import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
-import '../../../../../app/theme/widgets/ora_section_header.dart';
+import '../../../../../app/theme/ora_typography.dart';
+import '../../../../../core/utils/responsive.dart';
+import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
+import '../../../shared/demo/demo_listings.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/provider_card.dart';
-import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
 class ServiceProvidersView extends ConsumerWidget {
   const ServiceProvidersView({
@@ -27,6 +30,8 @@ class ServiceProvidersView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final catalogue = ref.watch(catalogueProvider);
+    final demoEnabled = ref.watch(demoListingsEnabledProvider);
+    final padding = Responsive.horizontalPadding(context);
     return Scaffold(
       backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Services')),
@@ -51,6 +56,12 @@ class ServiceProvidersView extends ConsumerWidget {
           if (category == null || subcategory == null) {
             return const MarketplaceEmptyState(title: 'Service not found');
           }
+          final visibleProviders = providers.isNotEmpty
+              ? providers
+              : demoEnabled
+              ? demoServiceProviders(subcategory)
+              : const <ServiceProviderSummary>[];
+          final isSample = demoEnabled;
           return Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 760),
@@ -59,10 +70,10 @@ class ServiceProvidersView extends ConsumerWidget {
                   if (previewBannerLabel != null)
                     SliverToBoxAdapter(
                       child: Container(
-                        margin: const EdgeInsets.fromLTRB(
+                        margin: EdgeInsets.fromLTRB(
+                          padding,
                           OraSpacing.md,
-                          OraSpacing.md,
-                          OraSpacing.md,
+                          padding,
                           0,
                         ),
                         padding: const EdgeInsets.all(OraSpacing.sm),
@@ -80,41 +91,49 @@ class ServiceProvidersView extends ConsumerWidget {
                       ),
                     ),
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(
+                    padding: EdgeInsets.fromLTRB(
+                      padding,
                       OraSpacing.md,
-                      OraSpacing.md,
-                      OraSpacing.md,
+                      padding,
                       OraSpacing.sm,
                     ),
                     sliver: SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: _ServiceProviderHero(subcategory: subcategory),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                      padding,
+                      OraSpacing.xs,
+                      padding,
+                      OraSpacing.sm,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: OraSpacing.xs,
+                        runSpacing: OraSpacing.xs,
                         children: [
-                          OraSectionHeader(
-                            eyebrow: 'Find experts',
-                            title: subcategory.name,
+                          Text(
+                            'Find experts',
+                            style: OraTypography.title(OraColors.textPrimary),
                           ),
-                          const SizedBox(height: OraSpacing.sm),
-                          const Wrap(
-                            spacing: OraSpacing.xs,
-                            children: [
-                              FilterChip(
-                                label: Text('Sort'),
-                                selected: false,
-                                onSelected: null,
-                              ),
-                              FilterChip(
-                                label: Text('Filter'),
-                                selected: false,
-                                onSelected: null,
-                              ),
-                            ],
+                          const FilterChip(
+                            label: Text('Sort'),
+                            selected: false,
+                            onSelected: null,
+                          ),
+                          const FilterChip(
+                            label: Text('Filter'),
+                            selected: false,
+                            onSelected: null,
                           ),
                         ],
                       ),
                     ),
                   ),
-                  if (providers.isEmpty)
+                  if (visibleProviders.isEmpty)
                     SliverFillRemaining(
                       hasScrollBody: false,
                       child: MarketplaceEmptyState(
@@ -127,21 +146,34 @@ class ServiceProvidersView extends ConsumerWidget {
                     )
                   else
                     SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(
-                        OraSpacing.md,
-                        OraSpacing.sm,
-                        OraSpacing.md,
+                      padding: EdgeInsets.fromLTRB(
+                        padding,
+                        OraSpacing.xs,
+                        padding,
                         OraSpacing.xl,
                       ),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
+                          final provider = visibleProviders[index];
                           return Padding(
                             padding: const EdgeInsets.only(
                               bottom: OraSpacing.sm,
                             ),
-                            child: ProviderCard(model: providers[index]),
+                            child: ProviderCard(
+                              model: provider,
+                              isSample: isSample,
+                              onBookmark: isSample
+                                  ? () => showDemoBookingSheet(context)
+                                  : null,
+                              onContact: isSample
+                                  ? () => showDemoBookingSheet(context)
+                                  : null,
+                              onViewProfile: isSample
+                                  ? () => showDemoBookingSheet(context)
+                                  : null,
+                            ),
                           );
-                        }, childCount: providers.length),
+                        }, childCount: visibleProviders.length),
                       ),
                     ),
                 ],
@@ -149,6 +181,65 @@ class ServiceProvidersView extends ConsumerWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _ServiceProviderHero extends StatelessWidget {
+  const _ServiceProviderHero({required this.subcategory});
+
+  final ServiceSubcategory subcategory;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(OraRadius.card),
+      child: SizedBox(
+        height: 172,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/marketplace/${subcategory.image}',
+              cacheWidth: 960,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+                  const ColoredBox(color: OraColors.navyElevated),
+            ),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                  colors: [Color(0x0012182B), Color(0xE612182B)],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(OraSpacing.md),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Find expert ${subcategory.name}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: OraTypography.headline(Colors.white),
+                  ),
+                  const SizedBox(height: OraSpacing.xxs),
+                  const Text(
+                    'Local service providers',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

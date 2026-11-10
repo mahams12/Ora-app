@@ -9,6 +9,7 @@ import 'package:ora/app/router/app_router.dart';
 import 'package:ora/app/theme/ora_theme.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_models.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_provider.dart';
+import 'package:ora/features/marketplace/shared/demo/demo_listings.dart';
 
 Future<MarketplaceCatalogue> loadMarketplaceCatalogue() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -25,12 +26,16 @@ Future<GoRouter> pumpMarketplaceRoute(
   required String location,
   required MarketplaceCatalogue catalogue,
   double textScale = 1,
+  bool demoListingsEnabled = false,
 }) async {
   final router = createAppRouter(initialLocation: location);
   addTearDown(router.dispose);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [catalogueProvider.overrideWith((ref) async => catalogue)],
+      overrides: [
+        catalogueProvider.overrideWith((ref) async => catalogue),
+        demoListingsEnabledProvider.overrideWithValue(demoListingsEnabled),
+      ],
       child: MaterialApp.router(
         theme: OraTheme.dark(),
         routerConfig: router,
