@@ -10,6 +10,7 @@ import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/errors/app_failure.dart';
 import '../../../auth/presentation/view_models/session_user_profile.dart';
 import '../view_models/driver_availability_view_model.dart';
 import 'driver_assigned_rides_view.dart';
@@ -115,6 +116,63 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
         ],
       ),
     );
+  }
+
+  /// Switch to Driver / Passenger — POST /v1/auth/mode.
+  /// The server durably takes the driver offline (ghost-presence guard) and
+  /// refuses with ACTIVE_JOB while a trip/delivery is in flight.
+  Future<void> _onSwitchToPassenger() async {
+    _closeDrawer();
+    if (_signingOut) return;
+    try {
+      final profile =
+          await ref.read(switchModeUseCaseProvider)(mode: 'passenger');
+      ref.read(sessionUserProfileProvider.notifier).setProfile(profile);
+      // Refresh availability → presence publisher stops (isOnline=false).
+      unawaited(ref.read(driverAvailabilityProvider.notifier).refresh());
+      if (!mounted) return;
+      context.go(AppRoutes.home);
+    } catch (error) {
+      if (!mounted) return;
+      final failure = ref.read(failureMapperProvider).fromException(error);
+      final isActiveJob =
+          failure is ConflictFailure && failure.code == 'ACTIVE_JOB';
+      await showOraBottomSheet<void>(
+        context: context,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            OraSectionHeader(
+              eyebrow: 'Switch to passenger',
+              title: isActiveJob
+                  ? 'Active trip in progress'
+                  : 'Cannot switch to passenger mode',
+              description: isActiveJob
+                  ? 'You have an active trip or delivery. Finish it or '
+                      'return the parcel before switching to passenger mode — '
+                      'the job is kept in My trips.'
+                  : failure.userMessage,
+            ),
+            const SizedBox(height: OraSpacing.lg),
+            if (isActiveJob)
+              OraButton(
+                label: 'Go to My trips',
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _selectPage(DriverShellPage.assigned);
+                },
+              ),
+            const SizedBox(height: OraSpacing.xs),
+            OraButton(
+              label: 'Stay in driver mode',
+              variant: OraButtonVariant.secondary,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   Future<void> _signOut() async {
@@ -232,10 +290,7 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
             iconColor: OraColors.goldSoft,
             bareIcon: true,
             showChevron: true,
-            onTap: () {
-              _closeDrawer();
-              context.go(AppRoutes.home);
-            },
+            onTap: _onSwitchToPassenger,
           ),
           OraDrawerItem(
             title: 'Driver settings',

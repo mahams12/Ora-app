@@ -22,7 +22,8 @@ Future<T?> showOraBottomSheet<T>({
     barrierColor: Colors.black54,
     builder: (context) {
       final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-      final maxHeight = MediaQuery.sizeOf(context).height * factor;
+      final maxHeight =
+          (MediaQuery.sizeOf(context).height - bottomInset) * factor;
       return Padding(
         padding: EdgeInsets.only(bottom: bottomInset),
         child: Align(

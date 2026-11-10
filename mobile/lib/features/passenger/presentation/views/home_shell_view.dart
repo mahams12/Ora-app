@@ -8,6 +8,7 @@ import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/widgets/widgets.dart';
 import '../../../auth/presentation/view_models/session_user_profile.dart';
+import '../../../driver/presentation/widgets/driver_onboarding_sheet.dart';
 import 'passenger_home_view.dart';
 import '../../../../features/ride/presentation/views/ride_history_view.dart';
 
@@ -36,7 +37,9 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
   /// can reach them. Role-gated server-side; failures are non-fatal.
   Future<void> _syncPassengerFcmToken() async {
     final profile = ref.read(sessionUserProfileProvider);
-    if (profile?.role != 'passenger') {
+    // Dual-role accounts: approved drivers in passenger mode also need
+    // passenger ride nudges — the server gate allows driverStatus=approved.
+    if (profile?.role != 'passenger' && profile?.isApprovedDriver != true) {
       return;
     }
     try {
@@ -126,11 +129,105 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
       },
     );
 
-    if (profile?.isApprovedDriver == true) {
-      _openDriverTools();
+    final driverStatus = profile?.driverStatus ?? 'none';
+    if (driverStatus == 'pending') {
+      await _showDriverStatusSheet(
+        title: 'Application under review',
+        description:
+            'Your driver application is still being reviewed. You will be '
+            'able to switch to driver mode once it is approved.',
+      );
       return;
     }
-    await _showUnavailable('Driver mode');
+    if (driverStatus == 'suspended') {
+      await _showDriverStatusSheet(
+        title: 'Driver access suspended',
+        description:
+            'Your driver access has been suspended. Contact your '
+            'administrator for more information.',
+      );
+      return;
+    }
+    if (profile?.isApprovedDriver != true) {
+      // driverStatus 'none' — first-time driver onboarding.
+      await _startDriverOnboarding();
+      return;
+    }
+    await _switchToDriverMode();
+  }
+
+  /// Approved driver → POST /v1/auth/mode then enter the driver shell.
+  /// ACTIVE_JOB means a live passenger booking must be finished first.
+  Future<void> _switchToDriverMode() async {
+    try {
+      final profile =
+          await ref.read(switchModeUseCaseProvider)(mode: 'driver');
+      ref.read(sessionUserProfileProvider.notifier).setProfile(profile);
+      if (!mounted) return;
+      _openDriverTools();
+    } catch (error) {
+      if (!mounted) return;
+      final failure = ref.read(failureMapperProvider).fromException(error);
+      await _showDriverStatusSheet(
+        title: 'Cannot switch to driver mode',
+        description: failure.userMessage,
+      );
+    }
+  }
+
+  /// First-time driver: collect vehicle details → submit → 'pending'.
+  Future<void> _startDriverOnboarding() async {
+    final result = await DriverOnboardingSheet.show(context);
+    if (result == null || !mounted) return;
+    try {
+      await ref.read(submitDriverOnboardingUseCaseProvider)(
+        vehicleType: result.vehicleType,
+        vehicleModel:
+            result.vehicleModel?.isNotEmpty == true ? result.vehicleModel : null,
+        plateNumber:
+            result.plateNumber?.isNotEmpty == true ? result.plateNumber : null,
+        homeCity: result.homeCity?.isNotEmpty == true ? result.homeCity : null,
+      );
+      if (!mounted) return;
+      await _showDriverStatusSheet(
+        title: 'Application submitted',
+        description:
+            'Your driver application has been submitted for review. You will '
+            'be able to switch to driver mode once it is approved.',
+      );
+    } catch (error) {
+      if (!mounted) return;
+      final failure = ref.read(failureMapperProvider).fromException(error);
+      await _showDriverStatusSheet(
+        title: 'Application failed',
+        description: failure.userMessage,
+      );
+    }
+  }
+
+  Future<void> _showDriverStatusSheet({
+    required String title,
+    required String description,
+  }) {
+    return showOraBottomSheet<void>(
+      context: context,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          OraSectionHeader(
+            eyebrow: 'Switch to driver',
+            title: title,
+            description: description,
+          ),
+          const SizedBox(height: OraSpacing.lg),
+          OraButton(
+            label: 'Got it',
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _signOut() async {

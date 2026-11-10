@@ -10,6 +10,7 @@ class UserProfileModel {
     this.displayName,
     this.role,
     this.driverStatus,
+    this.activeMode,
     this.isActive = true,
     this.banned = false,
     this.profileComplete = false,
@@ -22,6 +23,7 @@ class UserProfileModel {
       displayName: json['displayName'] as String?,
       role: json['role'] as String?,
       driverStatus: json['driverStatus'] as String?,
+      activeMode: json['activeMode'] as String?,
       isActive: json['isActive'] as bool? ?? true,
       banned: json['banned'] as bool? ?? false,
       // Read verbatim from the server; never recomputed from role/isActive.
@@ -36,6 +38,9 @@ class UserProfileModel {
   final String? displayName;
   final String? role;
   final String? driverStatus;
+
+  /// Server-authoritative mode (Switch to Driver): 'passenger' | 'driver'.
+  final String? activeMode;
   final bool isActive;
   final bool banned;
 
@@ -48,6 +53,7 @@ class UserProfileModel {
         displayName: displayName,
         role: role,
         driverStatus: driverStatus,
+        activeMode: activeMode,
         isActive: isActive,
         banned: banned,
         profileComplete: profileComplete,

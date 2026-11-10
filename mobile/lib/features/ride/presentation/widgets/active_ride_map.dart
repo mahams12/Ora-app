@@ -7,6 +7,7 @@ import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
+import '../../../maps/preview/map_preview_config.dart';
 import '../../domain/entities/ride.dart';
 import '../../domain/location/trip_location_freshness.dart';
 import '../location/trip_location_session.dart';
@@ -449,6 +450,28 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     PatternItem.gap(12),
   ];
 
+  /// Ora dark base style — matches the MapLibre preview theme so the live
+  /// map and the RideMapPreview cards share one visual language.
+  static const String _darkMapStyle = '''[
+    {"elementType":"geometry","stylers":[{"color":"#12182b"}]},
+    {"elementType":"labels.text.stroke","stylers":[{"color":"#12182b"}]},
+    {"elementType":"labels.text.fill","stylers":[{"color":"#8b93ad"}]},
+    {"featureType":"administrative.locality","elementType":"labels.text.fill","stylers":[{"color":"#b9c2dd"}]},
+    {"featureType":"poi","elementType":"labels.text.fill","stylers":[{"color":"#7d88a5"}]},
+    {"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#1b2340"}]},
+    {"featureType":"poi.park","elementType":"labels.text.fill","stylers":[{"color":"#6f7a99"}]},
+    {"featureType":"road","elementType":"geometry","stylers":[{"color":"#2a3352"}]},
+    {"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#1e2540"}]},
+    {"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#98a3c2"}]},
+    {"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#3d4a6e"}]},
+    {"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#1e2540"}]},
+    {"featureType":"road.highway","elementType":"labels.text.fill","stylers":[{"color":"#d0d8ec"}]},
+    {"featureType":"transit","elementType":"geometry","stylers":[{"color":"#1e2540"}]},
+    {"featureType":"transit.station","elementType":"labels.text.fill","stylers":[{"color":"#7d88a5"}]},
+    {"featureType":"water","elementType":"geometry","stylers":[{"color":"#1b2340"}]},
+    {"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#4a5578"}]}
+  ]''';
+
   CameraPosition _initialCamera() {
     final pickup = _pickup;
     final destination = _destination;
@@ -465,16 +488,20 @@ class _ActiveRideMapState extends State<ActiveRideMap>
         zoom: 12,
       );
     }
+    // Single-point frames open at the same 3D tilt as RideMapPreview for a
+    // consistent look; identity-driven bounds fits flatten to 0° as usual.
     if (pickup != null) {
       return CameraPosition(
         target: pickup,
         zoom: ActiveRideMapCameraPolicy.singlePointZoom,
+        tilt: MapPreviewConfig.threeDTilt,
       );
     }
     if (destination != null) {
       return CameraPosition(
         target: destination,
         zoom: ActiveRideMapCameraPolicy.singlePointZoom,
+        tilt: MapPreviewConfig.threeDTilt,
       );
     }
     return ActiveRideMapCameraPolicy.idleCamera;
@@ -508,6 +535,8 @@ class _ActiveRideMapState extends State<ActiveRideMap>
                   initialCameraPosition: _initialCamera(),
                   markers: _markers(),
                   polylines: _polylines(guides),
+                  style: _darkMapStyle,
+                  buildingsEnabled: true,
                   myLocationButtonEnabled: false,
                   myLocationEnabled: false,
                   zoomControlsEnabled: false,

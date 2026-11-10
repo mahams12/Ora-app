@@ -13,12 +13,14 @@ class _FakeRideRepository implements RideRepository {
     String? cursor,
     String? status,
     String? serviceType,
+    String? as,
   }) async {
     lastArgs = {
       'limit': limit,
       'cursor': cursor,
       'status': status,
       'serviceType': serviceType,
+      'as': as,
     };
     return lastPage ??
         const RideListPage(rides: [], nextCursor: null);
@@ -117,6 +119,8 @@ class _FakeRideRepository implements RideRepository {
   Future<Ride> startRide({
     required String rideId,
     int? expectedVersion,
+    String? otp,
+    String? pickupPhotoUrl,
     required String operationKey,
   }) =>
       throw UnimplementedError();
@@ -125,6 +129,41 @@ class _FakeRideRepository implements RideRepository {
   Future<Ride> completeRide({
     required String rideId,
     int? expectedVersion,
+    String? otp,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> failDelivery({
+    required String rideId,
+    int? expectedVersion,
+    required String reason,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> retryDelivery({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> startReturn({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> completeReturn({
+    required String rideId,
+    int? expectedVersion,
+    String? otp,
     required String operationKey,
   }) =>
       throw UnimplementedError();
@@ -147,6 +186,84 @@ class _FakeRideRepository implements RideRepository {
 
   @override
   Future<RideRating> getMyRating(String rideId) => throw UnimplementedError();
+
+  @override
+  Future<Ride> arriveStop({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> confirmStop({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    int? purchaseTotalMinor,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> failStop({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required String reason,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> submitStopQuote({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required List<Map<String, Object?>> items,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> respondToStopQuote({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required bool approve,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> reportSettlement({
+    required String rideId,
+    int? expectedVersion,
+    required String status,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> acknowledgeDelivery({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Ride> createDispute({
+    required String rideId,
+    required String category,
+    required String message,
+    required String operationKey,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<Map<String, Object?>> getDeliveryConfig() => throw UnimplementedError();
 }
 
 void main() {
@@ -188,6 +305,7 @@ void main() {
       cursor: 'c1',
       status: 'completed',
       serviceType: 'ride',
+      as: 'passenger',
     );
     expect(page.nextCursor, 'next');
     expect(repo.lastArgs, {
@@ -195,6 +313,7 @@ void main() {
       'cursor': 'c1',
       'status': 'completed',
       'serviceType': 'ride',
+      'as': 'passenger',
     });
   });
 }

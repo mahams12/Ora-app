@@ -15,6 +15,9 @@ class PricingEstimate {
     required this.durationMin,
     required this.category,
     this.encodedPolyline,
+    this.stopFeesMinor,
+    this.serviceFeeMinor,
+    this.legs,
   });
 
   final String pricingSnapshotId;
@@ -32,6 +35,13 @@ class PricingEstimate {
   /// Optional Google encoded polyline for map preview only (MAP-1).
   /// Display-only — never used for fare authority.
   final String? encodedPolyline;
+
+  /// Ora Courier v2 — multi-leg route breakdown for display.
+  /// legs[i] = {index, fromSeq, toSeq, distanceMeters, durationSeconds,
+  ///            distanceKm, durationMin, from, to}.
+  final List<Map<String, Object?>>? legs;
+  final int? stopFeesMinor;
+  final int? serviceFeeMinor;
 
   bool get hasUsableEncodedPolyline {
     final value = encodedPolyline?.trim();
@@ -91,6 +101,13 @@ class PricingEstimate {
       durationMin: asDouble(json['durationMin'], 'durationMin'),
       category: asString(json['category'], 'category'),
       encodedPolyline: asOptionalPolyline(json['encodedPolyline']),
+      stopFeesMinor: json['stopFeesMinor'] as int?,
+      serviceFeeMinor: json['serviceFeeMinor'] as int?,
+      legs: json['legs'] is List
+          ? (json['legs'] as List)
+              .map((e) => Map<String, Object?>.from(e as Map))
+              .toList()
+          : null,
     );
   }
 }
@@ -134,6 +151,7 @@ class PricingEstimateRequest {
     this.pickupAddress,
     this.destinationAddress,
     this.serviceType = 'ride',
+    this.stops,
   });
 
   final double pickupLat;
@@ -145,6 +163,10 @@ class PricingEstimateRequest {
   final String category;
   final String city;
   final String serviceType;
+
+  /// Ora Courier v2 — ordered waypoints incl. pickup/destination when the
+  /// itinerary has intermediate stops. Server prices the full route.
+  final List<Map<String, double>>? stops;
 
   Map<String, Object?> toJson() => <String, Object?>{
         'pickup': <String, Object?>{
@@ -160,6 +182,10 @@ class PricingEstimateRequest {
         'category': category,
         'city': city,
         'serviceType': serviceType,
+        if (stops != null)
+          'stops': stops!
+              .map((s) => <String, Object?>{'lat': s['lat'], 'lng': s['lng']})
+              .toList(),
       };
 }
 

@@ -709,6 +709,7 @@ void main() {
           cursor: any(named: 'cursor'),
           status: any(named: 'status'),
           serviceType: any(named: 'serviceType'),
+          as: any(named: 'as'),
         ),
       ).thenAnswer(
         (_) async => RideListPage(rides: [_ride(state: 'RIDE_CLOSED')], nextCursor: null),
@@ -733,6 +734,7 @@ void main() {
           cursor: any(named: 'cursor'),
           status: any(named: 'status'),
           serviceType: any(named: 'serviceType'),
+          as: any(named: 'as'),
         ),
       ).thenThrow(const AppFailure.network(message: 'refresh failed'));
       await vm.refresh();

@@ -60,12 +60,14 @@ class RideRepositoryImpl implements RideRepository {
     String? cursor,
     String? status,
     String? serviceType,
+    String? as,
   }) {
     return _remote.listRides(
       limit: limit,
       cursor: cursor,
       status: status,
       serviceType: serviceType,
+      as: as,
       context: _apiClient.newContext(),
     );
   }
@@ -242,6 +244,8 @@ class RideRepositoryImpl implements RideRepository {
   Future<Ride> startRide({
     required String rideId,
     int? expectedVersion,
+    String? otp,
+    String? pickupPhotoUrl,
     required String operationKey,
   }) {
     return _withNonce(
@@ -249,7 +253,11 @@ class RideRepositoryImpl implements RideRepository {
       isTerminalSuccess: (ride) => ride.state == 'RIDE_STARTED',
       run: (nonce) => _remote.startRide(
         rideId: rideId,
-        body: _versionBody(expectedVersion),
+        body: {
+          ..._versionBody(expectedVersion),
+          if (otp != null) 'otp': otp,
+          if (pickupPhotoUrl != null) 'pickupPhotoUrl': pickupPhotoUrl,
+        },
         context: _apiClient.newContext(idempotencyKey: nonce),
       ),
     );
@@ -259,6 +267,7 @@ class RideRepositoryImpl implements RideRepository {
   Future<Ride> completeRide({
     required String rideId,
     int? expectedVersion,
+    String? otp,
     required String operationKey,
   }) {
     return _withNonce(
@@ -266,10 +275,264 @@ class RideRepositoryImpl implements RideRepository {
       isTerminalSuccess: (ride) => ride.state == 'RIDE_COMPLETED',
       run: (nonce) => _remote.completeRide(
         rideId: rideId,
+        body: {
+          ..._versionBody(expectedVersion),
+          if (otp != null) 'otp': otp,
+        },
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> failDelivery({
+    required String rideId,
+    int? expectedVersion,
+    required String reason,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: (ride) => ride.state == 'DELIVERY_FAILED',
+      run: (nonce) => _remote.failDelivery(
+        rideId: rideId,
+        body: {
+          ..._versionBody(expectedVersion),
+          'reason': reason,
+        },
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> retryDelivery({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: (ride) => ride.state == 'RIDE_STARTED',
+      run: (nonce) => _remote.retryDelivery(
+        rideId: rideId,
         body: _versionBody(expectedVersion),
         context: _apiClient.newContext(idempotencyKey: nonce),
       ),
     );
+  }
+
+  @override
+  Future<Ride> startReturn({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: (ride) => ride.state == 'RETURNING',
+      run: (nonce) => _remote.startReturn(
+        rideId: rideId,
+        body: _versionBody(expectedVersion),
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> completeReturn({
+    required String rideId,
+    int? expectedVersion,
+    String? otp,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: (ride) => ride.state == 'RETURNED',
+      run: (nonce) => _remote.completeReturn(
+        rideId: rideId,
+        body: {
+          ..._versionBody(expectedVersion),
+          if (otp != null) 'otp': otp,
+        },
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  // ── Ora Courier v2 ──────────────────────────────────────────────────
+
+  @override
+  Future<Ride> arriveStop({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: _stopMoved,
+      run: (nonce) => _remote.arriveStop(
+        rideId: rideId,
+        seq: seq,
+        body: _versionBody(expectedVersion),
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> confirmStop({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    int? purchaseTotalMinor,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: _stopMoved,
+      run: (nonce) => _remote.confirmStop(
+        rideId: rideId,
+        seq: seq,
+        body: {
+          ..._versionBody(expectedVersion),
+          if (purchaseTotalMinor != null)
+            'purchaseTotalMinor': purchaseTotalMinor,
+        },
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> failStop({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required String reason,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: _stopMoved,
+      run: (nonce) => _remote.failStop(
+        rideId: rideId,
+        seq: seq,
+        body: {..._versionBody(expectedVersion), 'reason': reason},
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> submitStopQuote({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required List<Map<String, Object?>> items,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: _stopMoved,
+      run: (nonce) => _remote.submitStopQuote(
+        rideId: rideId,
+        seq: seq,
+        body: {..._versionBody(expectedVersion), 'items': items},
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> respondToStopQuote({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required bool approve,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: _stopMoved,
+      run: (nonce) => _remote.respondToStopQuote(
+        rideId: rideId,
+        seq: seq,
+        body: {
+          ..._versionBody(expectedVersion),
+          'decision': approve ? 'APPROVE' : 'REJECT',
+        },
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> reportSettlement({
+    required String rideId,
+    int? expectedVersion,
+    required String status,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: (ride) =>
+          (ride.settlement?['driverReportedStatus'] as String?) == status,
+      run: (nonce) => _remote.reportSettlement(
+        rideId: rideId,
+        body: {..._versionBody(expectedVersion), 'status': status},
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> acknowledgeDelivery({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: (ride) => ride.evidence?['customerAckAt'] != null,
+      run: (nonce) => _remote.acknowledgeDelivery(
+        rideId: rideId,
+        body: _versionBody(expectedVersion),
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Ride> createDispute({
+    required String rideId,
+    required String category,
+    required String message,
+    required String operationKey,
+  }) {
+    return _withNonce(
+      operationKey: operationKey,
+      isTerminalSuccess: (ride) => ride.disputeId != null,
+      run: (nonce) => _remote.createDispute(
+        rideId: rideId,
+        body: {'category': category, 'message': message},
+        context: _apiClient.newContext(idempotencyKey: nonce),
+      ),
+    );
+  }
+
+  @override
+  Future<Map<String, Object?>> getDeliveryConfig() {
+    return _remote.getDeliveryConfig(context: _apiClient.newContext());
+  }
+
+  /// Any stop progressed beyond PENDING — covers arrive/confirm/fail/quote/
+  /// quote-response replays (the returned doc is already post-mutation).
+  bool _stopMoved(Ride ride) {
+    final list = ride.stops;
+    if (list == null) return true; // legacy/v1 — response accepted as-is
+    return list.any((s) => s.status != 'PENDING');
   }
 
   @override

@@ -131,6 +131,9 @@ Future<void> _pumpDriverOpenRidesView(
         failureMapperProvider.overrideWithValue(
           const _PassthroughFailureMapper(),
         ),
+        // The offer sheet embeds RideMapPreview — disable live maps so
+        // pumpAndSettle isn't held by the MapLibre style fetch.
+        activeRideMapsEnabledProvider.overrideWithValue(false),
       ],
       child: const MaterialApp(
         home: Scaffold(body: DriverOpenRidesView(active: true)),
@@ -1121,6 +1124,7 @@ void main() {
           cursor: any(named: 'cursor'),
           status: any(named: 'status'),
           serviceType: any(named: 'serviceType'),
+          as: any(named: 'as'),
         ),
       ).thenAnswer(
         (_) async => RideListPage(rides: [_assignedRide()], nextCursor: null),
@@ -1147,6 +1151,7 @@ void main() {
           cursor: null,
           status: 'all',
           serviceType: null,
+          as: any(named: 'as'),
         ),
       ).called(1);
     });
@@ -1233,7 +1238,7 @@ void main() {
       expect(find.textContaining('Accept'), findsOneWidget);
     });
 
-    testWidgets('Accept opens offer sheet; card body does not', (tester) async {
+    testWidgets('Accept and card body both open offer sheet', (tester) async {
       final listOpen = MockListOpenRidesUseCase();
       when(
         () => listOpen(
@@ -1250,7 +1255,11 @@ void main() {
 
       await tester.tap(find.textContaining('Pickup A'));
       await tester.pumpAndSettle();
-      expect(find.text('Submit offer'), findsNothing);
+      expect(find.text('Submit offer'), findsNWidgets(2));
+
+      Navigator.of(tester.element(find.text('Submit offer').first))
+          .pop();
+      await tester.pumpAndSettle();
 
       await _tapAccept(tester);
       await tester.pumpAndSettle();

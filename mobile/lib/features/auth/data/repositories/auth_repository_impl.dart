@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart' show User;
+import 'package:uuid/uuid.dart';
 
 import '../../../../core/errors/app_failure.dart';
 import '../../../../core/logging/app_logger.dart';
@@ -35,6 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final SecureStorage _secureStorage;
   final ApiClient _apiClient;
   final AppLogger _logger;
+  final Uuid _uuid = const Uuid();
 
   @override
   Stream<AuthUser?> get authStateChanges => _firebase.authStateChanges;
@@ -155,6 +157,36 @@ class AuthRepositoryImpl implements AuthRepository {
       context: context,
     );
     return model.toDomain();
+  }
+
+  @override
+  Future<UserProfile> switchMode({required String mode}) async {
+    final context = _apiClient.newContext(
+      operationId: 'switch_mode',
+      idempotencyKey: 'mode_switch_${_uuid.v4()}',
+    );
+    final model = await _remote.switchMode(mode: mode, context: context);
+    return model.toDomain();
+  }
+
+  @override
+  Future<Map<String, dynamic>> submitDriverOnboarding({
+    required String vehicleType,
+    String? vehicleModel,
+    String? plateNumber,
+    String? homeCity,
+  }) async {
+    final context = _apiClient.newContext(
+      operationId: 'driver_onboarding',
+      idempotencyKey: 'driver_onboard_${_uuid.v4()}',
+    );
+    return _remote.submitDriverOnboarding(
+      vehicleType: vehicleType,
+      vehicleModel: vehicleModel,
+      plateNumber: plateNumber,
+      homeCity: homeCity,
+      context: context,
+    );
   }
 
   @override

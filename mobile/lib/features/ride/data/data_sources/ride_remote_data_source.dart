@@ -37,6 +37,7 @@ class RideRemoteDataSource {
     String? cursor,
     String? status,
     String? serviceType,
+    String? as,
     required RequestContext context,
   }) async {
     final response = await _apiClient.get<Map<String, dynamic>>(
@@ -46,6 +47,7 @@ class RideRemoteDataSource {
         if (cursor != null) 'cursor': cursor,
         if (status != null) 'status': status,
         if (serviceType != null) 'serviceType': serviceType,
+        if (as != null) 'as': as,
       },
       context: context,
     );
@@ -288,6 +290,66 @@ class RideRemoteDataSource {
     return _parseRide(_unwrapData(response.data));
   }
 
+  /// Ora Courier — driver reports a failed delivery attempt.
+  Future<Ride> failDelivery({
+    required String rideId,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/delivery-failed',
+      data: body,
+      context: context,
+      idempotent: true,
+    );
+    return _parseRide(_unwrapData(response.data));
+  }
+
+  /// Ora Courier — driver retries delivery after a failed attempt.
+  Future<Ride> retryDelivery({
+    required String rideId,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/retry-delivery',
+      data: body,
+      context: context,
+      idempotent: true,
+    );
+    return _parseRide(_unwrapData(response.data));
+  }
+
+  /// Ora Courier — driver begins returning the parcel to the sender.
+  Future<Ride> startReturn({
+    required String rideId,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/return-start',
+      data: body,
+      context: context,
+      idempotent: true,
+    );
+    return _parseRide(_unwrapData(response.data));
+  }
+
+  /// Ora Courier — sender confirms the parcel came back (return code).
+  Future<Ride> completeReturn({
+    required String rideId,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/return-complete',
+      data: body,
+      context: context,
+      idempotent: true,
+    );
+    return _parseRide(_unwrapData(response.data));
+  }
+
   Future<Ride> closeRide({
     required String rideId,
     required Map<String, Object?> body,
@@ -300,6 +362,143 @@ class RideRemoteDataSource {
       idempotent: true,
     );
     return _parseRide(_unwrapData(response.data));
+  }
+
+  // ── Ora Courier v2 — code-free multi-stop progression ──────────────
+
+  Future<Ride> _stopAction({
+    required String rideId,
+    required int seq,
+    required String action,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/stops/$seq/$action',
+      data: body,
+      context: context,
+      idempotent: true,
+    );
+    return _parseRide(_unwrapData(response.data));
+  }
+
+  Future<Ride> arriveStop({
+    required String rideId,
+    required int seq,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) => _stopAction(
+        rideId: rideId,
+        seq: seq,
+        action: 'arrive',
+        body: body,
+        context: context,
+      );
+
+  Future<Ride> confirmStop({
+    required String rideId,
+    required int seq,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) => _stopAction(
+        rideId: rideId,
+        seq: seq,
+        action: 'confirm',
+        body: body,
+        context: context,
+      );
+
+  Future<Ride> failStop({
+    required String rideId,
+    required int seq,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) => _stopAction(
+        rideId: rideId,
+        seq: seq,
+        action: 'fail',
+        body: body,
+        context: context,
+      );
+
+  Future<Ride> submitStopQuote({
+    required String rideId,
+    required int seq,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) => _stopAction(
+        rideId: rideId,
+        seq: seq,
+        action: 'quote',
+        body: body,
+        context: context,
+      );
+
+  Future<Ride> respondToStopQuote({
+    required String rideId,
+    required int seq,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) => _stopAction(
+        rideId: rideId,
+        seq: seq,
+        action: 'quote-response',
+        body: body,
+        context: context,
+      );
+
+  Future<Ride> reportSettlement({
+    required String rideId,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/settlement',
+      data: body,
+      context: context,
+      idempotent: true,
+    );
+    return _parseRide(_unwrapData(response.data));
+  }
+
+  Future<Ride> acknowledgeDelivery({
+    required String rideId,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/acknowledge',
+      data: body,
+      context: context,
+      idempotent: true,
+    );
+    return _parseRide(_unwrapData(response.data));
+  }
+
+  Future<Ride> createDispute({
+    required String rideId,
+    required Map<String, Object?> body,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/rides/$rideId/disputes',
+      data: body,
+      context: context,
+      idempotent: true,
+    );
+    return _parseRide(_unwrapData(response.data));
+  }
+
+  /// Client-visible delivery limits/flags (maxStops, budget cap, gates).
+  Future<Map<String, Object?>> getDeliveryConfig({
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.get<Map<String, dynamic>>(
+      '/delivery-config',
+      context: context,
+    );
+    final data = _unwrapData(response.data);
+    return Map<String, Object?>.from(data);
   }
 
   Future<RideRating> submitRating({
@@ -341,6 +540,42 @@ class RideRemoteDataSource {
     throw StateError('Ride API envelope missing data');
   }
 
+  List<RideStop>? _parseStops(Object? raw) {
+    if (raw is! List) return null;
+    return raw.map((e) {
+      final s = Map<String, dynamic>.from(e as Map);
+      return RideStop(
+        seq: (s['seq'] as num).toInt(),
+        type: s['type'] as String,
+        location:
+            _parseLatLng(Map<Object?, Object?>.from(s['location'] as Map)),
+        status: s['status'] as String? ?? 'PENDING',
+        label: s['label'] as String?,
+        instructions: s['instructions'] as String?,
+        items: s['items'] is List
+            ? (s['items'] as List)
+                .map((i) => Map<String, Object?>.from(i as Map))
+                .toList()
+            : null,
+        shopBudgetMinor: s['shopBudgetMinor'] as int?,
+        arrivedAt: s['arrivedAt'] as String?,
+        doneAt: s['doneAt'] as String?,
+        failedAt: s['failedAt'] as String?,
+        failureReason: s['failureReason'] as String?,
+        confirmedNearMeters: s['confirmedNearMeters'] as int?,
+        quote: s['quote'] is Map
+            ? Map<String, Object?>.from(s['quote'] as Map)
+            : null,
+        purchase: s['purchase'] is Map
+            ? Map<String, Object?>.from(s['purchase'] as Map)
+            : null,
+      );
+    }).toList();
+  }
+
+  Map<String, Object?>? _mapOrNull(Object? raw) =>
+      raw is Map ? Map<String, Object?>.from(raw) : null;
+
   OpenRide _parseOpenRide(Map<String, dynamic> json) {
     return OpenRide(
       rideId: json['rideId'] as String,
@@ -362,6 +597,11 @@ class RideRemoteDataSource {
       estimatedDurationMin: _optionalRoundedInt(json['estimatedDurationMin']),
       expiresAt: json['expiresAt'] as String,
       createdAt: json['createdAt'] as String,
+      parcel: json['parcel'] is Map
+          ? Map<String, Object?>.from(json['parcel'] as Map)
+          : null,
+      stops: _parseStops(json['stops']),
+      shopping: _mapOrNull(json['shopping']),
     );
   }
 
@@ -388,6 +628,11 @@ class RideRemoteDataSource {
       distanceKm: json['distanceKm'] == null
           ? null
           : (json['distanceKm'] as num).toDouble(),
+      parcel: json['parcel'] is Map
+          ? Map<String, Object?>.from(json['parcel'] as Map)
+          : null,
+      stops: _parseStops(json['stops']),
+      shopping: _mapOrNull(json['shopping']),
     );
   }
 
@@ -427,6 +672,26 @@ class RideRemoteDataSource {
       cancellationReason: json['cancellationReason'] as String?,
       createdAt: json['createdAt'] as String,
       updatedAt: json['updatedAt'] as String,
+      parcel: json['parcel'] is Map
+          ? Map<String, Object?>.from(json['parcel'] as Map)
+          : null,
+      otpCodes: json['otpCodes'] is Map
+          ? Map<String, Object?>.from(json['otpCodes'] as Map)
+          : null,
+      pickupPhotoUrl: json['pickupPhotoUrl'] as String?,
+      deliveryFailedAt: json['deliveryFailedAt'] as String?,
+      deliveryFailedReason: json['deliveryFailedReason'] as String?,
+      returnStartedAt: json['returnStartedAt'] as String?,
+      returnedAt: json['returnedAt'] as String?,
+      courierProtocolVersion: json['courierProtocolVersion'] as int?,
+      stops: _parseStops(json['stops']),
+      currentStopIndex: json['currentStopIndex'] as int?,
+      shopping: _mapOrNull(json['shopping']),
+      settlement: _mapOrNull(json['settlement']),
+      evidence: _mapOrNull(json['evidence']),
+      partialFulfillment: json['partialFulfillment'] as bool?,
+      disputeStatus: json['disputeStatus'] as String?,
+      disputeId: json['disputeId'] as String?,
     );
   }
 
