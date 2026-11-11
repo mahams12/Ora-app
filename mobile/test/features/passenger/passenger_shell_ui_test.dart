@@ -183,7 +183,7 @@ void main() {
     );
     expect(find.text('Where are you headed?'), findsNothing);
     expect(find.text('Explore ORA'), findsOneWidget);
-    expect(find.text('Travel beyond the city'), findsOneWidget);
+    expect(find.text('Your World. One App.'), findsOneWidget);
     expect(find.text('Choose a ride'), findsNothing);
     expect(find.text('Logistics'), findsWidgets);
     expect(find.text('Services'), findsWidgets);
@@ -312,9 +312,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.text('Travel beyond the city'));
+    await tester.ensureVisible(find.text('Your World. One App.'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Travel beyond the city'));
+    await tester.tap(find.text('Your World. One App.'));
     await tester.pumpAndSettle();
 
     expect(find.byType(RideRequestView), findsOneWidget);

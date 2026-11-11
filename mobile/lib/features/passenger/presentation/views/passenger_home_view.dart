@@ -230,20 +230,20 @@ class _PromoCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'INTERCITY',
+                          'ORA',
                           style: OraTypography.sectionTitle(OraColors.goldSoft),
                         ),
                         const SizedBox(height: OraSpacing.xxs),
                         Text(
-                          'Travel beyond the city',
+                          'Your World. One App.',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: OraTypography.title(OraColors.onPhoto),
                         ),
                         const SizedBox(height: OraSpacing.xxs),
                         Text(
-                          'Continue with the existing Intercity ride flow.',
-                          maxLines: 1,
+                          'Wherever life takes you, ORA makes it easier.',
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: OraTypography.caption(OraColors.onPhotoMuted),
                         ),
