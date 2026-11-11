@@ -166,13 +166,21 @@ RTDB     = ephemeral trip projection (N2B) — IMPLEMENTED (`src/rtdb/` + `fireb
 
 ---
 
+## Driver registration (current)
+
+`POST /v1/drivers/onboarding` validates the applicant and vehicle details and
+stores them server-side. `DRIVER_AUTO_APPROVE` defaults to `true` until admin
+review exists; `false` or `0` leaves applications pending. Document photos are
+deferred because Firebase Storage is not configured. Firestore rules deny
+client writes to `users/{uid}` and `drivers/{uid}`.
+
 ## Registered HTTP surface (summary)
 
 See full index: [`API_CONTRACT_INDEX.md`](architecture/API_CONTRACT_INDEX.md).
 
 - Auth: `POST /v1/auth/register`, `GET /v1/auth/me`, `PATCH /v1/auth/profile`
 - Rides + offers + ratings + internal sweeps
-- Drivers: `POST /v1/drivers/go-online`, `POST /v1/drivers/go-offline`
+- Drivers: `POST /v1/drivers/onboarding`, `POST /v1/drivers/go-online`, `POST /v1/drivers/go-offline`
 - Location: `POST /v1/location/update`
 - Internal nearby: `GET /v1/internal/drivers/nearby` (worker token; N3)
 - Health: `GET /healthz`

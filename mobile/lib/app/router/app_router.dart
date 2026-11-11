@@ -6,6 +6,7 @@ import '../../features/auth/presentation/views/otp_entry_view.dart';
 import '../../features/auth/presentation/views/phone_entry_view.dart';
 import '../../features/auth/presentation/views/splash_view.dart';
 import '../../features/driver/presentation/views/driver_assigned_ride_view.dart';
+import '../../features/driver/presentation/views/driver_registration_view.dart';
 import '../../features/driver/presentation/views/driver_shell_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/maps/poc/maplibre_poc_view.dart';
@@ -74,6 +75,11 @@ GoRouter createAppRouter({
         path: AppRoutes.home,
         name: 'home',
         builder: (context, state) => const HomeShellView(),
+      ),
+      GoRoute(
+        path: AppRoutes.driverRegistration,
+        name: 'driver-registration',
+        builder: (context, state) => const DriverRegistrationView(),
       ),
       GoRoute(
         path: AppRoutes.ridesHub,

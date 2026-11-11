@@ -3,6 +3,7 @@ import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { createApp } from './app';
 import { assertFirebaseTargetConfig } from './config/firebase_target_guards';
+import { driverAutoApproveFromEnv } from './config/driver_auto_approve';
 import { assertProductionSecurityConfig } from './config/production_guards';
 import { createFirestoreGeoClient } from './redis/firestore_geo_client';
 import { createRtdbGeoClient } from './rtdb/rtdb_geo_client';
@@ -145,6 +146,7 @@ async function main() {
     streamStore,
     fcmSender,
     routingProvider,
+    driverAutoApprove: driverAutoApproveFromEnv(process.env),
     verifyAppCheck: requireAppCheck
       ? async (token) => {
           // Lazy import keeps App Check optional until production.

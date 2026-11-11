@@ -12,6 +12,7 @@ class AppRoutes {
 
   // Protected
   static const home = '/home';
+  static const driverRegistration = '/become-driver';
 
   /// Passenger's ride services hub.
   static const ridesHub = '/rides';

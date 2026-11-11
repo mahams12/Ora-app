@@ -4,6 +4,7 @@ import type { AuthedRequest } from '../middleware/auth';
 import { getRequestId } from '../http/request_id';
 import { sendApiError, logSafe } from '../http/errors';
 import { DriverAvailabilityService } from './driver_availability_service';
+import { DriverOnboardingService } from './driver_onboarding_service';
 import { sendDriverData, sendDriverDomainError } from './http';
 import { DriverDomainError } from './types';
 import { DeviceTokenService } from '../delivery/device_token_service';
@@ -15,6 +16,7 @@ export function createDriversRouter(
     driverId: string,
     state: import('./types').AvailabilityState,
   ) => void,
+  driverAutoApprove = true,
 ): Router {
   const router = Router();
   const availability = new DriverAvailabilityService(
@@ -22,7 +24,40 @@ export function createDriversRouter(
     geoProjection ?? null,
     onAvailabilityTransition,
   );
+  const onboarding = new DriverOnboardingService(db, driverAutoApprove);
   const deviceTokens = new DeviceTokenService(db);
+
+  router.post('/onboarding', async (req: AuthedRequest, res) => {
+    if (!req.caller) {
+      sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');
+      return;
+    }
+    const started = Date.now();
+    try {
+      const result = await onboarding.submit({
+        caller: req.caller,
+        body: req.body,
+      });
+      logSafe('DRIVER_ONBOARDING_SUBMIT', {
+        operation: 'DRIVER_ONBOARDING_SUBMIT',
+        requestId: getRequestId(req),
+        actorId: req.caller.uid,
+        driverStatus: result.body.data.driverStatus,
+        approved: result.body.data.approved,
+        durationMs: Date.now() - started,
+      });
+      sendDriverData(req, res, result.httpStatus, result.body.data);
+    } catch (err) {
+      logSafe('DRIVER_ONBOARDING_SUBMIT', {
+        operation: 'DRIVER_ONBOARDING_SUBMIT',
+        requestId: getRequestId(req),
+        actorId: req.caller.uid,
+        durationMs: Date.now() - started,
+        errorCode: err instanceof DriverDomainError ? err.code : 'INTERNAL',
+      });
+      sendDriverDomainError(req, res, err);
+    }
+  });
 
   router.post('/go-online', async (req: AuthedRequest, res) => {
     if (!req.caller) {

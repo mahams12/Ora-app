@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../ora_colors.dart';
 import '../ora_radius.dart';
@@ -26,6 +27,7 @@ class OraTextField extends StatelessWidget {
     this.maxLines = 1,
     this.minLines,
     this.focusNode,
+    this.inputFormatters,
   });
 
   final TextEditingController? controller;
@@ -45,6 +47,7 @@ class OraTextField extends StatelessWidget {
   final int? maxLines;
   final int? minLines;
   final FocusNode? focusNode;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +69,7 @@ class OraTextField extends StatelessWidget {
         TextField(
           controller: controller,
           focusNode: focusNode,
+          inputFormatters: inputFormatters,
           obscureText: obscureText,
           enabled: enabled,
           keyboardType: keyboardType,
