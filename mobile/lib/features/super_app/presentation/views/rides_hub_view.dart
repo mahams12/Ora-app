@@ -26,7 +26,7 @@ class RidesHubView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Rides'), leading: const BackButton()),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.rides,

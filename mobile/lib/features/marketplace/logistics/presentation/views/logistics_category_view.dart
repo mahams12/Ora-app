@@ -70,7 +70,7 @@ class _LogisticsCategoryViewState extends ConsumerState<LogisticsCategoryView> {
     final demoEnabled = ref.watch(demoListingsEnabledProvider);
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Logistics')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.logistics,

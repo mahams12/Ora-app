@@ -66,7 +66,7 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
     final catalogue = ref.watch(catalogueProvider);
     final demoEnabled = ref.watch(demoListingsEnabledProvider);
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Rental')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.rental,

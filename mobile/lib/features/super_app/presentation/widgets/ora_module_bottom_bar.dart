@@ -19,14 +19,16 @@ class OraModuleBottomBar extends StatelessWidget {
       top: false,
       child: DecoratedBox(
         decoration: const BoxDecoration(
-          color: OraColors.surface,
-          border: Border(top: BorderSide(color: OraColors.border)),
+          color: OraColors.navyElevated,
+          border: Border(
+            top: BorderSide(color: Color(0x59F88733), width: 1.2),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Color(0x14F88733),
-              blurRadius: 18,
+              color: Color(0x40F88733),
+              blurRadius: 22,
               offset: Offset(0, -6),
-              spreadRadius: -8,
+              spreadRadius: -10,
             ),
           ],
         ),

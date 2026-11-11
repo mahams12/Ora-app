@@ -217,7 +217,7 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       bottomNavigationBar: OraModuleBottomBar(
         selected: _page == PassengerShellPage.rides
             ? OraModuleDestination.rides

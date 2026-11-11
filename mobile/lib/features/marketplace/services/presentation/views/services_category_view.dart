@@ -22,7 +22,7 @@ class ServicesCategoryView extends ConsumerWidget {
     final catalogue = ref.watch(catalogueProvider);
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Services')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.services,

@@ -288,9 +288,9 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: OraColors.navy,
+        backgroundColor: Colors.transparent,
         foregroundColor: OraColors.textPrimary,
         title: const Text('MapLibre PoC'),
         actions: [

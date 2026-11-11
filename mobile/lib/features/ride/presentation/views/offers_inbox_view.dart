@@ -72,9 +72,9 @@ class _OffersInboxViewState extends ConsumerState<OffersInboxView>
     final padding = Responsive.horizontalPadding(context);
 
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: OraColors.background,
+        backgroundColor: Colors.transparent,
         title: Text(
           'Offers',
           style: OraTypography.title(OraColors.textPrimary),

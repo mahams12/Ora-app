@@ -120,9 +120,9 @@ class _ActiveRideViewState extends ConsumerState<ActiveRideView>
     });
 
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: OraColors.background,
+        backgroundColor: Colors.transparent,
         title: Text(
           'Active ride',
           style: OraTypography.title(OraColors.textPrimary),

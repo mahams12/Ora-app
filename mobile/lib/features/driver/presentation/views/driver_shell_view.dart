@@ -226,7 +226,7 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       drawer: OraDrawerShell(
         avatarInitials: initials,
         avatarData: profile?.avatarData,

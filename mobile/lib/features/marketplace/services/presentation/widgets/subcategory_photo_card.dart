@@ -76,30 +76,24 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
                     fit: StackFit.expand,
                     clipBehavior: Clip.hardEdge,
                     children: [
-                      if (widget.subcategory.image == 'placeholder')
-                        _photoPlaceholder()
-                      else
-                        const Positioned.fill(
-                          child: ColoredBox(color: OraColors.primaryMuted),
-                        ),
-                        Image.asset(
-                          'assets/marketplace/${widget.subcategory.image}',
-                          cacheWidth: 360,
-                          fit: BoxFit.contain,
-                          filterQuality: FilterQuality.medium,
-                          errorBuilder: (context, error, stackTrace) =>
-                              _photoPlaceholder(),
-                        ),
-                      const DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              OraColors.photoScrimStrong,
-                            ],
-                          ),
+                      const Positioned.fill(
+                        child: ColoredBox(color: OraColors.surface),
+                      ),
+                      Positioned.fill(
+                        bottom: 38,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 10, 12, 2),
+                          child: widget.subcategory.image == 'placeholder'
+                              ? _photoPlaceholder()
+                              : Image.asset(
+                                  'assets/marketplace/${widget.subcategory.image}',
+                                  cacheWidth: 360,
+                                  fit: BoxFit.contain,
+                                  filterQuality: FilterQuality.medium,
+                                  errorBuilder:
+                                      (context, error, stackTrace) =>
+                                          _photoPlaceholder(),
+                                ),
                         ),
                       ),
                       Positioned(
@@ -110,7 +104,9 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
                           widget.subcategory.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: OraTypography.bodyEmphasis(OraColors.onPhoto),
+                          style: OraTypography.bodyEmphasis(
+                            OraColors.textPrimary,
+                          ),
                         ),
                       ),
                     ],

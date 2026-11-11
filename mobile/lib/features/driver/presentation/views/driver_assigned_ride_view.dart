@@ -271,9 +271,9 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
     final padding = Responsive.horizontalPadding(context);
 
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: OraColors.background,
+        backgroundColor: Colors.transparent,
         title: Text(
           'Assigned ride',
           style: OraTypography.title(OraColors.textPrimary),

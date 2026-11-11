@@ -54,9 +54,9 @@ class _RideHistoryDetailViewState
     });
 
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: OraColors.background,
+        backgroundColor: Colors.transparent,
         title: Text(
           'Ride details',
           style: OraTypography.title(OraColors.textPrimary),

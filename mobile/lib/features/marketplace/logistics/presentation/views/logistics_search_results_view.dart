@@ -20,7 +20,7 @@ class LogisticsSearchResultsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final catalogue = ref.watch(catalogueProvider);
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Vehicle search')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.logistics,

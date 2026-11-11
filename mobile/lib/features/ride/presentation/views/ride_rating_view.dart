@@ -37,9 +37,9 @@ class _RideRatingViewState extends ConsumerState<RideRatingView> {
     final padding = Responsive.horizontalPadding(context);
 
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: OraColors.background,
+        backgroundColor: Colors.transparent,
         title: Text(
           'Rate your ride',
           style: OraTypography.title(OraColors.textPrimary),

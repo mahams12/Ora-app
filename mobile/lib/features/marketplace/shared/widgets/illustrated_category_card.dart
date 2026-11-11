@@ -90,23 +90,17 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
                       clipBehavior: Clip.hardEdge,
                       children: [
                         const Positioned.fill(
-                          child: ColoredBox(color: OraColors.primaryMuted),
+                          child: ColoredBox(color: OraColors.surface),
                         ),
-                        Image.asset(
-                          widget.imageAsset,
-                          cacheWidth: 480,
-                          fit: BoxFit.contain,
-                          filterQuality: FilterQuality.medium,
-                        ),
-                        const DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                OraColors.shadow,
-                                OraColors.photoScrimStrong,
-                              ],
+                        Positioned.fill(
+                          bottom: 44,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(14, 12, 14, 2),
+                            child: Image.asset(
+                              widget.imageAsset,
+                              cacheWidth: 480,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.medium,
                             ),
                           ),
                         ),
@@ -123,7 +117,7 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
                             child: Icon(
                               widget.badgeIcon,
                               size: 16,
-                              color: OraColors.navy,
+                              color: OraColors.gold,
                             ),
                           ),
                         ),
@@ -142,7 +136,7 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: OraTypography.bodyEmphasis(
-                                  OraColors.onPhoto,
+                                  OraColors.textPrimary,
                                 ),
                               ),
                               Text(
@@ -150,7 +144,7 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: OraTypography.caption(
-                                  OraColors.onPhotoMuted,
+                                  OraColors.textMuted,
                                 ),
                               ),
                             ],

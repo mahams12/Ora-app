@@ -557,7 +557,7 @@ class _DriverRegistrationViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Driver registration')),
       body: SafeArea(
         child: Center(

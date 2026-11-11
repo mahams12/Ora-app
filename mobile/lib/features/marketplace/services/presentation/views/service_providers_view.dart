@@ -80,7 +80,7 @@ class _ServiceProvidersViewState extends ConsumerState<ServiceProvidersView> {
     final demoEnabled = ref.watch(demoListingsEnabledProvider);
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Services')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.services,
@@ -132,7 +132,7 @@ class _ServiceProvidersViewState extends ConsumerState<ServiceProvidersView> {
                         child: Text(
                           widget.previewBannerLabel!,
                           style: const TextStyle(
-                            color: OraColors.navy,
+                            color: OraColors.onPhoto,
                             fontWeight: FontWeight.w700,
                           ),
                         ),

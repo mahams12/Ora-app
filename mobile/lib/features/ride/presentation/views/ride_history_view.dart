@@ -83,7 +83,7 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
     // spinner before the first gated load (breaks pumpAndSettle / wastes work).
     if (!widget.active && !_initialLoadRequested) {
       return const Scaffold(
-        backgroundColor: OraColors.background,
+        backgroundColor: Colors.transparent,
         body: SizedBox.expand(),
       );
     }
@@ -93,7 +93,7 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
     final padding = Responsive.horizontalPadding(context);
 
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

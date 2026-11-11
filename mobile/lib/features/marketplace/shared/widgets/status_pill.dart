@@ -54,7 +54,7 @@ class StatusPill extends StatelessWidget {
         child: Text(
           _label,
           style: OraTypography.caption(
-            inverse ? OraColors.navy : _foreground,
+            inverse ? OraColors.textPrimary : _foreground,
           ).copyWith(height: 1),
         ),
       ),

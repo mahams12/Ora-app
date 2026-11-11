@@ -80,7 +80,7 @@ class RentalPropertyDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(model.title, maxLines: 1, overflow: TextOverflow.ellipsis),
       ),
@@ -303,7 +303,7 @@ class RentalPropertyDetailView extends StatelessWidget {
                 child: const Icon(
                   Icons.home_work_outlined,
                   size: 16,
-                  color: OraColors.navy,
+                  color: OraColors.gold,
                 ),
               ),
             ),
@@ -377,7 +377,7 @@ class _GalleryStatus extends StatelessWidget {
       ),
       child: Text(
         isVerified ? 'Verified host' : 'Not verified',
-        style: OraTypography.caption(OraColors.navy).copyWith(fontSize: 9),
+        style: OraTypography.caption(OraColors.textPrimary).copyWith(fontSize: 9),
       ),
     );
   }

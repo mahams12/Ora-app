@@ -55,7 +55,7 @@ class OraAuthScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

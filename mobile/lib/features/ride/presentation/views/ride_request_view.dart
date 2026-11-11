@@ -253,7 +253,7 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
         }
       },
       child: Scaffold(
-        backgroundColor: OraColors.background,
+        backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           top: false,

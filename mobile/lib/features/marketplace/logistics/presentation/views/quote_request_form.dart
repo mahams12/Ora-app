@@ -117,7 +117,7 @@ class _QuoteRequestFormState extends ConsumerState<QuoteRequestForm> {
     final catalogue = ref.watch(catalogueProvider);
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Request a quotation')),
       body: catalogue.when(
         loading: () => const Center(child: CircularProgressIndicator()),

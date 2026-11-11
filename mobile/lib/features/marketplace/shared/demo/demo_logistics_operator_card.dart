@@ -101,7 +101,7 @@ class DemoLogisticsOperatorCard extends StatelessWidget {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: OraColors.navy.withValues(alpha: 0.92),
+                                color: OraColors.primary.withValues(alpha: 0.95),
                                 borderRadius: BorderRadius.circular(
                                   OraRadius.pill,
                                 ),
@@ -109,7 +109,7 @@ class DemoLogisticsOperatorCard extends StatelessWidget {
                               child: Text(
                                 'Near you',
                                 style: OraTypography.caption(
-                                  OraColors.textPrimary,
+                                  OraColors.onPhoto,
                                 ).copyWith(fontSize: 9),
                               ),
                             ),
@@ -226,7 +226,7 @@ class DemoLogisticsOperatorCard extends StatelessWidget {
                                   horizontal: OraSpacing.sm,
                                 ),
                                 backgroundColor: OraColors.gold,
-                                foregroundColor: OraColors.navy,
+                                foregroundColor: OraColors.onPhoto,
                               ),
                               child: const Text('Book now', maxLines: 1),
                             ),

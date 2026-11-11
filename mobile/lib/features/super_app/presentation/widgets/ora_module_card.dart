@@ -81,25 +81,18 @@ class _OraModuleCardState extends State<OraModuleCard> {
                     height: 164,
                     child: Stack(
                       children: [
-                        Positioned.fill(
-                          child: Image.asset(
-                            widget.imageAsset,
-                            cacheWidth: 480,
-                            fit: BoxFit.cover,
-                            filterQuality: FilterQuality.medium,
-                          ),
-                        ),
                         const Positioned.fill(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  OraColors.photoScrimStrong,
-                                ],
-                              ),
+                          child: ColoredBox(color: OraColors.surface),
+                        ),
+                        Positioned.fill(
+                          bottom: 52,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(18, 10, 18, 2),
+                            child: Image.asset(
+                              widget.imageAsset,
+                              cacheWidth: 480,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.medium,
                             ),
                           ),
                         ),
@@ -133,7 +126,7 @@ class _OraModuleCardState extends State<OraModuleCard> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: OraTypography.bodyEmphasis(
-                                  OraColors.onPhoto,
+                                  OraColors.textPrimary,
                                 ),
                               ),
                               Text(
@@ -141,7 +134,7 @@ class _OraModuleCardState extends State<OraModuleCard> {
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: OraTypography.caption(
-                                  OraColors.onPhotoMuted,
+                                  OraColors.textMuted,
                                 ),
                               ),
                             ],

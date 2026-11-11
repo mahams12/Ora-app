@@ -131,9 +131,20 @@ class _HomeHeroHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [OraColors.navy, OraColors.navyElevated],
+          colors: [OraColors.navyElevated, OraColors.primaryMuted],
         ),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        border: Border(
+          bottom: BorderSide(color: Color(0x66F88733), width: 1.4),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x33F88733),
+            blurRadius: 18,
+            offset: Offset(0, 6),
+            spreadRadius: -8,
+          ),
+        ],
       ),
       child: SafeArea(
         bottom: false,

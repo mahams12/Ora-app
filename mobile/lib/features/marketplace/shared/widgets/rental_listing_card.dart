@@ -161,7 +161,7 @@ class RentalListingCard extends StatelessWidget {
                               child: const Icon(
                                 Icons.home_work_outlined,
                                 size: 16,
-                                color: OraColors.navy,
+                                color: OraColors.gold,
                               ),
                             ),
                     ),
@@ -174,7 +174,7 @@ class RentalListingCard extends StatelessWidget {
                           onPressed: onBookmark,
                           style: IconButton.styleFrom(
                             backgroundColor: OraColors.onPhotoMuted,
-                            foregroundColor: OraColors.navy,
+                            foregroundColor: OraColors.textPrimary,
                           ),
                           icon: const Icon(Icons.favorite_border_rounded),
                         ),
@@ -305,14 +305,14 @@ class _HorizontalRentalListingCard extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: OraColors.navy.withValues(alpha: 0.92),
+                              color: OraColors.ink.withValues(alpha: 0.85),
                               borderRadius: BorderRadius.circular(
                                 OraRadius.pill,
                               ),
                             ),
                             child: Text(
                               '★ ${model.rating!.toStringAsFixed(1)}',
-                              style: OraTypography.caption(OraColors.goldSoft),
+                              style: OraTypography.caption(OraColors.gold400),
                             ),
                           ),
                         ),
@@ -403,7 +403,7 @@ class _HorizontalRentalListingCard extends StatelessWidget {
                               style: IconButton.styleFrom(
                                 minimumSize: const Size(44, 44),
                                 backgroundColor: OraColors.gold,
-                                foregroundColor: OraColors.navy,
+                                foregroundColor: OraColors.onPhoto,
                               ),
                               icon: const Icon(Icons.arrow_forward_rounded),
                             ),
@@ -471,7 +471,7 @@ class _VerifiedBadge extends StatelessWidget {
       child: Text(
         isVerified ? 'Verified host' : 'Not verified',
         maxLines: 1,
-        style: OraTypography.caption(OraColors.navy).copyWith(fontSize: 9),
+        style: OraTypography.caption(OraColors.textPrimary).copyWith(fontSize: 9),
       ),
     );
   }
