@@ -26,7 +26,7 @@ Registered in `src/app.ts`:
 | Health | `GET /healthz` |
 | Auth | `POST /v1/auth/register`, `GET /v1/auth/me`, `PATCH /v1/auth/profile` |
 | Rides | `/v1/rides` (+ offers, progression, ratings, open discovery) |
-| Drivers | `POST /v1/drivers/go-online`, `POST /v1/drivers/go-offline` |
+| Drivers | `POST /v1/drivers/onboarding`, `POST /v1/drivers/go-online`, `POST /v1/drivers/go-offline` |
 | Location | `POST /v1/location/update` |
 | Internal | expire / offer-expire / no-show / **dispatch** sweeps + tick; nearby; **D1 outbox→FCM sweep** (worker token) |
 | Drivers | go-online / go-offline; **D1 device-tokens** register/clear |
@@ -34,6 +34,10 @@ Registered in `src/app.ts`:
 N3 nearby, N4 dispatch, and D1 FCM projector are **worker-only** (`X-Ora-Worker-Token`).Identity is **always** from `admin.auth().verifyIdToken()`. Client-supplied `uid` / `role` are ignored.
 
 ## Local run
+
+Driver applications are auto-approved by default until the admin review side
+exists. Set `DRIVER_AUTO_APPROVE=false` (or `0`) to retain pending status.
+Document photos remain deferred until Firebase Storage is configured.
 
 1. Firebase Console → service account JSON (store **outside** `mobile/`).
 2. Copy `.env.example` → `.env`; set `GOOGLE_APPLICATION_CREDENTIALS`, `FIREBASE_PROJECT_ID`.

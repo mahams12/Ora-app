@@ -67,6 +67,8 @@ export interface CreateAppOptions {
    * e.g. `new DriverEligibilityCache(0)` disables caching.
    */
   eligibilityCache?: DriverEligibilityCache;
+  /** Defaults to auto-approving driver applications until admin review exists. */
+  driverAutoApprove?: boolean;
 }
 
 export function createApp(options: CreateAppOptions) {
@@ -122,6 +124,7 @@ export function createApp(options: CreateAppOptions) {
     rateLimit,
     createDriversRouter(options.db, geo, (driverId) =>
       eligibilityCache.invalidate(driverId),
+      options.driverAutoApprove ?? true,
     ),
   );
 

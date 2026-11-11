@@ -42,8 +42,12 @@ import '../../features/passenger/presentation/view_models/home_view_model.dart';
 import '../../features/ride/data/data_sources/pricing_remote_data_source.dart';
 import '../../features/ride/data/data_sources/ride_remote_data_source.dart';
 import '../../features/driver/data/availability/driver_availability_remote_data_source.dart';
+import '../../features/driver/data/onboarding/driver_onboarding_remote_data_source.dart';
+import '../../features/driver/data/onboarding/driver_onboarding_repository_impl.dart';
 import '../../features/driver/data/location/driver_location_remote_data_source.dart';
 import '../../features/driver/data/location/geolocator_driver_location_source.dart';
+import '../../features/driver/domain/repositories/driver_onboarding_repository.dart';
+import '../../features/driver/domain/use_cases/submit_driver_onboarding_use_case.dart';
 import '../../features/driver/domain/location/driver_location_source.dart';
 import '../../features/ride/data/location/fallback_place_search.dart';
 import '../../features/ride/data/location/geocoding_device_geocoder.dart';
@@ -178,6 +182,25 @@ final driverLocationRemoteDataSourceProvider =
 final driverAvailabilityRemoteDataSourceProvider =
     Provider<DriverAvailabilityRemoteDataSource>(
   (ref) => ApiDriverAvailabilityRemoteDataSource(ref.watch(apiClientProvider)),
+);
+
+final driverOnboardingRemoteDataSourceProvider =
+    Provider<DriverOnboardingRemoteDataSource>(
+  (ref) => ApiDriverOnboardingRemoteDataSource(ref.watch(apiClientProvider)),
+);
+
+final driverOnboardingRepositoryProvider = Provider<DriverOnboardingRepository>(
+  (ref) => DriverOnboardingRepositoryImpl(
+    remote: ref.watch(driverOnboardingRemoteDataSourceProvider),
+    apiClient: ref.watch(apiClientProvider),
+  ),
+);
+
+final submitDriverOnboardingUseCaseProvider =
+    Provider<SubmitDriverOnboardingUseCase>(
+  (ref) => SubmitDriverOnboardingUseCase(
+    ref.watch(driverOnboardingRepositoryProvider),
+  ),
 );
 
 /// Google Places autocomplete + details (Phase 4A). Not Routes.

@@ -130,6 +130,24 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
     context.go(AppRoutes.driverHome);
   }
 
+  Future<void> _showDriverGateSheet(String title) {
+    return showOraBottomSheet<void>(
+      context: context,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          OraSectionHeader(eyebrow: 'Driver access', title: title),
+          const SizedBox(height: OraSpacing.lg),
+          OraButton(
+            label: 'Got it',
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _onSwitchToDriver() async {
     _closeDrawer();
     // Role/driverStatus can change server-side after bootstrap (e.g. ops approval).
@@ -142,6 +160,7 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
       // Fall through — gate uses last known session profile.
     }
 
+    if (!mounted) return;
     final profile = ref.read(sessionUserProfileProvider);
     ref
         .read(appLoggerProvider)
@@ -160,7 +179,15 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
       _openDriverTools();
       return;
     }
-    await _showUnavailable('Driver mode');
+    if (profile?.driverStatus == 'pending') {
+      await _showDriverGateSheet('Application under review');
+      return;
+    }
+    if (profile?.driverStatus == 'suspended') {
+      await _showDriverGateSheet('Driver account suspended — contact support');
+      return;
+    }
+    await context.push<void>(AppRoutes.driverRegistration);
   }
 
   Future<void> _signOut() async {
