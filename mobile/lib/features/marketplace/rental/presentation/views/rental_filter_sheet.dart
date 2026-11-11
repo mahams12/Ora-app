@@ -31,23 +31,20 @@ class RentalFilterState {
 }
 
 class RentalFilterSheet extends StatefulWidget {
-  const RentalFilterSheet({required this.initialValue, super.key});
+  const RentalFilterSheet({
+    required this.initialValue,
+    this.propertyTypes = const [],
+    super.key,
+  });
 
   final RentalFilterState initialValue;
+  final List<String> propertyTypes;
 
   @override
   State<RentalFilterSheet> createState() => _RentalFilterSheetState();
 }
 
 class _RentalFilterSheetState extends State<RentalFilterSheet> {
-  static const _propertyTypes = [
-    'Apartment',
-    'House',
-    'Room',
-    'Villa',
-    'Guest house',
-    'Hotel',
-  ];
   static const _amenityOptions = [
     'Wi-Fi',
     'Kitchen',
@@ -176,7 +173,7 @@ class _RentalFilterSheetState extends State<RentalFilterSheet> {
                         spacing: OraSpacing.xs,
                         runSpacing: OraSpacing.xs,
                         children: [
-                          for (final type in _propertyTypes)
+                          for (final type in widget.propertyTypes)
                             ChoiceChip(
                               label: Text(type),
                               selected: _propertyType == type,

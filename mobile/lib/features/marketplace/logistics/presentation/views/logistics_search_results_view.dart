@@ -9,6 +9,7 @@ import '../../../../../app/theme/ora_typography.dart';
 import '../../../catalogue/catalogue_provider.dart';
 import '../../../catalogue/catalogue_search.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
+import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
 class LogisticsSearchResultsView extends ConsumerWidget {
   const LogisticsSearchResultsView({required this.query, super.key});
@@ -21,6 +22,9 @@ class LogisticsSearchResultsView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Vehicle search')),
+      bottomNavigationBar: const OraModuleBottomBar(
+        selected: OraModuleDestination.logistics,
+      ),
       body: catalogue.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) =>

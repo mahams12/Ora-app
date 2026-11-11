@@ -6,8 +6,9 @@ class AppConstants {
   static const logoAsset = 'assets/branding/ora_logo.png';
   static const serviceCityRidesAsset =
       'assets/branding/services/city_rides.jpg';
-  static const serviceIntercityAsset =
-      'assets/branding/services/intercity.jpg';
+  static const serviceIntercityAsset = 'assets/branding/services/intercity.jpg';
+  static const homeIntercityRoadAsset =
+      'assets/marketplace/rides/intercity_road.webp';
   static const serviceCourierAsset = 'assets/branding/services/courier.jpg';
   static const serviceMoveAsset = 'assets/branding/services/move.jpg';
   static const minTapTargetSize = 48.0;

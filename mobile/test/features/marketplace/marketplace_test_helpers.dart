@@ -9,6 +9,8 @@ import 'package:ora/app/router/app_router.dart';
 import 'package:ora/app/theme/ora_theme.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_models.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_provider.dart';
+import 'package:ora/features/marketplace/shared/demo/demo_listings.dart';
+import 'package:ora/features/super_app/recent/recent_activity.dart';
 
 Future<MarketplaceCatalogue> loadMarketplaceCatalogue() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -24,13 +26,30 @@ Future<GoRouter> pumpMarketplaceRoute(
   WidgetTester tester, {
   required String location,
   required MarketplaceCatalogue catalogue,
+  double textScale = 1,
+  bool demoListingsEnabled = false,
 }) async {
   final router = createAppRouter(initialLocation: location);
   addTearDown(router.dispose);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [catalogueProvider.overrideWith((ref) async => catalogue)],
-      child: MaterialApp.router(theme: OraTheme.dark(), routerConfig: router),
+      overrides: [
+        catalogueProvider.overrideWith((ref) async => catalogue),
+        demoListingsEnabledProvider.overrideWithValue(demoListingsEnabled),
+        recentActivityStorageProvider.overrideWithValue(
+          InMemoryRecentActivityStorage(),
+        ),
+      ],
+      child: MaterialApp.router(
+        theme: OraTheme.dark(),
+        routerConfig: router,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(textScale)),
+          child: child!,
+        ),
+      ),
     ),
   );
   for (var frame = 0; frame < 6; frame++) {

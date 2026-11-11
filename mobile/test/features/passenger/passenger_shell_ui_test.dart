@@ -13,7 +13,9 @@ import 'package:ora/features/passenger/presentation/views/home_shell_view.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';
 import 'package:ora/features/ride/domain/use_cases/ride_use_cases.dart';
 import 'package:ora/features/ride/presentation/views/ride_request_view.dart';
+import 'package:ora/features/super_app/recent/recent_activity.dart';
 import 'package:ora/features/super_app/presentation/views/rides_hub_view.dart';
+import 'package:ora/features/super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
 class MockLogoutUseCase extends Mock implements LogoutUseCase {}
 
@@ -31,10 +33,7 @@ Widget _wrapShell({
   final router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(
-        path: AppRoutes.home,
-        builder: (_, __) => const HomeShellView(),
-      ),
+      GoRoute(path: AppRoutes.home, builder: (_, __) => const HomeShellView()),
       GoRoute(
         path: AppRoutes.ridesHub,
         builder: (_, __) => const RidesHubView(),
@@ -55,10 +54,7 @@ Widget _wrapShell({
         size: size,
         textScaler: TextScaler.linear(textScale),
       ),
-      child: MaterialApp.router(
-        theme: OraTheme.dark(),
-        routerConfig: router,
-      ),
+      child: MaterialApp.router(theme: OraTheme.dark(), routerConfig: router),
     ),
   );
 }
@@ -93,6 +89,9 @@ List<Override> _baseOverrides({
     logoutUseCaseProvider.overrideWithValue(logout),
     getCurrentUserUseCaseProvider.overrideWithValue(getUser),
     listRidesUseCaseProvider.overrideWithValue(list),
+    recentActivityStorageProvider.overrideWithValue(
+      InMemoryRecentActivityStorage(),
+    ),
     if (createRide != null)
       createRideUseCaseProvider.overrideWithValue(createRide),
   ];
@@ -123,46 +122,53 @@ void main() {
     registerFallbackValue('');
   });
 
-  testWidgets('passenger shell renders Home and drawer (no bottom nav)', (
+  testWidgets('passenger shell renders Home, module bar, and drawer', (
     tester,
   ) async {
     await tester.pumpWidget(_wrapShell(overrides: _baseOverrides()));
     await tester.pumpAndSettle();
 
     expect(find.text('ORA'), findsWidgets);
-    expect(find.text('Where are you headed?'), findsOneWidget);
-    expect(find.text('Earn on ORA'), findsOneWidget);
+    expect(find.text('Where are you headed?'), findsNothing);
     expect(find.text('Explore ORA'), findsOneWidget);
-    expect(find.textContaining('Intercity trips'), findsOneWidget);
+    expect(find.text('Travel beyond the city'), findsOneWidget);
     expect(find.text('Choose a ride'), findsNothing);
-    expect(find.byType(BottomNavigationBar), findsNothing);
+    expect(find.text('Logistics'), findsWidgets);
+    expect(find.text('Services'), findsWidgets);
+    expect(find.text('Wallet'), findsNothing);
+    expect(find.byType(OraModuleBottomBar), findsOneWidget);
     expect(find.text('Account'), findsNothing);
 
     await _openDrawer(tester);
     expect(find.byType(OraDrawerShell), findsOneWidget);
     expect(find.text('Home'), findsWidgets);
     expect(find.text('My rides'), findsWidgets);
-    expect(find.text('Wallet'), findsWidgets);
+    expect(find.text('Saved places'), findsNothing);
+    expect(find.text('Wallet'), findsNothing);
+    expect(find.text('Safety centre'), findsNothing);
     await _scrollDrawerTo(tester, find.text('Switch to driver mode'));
     expect(find.text('Switch to driver mode'), findsOneWidget);
     expect(find.text('Register your vehicle'), findsOneWidget);
+    await _scrollDrawerTo(tester, find.text('Switch to vendor mode'));
+    expect(find.text('Switch to driver mode'), findsOneWidget);
+    expect(find.text('Switch to vendor mode'), findsOneWidget);
     await _scrollDrawerTo(tester, find.text('Log out'));
     expect(find.text('Log out'), findsOneWidget);
     expect(find.textContaining('api'), findsNothing);
     expect(find.textContaining('https://'), findsNothing);
 
-    // Close drawer, then verify saved places + quick actions further down.
     await tester.tapAt(const Offset(380, 100));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(
-      find.text('Quick actions'),
+      find.text('Your recent rides, rentals and services will appear here.'),
       200,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.text('Saved places'), findsOneWidget);
-    expect(find.text('Work'), findsOneWidget);
-    expect(find.text('Quick actions'), findsOneWidget);
-    expect(find.text('Safety'), findsOneWidget);
+    expect(find.text('Frequently used'), findsOneWidget);
+    expect(
+      find.text('Your recent rides, rentals and services will appear here.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('drawer My rides opens history without leaving shell', (
@@ -179,6 +185,19 @@ void main() {
     expect(find.textContaining('not wired yet'), findsNothing);
     expect(find.text('All'), findsOneWidget);
     expect(find.text('Completed'), findsOneWidget);
+  });
+
+  testWidgets('passenger home fits 360px with larger text', (tester) async {
+    await tester.pumpWidget(
+      _wrapShell(
+        overrides: _baseOverrides(),
+        size: const Size(360, 640),
+        textScale: 1.3,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.byType(OraModuleBottomBar), findsOneWidget);
   });
 
   testWidgets('drawer Log out is available', (tester) async {
@@ -205,7 +224,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Where are you headed?'));
+    await tester.ensureVisible(find.text('Travel beyond the city'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Travel beyond the city'));
     await tester.pumpAndSettle();
 
     expect(find.byType(RideRequestView), findsOneWidget);
@@ -226,15 +247,13 @@ void main() {
 
     await tester.tap(find.text('Rides').first);
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(
-      find.text('Choose a ride'),
-      120,
-      scrollable: find.byType(Scrollable).first,
+    await tester.drag(
+      find.byType(CustomScrollView).last,
+      const Offset(0, -360),
     );
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -120));
     await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Zip'));
+    await tester.ensureVisible(find.text('Bike'));
+    await tester.tap(find.text('Bike'));
     await tester.pumpAndSettle();
     expect(find.byType(RideRequestView), findsOneWidget);
     verifyNever(
@@ -245,30 +264,32 @@ void main() {
     );
   });
 
-  testWidgets('quick actions My rides opens history', (tester) async {
-    await tester.pumpWidget(_wrapShell(overrides: _baseOverrides()));
-    await tester.pumpAndSettle();
-
-    await tester.scrollUntilVisible(
-      find.text('Quick actions'),
-      120,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('My rides').last);
-    await tester.pumpAndSettle();
-    expect(find.text('All'), findsOneWidget);
-    expect(find.text('Completed'), findsOneWidget);
-  });
-
-  testWidgets('drawer wallet is honestly unavailable', (tester) async {
+  testWidgets('vendor drawer entry shows the coming-soon sheet', (
+    tester,
+  ) async {
     await tester.pumpWidget(_wrapShell(overrides: _baseOverrides()));
     await tester.pumpAndSettle();
 
     await _openDrawer(tester);
-    await tester.tap(find.text('Wallet'));
+    await _scrollDrawerTo(tester, find.text('Switch to vendor mode'));
+    expect(find.text('Switch to driver mode'), findsOneWidget);
+    expect(find.text('Switch to vendor mode'), findsOneWidget);
+    expect(find.text('Vendor web portal'), findsOneWidget);
+    expect(find.text('Saved places'), findsNothing);
+    expect(find.text('Wallet'), findsNothing);
+    expect(find.text('Safety centre'), findsNothing);
+    await tester.tap(find.text('Switch to vendor mode'));
     await tester.pumpAndSettle();
-    expect(find.textContaining('not wired to the backend'), findsOneWidget);
+    expect(find.text('COMING SOON'), findsOneWidget);
+    expect(find.text('Vendor portal'), findsOneWidget);
+    expect(
+      find.text(
+        'Vendors will manage listings and bookings from the ORA vendor web '
+        'app. Coming soon.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Got it'), findsOneWidget);
   });
 
   testWidgets('no overflow on compact phone with large text', (tester) async {
@@ -285,14 +306,11 @@ void main() {
 
   testWidgets('tablet width layout has no overflow', (tester) async {
     await tester.pumpWidget(
-      _wrapShell(
-        size: const Size(768, 1024),
-        overrides: _baseOverrides(),
-      ),
+      _wrapShell(size: const Size(768, 1024), overrides: _baseOverrides()),
     );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(find.textContaining('Where are you headed?'), findsOneWidget);
+    expect(find.textContaining('Where are you headed?'), findsNothing);
   });
 
   testWidgets('does not show fake fares', (tester) async {

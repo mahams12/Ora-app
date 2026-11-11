@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ora/app/theme/theme.dart';
+import 'package:ora/features/marketplace/catalogue/catalogue_models.dart';
+import 'package:ora/features/marketplace/services/presentation/widgets/subcategory_photo_card.dart';
 import 'package:ora/features/marketplace/shared/widgets/illustrated_category_card.dart';
 import 'package:ora/features/marketplace/shared/widgets/marketplace_empty_state.dart';
 import 'package:ora/features/marketplace/shared/widgets/marketplace_search_field.dart';
@@ -56,6 +58,34 @@ void main() {
     expect(tapped, isTrue);
   });
 
+  testWidgets('subcategory photo uses a neutral fallback when unavailable', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        SizedBox(
+          width: 168,
+          height: 124,
+          child: SubcategoryPhotoCard(
+            subcategory: ServiceSubcategory(
+              id: 'missing_subcategory',
+              name: 'Fallback service',
+              keywords: [],
+            ),
+            onTap: () {},
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fallback service'), findsOneWidget);
+    final images = tester.widgetList<Image>(find.byType(Image));
+    expect(images, hasLength(1));
+    expect(find.byIcon(Icons.image_not_supported_outlined), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('status pills show each honest state', (tester) async {
     await tester.pumpWidget(
       _app(
@@ -97,9 +127,9 @@ void main() {
     await tester.pumpWidget(
       _app(
         const ProviderCard(
-          model: ProviderCardModel(
-            name: 'Preview sample provider',
-            serviceName: 'Preview sample service',
+          model: ServiceProviderSummary(
+            name: 'Test provider',
+            specialization: 'Test specialization',
             rating: 4.9,
             reviewCount: 0,
           ),
@@ -107,39 +137,89 @@ void main() {
       ),
     );
 
-    expect(find.text('Preview sample provider'), findsOneWidget);
-    expect(find.textContaining('reviews'), findsNothing);
-    expect(find.textContaining('jobs'), findsNothing);
-    expect(find.textContaining('Verified'), findsNothing);
-    expect(find.byIcon(Icons.payments_outlined), findsNothing);
+    expect(find.text('Test provider'), findsOneWidget);
+    expect(find.text('Test specialization'), findsOneWidget);
+    expect(find.text('Rating'), findsNothing);
+    expect(find.text('Total jobs'), findsNothing);
+    expect(find.text('Rate'), findsNothing);
+    expect(find.textContaining('★'), findsNothing);
   });
 
-  testWidgets('provider card renders only supplied verified metrics', (
+  testWidgets('provider card hides metrics when optional values are null', (
     tester,
   ) async {
     await tester.pumpWidget(
       _app(
         const ProviderCard(
-          model: ProviderCardModel(
-            name: 'Preview sample provider',
-            serviceName: 'Preview sample service',
-            rating: 4.7,
-            reviewCount: 9,
-            completedJobs: 22,
-            priceLabel: 'Preview rate',
-            availability: 'Preview availability',
+          model: ServiceProviderSummary(
+            name: 'Test provider',
+            specialization: 'Test specialization',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Rating'), findsNothing);
+    expect(find.text('Total jobs'), findsNothing);
+    expect(find.text('Rate'), findsNothing);
+  });
+
+  testWidgets('provider card renders supplied verified metrics', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        const ProviderCard(
+          model: ServiceProviderSummary(
+            name: 'Test provider',
+            specialization: 'Residential plumber',
+            rating: 4.5,
+            reviewCount: 6,
+            verifiedJobCount: 22,
+            rate: 'Rs 1,500/hr',
             isVerified: true,
           ),
         ),
       ),
     );
 
-    expect(find.textContaining('4.7'), findsOneWidget);
-    expect(find.textContaining('9 reviews'), findsOneWidget);
-    expect(find.text('22 jobs'), findsOneWidget);
-    expect(find.text('Preview rate'), findsOneWidget);
-    expect(find.text('Preview availability'), findsOneWidget);
+    expect(find.text('Test provider'), findsOneWidget);
+    expect(find.text('Residential plumber'), findsOneWidget);
+    expect(find.text('★ 4.5'), findsOneWidget);
+    expect(find.text('Total jobs'), findsOneWidget);
+    expect(find.text('22'), findsOneWidget);
+    expect(find.text('Rs 1,500/hr'), findsOneWidget);
     expect(find.byIcon(Icons.verified_rounded), findsOneWidget);
+  });
+
+  testWidgets('provider card fits compact and large phone widths', (
+    tester,
+  ) async {
+    addTearDown(() {
+      tester.view
+        ..resetPhysicalSize()
+        ..resetDevicePixelRatio();
+    });
+    for (final size in [const Size(320, 640), const Size(430, 932)]) {
+      tester.view
+        ..devicePixelRatio = 1
+        ..physicalSize = size;
+      await tester.pumpWidget(
+        _app(
+          const ProviderCard(
+            model: ServiceProviderSummary(
+              name: 'Test provider',
+              specialization: 'Residential plumber',
+              rating: 4.5,
+              reviewCount: 6,
+              verifiedJobCount: 22,
+              rate: 'Rs 1,500/hr',
+            ),
+          ),
+        ),
+      );
+      expect(tester.takeException(), isNull, reason: 'ProviderCard at $size');
+    }
   });
 
   testWidgets('rental listing hides absent data and zero-review rating', (

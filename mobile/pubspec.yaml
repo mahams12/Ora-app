@@ -54,7 +54,12 @@ flutter:
     - assets/marketplace/modules/
     - assets/marketplace/catalogue_v1.json
     - assets/marketplace/logistics/
+    - assets/marketplace/logistics/types/
+    - assets/marketplace/rental/
+    - assets/marketplace/rental/subs/
+    - assets/marketplace/rides/
     - assets/marketplace/services/
+    - assets/marketplace/services/subs/
     - assets/branding/ride_card/
     - assets/branding/ride_card/icons/
     # Ride Request half-screen MapLibre preview (Ora dark style + markers).

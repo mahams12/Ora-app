@@ -31,7 +31,9 @@ class _RefreshingAuthNotifier extends AuthStateNotifier {
 
   @override
   Future<void> refreshCanonicalProfile() async {
-    ref.read(sessionUserProfileProvider.notifier).setProfile(
+    ref
+        .read(sessionUserProfileProvider.notifier)
+        .setProfile(
           const UserProfile(
             uid: 'SRjL7BJgCKTduhtpjtYMRZMq5fD2',
             phoneNumber: '+923012345677',
@@ -50,87 +52,107 @@ void main() {
     registerFallbackValue('');
   });
 
-  testWidgets('Earn on ORA refreshes /me and opens driver shell for approved driver',
-      (tester) async {
-    final logout = MockLogoutUseCase();
-    final getUser = MockGetCurrentUserUseCase();
-    final listRides = MockListRidesUseCase();
-    when(() => logout()).thenAnswer((_) async {});
-    when(() => getUser()).thenAnswer(
-      (_) async => const AuthUser(
-        uid: 'SRjL7BJgCKTduhtpjtYMRZMq5fD2',
-        phoneNumber: '+923012345677',
-        isEmailVerified: false,
-        displayName: 'Hello',
-      ),
-    );
-    when(
-      () => listRides(
-        limit: any(named: 'limit'),
-        cursor: any(named: 'cursor'),
-        status: any(named: 'status'),
-        serviceType: any(named: 'serviceType'),
-      ),
-    ).thenAnswer((_) async => const RideListPage(rides: [], nextCursor: null));
+  testWidgets(
+    'drawer switch refreshes /me and opens driver shell for approved driver',
+    (tester) async {
+      final logout = MockLogoutUseCase();
+      final getUser = MockGetCurrentUserUseCase();
+      final listRides = MockListRidesUseCase();
+      when(() => logout()).thenAnswer((_) async {});
+      when(() => getUser()).thenAnswer(
+        (_) async => const AuthUser(
+          uid: 'SRjL7BJgCKTduhtpjtYMRZMq5fD2',
+          phoneNumber: '+923012345677',
+          isEmailVerified: false,
+          displayName: 'Hello',
+        ),
+      );
+      when(
+        () => listRides(
+          limit: any(named: 'limit'),
+          cursor: any(named: 'cursor'),
+          status: any(named: 'status'),
+          serviceType: any(named: 'serviceType'),
+        ),
+      ).thenAnswer(
+        (_) async => const RideListPage(rides: [], nextCursor: null),
+      );
 
-    final container = ProviderContainer(
-      overrides: [
-        logoutUseCaseProvider.overrideWithValue(logout),
-        getCurrentUserUseCaseProvider.overrideWithValue(getUser),
-        listRidesUseCaseProvider.overrideWithValue(listRides),
-        authStateNotifierProvider.overrideWith(_RefreshingAuthNotifier.new),
-      ],
-    );
-    addTearDown(container.dispose);
-
-    final routerProvider = Provider<GoRouter>((ref) {
-      final guard = AuthRouteGuard(ref);
-      return GoRouter(
-        initialLocation: AppRoutes.home,
-        redirect: (context, state) => guard.redirect(state),
-        routes: [
-          GoRoute(
-            path: AppRoutes.home,
-            builder: (_, __) => const HomeShellView(),
-          ),
-          GoRoute(
-            path: AppRoutes.driverHome,
-            builder: (_, __) => const DriverShellView(),
-          ),
+      final container = ProviderContainer(
+        overrides: [
+          logoutUseCaseProvider.overrideWithValue(logout),
+          getCurrentUserUseCaseProvider.overrideWithValue(getUser),
+          listRidesUseCaseProvider.overrideWithValue(listRides),
+          authStateNotifierProvider.overrideWith(_RefreshingAuthNotifier.new),
         ],
       );
-    });
+      addTearDown(container.dispose);
 
-    final router = container.read(routerProvider);
-    addTearDown(router.dispose);
-
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: MaterialApp.router(
-          theme: OraTheme.dark(),
-          routerConfig: router,
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    // Stale passenger session — gate would block without refresh.
-    container.read(sessionUserProfileProvider.notifier).setProfile(
-          const UserProfile(
-            uid: 'SRjL7BJgCKTduhtpjtYMRZMq5fD2',
-            phoneNumber: '+923012345677',
-            role: 'passenger',
-            driverStatus: 'none',
-            profileComplete: true,
-          ),
+      final routerProvider = Provider<GoRouter>((ref) {
+        final guard = AuthRouteGuard(ref);
+        return GoRouter(
+          initialLocation: AppRoutes.home,
+          redirect: (context, state) => guard.redirect(state),
+          routes: [
+            GoRoute(
+              path: AppRoutes.home,
+              builder: (_, __) => const HomeShellView(),
+            ),
+            GoRoute(
+              path: AppRoutes.driverHome,
+              builder: (_, __) => const DriverShellView(),
+            ),
+          ],
         );
+      });
 
-    await tester.tap(find.text('Earn on ORA'));
-    await tester.pumpAndSettle();
+      final router = container.read(routerProvider);
+      addTearDown(router.dispose);
 
-    expect(find.text('Open ride requests'), findsOneWidget);
-    expect(find.text('Coming later'), findsNothing);
-    expect(find.text('Driver mode'), findsNothing);
-  });
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp.router(
+            theme: OraTheme.dark(),
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Stale passenger session — gate would block without refresh.
+      container
+          .read(sessionUserProfileProvider.notifier)
+          .setProfile(
+            const UserProfile(
+              uid: 'SRjL7BJgCKTduhtpjtYMRZMq5fD2',
+              phoneNumber: '+923012345677',
+              role: 'passenger',
+              driverStatus: 'none',
+              profileComplete: true,
+            ),
+          );
+
+      await tester.tap(find.byTooltip('Menu').first);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Switch to driver mode'));
+      await tester.drag(
+        find
+            .descendant(
+              of: find.byType(OraDrawerShell),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+        const Offset(0, -120),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Switch to driver mode'));
+      await tester.tap(find.text('Switch to driver mode'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Open ride requests'), findsOneWidget);
+      expect(find.text('Coming later'), findsNothing);
+      expect(find.text('Driver mode'), findsNothing);
+    },
+  );
 }

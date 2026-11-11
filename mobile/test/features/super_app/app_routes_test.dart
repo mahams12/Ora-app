@@ -55,8 +55,16 @@ void main() {
         AppRoutes.ridesHub,
         AppRoutes.logistics,
         AppRoutes.rental,
+        AppRoutes.rentalCategory,
         AppRoutes.services,
       ]),
+    );
+  });
+
+  test('rental category route preserves selected subcategory', () {
+    expect(
+      AppRoutes.rentalCategoryPath('events', subcategoryId: 'wedding_halls'),
+      '/rental/category/events?subcategory=wedding_halls',
     );
   });
 }
