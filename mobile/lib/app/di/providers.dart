@@ -29,7 +29,6 @@ import '../../features/auth/domain/use_cases/request_otp_use_case.dart';
 import '../../features/auth/domain/use_cases/resend_otp_use_case.dart';
 import '../../features/auth/domain/use_cases/resolve_auth_profile_use_case.dart';
 import '../../features/auth/domain/use_cases/restore_session_use_case.dart';
-import '../../features/auth/domain/use_cases/submit_driver_onboarding_use_case.dart';
 import '../../features/auth/domain/use_cases/switch_mode_use_case.dart';
 import '../../features/auth/domain/use_cases/update_display_name_use_case.dart';
 import '../../features/auth/domain/use_cases/verify_otp_use_case.dart';
@@ -462,11 +461,6 @@ final resolveAuthProfileUseCaseProvider = Provider<ResolveAuthProfileUseCase>(
 
 final switchModeUseCaseProvider = Provider<SwitchModeUseCase>(
   (ref) => SwitchModeUseCase(ref.watch(authRepositoryProvider)),
-);
-
-final submitDriverOnboardingUseCaseProvider =
-    Provider<SubmitDriverOnboardingUseCase>(
-  (ref) => SubmitDriverOnboardingUseCase(ref.watch(authRepositoryProvider)),
 );
 
 final updateDisplayNameUseCaseProvider = Provider<UpdateDisplayNameUseCase>(
