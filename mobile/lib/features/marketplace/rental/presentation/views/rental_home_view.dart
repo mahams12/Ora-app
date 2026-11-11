@@ -374,10 +374,13 @@ class _RentalHero extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
+            const Positioned.fill(
+              child: ColoredBox(color: OraColors.primaryMuted),
+            ),
             Image.asset(
               'assets/marketplace/modules/rental.webp',
               cacheWidth: 720,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
             const DecoratedBox(
               decoration: BoxDecoration(

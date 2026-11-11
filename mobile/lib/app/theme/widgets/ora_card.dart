@@ -55,7 +55,7 @@ class _OraCardState extends State<OraCard> {
 
     final shadows = widget.variant == OraCardVariant.elevated
         ? OraElevation.raisedShadow
-        : null;
+        : OraElevation.cardShadow;
 
     final surface = AnimatedContainer(
       duration: OraMotion.select,

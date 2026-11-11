@@ -6,7 +6,7 @@ import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 
-enum OraModuleDestination { rides, logistics, rental, services }
+enum OraModuleDestination { home, rides, logistics, rental, services }
 
 class OraModuleBottomBar extends StatelessWidget {
   const OraModuleBottomBar({this.selected, super.key});
@@ -21,11 +21,26 @@ class OraModuleBottomBar extends StatelessWidget {
         decoration: const BoxDecoration(
           color: OraColors.surface,
           border: Border(top: BorderSide(color: OraColors.border)),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x14F88733),
+              blurRadius: 18,
+              offset: Offset(0, -6),
+              spreadRadius: -8,
+            ),
+          ],
         ),
         child: SizedBox(
           height: 64,
           child: Row(
             children: [
+              _ModuleItem(
+                icon: Icons.home_outlined,
+                selectedIcon: Icons.home_rounded,
+                label: 'Home',
+                selected: selected == OraModuleDestination.home,
+                onTap: () => _replace(context, AppRoutes.home),
+              ),
               _ModuleItem(
                 icon: Icons.directions_car_outlined,
                 selectedIcon: Icons.directions_car_rounded,

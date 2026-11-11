@@ -57,9 +57,9 @@ class MapPreviewConfig {
       ' <a href="https://openmaptiles.org" target="_blank">&copy; OpenMapTiles</a>'
       ' <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>';
 
-  /// Approved Ora map accent blue (route core + glow).
-  static const String routeBlue = '#4FA3D9';
-  static const String routeGlow = '#7CC8F5';
+  /// Approved Ora map accent orange (route core + glow).
+  static const String routeBlue = '#F88733';
+  static const String routeGlow = '#FFC08A';
 
   static const double routeCoreWidth = 5.5;
   static const double routeGlowWidth = 10;

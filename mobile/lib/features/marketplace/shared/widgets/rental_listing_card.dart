@@ -122,11 +122,14 @@ class RentalListingCard extends StatelessWidget {
                   fit: StackFit.expand,
                   clipBehavior: Clip.hardEdge,
                   children: [
+                    const Positioned.fill(
+                      child: ColoredBox(color: OraColors.primaryMuted),
+                    ),
                     if (model.imageAsset != null)
                       Image.asset(
                         model.imageAsset!,
                         cacheWidth: 900,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         filterQuality: FilterQuality.medium,
                       )
                     else
@@ -275,10 +278,13 @@ class _HorizontalRentalListingCard extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
+                      const Positioned.fill(
+                        child: ColoredBox(color: OraColors.primaryMuted),
+                      ),
                       if (model.imageAsset != null)
                         Image.asset(
                           model.imageAsset!,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           filterQuality: FilterQuality.medium,
                         )
                       else

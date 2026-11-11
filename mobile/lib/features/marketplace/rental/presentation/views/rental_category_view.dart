@@ -355,10 +355,13 @@ class _RentalCategoryHero extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
+            const Positioned.fill(
+              child: ColoredBox(color: OraColors.primaryMuted),
+            ),
             Image.asset(
               'assets/marketplace/${category.image}',
               cacheWidth: 960,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) =>
                   const ColoredBox(color: OraColors.navyElevated),
             ),
@@ -446,10 +449,13 @@ class _RentalSubcategoryPhotoCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
+                  const Positioned.fill(
+                    child: ColoredBox(color: OraColors.primaryMuted),
+                  ),
                   Image.asset(
                     'assets/marketplace/${subcategory.image ?? category.image}',
                     cacheWidth: 440,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) =>
                         const ColoredBox(color: OraColors.surfaceStrong),
                   ),

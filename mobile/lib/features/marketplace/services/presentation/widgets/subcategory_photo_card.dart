@@ -79,10 +79,13 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
                       if (widget.subcategory.image == 'placeholder')
                         _photoPlaceholder()
                       else
+                        const Positioned.fill(
+                          child: ColoredBox(color: OraColors.primaryMuted),
+                        ),
                         Image.asset(
                           'assets/marketplace/${widget.subcategory.image}',
                           cacheWidth: 360,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           filterQuality: FilterQuality.medium,
                           errorBuilder: (context, error, stackTrace) =>
                               _photoPlaceholder(),

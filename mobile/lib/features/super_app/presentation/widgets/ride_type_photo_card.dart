@@ -54,10 +54,13 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
+                    const Positioned.fill(
+                      child: ColoredBox(color: OraColors.primaryMuted),
+                    ),
                     Image.asset(
                       option.image,
                       cacheWidth: 480,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       filterQuality: FilterQuality.medium,
                       errorBuilder: (context, error, stackTrace) =>
                           const ColoredBox(

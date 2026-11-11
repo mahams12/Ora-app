@@ -9,9 +9,9 @@ class OraColors {
 
   // ── Brand primitives (prototype) ───────────────────────────────────────────
 
-  static const navy = Color(0xFFF2E3DD);
-  static const navyElevated = Color(0xFFFFF7F3);
-  static const canvas = Color(0xFFF2E3DD);
+  static const navy = Color(0xFFFDE9D3);
+  static const navyElevated = Color(0xFFFFF8EF);
+  static const canvas = Color(0xFFFDE9D3);
 
   static const gold = Color(0xFFF88733);
   static const goldMuted = Color(0x33F88733);
@@ -19,8 +19,8 @@ class OraColors {
   static const goldDeep = Color(0xFFE16F22);
 
   static const teal = Color(0xFFA67D68);
-  static const tealMuted = Color(0x33E9C2AD);
-  static const tealBright = Color(0xFFA67D68);
+  static const tealMuted = Color(0x33F0D2B4);
+  static const tealBright = Color(0xFFE16F22);
   static const tealDeep = Color(0xFF8A624E);
 
   static const info = Color(0xFFA67D68);
@@ -32,8 +32,8 @@ class OraColors {
   static const ink = Color(0xFF2A211D);
   static const slate = Color(0xFFA67D68);
   static const slateMuted = Color(0xFFA67D68);
-  static const line = Color(0xFFE9C2AD);
-  static const starEmpty = Color(0xFFE9C2AD);
+  static const line = Color(0xFFF0D2B4);
+  static const starEmpty = Color(0xFFF0D2B4);
 
   static const danger = Color(0xFFB33B36);
   static const dangerForeground = Color(0xFF8F2926);
@@ -48,7 +48,7 @@ class OraColors {
   static const warningForeground = Color(0xFF8B6914);
   static const errorSurface = Color(0xFFFCE9E7);
 
-  static const disabled = Color(0xFFE9C2AD);
+  static const disabled = Color(0xFFF0D2B4);
   static const disabledForeground = Color(0xFFA67D68);
   static const shadow = Color(0x142A211D);
   static const photoScrim = Color(0x99000000);
@@ -60,7 +60,7 @@ class OraColors {
   // ── Semantic aliases (preferred) ───────────────────────────────────────────
 
   static const primary = gold;
-  static const primaryMuted = Color(0xFFE9C2AD);
+  static const primaryMuted = Color(0xFFF0D2B4);
   static const primaryForeground = Color(0xFFFFFFFF);
 
   static const secondary = teal;
@@ -69,7 +69,7 @@ class OraColors {
 
   static const background = canvas;
   static const surface = Color(0xFFFFFFFF);
-  static const surfaceElevated = Color(0xFFFFF7F3);
+  static const surfaceElevated = Color(0xFFFFF8EF);
   static const surfaceStrong = Color(0xFFFFFFFF);
 
   static const textPrimary = ink;

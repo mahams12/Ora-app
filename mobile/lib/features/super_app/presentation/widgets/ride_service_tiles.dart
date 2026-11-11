@@ -11,18 +11,14 @@ class RideServiceTiles extends StatelessWidget {
     required this.onCityRides,
     required this.onIntercity,
     required this.onCourier,
-    required this.onMove,
     this.courierStatusLabel,
-    this.moveStatusLabel,
     super.key,
   });
 
   final VoidCallback onCityRides;
   final VoidCallback onIntercity;
   final VoidCallback onCourier;
-  final VoidCallback onMove;
   final String? courierStatusLabel;
-  final String? moveStatusLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -67,18 +63,9 @@ class RideServiceTiles extends StatelessWidget {
                 onTap: onCourier,
               ),
             ),
-            const SizedBox(width: OraSpacing.sm),
-            Expanded(
-              child: RideServiceTile(
-                title: 'Move',
-                subtitle: 'Truck + helpers',
-                imageAsset: AppConstants.serviceMoveAsset,
-                icon: Icons.local_shipping_outlined,
-                badgeColor: OraColors.tealBright,
-                statusLabel: moveStatusLabel,
-                onTap: onMove,
-              ),
-            ),
+            // Logistics ("Move") intentionally removed from the rides page —
+            // it stays reachable from the bottom-bar Logistics module.
+            const Spacer(),
           ],
         ),
       ],
@@ -132,9 +119,12 @@ class RideServiceTile extends StatelessWidget {
                   fit: StackFit.expand,
                   clipBehavior: Clip.hardEdge,
                   children: [
+                    const Positioned.fill(
+                      child: ColoredBox(color: OraColors.primaryMuted),
+                    ),
                     Image.asset(
                       imageAsset,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       filterQuality: FilterQuality.medium,
                     ),
                     const DecoratedBox(

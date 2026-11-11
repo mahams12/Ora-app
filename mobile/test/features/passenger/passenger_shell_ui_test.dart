@@ -333,7 +333,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Rides').first);
+    await tester.tap(find.text('Rides').last);
     await tester.pumpAndSettle();
     await tester.drag(
       find.byType(CustomScrollView).last,

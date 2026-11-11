@@ -89,10 +89,13 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
                       fit: StackFit.expand,
                       clipBehavior: Clip.hardEdge,
                       children: [
+                        const Positioned.fill(
+                          child: ColoredBox(color: OraColors.primaryMuted),
+                        ),
                         Image.asset(
                           widget.imageAsset,
                           cacheWidth: 480,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           filterQuality: FilterQuality.medium,
                         ),
                         const DecoratedBox(

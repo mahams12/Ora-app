@@ -82,7 +82,7 @@ void main() {
     expect(find.text('/rides/request?service=intercity'), findsOneWidget);
   });
 
-  testWidgets('Courier stays coming later and Move opens Logistics', (
+  testWidgets('Courier stays coming later and Move tile is hidden', (
     tester,
   ) async {
     final router = _router();
@@ -107,10 +107,8 @@ void main() {
     await tester.tap(find.text('Got it'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Move'));
-    await tester.pumpAndSettle();
-    expect(find.text('/logistics'), findsOneWidget);
-    expect(find.text('Coming later'), findsNothing);
+    expect(find.text('Move'), findsNothing);
+    expect(find.text('Logistics'), findsWidgets);
   });
 
   test('ride type catalogue keeps typed actions and category IDs', () {

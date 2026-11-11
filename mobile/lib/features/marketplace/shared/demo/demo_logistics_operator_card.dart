@@ -50,10 +50,13 @@ class DemoLogisticsOperatorCard extends StatelessWidget {
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
+                          const Positioned.fill(
+                            child: ColoredBox(color: OraColors.primaryMuted),
+                          ),
                           Image.asset(
                             operator.imageAsset,
                             cacheWidth: 360,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) =>
                                 const ColoredBox(
                                   color: OraColors.surfaceStrong,

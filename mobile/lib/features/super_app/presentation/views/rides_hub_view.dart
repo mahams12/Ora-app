@@ -93,8 +93,6 @@ class RidesHubView extends ConsumerWidget {
                         onCourier: () => unawaited(
                           showServiceComingLaterSheet(context, 'Courier'),
                         ),
-                        onMove: () =>
-                            unawaited(context.push<void>(AppRoutes.logistics)),
                         courierStatusLabel: 'Coming later',
                       ),
                       const SizedBox(height: OraSpacing.lg),
