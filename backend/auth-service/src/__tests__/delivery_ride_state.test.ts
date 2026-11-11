@@ -181,16 +181,18 @@ describe('RS-PUSH passenger token registration', () => {
     ).toBeUndefined();
   });
 
-  it('2. driver is rejected on the passenger token route; passenger rejected on driver route', async () => {
+  it('2. approved driver may register passenger tokens (dual-role); passenger rejected on driver route', async () => {
     const db = memoryDb();
     seedUser(db, 'd1', 'driver', 'approved');
     seedUser(db, 'p1', 'passenger');
+    // Switch to Driver: an approved driver in passenger mode needs passenger
+    // ride nudges — the passenger token route allows driverStatus=approved.
     const driverApp = appFor(db, 'd1');
     await request(driverApp)
       .post('/v1/device-tokens')
       .set('Authorization', 'Bearer t')
       .send({ token: 'fcm-driver-on-passenger-rt' })
-      .expect(403);
+      .expect(201);
 
     const passengerApp = appFor(db, 'p1');
     await request(passengerApp)
@@ -538,5 +540,46 @@ describe('RS-PUSH sweep endpoint', () => {
     expect(res.body.data.delivered).toBe(1);
     expect(sent).toHaveLength(1);
     expect(sent[0].data.type).toBe('RIDE_UPDATE');
+  });
+
+  it('courier v2 events push to the correct recipient', async () => {
+    const db = memoryDb();
+    seedRide(db, 'ride1', { passengerId: 'p1', assignedDriverId: 'd1' });
+    seedPassengerToken(db, 'p1', 'tok-p1-abcdefghij');
+    seedDriverToken(db, 'd1', 'tok-d1-abcdefghij');
+    // Driver-reported events wake the passenger.
+    seedEvent(db, 'ev-quote', 'delivery.quote.ready', 'ride1', { seq: 0 });
+    seedEvent(db, 'ev-arr', 'delivery.stop.arrived', 'ride1', { seq: 0 });
+    seedEvent(db, 'ev-set', 'delivery.settlement.reported', 'ride1', {});
+    // Passenger actions wake the driver.
+    seedEvent(db, 'ev-resp', 'delivery.quote.responded', 'ride1', {
+      seq: 0,
+      decision: 'approve',
+    });
+    seedEvent(db, 'ev-ack', 'delivery.acknowledged', 'ride1', {});
+    // Disputes wake both.
+    seedEvent(db, 'ev-disp', 'delivery.dispute.opened', 'ride1', {});
+    const { sender, sent } = recordingFcm();
+    const p = projectorFor(db, sender);
+    const toks = async (id: string) => {
+      sent.length = 0;
+      const res = await p.processEvent({ eventId: id, ...PROCESS_INPUT });
+      return { outcome: res.outcome, tokens: sent.map((s) => s.token) };
+    };
+    for (const id of ['ev-quote', 'ev-arr', 'ev-set']) {
+      expect(await toks(id)).toEqual({
+        outcome: 'delivered',
+        tokens: ['tok-p1-abcdefghij'],
+      });
+    }
+    for (const id of ['ev-resp', 'ev-ack']) {
+      expect(await toks(id)).toEqual({
+        outcome: 'delivered',
+        tokens: ['tok-d1-abcdefghij'],
+      });
+    }
+    expect((await toks('ev-disp')).tokens.sort()).toEqual(
+      ['tok-d1-abcdefghij', 'tok-p1-abcdefghij'].sort(),
+    );
   });
 });

@@ -191,6 +191,7 @@ class DriverAssignedRidesViewModel
         cursor: cursor,
         status: state.status,
         serviceType: state.serviceType,
+        as: 'driver',
       );
       if (seq != _requestSeq) return;
 

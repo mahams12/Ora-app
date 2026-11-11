@@ -100,6 +100,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer(
       (_) async => RideListPage(rides: [_ride(id: 'r1')], nextCursor: null),
@@ -120,6 +121,7 @@ void main() {
         cursor: null,
         status: 'all',
         serviceType: null,
+        as: any(named: 'as'),
       ),
     ).called(1);
   });
@@ -131,6 +133,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((_) async => const RideListPage(rides: [], nextCursor: null));
 
@@ -148,6 +151,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((_) async {
       calls += 1;
@@ -174,6 +178,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((invocation) async {
       final cursor = invocation.namedArguments[#cursor] as String?;
@@ -194,6 +199,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer(
       (_) async => RideListPage(rides: [_ride(id: 'new')], nextCursor: null),
@@ -210,6 +216,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((invocation) async {
       final cursor = invocation.namedArguments[#cursor] as String?;
@@ -240,6 +247,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).called(2);
   });
@@ -252,6 +260,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((invocation) async {
       final cursor = invocation.namedArguments[#cursor] as String?;
@@ -279,6 +288,7 @@ void main() {
         cursor: 'c1',
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).called(1);
   });
@@ -292,6 +302,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((invocation) async {
       statuses.add(invocation.namedArguments[#status] as String?);
@@ -322,6 +333,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((invocation) async {
       types.add(invocation.namedArguments[#serviceType] as String?);
@@ -343,6 +355,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer(
       (_) async => RideListPage(

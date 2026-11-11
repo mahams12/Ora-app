@@ -15,6 +15,7 @@ import {
   NearbyDomainError,
   NearbyDriversService,
   N3_MAX_LIMIT,
+  type N3InviteRevalidationContext,
 } from '../drivers/nearby_service';
 import { logSafe } from '../http/errors';
 import type { RideDoc } from './types';
@@ -38,6 +39,13 @@ const RIDES = 'rides';
 const OUTBOX = 'outboxEvents';
 const DEFAULT_SWEEP_BATCH = 25;
 const MAX_SWEEP_BATCH = 100;
+/**
+ * Candidates revalidated per batched context load. Wave capacity is ≤15;
+ * 25 covers the selection plus typical ineligible candidates in one
+ * parallel read batch, while bounding worst-case reads at 4 loads for a
+ * full 100-candidate result.
+ */
+const N4_INVITE_REVALIDATION_CHUNK = 25;
 
 function isFiniteLatLng(lat: unknown, lng: unknown): boolean {
   return (
@@ -208,15 +216,47 @@ export class DispatchWaveService {
     }
 
     const selected: string[] = [];
-    for (const candidate of nearbyResult.candidates) {
+    const candidateIds = nearbyResult.candidates.map((c) => c.driverId);
+    // Revalidation contexts are loaded lazily in nearest-first chunks: the
+    // selection loop almost always finishes inside the first chunk, so a
+    // wave costs ~1 batched read set instead of up to 4 serial round-trips
+    // per candidate. Every eligibility rule is identical — only the read
+    // pattern changed.
+    let revalidationCtx: N3InviteRevalidationContext | null = null;
+    let ctxCoveredUntil = 0;
+    for (let i = 0; i < nearbyResult.candidates.length; i++) {
+      const candidate = nearbyResult.candidates[i];
       if (selected.length >= need) break;
       if (alreadyInvited.has(candidate.driverId)) continue;
+
+      if (i >= ctxCoveredUntil) {
+        const end = Math.min(
+          i + N4_INVITE_REVALIDATION_CHUNK,
+          candidateIds.length,
+        );
+        try {
+          revalidationCtx = await this.nearby.loadInviteRevalidationContext(
+            candidateIds.slice(i, end),
+            { requestId: input.correlationId },
+          );
+        } catch (err) {
+          if (err instanceof NearbyDomainError) {
+            throw new RideDomainError(err.code, err.httpStatus, err.message);
+          }
+          throw err;
+        }
+        ctxCoveredUntil = end;
+      }
 
       let stillOk: boolean;
       try {
         stillOk = await this.nearby.isStillEligibleForInvite(
           candidate.driverId,
-          { nowMs, requestId: input.correlationId },
+          {
+            nowMs,
+            requestId: input.correlationId,
+            revalidation: revalidationCtx ?? undefined,
+          },
         );
       } catch (err) {
         if (err instanceof NearbyDomainError) {

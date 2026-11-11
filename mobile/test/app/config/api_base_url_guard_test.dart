@@ -62,5 +62,22 @@ void main() {
         'https://api.ora.app/v1',
       );
     });
+
+    test('rejects base URL missing the /v1 prefix', () {
+      for (final url in [
+        'http://10.0.2.2:8080',
+        'http://10.0.2.2:8080/',
+        'http://10.0.2.2:8080/api',
+      ]) {
+        expect(
+          () => resolveApiBaseUrl(
+            environment: AppEnvironment.development,
+            apiBaseUrl: url,
+          ),
+          throwsA(isA<ArgumentError>()),
+          reason: url,
+        );
+      }
+    });
   });
 }

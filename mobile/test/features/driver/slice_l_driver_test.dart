@@ -286,6 +286,7 @@ void main() {
           cursor: any(named: 'cursor'),
           status: any(named: 'status'),
           serviceType: any(named: 'serviceType'),
+          as: any(named: 'as'),
         ),
       ).thenAnswer(
         (_) async => RideListPage(
@@ -316,6 +317,7 @@ void main() {
           cursor: any(named: 'cursor'),
           status: any(named: 'status'),
           serviceType: any(named: 'serviceType'),
+          as: any(named: 'as'),
         ),
       ).called(1);
     });

@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 import type {
   DocumentReference,
   Firestore,
@@ -26,6 +26,7 @@ import {
   assertExpirable,
   assertOfferable,
   assertProgression,
+  COURIER_PARCEL_IN_TRANSIT,
   isExpirable,
 } from './state_machine';
 import type { TripLocationRtdb } from '../rtdb/types';
@@ -48,22 +49,49 @@ import {
   type FeePolicyDoc,
 } from '../pricing/fee_policy';
 import {
+  COURIER_PROTOCOL_EVIDENCE,
+  DELIVERY_FAILURE_REASONS,
+  DISPUTE_CATEGORIES,
+  DISPUTES_COLLECTION,
   IDEMPOTENCY_TTL_MS,
   IdempotencyReplay,
   MAX_OFFERS_SUPERSEDE_IN_TXN,
+  PARCEL_CATEGORIES,
+  PARCEL_SIZES,
   RIDE_NO_SHOW_WAIT_MS,
   RIDE_OFFER_TTL_MS,
   RIDE_SEARCH_TTL_MS,
   RideDomainError,
+  SETTLEMENT_REPORTS,
+  STOP_FAILURE_REASONS,
+  type DeliveryFailureReason,
+  type DisputeCategory,
+  type DisputeDoc,
   type LatLng,
   type OfferType,
+  type ParcelCategory,
+  type ParcelDetails,
+  type ParcelOtp,
+  type ParcelSize,
   type PaymentMethod,
   type RatingDoc,
   type RatingType,
   type RideDoc,
   type RideOfferDoc,
   type RideState,
+  type RideStopDoc,
+  type SettlementDoc,
+  type SettlementReport,
+  type ShoppingDoc,
+  type StopFailureReason,
+  type StopItem,
+  type StopStatus,
+  type StopType,
 } from './types';
+import {
+  isProhibitedItem,
+  loadDeliveryConfig,
+} from '../delivery/delivery_config';
 import {
   completedStates,
   decodeListCursor,
@@ -165,6 +193,9 @@ const MAX_PARENT_OFFER_CLEANUP_PASSES = 20;
 
 const PAYMENT_METHODS = new Set(['CASH', 'WALLET', 'ONLINE_PAYMENT']);
 
+/** Ora Courier — which confirmation code a transition consumes. */
+export type ParcelOtpPurpose = 'pickup' | 'delivery' | 'return';
+
 function requireIdempotencyKey(raw: string | undefined): string {
   const key = raw?.trim() ?? '';
   if (key.length < 8 || key.length > 200) {
@@ -218,6 +249,489 @@ function publicLatLng(point: LatLng) {
   return out;
 }
 
+// ── Ora Courier ─────────────────────────────────────────────────────────────
+
+const PARCEL_OTP_TTL_MS = 24 * 60 * 60 * 1000;
+const PARCEL_OTP_MAX_ATTEMPTS = 10;
+
+function parcelString(
+  raw: unknown,
+  field: string,
+  opts: { min: number; max: number; required: boolean },
+): string | null {
+  if (raw == null || raw === '') {
+    if (opts.required) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        `parcel.${field} is required.`,
+      );
+    }
+    return null;
+  }
+  if (typeof raw !== 'string') {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      `parcel.${field} must be a string.`,
+    );
+  }
+  const v = raw.trim();
+  if (v.length < opts.min || v.length > opts.max) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      `parcel.${field} must be ${opts.min}–${opts.max} characters.`,
+    );
+  }
+  return v;
+}
+
+/** Loose international phone check — digits, optional +, spaces/dashes. */
+function parcelPhone(raw: unknown, field: string): string {
+  const v = parcelString(raw, field, { min: 7, max: 20, required: true })!;
+  if (!/^\+?[0-9][0-9\s-]{5,18}$/.test(v)) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      `parcel.${field} must be a valid phone number.`,
+    );
+  }
+  return v;
+}
+
+/**
+ * Validate the courier parcel manifest at booking time. Strict caps keep
+ * payloads bounded; unknown keys are already rejected by createRide.
+ */
+function parseParcelDetails(raw: unknown): ParcelDetails {
+  if (raw == null || typeof raw !== 'object' || Array.isArray(raw)) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'parcel is required for courier bookings.',
+    );
+  }
+  const obj = raw as Record<string, unknown>;
+  const allowed = new Set([
+    'senderName',
+    'senderPhone',
+    'receiverName',
+    'receiverPhone',
+    'parcelCategory',
+    'size',
+    'weightKg',
+    'quantity',
+    'description',
+    'handlingInstructions',
+    'photoUrl',
+  ]);
+  const extra = Object.keys(obj).filter((k) => !allowed.has(k));
+  if (extra.length > 0) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      `parcel has unknown fields: ${extra.join(', ')}.`,
+    );
+  }
+
+  const parcelCategory = parcelString(obj.parcelCategory, 'parcelCategory', {
+    min: 1,
+    max: 30,
+    required: true,
+  })!;
+  if (!(PARCEL_CATEGORIES as readonly string[]).includes(parcelCategory)) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      `parcel.parcelCategory must be one of: ${PARCEL_CATEGORIES.join(', ')}.`,
+    );
+  }
+  const size = parcelString(obj.size, 'size', {
+    min: 1,
+    max: 10,
+    required: true,
+  })!.toUpperCase();
+  if (!(PARCEL_SIZES as readonly string[]).includes(size)) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'parcel.size must be SMALL, MEDIUM, or LARGE.',
+    );
+  }
+  const weightKg = Number(obj.weightKg);
+  if (!Number.isFinite(weightKg) || weightKg <= 0 || weightKg > 30) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'parcel.weightKg must be a number greater than 0 and at most 30 kg.',
+    );
+  }
+  const quantity = Number(obj.quantity);
+  if (!Number.isInteger(quantity) || quantity < 1 || quantity > 50) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'parcel.quantity must be an integer from 1 to 50.',
+    );
+  }
+  const photoUrl = parcelString(obj.photoUrl, 'photoUrl', {
+    min: 0,
+    max: 500,
+    required: false,
+  });
+  if (photoUrl != null && !/^https:\/\//i.test(photoUrl)) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'parcel.photoUrl must be an https URL.',
+    );
+  }
+
+  return {
+    senderName: parcelString(obj.senderName, 'senderName', {
+      min: 1,
+      max: 80,
+      required: true,
+    })!,
+    senderPhone: parcelPhone(obj.senderPhone, 'senderPhone'),
+    receiverName: parcelString(obj.receiverName, 'receiverName', {
+      min: 1,
+      max: 80,
+      required: true,
+    })!,
+    receiverPhone: parcelPhone(obj.receiverPhone, 'receiverPhone'),
+    parcelCategory: parcelCategory as ParcelCategory,
+    size: size as ParcelSize,
+    weightKg,
+    quantity,
+    description: parcelString(obj.description, 'description', {
+      min: 1,
+      max: 500,
+      required: true,
+    })!,
+    handlingInstructions: parcelString(
+      obj.handlingInstructions,
+      'handlingInstructions',
+      { min: 0, max: 300, required: false },
+    ),
+    photoUrl,
+  };
+}
+
+function parseStopItems(raw: unknown, seq: number): StopItem[] | undefined {
+  if (raw === undefined) return undefined;
+  if (!Array.isArray(raw) || raw.length < 1 || raw.length > 50) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      `stops[${seq}].items must contain 1–50 items.`,
+    );
+  }
+  return raw.map((it, i) => {
+    const o = (it ?? {}) as Record<string, unknown>;
+    const name = parcelString(o.name, `stops[${seq}].items[${i}].name`, {
+      min: 1,
+      max: 100,
+      required: true,
+    })!;
+    const qty = Number(o.qty ?? 1);
+    if (!Number.isInteger(qty) || qty < 1 || qty > 99) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        `stops[${seq}].items[${i}].qty must be an integer from 1 to 99.`,
+      );
+    }
+    const note = parcelString(o.note, `stops[${seq}].items[${i}].note`, {
+      min: 0,
+      max: 200,
+      required: false,
+    });
+    return { name, qty, note };
+  });
+}
+
+/**
+ * Ora Courier v2 — validate + normalize the ordered itinerary.
+ * pickup/destination are derived from first/last stop; stops are immutable
+ * after create (post-acceptance amendments are a future phase).
+ */
+function parseStops(
+  raw: unknown,
+  serviceType: string,
+  maxStops: number,
+): RideStopDoc[] {
+  if (!Array.isArray(raw)) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'stops must be an array of waypoints.',
+    );
+  }
+  if (raw.length < 2 || raw.length > maxStops) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      `stops must contain between 2 and ${maxStops} waypoints.`,
+    );
+  }
+  const allowedTypes =
+    serviceType === 'buy_deliver'
+      ? new Set<StopType>(['PICKUP', 'SHOP', 'DROPOFF'])
+      : new Set<StopType>(['PICKUP', 'DROPOFF']);
+
+  const stops: RideStopDoc[] = raw.map((s, i) => {
+    const o = (s ?? {}) as Record<string, unknown>;
+    const extra = Object.keys(o).filter(
+      (k) =>
+        !new Set([
+          'type',
+          'location',
+          'label',
+          'instructions',
+          'items',
+          'shopBudgetMinor',
+        ]).has(k),
+    );
+    if (extra.length > 0) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        `stops[${i}] has unknown fields: ${extra.join(', ')}.`,
+      );
+    }
+    const type = parcelString(o.type, `stops[${i}].type`, {
+      min: 1,
+      max: 10,
+      required: true,
+    })!.toUpperCase() as StopType;
+    if (!allowedTypes.has(type)) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        `stops[${i}].type is not valid for ${serviceType}.`,
+      );
+    }
+    const location = parseLatLng(o.location, `stops[${i}].location`);
+    const label = parcelString(o.label, `stops[${i}].label`, {
+      min: 0,
+      max: 80,
+      required: false,
+    });
+    const instructions = parcelString(
+      o.instructions,
+      `stops[${i}].instructions`,
+      { min: 0, max: 500, required: false },
+    );
+    const items = parseStopItems(o.items, i);
+    if (type === 'SHOP' && (!items || items.length === 0)) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        `stops[${i}] (SHOP) requires a non-empty items list.`,
+      );
+    }
+    if (type !== 'SHOP' && items !== undefined) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        `stops[${i}].items is only valid on SHOP stops.`,
+      );
+    }
+    let shopBudgetMinor: number | null = null;
+    if (o.shopBudgetMinor !== undefined && o.shopBudgetMinor !== null) {
+      const b = Number(o.shopBudgetMinor);
+      if (!Number.isInteger(b) || b <= 0) {
+        throw new RideDomainError(
+          'VALIDATION_ERROR',
+          400,
+          `stops[${i}].shopBudgetMinor must be a positive integer.`,
+        );
+      }
+      shopBudgetMinor = b;
+    }
+    return {
+      seq: i,
+      type,
+      location,
+      label,
+      instructions,
+      ...(items !== undefined ? { items } : {}),
+      shopBudgetMinor,
+      status: 'PENDING' as StopStatus,
+      arrivedAt: null,
+      doneAt: null,
+      failedAt: null,
+      failureReason: null,
+      confirmedNearMeters: null,
+      quote: null,
+      purchase: null,
+    };
+  });
+
+  if (stops[0].type === 'DROPOFF') {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'The first stop cannot be a DROPOFF.',
+    );
+  }
+  if (stops[stops.length - 1].type !== 'DROPOFF') {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'The last stop must be a DROPOFF.',
+    );
+  }
+  if (serviceType === 'buy_deliver' && !stops.some((s) => s.type === 'SHOP')) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'Buy & Deliver requires at least one SHOP stop.',
+    );
+  }
+  return stops;
+}
+
+/** Ora Courier v2 — validate the buy_deliver shopping block. */
+function parseShopping(
+  raw: unknown,
+  maxBudgetMinor: number,
+): ShoppingDoc {
+  if (raw == null || typeof raw !== 'object' || Array.isArray(raw)) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'shopping is required for buy_deliver bookings.',
+    );
+  }
+  const o = raw as Record<string, unknown>;
+  const extra = Object.keys(o).filter(
+    (k) =>
+      !new Set([
+        'totalBudgetMinor',
+        'attestationAccepted',
+        'paymentArrangement',
+      ]).has(k),
+  );
+  if (extra.length > 0) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      `shopping has unknown fields: ${extra.join(', ')}.`,
+    );
+  }
+  const budget = Number(o.totalBudgetMinor);
+  if (!Number.isInteger(budget) || budget <= 0) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'shopping.totalBudgetMinor must be a positive integer.',
+    );
+  }
+  if (budget > maxBudgetMinor) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      `shopping.totalBudgetMinor exceeds the booking cap of ${maxBudgetMinor}.`,
+    );
+  }
+  if (o.attestationAccepted !== true) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'The restricted-items attestation must be accepted.',
+    );
+  }
+  if (
+    o.paymentArrangement !== undefined &&
+    o.paymentArrangement !== 'RIDER_CASH'
+  ) {
+    throw new RideDomainError(
+      'VALIDATION_ERROR',
+      400,
+      'Only RIDER_CASH payment arrangement is supported.',
+    );
+  }
+  return {
+    totalBudgetMinor: budget,
+    approvedTotalMinor: 0,
+    spentMinor: 0,
+    serviceFeeMinor: 0,
+    paymentArrangement: 'RIDER_CASH',
+    attestationAcceptedAt: new Date().toISOString(),
+  };
+}
+
+/**
+ * Ora Courier v2 — the driver holds goods (parcel collected or shopping
+ * purchased). While true, instant cancellation is unsafe and blocked.
+ */
+function v2HasCustody(ride: RideDoc): boolean {
+  if (ride.courierProtocolVersion !== COURIER_PROTOCOL_EVIDENCE) return false;
+  return (ride.stops ?? []).some(
+    (s) =>
+      s.status === 'DONE' && (s.type === 'PICKUP' || s.type === 'SHOP'),
+  );
+}
+
+function haversineMeters(
+  a: { lat: number; lng: number },
+  b: { lat: number; lng: number },
+): number {
+  const R = 6371000;
+  const rad = (d: number) => (d * Math.PI) / 180;
+  const dLat = rad(b.lat - a.lat);
+  const dLng = rad(b.lng - a.lng);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+/** Evidence flag thresholds — recorded, never blocking (GPS can be stale). */
+const STOP_CONFIRM_NEAR_METERS = 300;
+const STOP_CONFIRM_FIX_MAX_AGE_MS = 10 * 60 * 1000;
+
+function generateParcelOtp(now: Date): ParcelOtp {
+  const code = () => randomInt(0, 1_000_000).toString().padStart(6, '0');
+  return {
+    pickupCode: code(),
+    deliveryCode: code(),
+    returnCode: code(),
+    expiresAt: new Date(now.getTime() + PARCEL_OTP_TTL_MS).toISOString(),
+    attempts: 0,
+    pickupUsedAt: null,
+    deliveryUsedAt: null,
+    returnUsedAt: null,
+  };
+}
+
+function otpFieldForPurpose(purpose: ParcelOtpPurpose): keyof ParcelOtp {
+  switch (purpose) {
+    case 'pickup':
+      return 'pickupCode';
+    case 'delivery':
+      return 'deliveryCode';
+    case 'return':
+      return 'returnCode';
+  }
+}
+
+function otpUsedFieldForPurpose(
+  purpose: ParcelOtpPurpose,
+): 'pickupUsedAt' | 'deliveryUsedAt' | 'returnUsedAt' {
+  switch (purpose) {
+    case 'pickup':
+      return 'pickupUsedAt';
+    case 'delivery':
+      return 'deliveryUsedAt';
+    case 'return':
+      return 'returnUsedAt';
+  }
+}
+
 /**
  * Slice M0 — privacy-minimized open-ride discovery projection.
  * Excludes passenger identity, assignment internals, pricing snapshots, and
@@ -238,6 +752,41 @@ function publicOpenRide(ride: RideDoc) {
     passengerOfferMinor: ride.passengerOfferMinor,
     paymentMethod: ride.paymentMethod,
     passengerCount: ride.passengerCount,
+    // Ora Courier — non-contact parcel summary only (mirrors the invite
+    // projection); sender/receiver names+phones are never open-discoverable.
+    ...(ride.serviceType === 'courier' && ride.parcel
+      ? {
+          parcel: {
+            parcelCategory: ride.parcel.parcelCategory,
+            size: ride.parcel.size,
+            weightKg: ride.parcel.weightKg,
+            quantity: ride.parcel.quantity,
+            description: ride.parcel.description,
+          },
+        }
+      : {}),
+    // Ora Courier v2 — itinerary summary for driver offer evaluation:
+    // types, locations, labels, shopping items; no contacts exist on stops.
+    ...(ride.stops && ride.stops.length > 0
+      ? {
+          courierProtocolVersion: ride.courierProtocolVersion ?? null,
+          stops: ride.stops.map((s) => ({
+            seq: s.seq,
+            type: s.type,
+            location: publicLatLng(s.location),
+            label: s.label,
+            instructions: s.instructions,
+            ...(s.items ? { items: s.items } : {}),
+            shopBudgetMinor: s.shopBudgetMinor ?? null,
+          })),
+          shopping: ride.shopping
+            ? {
+                totalBudgetMinor: ride.shopping.totalBudgetMinor,
+                paymentArrangement: ride.shopping.paymentArrangement,
+              }
+            : null,
+        }
+      : {}),
     distanceKm: ride.distanceKm,
     estimatedDurationMin:
       ride.estimatedDurationMin == null
@@ -324,6 +873,51 @@ function publicRide(ride: RideDoc, viewer: RideViewer) {
       : {}),
     paymentMethod: ride.paymentMethod,
     passengerCount: ride.passengerCount,
+    // Ora Courier — parcel manifest + OTP codes. publicRide is only ever
+    // invoked for the passenger or the assigned driver; contacts therefore
+    // stay within the two authorized parties. Codes are passenger-only.
+    ...(ride.serviceType === 'courier' && ride.parcel
+      ? {
+          parcel: ride.parcel,
+        }
+      : {}),
+    ...((ride.serviceType === 'courier' ||
+      ride.serviceType === 'buy_deliver')
+      ? {
+          deliveryFailedAt: ride.deliveryFailedAt ?? null,
+          deliveryFailedReason: ride.deliveryFailedReason ?? null,
+          returnStartedAt: ride.returnStartedAt ?? null,
+          returnedAt: ride.returnedAt ?? null,
+          pickupPhotoUrl: ride.pickupPhotoUrl ?? null,
+        }
+      : {}),
+    ...(viewer === 'passenger' && ride.parcelOtp
+      ? {
+          otpCodes: {
+            pickup: ride.parcelOtp.pickupCode,
+            delivery: ride.parcelOtp.deliveryCode,
+            return: ride.parcelOtp.returnCode,
+            expiresAt: ride.parcelOtp.expiresAt,
+            pickupUsedAt: ride.parcelOtp.pickupUsedAt,
+            deliveryUsedAt: ride.parcelOtp.deliveryUsedAt,
+            returnUsedAt: ride.parcelOtp.returnUsedAt,
+          },
+        }
+      : {}),
+    // Ora Courier v2 — full itinerary + settlement visible to both parties.
+    ...(ride.stops && ride.stops.length > 0
+      ? {
+          courierProtocolVersion: ride.courierProtocolVersion ?? null,
+          stops: ride.stops,
+          currentStopIndex: ride.currentStopIndex ?? null,
+          shopping: ride.shopping ?? null,
+          settlement: ride.settlement ?? null,
+          evidence: ride.evidence ?? null,
+          partialFulfillment: ride.partialFulfillment ?? false,
+          disputeStatus: ride.disputeStatus ?? 'none',
+          disputeId: ride.disputeId ?? null,
+        }
+      : {}),
     expiresAt: ride.expiresAt,
     assignedAt: ride.assignedAt,
     arrivedAt: ride.arrivedAt ?? null,
@@ -416,7 +1010,11 @@ function deriveRatingDirection(
 }
 
 function assertRatingEligible(state: RideState): void {
-  if (state !== 'RIDE_COMPLETED' && state !== 'RIDE_CLOSED') {
+  if (
+    state !== 'RIDE_COMPLETED' &&
+    state !== 'RIDE_CLOSED' &&
+    state !== 'RETURNED'
+  ) {
     throw new RideDomainError(
       'STATE_CONFLICT',
       409,
@@ -611,6 +1209,9 @@ export class RideService {
         'pricingSnapshotId',
         'paymentMethod',
         'passengerCount',
+        'parcel',
+        'stops',
+        'shopping',
       ]),
     );
 
@@ -651,7 +1252,108 @@ export class RideService {
       throw new RideDomainError(
         'VALIDATION_ERROR',
         400,
-        'serviceType must be one of: ride, courier, intercity, move.',
+        'serviceType must be one of: ride, courier, buy_deliver, intercity, move.',
+      );
+    }
+
+    // Ora Courier v2 — feature gates + itinerary validation need config.
+    const deliveryCfg =
+      serviceType === 'courier' || serviceType === 'buy_deliver'
+        ? await loadDeliveryConfig(this.db)
+        : null;
+    if (serviceType === 'buy_deliver' && deliveryCfg?.enableBuyDeliver === false) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        'Buy & Deliver is not currently available.',
+      );
+    }
+
+    // Ora Courier — parcel manifest is mandatory for courier bookings and
+    // rejected on every other service type (keeps ride payloads clean).
+    let parcel: ParcelDetails | undefined;
+    if (serviceType === 'courier') {
+      parcel = parseParcelDetails(body.parcel);
+    } else if (body.parcel !== undefined) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        'parcel is only valid for courier bookings.',
+      );
+    }
+
+    // Ora Courier v2 — stops itinerary. `buy_deliver` requires stops;
+    // `courier` with stops becomes protocol v2 (code-free); `courier`
+    // without stops stays protocol v1 (OTP, old-APK compatibility).
+    let stops: RideStopDoc[] | undefined;
+    if (body.stops !== undefined) {
+      if (serviceType !== 'courier' && serviceType !== 'buy_deliver') {
+        throw new RideDomainError(
+          'VALIDATION_ERROR',
+          400,
+          'stops is only valid for courier and buy_deliver bookings.',
+        );
+      }
+      stops = parseStops(body.stops, serviceType, deliveryCfg?.maxStops ?? 5);
+      if (
+        stops[0].location.lat !== pickup.lat ||
+        stops[0].location.lng !== pickup.lng ||
+        stops[stops.length - 1].location.lat !== destination.lat ||
+        stops[stops.length - 1].location.lng !== destination.lng
+      ) {
+        throw new RideDomainError(
+          'VALIDATION_ERROR',
+          400,
+          'stops must begin at pickup and end at destination.',
+        );
+      }
+      // Prohibited-items enforcement at booking (SHOP item names).
+      if (serviceType === 'buy_deliver' && deliveryCfg) {
+        for (const stop of stops) {
+          for (const item of stop.items ?? []) {
+            if (isProhibitedItem(item.name, deliveryCfg)) {
+              throw new RideDomainError(
+                'VALIDATION_ERROR',
+                400,
+                `Item "${item.name}" is not permitted for delivery.`,
+              );
+            }
+          }
+        }
+      }
+    }
+    if (serviceType === 'buy_deliver' && !stops) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        'stops are required for buy_deliver bookings.',
+      );
+    }
+
+    let shopping: ShoppingDoc | undefined;
+    if (serviceType === 'buy_deliver') {
+      shopping = parseShopping(
+        body.shopping,
+        deliveryCfg?.maxShoppingBudgetMinor ?? 300000,
+      );
+      // Per-shop caps may not exceed the booking budget.
+      for (const s of stops ?? []) {
+        if (
+          s.shopBudgetMinor != null &&
+          s.shopBudgetMinor > shopping.totalBudgetMinor
+        ) {
+          throw new RideDomainError(
+            'VALIDATION_ERROR',
+            400,
+            `stops[${s.seq}].shopBudgetMinor exceeds the booking budget.`,
+          );
+        }
+      }
+    } else if (body.shopping !== undefined) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        'shopping is only valid for buy_deliver bookings.',
       );
     }
     const paymentMethod = body.paymentMethod;
@@ -758,6 +1460,49 @@ export class RideService {
       paymentMethod: paymentMethod as PaymentMethod,
       paymentIntentId: null,
       passengerCount,
+      ...(parcel ? { parcel } : {}),
+      // Ora Courier v2 — protocol stamp + itinerary. v1 (no stops) keeps the
+      // OTP-era contract so the shipped APK continues to work.
+      ...(stops
+        ? {
+            courierProtocolVersion: COURIER_PROTOCOL_EVIDENCE as 2,
+            stops,
+            currentStopIndex: 0,
+            evidence: { confirms: [], customerAckAt: null },
+            settlement: {
+              currency: 'PKR',
+              deliveryFareMinor: null,
+              shoppingTotalMinor: 0,
+              serviceFeeMinor:
+                typeof snapshot.inputs?.serviceFeeMinor === 'number'
+                  ? (snapshot.inputs.serviceFeeMinor as number)
+                  : 0,
+              stopFeesMinor:
+                typeof snapshot.inputs?.stopFeesMinor === 'number'
+                  ? (snapshot.inputs.stopFeesMinor as number)
+                  : 0,
+              totalDueMinor: 0,
+              driverReportedStatus: null,
+              driverReportedAt: null,
+              customerAckAt: null,
+              status: 'PENDING' as const,
+            },
+            partialFulfillment: false,
+            disputeStatus: 'none' as const,
+            disputeId: null,
+          }
+        : {}),
+      ...(shopping
+        ? {
+            shopping: {
+              ...shopping,
+              serviceFeeMinor:
+                typeof snapshot.inputs?.serviceFeeMinor === 'number'
+                  ? (snapshot.inputs.serviceFeeMinor as number)
+                  : 0,
+            },
+          }
+        : {}),
       expiresAt: new Date(now.getTime() + RIDE_SEARCH_TTL_MS).toISOString(),
       assignedAt: null,
       arrivedAt: null,
@@ -882,16 +1627,29 @@ export class RideService {
     };
   }> {
     const actor = await loadActor(this.db, input.caller.uid);
-    const queryRole: RideListQueryRole =
-      actor.role === 'driver' && actor.driverStatus === 'approved'
-        ? 'driver'
-        : 'passenger';
+    const parsed = parseRideListQuery(input.query);
+    const isDriverEligible =
+      actor.role === 'driver' && actor.driverStatus === 'approved';
+    let queryRole: RideListQueryRole;
+    if (parsed.as === 'driver') {
+      if (!isDriverEligible) {
+        throw new RideDomainError(
+          'DRIVER_NOT_ELIGIBLE',
+          403,
+          'Driver is not approved to view driver trips.',
+        );
+      }
+      queryRole = 'driver';
+    } else if (parsed.as === 'passenger') {
+      queryRole = 'passenger';
+    } else {
+      queryRole = isDriverEligible ? 'driver' : 'passenger';
+    }
     const ownerField =
       queryRole === 'driver' ? 'assignedDriverId' : 'passengerId';
     const uid = input.caller.uid;
     const binding = ownerBinding(uid, queryRole);
 
-    const parsed = parseRideListQuery(input.query);
     const cursor = parsed.cursor
       ? decodeListCursor(parsed.cursor, binding)
       : null;
@@ -1763,6 +2521,26 @@ export class RideService {
           assignedAt: nowIso,
           version: nextVersion,
           updatedAt: nowIso,
+          // Ora Courier — issue pickup/delivery/return codes at assignment.
+          // Single-use, expiring, passenger-visible only.
+          // v2 bookings (courierProtocolVersion=2) are code-free — no OTP.
+          ...(ride.serviceType === 'courier' &&
+          ride.courierProtocolVersion !== COURIER_PROTOCOL_EVIDENCE
+            ? { parcelOtp: generateParcelOtp(now) }
+            : {}),
+          // Ora Courier v2 — fare becomes due once an offer is agreed;
+          // settlement is computed server-side, never client-supplied.
+          ...(ride.courierProtocolVersion === COURIER_PROTOCOL_EVIDENCE &&
+          ride.settlement
+            ? {
+                'settlement.deliveryFareMinor': offer.amountMinor,
+                // The agreed fare already includes serviceFeeMinor and
+                // stopFeesMinor (estimate_service.ts: they are folded into
+                // recommendedFareMinor). Only shopping spend is added on top.
+                'settlement.totalDueMinor':
+                  offer.amountMinor + (ride.settlement.shoppingTotalMinor ?? 0),
+              }
+            : {}),
         });
 
         tx.update(offerRef, {
@@ -1963,7 +2741,11 @@ export class RideService {
           (ride.state === 'DRIVER_ASSIGNED' ||
             ride.state === 'DRIVER_EN_ROUTE' ||
             ride.state === 'DRIVER_ARRIVED' ||
-            ride.state === 'RIDE_STARTED');
+            ride.state === 'RIDE_STARTED' ||
+            // Ora Courier v2 — non-custody failed deliveries stay cancellable.
+            (ride.courierProtocolVersion === COURIER_PROTOCOL_EVIDENCE &&
+              ride.state === 'DELIVERY_FAILED' &&
+              !v2HasCustody(ride)));
 
         let cancelledBy: 'passenger' | 'driver';
 
@@ -1987,9 +2769,49 @@ export class RideService {
               'Only the passenger or assigned driver may cancel after assignment.',
             );
           }
-          assertCancellablePostAssign(ride.state);
+          // Ora Courier v2 — a failed delivery WITHOUT goods/money in
+          // custody may still be cancelled even though DELIVERY_FAILED is
+          // not a normally-cancellable state.
+          const v2NonCustodyFailed =
+            ride.courierProtocolVersion === COURIER_PROTOCOL_EVIDENCE &&
+            ride.state === 'DELIVERY_FAILED' &&
+            !v2HasCustody(ride);
+          if (!v2NonCustodyFailed) {
+            assertCancellablePostAssign(ride.state);
+          }
+          // Ora Courier — once the parcel is picked up (RIDE_STARTED) the
+          // booking can only exit via delivery or return-to-sender.
+          // v1: parcel in transit by state. v2: blocked only with custody.
+          if (
+            (ride.serviceType === 'courier' ||
+              ride.serviceType === 'buy_deliver') &&
+            COURIER_PARCEL_IN_TRANSIT.has(ride.state) &&
+            (ride.courierProtocolVersion !== COURIER_PROTOCOL_EVIDENCE ||
+              v2HasCustody(ride))
+          ) {
+            throw new RideDomainError(
+              'STATE_CONFLICT',
+              409,
+              'A delivery in progress cannot be cancelled. The driver must complete it or return goods first.',
+            );
+          }
           cancelledBy = isPassenger ? 'passenger' : 'driver';
         } else {
+          // Ora Courier — a parcel in driver custody can never be cancelled
+          // (it must be delivered, retried, or returned to sender).
+          if (
+            (ride.serviceType === 'courier' ||
+              ride.serviceType === 'buy_deliver') &&
+            COURIER_PARCEL_IN_TRANSIT.has(ride.state) &&
+            (ride.courierProtocolVersion !== COURIER_PROTOCOL_EVIDENCE ||
+              v2HasCustody(ride))
+          ) {
+            throw new RideDomainError(
+              'STATE_CONFLICT',
+              409,
+              'A delivery in progress cannot be cancelled. The driver must complete it or return goods first.',
+            );
+          }
           throw new RideDomainError(
             'STATE_CONFLICT',
             409,
@@ -2177,6 +2999,9 @@ export class RideService {
       operation: 'RIDE_START',
       eventType: 'ride.started',
       setStartedAt: true,
+      // Ora Courier — parcel handover is confirmed by the sender's pickup code.
+      otpPurpose: 'pickup',
+      allowPickupPhoto: true,
     });
   }
 
@@ -2194,6 +3019,85 @@ export class RideService {
       operation: 'RIDE_COMPLETE',
       eventType: 'ride.completed',
       setCompletedAt: true,
+      // Ora Courier — delivery is confirmed by the receiver's delivery code.
+      otpPurpose: 'delivery',
+    });
+  }
+
+  /** Ora Courier — driver reports the delivery attempt failed. */
+  async failDelivery(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    return this.progressAssignedRide({
+      ...input,
+      fromState: 'RIDE_STARTED',
+      toState: 'DELIVERY_FAILED',
+      operation: 'DELIVERY_FAIL',
+      eventType: 'ride.delivery.failed',
+      requireDeliveryFailureReason: true,
+    });
+  }
+
+  /** Ora Courier — driver retries the delivery after a failed attempt. */
+  async retryDelivery(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    return this.progressAssignedRide({
+      ...input,
+      fromState: 'DELIVERY_FAILED',
+      toState: 'RIDE_STARTED',
+      operation: 'DELIVERY_RETRY',
+      eventType: 'ride.delivery.retry',
+      clearDeliveryFailure: true,
+      // Ora Courier v2 — retrying reopens the last failed stop so it can
+      // be arrived/confirmed again (no code needed).
+      v2ReopenFailedStops: true,
+    });
+  }
+
+  /** Ora Courier — driver begins returning the parcel to the sender. */
+  async startReturn(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    return this.progressAssignedRide({
+      ...input,
+      fromState: 'DELIVERY_FAILED',
+      toState: 'RETURNING',
+      operation: 'RETURN_START',
+      eventType: 'ride.return.started',
+      setReturnStartedAt: true,
+    });
+  }
+
+  /** Ora Courier — sender confirms the parcel came back (return code). */
+  async completeReturn(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    return this.progressAssignedRide({
+      ...input,
+      fromState: 'RETURNING',
+      toState: 'RETURNED',
+      operation: 'RETURN_COMPLETE',
+      eventType: 'ride.returned',
+      otpPurpose: 'return',
+      setCompletedAt: true,
+      setReturnedAt: true,
     });
   }
 
@@ -2210,16 +3114,25 @@ export class RideService {
     setArrivedAt?: boolean;
     setStartedAt?: boolean;
     setCompletedAt?: boolean;
+    setReturnedAt?: boolean;
+    setReturnStartedAt?: boolean;
+    clearDeliveryFailure?: boolean;
+    requireDeliveryFailureReason?: boolean;
+    allowPickupPhoto?: boolean;
+    otpPurpose?: ParcelOtpPurpose;
+    v2ReopenFailedStops?: boolean;
   }): Promise<{ httpStatus: number; body: unknown }> {
     const idempotencyKey = requireIdempotencyKey(input.idempotencyKeyHeader);
     const body = rejectUnknownKeys(
       input.body ?? {},
-      new Set(['expectedVersion']),
+      new Set(['expectedVersion', 'otp', 'pickupPhotoUrl', 'reason']),
     );
     const requestHash = hashRequest({
       rideId: input.rideId,
       operation: input.operation,
       expectedVersion: body.expectedVersion ?? null,
+      // OTP codes never enter the request hash (avoid hashing secrets); a
+      // wrong code is not idempotent-replayable anyway.
     });
     const replay = await readIdempotencyReplay(
       this.db,
@@ -2247,6 +3160,94 @@ export class RideService {
     const now = new Date();
     const nowIso = now.toISOString();
     let responseBody: unknown;
+
+    // Ora Courier — OTP pre-check (outside the txn so a wrong code can
+    // durably increment attempts without aborting writes). The authoritative
+    // single-use + code re-check still happens inside the transaction.
+    const otpInput =
+      typeof body.otp === 'string' ? body.otp.trim() : null;
+    const pickupPhotoUrl =
+      typeof body.pickupPhotoUrl === 'string'
+        ? body.pickupPhotoUrl.trim().slice(0, 500)
+        : null;
+    if (pickupPhotoUrl != null && pickupPhotoUrl !== '') {
+      if (!/^https:\/\//i.test(pickupPhotoUrl)) {
+        throw new RideDomainError(
+          'VALIDATION_ERROR',
+          400,
+          'pickupPhotoUrl must be an https URL.',
+        );
+      }
+    }
+    let failureReason: DeliveryFailureReason | null = null;
+    if (input.requireDeliveryFailureReason) {
+      const r = typeof body.reason === 'string' ? body.reason.trim() : '';
+      if (!(DELIVERY_FAILURE_REASONS as readonly string[]).includes(r)) {
+        throw new RideDomainError(
+          'VALIDATION_ERROR',
+          400,
+          `reason must be one of: ${DELIVERY_FAILURE_REASONS.join(', ')}.`,
+        );
+      }
+      failureReason = r as DeliveryFailureReason;
+    }
+    if (input.otpPurpose) {
+      const preSnap = await this.db.collection(RIDES).doc(input.rideId).get();
+      if (preSnap.exists) {
+        const preRide = preSnap.data() as RideDoc;
+        // Authorization precedes any attempts mutation — a non-assigned
+        // caller must never be able to burn the code-attempt budget.
+        if (
+          preRide.serviceType === 'courier' &&
+          preRide.courierProtocolVersion !== COURIER_PROTOCOL_EVIDENCE &&
+          preRide.state === input.fromState &&
+          preRide.assignedDriverId === input.caller.uid
+        ) {
+          const otp = preRide.parcelOtp;
+          if (!otp) {
+            throw new RideDomainError(
+              'STATE_CONFLICT',
+              409,
+              'Courier confirmation codes have not been issued for this delivery.',
+            );
+          }
+          if ((otp.attempts ?? 0) >= PARCEL_OTP_MAX_ATTEMPTS) {
+            throw new RideDomainError(
+              'OTP_LOCKED',
+              429,
+              'Too many invalid code attempts. Contact support.',
+            );
+          }
+          if (Date.parse(otp.expiresAt) <= now.getTime()) {
+            throw new RideDomainError(
+              'OTP_EXPIRED',
+              410,
+              'The confirmation code has expired.',
+            );
+          }
+          const usedField = otpUsedFieldForPurpose(input.otpPurpose);
+          if (otp[usedField] != null) {
+            throw new RideDomainError(
+              'OTP_ALREADY_USED',
+              409,
+              'This confirmation code was already used.',
+            );
+          }
+          const expected = otp[otpFieldForPurpose(input.otpPurpose)];
+          if (!otpInput || otpInput !== expected) {
+            await this.db
+              .collection(RIDES)
+              .doc(input.rideId)
+              .update({ 'parcelOtp.attempts': (otp.attempts ?? 0) + 1 });
+            throw new RideDomainError(
+              'OTP_INVALID',
+              403,
+              'Incorrect confirmation code.',
+            );
+          }
+        }
+      }
+    }
 
     try {
       await this.db.runTransaction(async (tx) => {
@@ -2320,12 +3321,63 @@ export class RideService {
           );
         }
 
+        // Ora Courier — in-txn single-use re-check (closes the race between
+        // the pre-check and commit; the code itself was already verified).
+        // v2 deliveries are code-free — the gate only applies when an OTP
+        // was actually issued (protocol v1).
+        if (
+          input.otpPurpose &&
+          ride.serviceType === 'courier' &&
+          ride.courierProtocolVersion !== COURIER_PROTOCOL_EVIDENCE
+        ) {
+          const otp = ride.parcelOtp;
+          const usedField = otpUsedFieldForPurpose(input.otpPurpose);
+          if (!otp || otp[usedField] != null) {
+            throw new RideDomainError(
+              'OTP_ALREADY_USED',
+              409,
+              'This confirmation code was already used.',
+            );
+          }
+        }
+
+        // Ora Courier v2 — retry reopens the most recent FAILED stop.
+        let reopenedStops: RideStopDoc[] | undefined;
+        let reopenedIndex: number | undefined;
+        if (
+          input.v2ReopenFailedStops &&
+          ride.courierProtocolVersion === COURIER_PROTOCOL_EVIDENCE &&
+          Array.isArray(ride.stops)
+        ) {
+          let lastFailed = -1;
+          ride.stops.forEach((s, i) => {
+            if (s.status === 'FAILED') lastFailed = i;
+          });
+          if (lastFailed >= 0) {
+            reopenedStops = ride.stops.map((s, i) =>
+              i === lastFailed
+                ? {
+                    ...s,
+                    status: 'PENDING' as StopStatus,
+                    failedAt: null,
+                    failureReason: null,
+                  }
+                : s,
+            );
+            reopenedIndex = lastFailed;
+          }
+        }
+
         const nextVersion = ride.version + 1;
         const patch: Record<string, unknown> = {
           state: input.toState,
           version: nextVersion,
           updatedAt: nowIso,
         };
+        if (reopenedStops) {
+          patch.stops = reopenedStops;
+          patch.currentStopIndex = reopenedIndex;
+        }
         // Phase 2L: set arrivedAt exactly once on first ARRIVED transition.
         if (input.setArrivedAt && ride.arrivedAt == null) {
           patch.arrivedAt = nowIso;
@@ -2335,6 +3387,31 @@ export class RideService {
         }
         if (input.setCompletedAt) {
           patch.completedAt = nowIso;
+        }
+        // Ora Courier — exception/bookkeeping fields.
+        if (input.setReturnedAt) {
+          patch.returnedAt = nowIso;
+        }
+        if (input.setReturnStartedAt) {
+          patch.returnStartedAt = nowIso;
+        }
+        if (input.requireDeliveryFailureReason && failureReason) {
+          patch.deliveryFailedAt = nowIso;
+          patch.deliveryFailedReason = failureReason;
+        }
+        if (input.clearDeliveryFailure) {
+          patch.deliveryFailedReason = null;
+        }
+        if (
+          input.otpPurpose &&
+          ride.serviceType === 'courier' &&
+          ride.courierProtocolVersion !== COURIER_PROTOCOL_EVIDENCE
+        ) {
+          patch[`parcelOtp.${otpUsedFieldForPurpose(input.otpPurpose)}`] =
+            nowIso;
+        }
+        if (input.allowPickupPhoto && pickupPhotoUrl) {
+          patch.pickupPhotoUrl = pickupPhotoUrl;
         }
 
         tx.update(rideRef, patch);
@@ -2352,6 +3429,28 @@ export class RideService {
           arrivedAt: arrivedAtValue,
           startedAt: input.setStartedAt ? nowIso : ride.startedAt,
           completedAt: input.setCompletedAt ? nowIso : ride.completedAt,
+          returnedAt: input.setReturnedAt ? nowIso : ride.returnedAt,
+          returnStartedAt: input.setReturnStartedAt
+            ? nowIso
+            : ride.returnStartedAt,
+          deliveryFailedAt:
+            input.requireDeliveryFailureReason && failureReason
+              ? nowIso
+              : ride.deliveryFailedAt,
+          deliveryFailedReason:
+            input.requireDeliveryFailureReason && failureReason
+              ? failureReason
+              : input.clearDeliveryFailure
+                ? null
+                : ride.deliveryFailedReason,
+          pickupPhotoUrl:
+            input.allowPickupPhoto && pickupPhotoUrl
+              ? pickupPhotoUrl
+              : ride.pickupPhotoUrl,
+          ...(reopenedStops ? { stops: reopenedStops } : {}),
+          ...(reopenedIndex !== undefined
+            ? { currentStopIndex: reopenedIndex }
+            : {}),
         };
         responseBody = { data: publicRide(updated, 'driver') };
 
@@ -2396,7 +3495,10 @@ export class RideService {
       throw err;
     }
 
-    if (input.toState === 'RIDE_COMPLETED') {
+    if (
+      input.toState === 'RIDE_COMPLETED' ||
+      input.toState === 'RETURNED'
+    ) {
       const completed =
         responseBody &&
         typeof responseBody === 'object' &&
@@ -2409,11 +3511,1241 @@ export class RideService {
         rideId: input.rideId,
         assignedDriverId: completed?.assignedDriverId ?? null,
         requestId: input.correlationId,
-        reason: 'RIDE_COMPLETED',
+        reason: input.toState,
       });
     }
 
     return { httpStatus: 200, body: responseBody };
+  }
+
+  // ──────────────────────────────────────────────────────────────
+  // Ora Courier v2 — code-free, multi-stop delivery mutations.
+  // ──────────────────────────────────────────────────────────────
+
+  /** Read the driver's latest accepted trip fix for proximity evidence. */
+  private async latestDriverFixMeters(
+    rideId: string,
+    stop: { lat: number; lng: number },
+    nowMs: number,
+  ): Promise<{ nearMeters: number | null; gpsFlag: boolean }> {
+    try {
+      const latest = await this.tripLocationRtdb?.getTripLocationLatest?.(
+        rideId,
+      );
+      if (!latest || typeof latest.lat !== 'number') {
+        return { nearMeters: null, gpsFlag: true };
+      }
+      const nearMeters = Math.round(haversineMeters(latest, stop));
+      const stale =
+        typeof latest.ts !== 'number' ||
+        nowMs - latest.ts > STOP_CONFIRM_FIX_MAX_AGE_MS;
+      return {
+        nearMeters,
+        gpsFlag: stale || nearMeters > STOP_CONFIRM_NEAR_METERS,
+      };
+    } catch {
+      return { nearMeters: null, gpsFlag: true };
+    }
+  }
+
+  /**
+   * Shared scaffold for v2 delivery mutations: idempotency replay →
+   * transaction (idem + ride doc + caller authZ via `authorize`) → patch +
+   * idem record + outbox event. `apply` runs inside the txn after all reads.
+   */
+  private async mutateDelivery(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+    operation: string;
+    eventType: string;
+    allowedKeys: Set<string>;
+    hashExtra?: Record<string, unknown>;
+    authorize: (ride: RideDoc) => 'driver' | 'passenger';
+    apply: (ctx: {
+      ride: RideDoc;
+      body: Record<string, unknown>;
+      now: Date;
+      nowIso: string;
+    }) => {
+      patch: Record<string, unknown>;
+      rideOverrides?: Partial<RideDoc>;
+      eventPayload: Record<string, unknown>;
+      /** Optional extra document write executed in the same transaction. */
+      extraWrite?: {
+        collection: string;
+        docId: string;
+        data: Record<string, unknown>;
+      };
+    };
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    const idempotencyKey = requireIdempotencyKey(input.idempotencyKeyHeader);
+    const body = rejectUnknownKeys(input.body ?? {}, input.allowedKeys);
+    const requestHash = hashRequest({
+      rideId: input.rideId,
+      operation: input.operation,
+      ...(input.hashExtra ?? {}),
+      expectedVersion: body.expectedVersion ?? null,
+    });
+    const replay = await readIdempotencyReplay(
+      this.db,
+      idempotencyKey,
+      requestHash,
+      input.caller.uid,
+    );
+    if (replay) {
+      return { httpStatus: replay.httpStatus, body: replay.body };
+    }
+
+    const expectedVersion =
+      body.expectedVersion == null ? null : Number(body.expectedVersion);
+    if (
+      expectedVersion != null &&
+      (!Number.isInteger(expectedVersion) || expectedVersion < 1)
+    ) {
+      throw new RideDomainError(
+        'VALIDATION_ERROR',
+        400,
+        'expectedVersion must be a positive integer.',
+      );
+    }
+
+    const now = new Date();
+    const nowIso = now.toISOString();
+    let responseBody: unknown;
+    let viewer: 'driver' | 'passenger' = 'driver';
+
+    try {
+      await this.db.runTransaction(async (tx) => {
+        const idemRef = this.db.collection(IDEM).doc(idempotencyKey);
+        const idemSnap = await tx.get(idemRef);
+        if (idemSnap.exists) {
+          const replayInTxn = assertIdempotencyRecord(
+            idemSnap.data() as {
+              requestHash: string;
+              actorId?: string;
+              responseSnapshot?: { httpStatus: number; body: unknown };
+            },
+            requestHash,
+            input.caller.uid,
+          );
+          if (replayInTxn) throw replayInTxn;
+        }
+
+        const rideRef = this.db.collection(RIDES).doc(input.rideId);
+        const rideSnap = await tx.get(rideRef);
+        if (!rideSnap.exists) {
+          throw new RideDomainError('RIDE_NOT_FOUND', 404, 'Ride not found.');
+        }
+        const ride = rideSnap.data() as RideDoc;
+        viewer = input.authorize(ride);
+
+        if (expectedVersion != null && ride.version !== expectedVersion) {
+          throw new RideDomainError(
+            'VERSION_CONFLICT',
+            409,
+            'Ride version does not match expectedVersion.',
+          );
+        }
+
+        const applied = input.apply({ ride, body, now, nowIso });
+        const nextVersion = ride.version + 1;
+        tx.update(rideRef, {
+          ...applied.patch,
+          version: nextVersion,
+          updatedAt: nowIso,
+        });
+        if (applied.extraWrite) {
+          tx.set(
+            this.db
+              .collection(applied.extraWrite.collection)
+              .doc(applied.extraWrite.docId),
+            applied.extraWrite.data,
+          );
+        }
+
+        const updated: RideDoc = {
+          ...ride,
+          ...(applied.rideOverrides ?? {}),
+          version: nextVersion,
+          updatedAt: nowIso,
+        };
+        responseBody = { data: publicRide(updated, viewer) };
+
+        tx.set(idemRef, {
+          idempotencyKey,
+          requestHash,
+          actorId: input.caller.uid,
+          operation: input.operation,
+          resourceId: input.rideId,
+          status: 'SUCCEEDED',
+          responseSnapshot: { httpStatus: 200, body: responseBody },
+          createdAt: nowIso,
+          expiresAt: new Date(Date.now() + IDEMPOTENCY_TTL_MS).toISOString(),
+        });
+
+        const eventId = randomUUID();
+        tx.set(this.db.collection(OUTBOX).doc(eventId), {
+          eventId,
+          eventType: input.eventType,
+          aggregateType: 'ride',
+          aggregateId: input.rideId,
+          aggregateVersion: nextVersion,
+          schemaVersion: 1,
+          occurredAt: nowIso,
+          correlationId: input.correlationId,
+          causationId: idempotencyKey,
+          payload: applied.eventPayload,
+          publishState: 'PENDING',
+          attemptCount: 0,
+          nextAttemptAt: nowIso,
+        });
+      });
+    } catch (err) {
+      if (err instanceof IdempotencyReplay) {
+        return { httpStatus: err.httpStatus, body: err.body };
+      }
+      throw err;
+    }
+
+    return { httpStatus: 200, body: responseBody };
+  }
+
+  private assertV2Delivery(ride: RideDoc): void {
+    if (
+      ride.courierProtocolVersion !== COURIER_PROTOCOL_EVIDENCE ||
+      !Array.isArray(ride.stops) ||
+      ride.stops.length === 0
+    ) {
+      throw new RideDomainError(
+        'STATE_CONFLICT',
+        409,
+        'This booking does not support stop progression.',
+      );
+    }
+  }
+
+  private currentStop(ride: RideDoc): RideStopDoc {
+    const idx = ride.currentStopIndex ?? 0;
+    const stop = ride.stops?.[idx];
+    if (!stop) {
+      throw new RideDomainError(
+        'STATE_CONFLICT',
+        409,
+        'No actionable stop remains on this itinerary.',
+      );
+    }
+    return stop;
+  }
+
+  /** First index with an actionable status, or -1 when the itinerary is done. */
+  private nextActionableIndex(stops: RideStopDoc[]): number {
+    return stops.findIndex((s) =>
+      s.status === 'PENDING' ||
+      s.status === 'ARRIVED' ||
+      s.status === 'WAITING_APPROVAL',
+    );
+  }
+
+  /** Ora Courier v2 — driver marks arrival at the current stop. */
+  async arriveAtStop(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    seq: number;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    return this.mutateDelivery({
+      ...input,
+      operation: 'STOP_ARRIVE',
+      eventType: 'delivery.stop.arrived',
+      allowedKeys: new Set(['expectedVersion']),
+      authorize: (ride) => {
+        if (ride.assignedDriverId !== input.caller.uid) {
+          throw new RideDomainError(
+            'FORBIDDEN',
+            403,
+            'Only the assigned driver may progress stops.',
+          );
+        }
+        this.assertV2Delivery(ride);
+        return 'driver';
+      },
+      apply: ({ ride, nowIso }) => {
+        if (
+          !new Set<RideState>([
+            'DRIVER_ASSIGNED',
+            'DRIVER_EN_ROUTE',
+            'DRIVER_ARRIVED',
+            'RIDE_STARTED',
+          ]).has(ride.state)
+        ) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            `Ride state ${ride.state} does not accept stop arrivals.`,
+          );
+        }
+        const stop = this.currentStop(ride);
+        if (stop.seq !== input.seq) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            `Stop ${input.seq} is not the current stop.`,
+          );
+        }
+        if (stop.status === 'ARRIVED') {
+          // Idempotent success — same transition already applied.
+          return {
+            patch: {},
+            eventPayload: {
+              rideId: input.rideId,
+              seq: input.seq,
+              actorId: input.caller.uid,
+              idempotent: true,
+            },
+          };
+        }
+        if (stop.status !== 'PENDING') {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            `Stop ${input.seq} cannot be arrived from ${stop.status}.`,
+          );
+        }
+        const stops = ride.stops!.map((s) =>
+          s.seq === input.seq
+            ? { ...s, status: 'ARRIVED' as StopStatus, arrivedAt: nowIso }
+            : s,
+        );
+        const patch: Record<string, unknown> = { stops };
+        const rideOverrides: Partial<RideDoc> = { stops };
+        // First-stop arrival mirrors the existing DRIVER_ARRIVED semantics.
+        if (
+          input.seq === 0 &&
+          (ride.state === 'DRIVER_ASSIGNED' ||
+            ride.state === 'DRIVER_EN_ROUTE')
+        ) {
+          patch.state = 'DRIVER_ARRIVED';
+          rideOverrides.state = 'DRIVER_ARRIVED';
+          if (ride.arrivedAt == null) {
+            patch.arrivedAt = nowIso;
+            rideOverrides.arrivedAt = nowIso;
+          }
+        }
+        return {
+          patch,
+          rideOverrides,
+          eventPayload: {
+            rideId: input.rideId,
+            seq: input.seq,
+            actorId: input.caller.uid,
+          },
+        };
+      },
+    });
+  }
+
+  /**
+   * Ora Courier v2 — driver confirms the current stop (collected / purchased /
+   * delivered). Code-free: records timestamp + GPS proximity evidence.
+   */
+  async confirmStop(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    seq: number;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    // Pre-txn read for GPS evidence (a failed RTDB read must not abort).
+    const preSnap = await this.db
+      .collection(RIDES)
+      .doc(input.rideId)
+      .get();
+    let evidence: { nearMeters: number | null; gpsFlag: boolean } = {
+      nearMeters: null,
+      gpsFlag: true,
+    };
+    if (preSnap.exists) {
+      const preRide = preSnap.data() as RideDoc;
+      const stop = (preRide.stops ?? []).find((s) => s.seq === input.seq);
+      if (stop && preRide.assignedDriverId === input.caller.uid) {
+        evidence = await this.latestDriverFixMeters(
+          input.rideId,
+          stop.location,
+          Date.now(),
+        );
+      }
+    }
+
+    let completedRide = false;
+    const result = await this.mutateDelivery({
+      ...input,
+      operation: 'STOP_CONFIRM',
+      eventType: 'delivery.stop.confirmed',
+      allowedKeys: new Set(['expectedVersion', 'purchaseTotalMinor']),
+      hashExtra: { seq: input.seq },
+      authorize: (ride) => {
+        if (ride.assignedDriverId !== input.caller.uid) {
+          throw new RideDomainError(
+            'FORBIDDEN',
+            403,
+            'Only the assigned driver may progress stops.',
+          );
+        }
+        this.assertV2Delivery(ride);
+        return 'driver';
+      },
+      apply: ({ ride, body, nowIso }) => {
+        const stop = this.currentStop(ride);
+        if (stop.seq !== input.seq) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            `Stop ${input.seq} is not the current stop.`,
+          );
+        }
+        if (stop.status === 'DONE') {
+          return {
+            patch: {},
+            eventPayload: {
+              rideId: input.rideId,
+              seq: input.seq,
+              actorId: input.caller.uid,
+              idempotent: true,
+            },
+          };
+        }
+        if (stop.status !== 'ARRIVED') {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            `Stop ${input.seq} must be ARRIVED before confirm (now ${stop.status}).`,
+          );
+        }
+
+        let purchase: { totalMinor: number; confirmedAt: string } | null = null;
+        let shoppingSpentDelta = 0;
+        if (stop.type === 'SHOP') {
+          const quote = stop.quote;
+          if (!quote || quote.approvedAt == null) {
+            throw new RideDomainError(
+              'STATE_CONFLICT',
+              409,
+              'Customer must approve the shopping quote before purchase.',
+            );
+          }
+          const total = Number(body.purchaseTotalMinor);
+          if (!Number.isInteger(total) || total < 0) {
+            throw new RideDomainError(
+              'VALIDATION_ERROR',
+              400,
+              'purchaseTotalMinor is required for SHOP stops.',
+            );
+          }
+          if (total > quote.totalMinor) {
+            throw new RideDomainError(
+              'VALIDATION_ERROR',
+              400,
+              'Purchase total exceeds the customer-approved quote.',
+            );
+          }
+          if (stop.shopBudgetMinor != null && total > stop.shopBudgetMinor) {
+            throw new RideDomainError(
+              'VALIDATION_ERROR',
+              400,
+              'Purchase total exceeds this shop’s budget cap.',
+            );
+          }
+          const spent = ride.shopping?.spentMinor ?? 0;
+          const budget = ride.shopping?.totalBudgetMinor ?? 0;
+          if (spent + total > budget) {
+            throw new RideDomainError(
+              'VALIDATION_ERROR',
+              400,
+              'Purchase total exceeds the remaining shopping budget.',
+            );
+          }
+          purchase = { totalMinor: total, confirmedAt: nowIso };
+          shoppingSpentDelta = total;
+        }
+
+        const stops = ride.stops!.map((s) =>
+          s.seq === input.seq
+            ? {
+                ...s,
+                status: 'DONE' as StopStatus,
+                doneAt: nowIso,
+                confirmedNearMeters: evidence.nearMeters,
+                ...(purchase ? { purchase } : {}),
+              }
+            : s,
+        );
+        const nextIdx = this.nextActionableIndex(stops);
+        const patch: Record<string, unknown> = {
+          stops,
+          currentStopIndex: nextIdx === -1 ? null : nextIdx,
+        };
+        const rideOverrides: Partial<RideDoc> = {
+          stops,
+          currentStopIndex: nextIdx === -1 ? undefined : nextIdx,
+        };
+
+        // Evidence ledger.
+        const confirms = [
+          ...(ride.evidence?.confirms ?? []),
+          {
+            seq: input.seq,
+            at: nowIso,
+            nearMeters: evidence.nearMeters,
+            gpsFlag: evidence.gpsFlag,
+          },
+        ];
+        patch['evidence.confirms'] = confirms;
+        rideOverrides.evidence = {
+          confirms,
+          customerAckAt: ride.evidence?.customerAckAt ?? null,
+        };
+
+        if (shoppingSpentDelta > 0 && ride.shopping) {
+          const newSpent = ride.shopping.spentMinor + shoppingSpentDelta;
+          patch['shopping.spentMinor'] = newSpent;
+          rideOverrides.shopping = {
+            ...ride.shopping,
+            spentMinor: newSpent,
+          };
+          if (ride.settlement) {
+            const newShoppingTotal =
+              ride.settlement.shoppingTotalMinor + shoppingSpentDelta;
+            const fare = ride.settlement.deliveryFareMinor ?? 0;
+            patch['settlement.shoppingTotalMinor'] = newShoppingTotal;
+            patch['settlement.totalDueMinor'] = fare + newShoppingTotal;
+            rideOverrides.settlement = {
+              ...ride.settlement,
+              shoppingTotalMinor: newShoppingTotal,
+              totalDueMinor: fare + newShoppingTotal,
+            };
+          }
+        }
+
+        // Custody begins → RIDE_STARTED (mirrors v1 parcel-in-transit).
+        const custodyNow = stops.some(
+          (s) =>
+            s.status === 'DONE' &&
+            (s.type === 'PICKUP' || s.type === 'SHOP'),
+        );
+        if (
+          custodyNow &&
+          new Set<RideState>([
+            'DRIVER_ASSIGNED',
+            'DRIVER_EN_ROUTE',
+            'DRIVER_ARRIVED',
+          ]).has(ride.state)
+        ) {
+          patch.state = 'RIDE_STARTED';
+          patch.startedAt = ride.startedAt ?? nowIso;
+          rideOverrides.state = 'RIDE_STARTED';
+          rideOverrides.startedAt = ride.startedAt ?? nowIso;
+        }
+
+        // Itinerary exhausted → terminal outcome.
+        const finalDone =
+          stops[stops.length - 1].status === 'DONE';
+        const anyFailed = stops.some(
+          (s) => s.status === 'FAILED' || s.status === 'SKIPPED',
+        );
+        if (nextIdx === -1) {
+          if (finalDone) {
+            patch.state = 'RIDE_COMPLETED';
+            patch.completedAt = nowIso;
+            rideOverrides.state = 'RIDE_COMPLETED';
+            rideOverrides.completedAt = nowIso;
+            if (anyFailed) {
+              patch.partialFulfillment = true;
+              rideOverrides.partialFulfillment = true;
+            }
+            completedRide = true;
+          } else {
+            patch.state = 'DELIVERY_FAILED';
+            patch.deliveryFailedAt = nowIso;
+            patch.deliveryFailedReason = 'OTHER';
+            rideOverrides.state = 'DELIVERY_FAILED';
+            rideOverrides.deliveryFailedAt = nowIso;
+          }
+        }
+
+        return {
+          patch,
+          rideOverrides,
+          eventPayload: {
+            rideId: input.rideId,
+            seq: input.seq,
+            actorId: input.caller.uid,
+            nearMeters: evidence.nearMeters,
+            gpsFlag: evidence.gpsFlag,
+            purchaseTotalMinor: purchase?.totalMinor ?? null,
+          },
+        };
+      },
+    });
+
+    if (completedRide) {
+      const assigned =
+        result.body &&
+        typeof result.body === 'object' &&
+        'data' in result.body
+          ? (result.body as {
+              data: { assignedDriverId?: string | null };
+            }).data
+          : null;
+      await this.afterRideTerminal({
+        rideId: input.rideId,
+        assignedDriverId: assigned?.assignedDriverId ?? null,
+        requestId: input.correlationId,
+        reason: 'RIDE_COMPLETED',
+      });
+    }
+    return result;
+  }
+
+  /** Ora Courier v2 — driver reports a stop failure (itinerary continues). */
+  async failStop(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    seq: number;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    return this.mutateDelivery({
+      ...input,
+      operation: 'STOP_FAIL',
+      eventType: 'delivery.stop.failed',
+      allowedKeys: new Set(['expectedVersion', 'reason']),
+      hashExtra: {
+        seq: input.seq,
+        reason:
+          typeof (input.body as Record<string, unknown> | null)?.reason ===
+          'string'
+            ? ((input.body as Record<string, unknown>).reason as string)
+            : null,
+      },
+      authorize: (ride) => {
+        if (ride.assignedDriverId !== input.caller.uid) {
+          throw new RideDomainError(
+            'FORBIDDEN',
+            403,
+            'Only the assigned driver may progress stops.',
+          );
+        }
+        this.assertV2Delivery(ride);
+        return 'driver';
+      },
+      apply: ({ ride, body, nowIso }) => {
+        const reason =
+          typeof body.reason === 'string' ? body.reason.trim() : '';
+        if (
+          !(STOP_FAILURE_REASONS as readonly string[]).includes(reason)
+        ) {
+          throw new RideDomainError(
+            'VALIDATION_ERROR',
+            400,
+            `reason must be one of: ${STOP_FAILURE_REASONS.join(', ')}.`,
+          );
+        }
+        const stop = this.currentStop(ride);
+        if (stop.seq !== input.seq) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            `Stop ${input.seq} is not the current stop.`,
+          );
+        }
+        if (stop.status === 'FAILED') {
+          return {
+            patch: {},
+            eventPayload: {
+              rideId: input.rideId,
+              seq: input.seq,
+              actorId: input.caller.uid,
+              idempotent: true,
+            },
+          };
+        }
+        if (
+          stop.status !== 'PENDING' &&
+          stop.status !== 'ARRIVED' &&
+          stop.status !== 'WAITING_APPROVAL'
+        ) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            `Stop ${input.seq} cannot fail from ${stop.status}.`,
+          );
+        }
+        const stops = ride.stops!.map((s) =>
+          s.seq === input.seq
+            ? {
+                ...s,
+                status: 'FAILED' as StopStatus,
+                failedAt: nowIso,
+                failureReason: reason as StopFailureReason,
+              }
+            : s,
+        );
+        const nextIdx = this.nextActionableIndex(stops);
+        const patch: Record<string, unknown> = {
+          stops,
+          currentStopIndex: nextIdx === -1 ? null : nextIdx,
+          partialFulfillment: true,
+        };
+        const rideOverrides: Partial<RideDoc> = {
+          stops,
+          currentStopIndex: nextIdx === -1 ? undefined : nextIdx,
+          partialFulfillment: true,
+        };
+        // Itinerary exhausted without final dropoff → DELIVERY_FAILED
+        // (custody-aware cancellation remains governed by v2HasCustody).
+        if (
+          nextIdx === -1 &&
+          stops[stops.length - 1].status !== 'DONE'
+        ) {
+          patch.state = 'DELIVERY_FAILED';
+          patch.deliveryFailedAt = nowIso;
+          patch.deliveryFailedReason = 'OTHER';
+          rideOverrides.state = 'DELIVERY_FAILED';
+          rideOverrides.deliveryFailedAt = nowIso;
+        }
+        return {
+          patch,
+          rideOverrides,
+          eventPayload: {
+            rideId: input.rideId,
+            seq: input.seq,
+            actorId: input.caller.uid,
+            reason,
+          },
+        };
+      },
+    });
+  }
+
+  /** buy_deliver — driver submits an itemized quote for the current SHOP stop. */
+  async submitStopQuote(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    seq: number;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    const cfg = await loadDeliveryConfig(this.db);
+    return this.mutateDelivery({
+      ...input,
+      operation: 'STOP_QUOTE',
+      eventType: 'delivery.quote.ready',
+      allowedKeys: new Set(['expectedVersion', 'items']),
+      hashExtra: { seq: input.seq },
+      authorize: (ride) => {
+        if (ride.assignedDriverId !== input.caller.uid) {
+          throw new RideDomainError(
+            'FORBIDDEN',
+            403,
+            'Only the assigned driver may quote purchases.',
+          );
+        }
+        this.assertV2Delivery(ride);
+        return 'driver';
+      },
+      apply: ({ ride, body, nowIso }) => {
+        const stop = this.currentStop(ride);
+        if (stop.seq !== input.seq) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            `Stop ${input.seq} is not the current stop.`,
+          );
+        }
+        if (stop.type !== 'SHOP') {
+          throw new RideDomainError(
+            'VALIDATION_ERROR',
+            400,
+            'Quotes are only valid for SHOP stops.',
+          );
+        }
+        if (
+          stop.status !== 'ARRIVED' &&
+          !(stop.status === 'WAITING_APPROVAL')
+        ) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            `Stop ${input.seq} must be ARRIVED before quoting.`,
+          );
+        }
+        const rawItems = body.items;
+        if (!Array.isArray(rawItems) || rawItems.length < 1 || rawItems.length > 50) {
+          throw new RideDomainError(
+            'VALIDATION_ERROR',
+            400,
+            'items must contain 1–50 entries.',
+          );
+        }
+        const items = rawItems.map((it, i) => {
+          const o = (it ?? {}) as Record<string, unknown>;
+          const name = parcelString(o.name, `items[${i}].name`, {
+            min: 1,
+            max: 100,
+            required: true,
+          })!;
+          if (isProhibitedItem(name, cfg)) {
+            throw new RideDomainError(
+              'VALIDATION_ERROR',
+              400,
+              `Item "${name}" is not permitted for delivery.`,
+            );
+          }
+          const qty = Number(o.qty ?? 1);
+          if (!Number.isInteger(qty) || qty < 1 || qty > 99) {
+            throw new RideDomainError(
+              'VALIDATION_ERROR',
+              400,
+              `items[${i}].qty must be an integer from 1 to 99.`,
+            );
+          }
+          const priceMinor = Number(o.priceMinor);
+          if (!Number.isInteger(priceMinor) || priceMinor < 0) {
+            throw new RideDomainError(
+              'VALIDATION_ERROR',
+              400,
+              `items[${i}].priceMinor must be a non-negative integer.`,
+            );
+          }
+          const note = parcelString(o.note, `items[${i}].note`, {
+            min: 0,
+            max: 200,
+            required: false,
+          });
+          return { name, qty, note, priceMinor };
+        });
+        const totalMinor = items.reduce((s, i) => s + i.priceMinor * i.qty, 0);
+        if (stop.shopBudgetMinor != null && totalMinor > stop.shopBudgetMinor) {
+          throw new RideDomainError(
+            'VALIDATION_ERROR',
+            400,
+            'Quote total exceeds this shop’s budget cap.',
+          );
+        }
+        const spent = ride.shopping?.spentMinor ?? 0;
+        const budget = ride.shopping?.totalBudgetMinor ?? 0;
+        if (spent + totalMinor > budget) {
+          throw new RideDomainError(
+            'VALIDATION_ERROR',
+            400,
+            'Quote total exceeds the remaining shopping budget.',
+          );
+        }
+        const stops = ride.stops!.map((s) =>
+          s.seq === input.seq
+            ? {
+                ...s,
+                status: 'WAITING_APPROVAL' as StopStatus,
+                quote: {
+                  items,
+                  totalMinor,
+                  quotedAt: nowIso,
+                  approvedAt: null,
+                  rejectedAt: null,
+                },
+              }
+            : s,
+        );
+        return {
+          patch: { stops },
+          rideOverrides: { stops },
+          eventPayload: {
+            rideId: input.rideId,
+            seq: input.seq,
+            actorId: input.caller.uid,
+            quoteTotalMinor: totalMinor,
+          },
+        };
+      },
+    });
+  }
+
+  /** buy_deliver — customer approves or rejects the pending shop quote. */
+  async respondToStopQuote(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    seq: number;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    return this.mutateDelivery({
+      ...input,
+      operation: 'STOP_QUOTE_RESPOND',
+      eventType: 'delivery.quote.responded',
+      allowedKeys: new Set(['expectedVersion', 'decision']),
+      hashExtra: {
+        seq: input.seq,
+        decision:
+          typeof (input.body as Record<string, unknown> | null)?.decision ===
+          'string'
+            ? ((input.body as Record<string, unknown>).decision as string)
+            : null,
+      },
+      authorize: (ride) => {
+        if (ride.passengerId !== input.caller.uid) {
+          throw new RideDomainError(
+            'FORBIDDEN',
+            403,
+            'Only the customer may respond to a shopping quote.',
+          );
+        }
+        this.assertV2Delivery(ride);
+        return 'passenger';
+      },
+      apply: ({ ride, body, nowIso }) => {
+        const decision =
+          typeof body.decision === 'string'
+            ? body.decision.trim().toUpperCase()
+            : '';
+        if (decision !== 'APPROVE' && decision !== 'REJECT') {
+          throw new RideDomainError(
+            'VALIDATION_ERROR',
+            400,
+            'decision must be APPROVE or REJECT.',
+          );
+        }
+        const stop = (ride.stops ?? []).find((s) => s.seq === input.seq);
+        if (
+          !stop ||
+          stop.status !== 'WAITING_APPROVAL' ||
+          !stop.quote
+        ) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            'No pending quote on this stop.',
+          );
+        }
+        const approved = decision === 'APPROVE';
+        const stops = ride.stops!.map((s) =>
+          s.seq === input.seq
+            ? {
+                ...s,
+                status: 'ARRIVED' as StopStatus,
+                quote: {
+                  ...s.quote!,
+                  approvedAt: approved ? nowIso : null,
+                  rejectedAt: approved ? null : nowIso,
+                },
+              }
+            : s,
+        );
+        // Approved-authorization total = spent + Σ approved-unpurchased quotes.
+        const approvedTotal =
+          (ride.shopping?.spentMinor ?? 0) +
+          stops.reduce(
+            (sum, s) =>
+              sum +
+              (s.quote?.approvedAt != null && !s.purchase
+                ? s.quote.totalMinor
+                : 0),
+            0,
+          );
+        const patch: Record<string, unknown> = { stops };
+        const rideOverrides: Partial<RideDoc> = { stops };
+        if (ride.shopping) {
+          patch['shopping.approvedTotalMinor'] = approvedTotal;
+          rideOverrides.shopping = {
+            ...ride.shopping,
+            approvedTotalMinor: approvedTotal,
+          };
+        }
+        return {
+          patch,
+          rideOverrides,
+          eventPayload: {
+            rideId: input.rideId,
+            seq: input.seq,
+            actorId: input.caller.uid,
+            decision,
+            quoteTotalMinor: stop.quote.totalMinor,
+          },
+        };
+      },
+    });
+  }
+
+  /** Ora Courier v2 — driver reports cash collection (never verified). */
+  async reportSettlement(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    return this.mutateDelivery({
+      ...input,
+      operation: 'SETTLEMENT_REPORT',
+      eventType: 'delivery.settlement.reported',
+      allowedKeys: new Set(['expectedVersion', 'status']),
+      hashExtra: {
+        status:
+          typeof (input.body as Record<string, unknown> | null)?.status ===
+          'string'
+            ? ((input.body as Record<string, unknown>).status as string)
+            : null,
+      },
+      authorize: (ride) => {
+        if (ride.assignedDriverId !== input.caller.uid) {
+          throw new RideDomainError(
+            'FORBIDDEN',
+            403,
+            'Only the assigned driver may report settlement.',
+          );
+        }
+        this.assertV2Delivery(ride);
+        return 'driver';
+      },
+      apply: ({ ride, body, nowIso }) => {
+        const status =
+          typeof body.status === 'string'
+            ? body.status.trim().toUpperCase()
+            : '';
+        if (!(SETTLEMENT_REPORTS as readonly string[]).includes(status)) {
+          throw new RideDomainError(
+            'VALIDATION_ERROR',
+            400,
+            `status must be one of: ${SETTLEMENT_REPORTS.join(', ')}.`,
+          );
+        }
+        if (
+          !new Set<RideState>([
+            'RIDE_COMPLETED',
+            'RIDE_CLOSED',
+            'RETURNED',
+            'DELIVERY_FAILED',
+          ]).has(ride.state) ||
+          !ride.settlement
+        ) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            'Settlement can only be reported after the delivery concludes.',
+          );
+        }
+        const settlement: SettlementDoc = {
+          ...ride.settlement,
+          driverReportedStatus: status as SettlementReport,
+          driverReportedAt: nowIso,
+          status: status === 'PAID' ? 'SETTLED' : 'PENDING',
+        };
+        return {
+          patch: { settlement },
+          rideOverrides: { settlement },
+          eventPayload: {
+            rideId: input.rideId,
+            actorId: input.caller.uid,
+            reportedStatus: status,
+            totalDueMinor: settlement.totalDueMinor,
+          },
+        };
+      },
+    });
+  }
+
+  /** Ora Courier v2 — customer acknowledges receipt (optional, evidence). */
+  async acknowledgeDelivery(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    return this.mutateDelivery({
+      ...input,
+      operation: 'DELIVERY_ACK',
+      eventType: 'delivery.acknowledged',
+      allowedKeys: new Set(['expectedVersion']),
+      authorize: (ride) => {
+        if (ride.passengerId !== input.caller.uid) {
+          throw new RideDomainError(
+            'FORBIDDEN',
+            403,
+            'Only the customer may acknowledge receipt.',
+          );
+        }
+        this.assertV2Delivery(ride);
+        return 'passenger';
+      },
+      apply: ({ ride, nowIso }) => {
+        if (
+          !new Set<RideState>([
+            'RIDE_COMPLETED',
+            'RIDE_CLOSED',
+            'DELIVERY_FAILED',
+            'RETURNED',
+          ]).has(ride.state)
+        ) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            'Receipt can only be acknowledged once the delivery concludes.',
+          );
+        }
+        const evidence = {
+          confirms: ride.evidence?.confirms ?? [],
+          customerAckAt: ride.evidence?.customerAckAt ?? nowIso,
+        };
+        const settlement: SettlementDoc | undefined = ride.settlement
+          ? { ...ride.settlement, customerAckAt: nowIso }
+          : undefined;
+        return {
+          patch: {
+            'evidence.customerAckAt': evidence.customerAckAt,
+            ...(settlement ? { 'settlement.customerAckAt': nowIso } : {}),
+          },
+          rideOverrides: {
+            evidence,
+            ...(settlement ? { settlement } : {}),
+          },
+          eventPayload: {
+            rideId: input.rideId,
+            actorId: input.caller.uid,
+          },
+        };
+      },
+    });
+  }
+
+  /** Ora Courier v2 — either party opens a dispute within the window. */
+  async createDispute(input: {
+    caller: AuthenticatedCaller;
+    rideId: string;
+    body: unknown;
+    idempotencyKeyHeader: string | undefined;
+    correlationId: string;
+  }): Promise<{ httpStatus: number; body: unknown }> {
+    const cfg = await loadDeliveryConfig(this.db);
+    const disputeId = randomUUID();
+    const windowMs = cfg.disputeWindowHours * 60 * 60 * 1000;
+
+    const result = await this.mutateDelivery({
+      ...input,
+      operation: 'DISPUTE_OPEN',
+      eventType: 'delivery.dispute.opened',
+      allowedKeys: new Set(['expectedVersion', 'category', 'message']),
+      hashExtra: { disputeId },
+      authorize: (ride) => {
+        const isPassenger = ride.passengerId === input.caller.uid;
+        const isDriver = ride.assignedDriverId === input.caller.uid;
+        if (!isPassenger && !isDriver) {
+          throw new RideDomainError(
+            'FORBIDDEN',
+            403,
+            'Only the customer or assigned driver may dispute this booking.',
+          );
+        }
+        this.assertV2Delivery(ride);
+        return isPassenger ? 'passenger' : 'driver';
+      },
+      apply: ({ ride, body, now, nowIso }) => {
+        const category =
+          typeof body.category === 'string'
+            ? body.category.trim().toUpperCase()
+            : '';
+        if (!(DISPUTE_CATEGORIES as readonly string[]).includes(category)) {
+          throw new RideDomainError(
+            'VALIDATION_ERROR',
+            400,
+            `category must be one of: ${DISPUTE_CATEGORIES.join(', ')}.`,
+          );
+        }
+        const message = parcelString(body.message, 'message', {
+          min: 1,
+          max: 1000,
+          required: true,
+        })!;
+        const concludedAt =
+          ride.completedAt ?? ride.returnedAt ?? ride.deliveryFailedAt;
+        if (!concludedAt) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            'Disputes open only after the delivery concludes.',
+          );
+        }
+        if (now.getTime() - Date.parse(concludedAt) > windowMs) {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            'The dispute window has closed.',
+          );
+        }
+        if (ride.disputeStatus === 'OPEN') {
+          throw new RideDomainError(
+            'STATE_CONFLICT',
+            409,
+            'A dispute is already open for this booking.',
+          );
+        }
+        // Created inside the same mutation window via the returned patch —
+        // the dispute doc itself is written by the wrapping txn below.
+        const patch: Record<string, unknown> = {
+          disputeStatus: 'OPEN',
+          disputeId,
+        };
+        if (ride.settlement) {
+          patch['settlement.status'] = 'DISPUTED';
+        }
+        const settlement = ride.settlement
+          ? { ...ride.settlement, status: 'DISPUTED' as const }
+          : undefined;
+        return {
+          patch,
+          rideOverrides: {
+            disputeStatus: 'OPEN',
+            disputeId,
+            ...(settlement ? { settlement } : {}),
+          },
+          eventPayload: {
+            rideId: input.rideId,
+            disputeId,
+            actorId: input.caller.uid,
+            category,
+            // message intentionally excluded from the event payload.
+          },
+          extraWrite: {
+            collection: DISPUTES_COLLECTION,
+            docId: disputeId,
+            data: {
+              disputeId,
+              rideId: input.rideId,
+              reporterUid: input.caller.uid,
+              reporterRole:
+                ride.passengerId === input.caller.uid
+                  ? 'passenger'
+                  : 'driver',
+              category: category as DisputeCategory,
+              message,
+              status: 'OPEN',
+              createdAt: nowIso,
+              resolvedAt: null,
+              resolution: null,
+            } satisfies DisputeDoc,
+          },
+        };
+      },
+    });
+    return result;
   }
 
   async closeRide(input: {

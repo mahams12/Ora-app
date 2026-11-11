@@ -13,6 +13,10 @@ abstract interface class RideRepository {
     String? cursor,
     String? status,
     String? serviceType,
+
+    /// Dual-role accounts (Switch to Driver) pick which history view:
+    /// 'passenger' → own bookings, 'driver' → assigned jobs.
+    String? as,
   });
 
   /// Dispatch-wave invitations for this driver (GET /v1/rides/invited).
@@ -82,14 +86,123 @@ abstract interface class RideRepository {
   Future<Ride> startRide({
     required String rideId,
     int? expectedVersion,
+    String? otp,
+    String? pickupPhotoUrl,
     required String operationKey,
   });
 
   Future<Ride> completeRide({
     required String rideId,
     int? expectedVersion,
+    String? otp,
     required String operationKey,
   });
+
+  /// Ora Courier — report a failed delivery attempt.
+  Future<Ride> failDelivery({
+    required String rideId,
+    int? expectedVersion,
+    required String reason,
+    required String operationKey,
+  });
+
+  /// Ora Courier — retry delivery after a failed attempt.
+  Future<Ride> retryDelivery({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  });
+
+  /// Ora Courier — start returning the parcel to the sender.
+  Future<Ride> startReturn({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  });
+
+  /// Ora Courier — sender confirms the parcel was returned (return code).
+  Future<Ride> completeReturn({
+    required String rideId,
+    int? expectedVersion,
+    String? otp,
+    required String operationKey,
+  });
+
+  // ── Ora Courier v2 — code-free multi-stop progression ──────────────
+
+  /// Driver marks arrival at stop `seq` (PICKUP | SHOP | DROPOFF).
+  Future<Ride> arriveStop({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required String operationKey,
+  });
+
+  /// Driver confirms completion of stop `seq` — collected parcel / purchased
+  /// items / delivered. `purchaseTotalMinor` is required on SHOP confirms.
+  Future<Ride> confirmStop({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    int? purchaseTotalMinor,
+    required String operationKey,
+  });
+
+  /// Driver reports a failed stop (`reason` is a server enum string).
+  Future<Ride> failStop({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required String reason,
+    required String operationKey,
+  });
+
+  /// buy_deliver — driver submits an itemized quote for a SHOP stop.
+  /// `items` = [{name, qty, priceMinor}].
+  Future<Ride> submitStopQuote({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required List<Map<String, Object?>> items,
+    required String operationKey,
+  });
+
+  /// buy_deliver — customer approves or rejects the driver's quote.
+  Future<Ride> respondToStopQuote({
+    required String rideId,
+    required int seq,
+    int? expectedVersion,
+    required bool approve,
+    required String operationKey,
+  });
+
+  /// Driver reports cash collection outcome: PAID | UNPAID | PARTIAL.
+  Future<Ride> reportSettlement({
+    required String rideId,
+    int? expectedVersion,
+    required String status,
+    required String operationKey,
+  });
+
+  /// Customer acknowledges receipt (server records an audit timestamp).
+  Future<Ride> acknowledgeDelivery({
+    required String rideId,
+    int? expectedVersion,
+    required String operationKey,
+  });
+
+  /// Either party opens a dispute within the configured window
+  /// (post-conclusion only). `category` is a server enum; `message` is
+  /// free text up to 1000 chars.
+  Future<Ride> createDispute({
+    required String rideId,
+    required String category,
+    required String message,
+    required String operationKey,
+  });
+
+  /// Client-visible delivery limits/flags (maxStops, budget caps, gates).
+  Future<Map<String, Object?>> getDeliveryConfig();
 
   Future<Ride> closeRide({
     required String rideId,

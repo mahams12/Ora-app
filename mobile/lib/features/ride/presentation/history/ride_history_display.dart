@@ -3,7 +3,13 @@ library;
 
 const rideHistoryStatusFilters = ['all', 'completed', 'cancelled'];
 
-const rideHistoryServiceTypes = ['ride', 'courier', 'intercity', 'move'];
+const rideHistoryServiceTypes = [
+  'ride',
+  'courier',
+  'buy_deliver',
+  'intercity',
+  'move',
+];
 
 const rideHistoryDefaultLimit = 10;
 
@@ -52,6 +58,7 @@ String historyServiceTypeLabel(String? serviceType) {
   return switch (serviceType.toLowerCase()) {
     'ride' => 'Ride',
     'courier' => 'Courier',
+    'buy_deliver' => 'Buy & Deliver',
     'intercity' => 'Intercity',
     'move' => 'Move',
     _ => serviceType,

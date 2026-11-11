@@ -186,6 +186,8 @@ class RideHistoryViewModel extends AutoDisposeNotifier<RideHistoryUiState> {
         cursor: cursor,
         status: state.status,
         serviceType: state.serviceType,
+        // Dual-role accounts: this page is always the passenger history.
+        as: 'passenger',
       );
       if (seq != _requestSeq) return;
 

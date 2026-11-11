@@ -62,6 +62,30 @@ export interface InvitedRideItem {
   category: string;
   distanceKm: number | null;
   passengerCount: number;
+  /**
+   * Ora Courier — driver-visible parcel summary (no contact info; names and
+   * phones stay on the ride doc and are exposed to the assigned driver only).
+   */
+  parcel?: {
+    parcelCategory: string;
+    size: string;
+    weightKg: number;
+    quantity: number;
+    description: string;
+    handlingInstructions: string | null;
+    photoUrl: string | null;
+  };
+  /** Ora Courier v2 — itinerary + budget for invite evaluation. */
+  courierProtocolVersion?: number | null;
+  stops?: Array<{
+    seq: number;
+    type: string;
+    location: { lat: number; lng: number; address?: string };
+    label: string | null;
+    items?: { name: string; qty: number; note: string | null }[];
+    shopBudgetMinor: number | null;
+  }>;
+  shopping?: { totalBudgetMinor: number; paymentArrangement: string } | null;
 }
 
 function inviteExpiryMs(wave: DispatchWaveDoc): number | null {
@@ -162,6 +186,39 @@ export class InviteService {
         category: ride.category,
         distanceKm: ride.distanceKm,
         passengerCount: ride.passengerCount,
+        ...(ride.serviceType === 'courier' && ride.parcel
+          ? {
+              parcel: {
+                parcelCategory: ride.parcel.parcelCategory,
+                size: ride.parcel.size,
+                weightKg: ride.parcel.weightKg,
+                quantity: ride.parcel.quantity,
+                description: ride.parcel.description,
+                handlingInstructions: ride.parcel.handlingInstructions,
+                photoUrl: ride.parcel.photoUrl,
+              },
+            }
+          : {}),
+        // Ora Courier v2 — itinerary + shopping budget for invite eval.
+        ...(Array.isArray(ride.stops) && ride.stops.length > 0
+          ? {
+              courierProtocolVersion: ride.courierProtocolVersion ?? null,
+              stops: ride.stops.map((s) => ({
+                seq: s.seq,
+                type: s.type,
+                location: s.location,
+                label: s.label,
+                ...(s.items ? { items: s.items } : {}),
+                shopBudgetMinor: s.shopBudgetMinor ?? null,
+              })),
+              shopping: ride.shopping
+                ? {
+                    totalBudgetMinor: ride.shopping.totalBudgetMinor,
+                    paymentArrangement: ride.shopping.paymentArrangement,
+                  }
+                : null,
+            }
+          : {}),
       });
     }
 

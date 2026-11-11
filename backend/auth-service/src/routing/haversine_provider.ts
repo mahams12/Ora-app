@@ -2,6 +2,7 @@ import {
   RoutingError,
   type ComputeDriveRouteInput,
   type DriveRouteResult,
+  type MultiLegRouteResult,
   type RoutingProvider,
 } from './types';
 
@@ -75,6 +76,36 @@ export class HaversineRoutingProvider implements RoutingProvider {
     return {
       distanceKm,
       durationMin: (distanceKm / ASSUMED_SPEED_KMH) * 60,
+      provider: 'haversine',
+    };
+  }
+
+  /** Ora Courier v2 — multi-stop: pairwise straight-line legs, same semantics. */
+  async computeRoute(input: {
+    waypoints: { lat: number; lng: number }[];
+  }): Promise<MultiLegRouteResult> {
+    const waypoints = input.waypoints;
+    if (!Array.isArray(waypoints) || waypoints.length < 2) {
+      throw new RoutingError(
+        'VALIDATION_ERROR',
+        400,
+        'waypoints must contain at least 2 points.',
+      );
+    }
+    const legs = [] as { distanceKm: number; durationMin: number }[];
+    for (let i = 0; i + 1 < waypoints.length; i++) {
+      const a = waypoints[i];
+      const b = waypoints[i + 1];
+      const r = await this.computeDriveRoute({
+        origin: { lat: a.lat, lng: a.lng },
+        destination: { lat: b.lat, lng: b.lng },
+      });
+      legs.push({ distanceKm: r.distanceKm, durationMin: r.durationMin });
+    }
+    return {
+      legs,
+      distanceKm: legs.reduce((s, l) => s + l.distanceKm, 0),
+      durationMin: legs.reduce((s, l) => s + l.durationMin, 0),
       provider: 'haversine',
     };
   }

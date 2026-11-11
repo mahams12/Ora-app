@@ -406,6 +406,7 @@ void main() {
           cursor: any(named: 'cursor'),
           status: any(named: 'status'),
           serviceType: any(named: 'serviceType'),
+          as: any(named: 'as'),
         ),
       ).thenAnswer(
         (_) async => const RideListPage(rides: [], nextCursor: null),
@@ -432,6 +433,7 @@ void main() {
           cursor: any(named: 'cursor'),
           status: any(named: 'status'),
           serviceType: any(named: 'serviceType'),
+          as: any(named: 'as'),
         ),
       );
 
@@ -487,6 +489,7 @@ void main() {
           cursor: any(named: 'cursor'),
           status: any(named: 'status'),
           serviceType: any(named: 'serviceType'),
+          as: any(named: 'as'),
         ),
       ).called(1);
     });

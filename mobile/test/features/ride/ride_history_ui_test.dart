@@ -118,6 +118,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer(
       (_) async => RideListPage(
@@ -153,6 +154,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((_) async => const RideListPage(rides: [], nextCursor: null));
 
@@ -168,6 +170,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenThrow(const AppFailure.network(message: 'offline'));
 
@@ -183,6 +186,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((invocation) async {
       final cursor = invocation.namedArguments[#cursor] as String?;
@@ -215,6 +219,7 @@ void main() {
         cursor: 'next',
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).called(1);
 
@@ -232,6 +237,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer(
       (_) async => RideListPage(
@@ -256,6 +262,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer(
       (_) async => RideListPage(
@@ -278,6 +285,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer(
       (_) async => RideListPage(
@@ -300,6 +308,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer(
       (_) async => RideListPage(
@@ -323,6 +332,7 @@ void main() {
         cursor: any(named: 'cursor'),
         status: any(named: 'status'),
         serviceType: any(named: 'serviceType'),
+        as: any(named: 'as'),
       ),
     ).thenAnswer((invocation) async {
       statuses.add(invocation.namedArguments[#status] as String?);

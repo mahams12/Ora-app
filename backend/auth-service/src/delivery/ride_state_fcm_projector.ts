@@ -240,7 +240,25 @@ export class RideStateFcmProjector {
       case 'ride.offer.received':
       case 'ride.offer.withdrawn':
       case 'ride.offer.expired':
+      // Courier v2 — driver-reported progress the passenger must see.
+      case 'delivery.stop.arrived':
+      case 'delivery.stop.confirmed':
+      case 'delivery.stop.failed':
+      case 'delivery.quote.ready':
+      case 'delivery.settlement.reported':
+      case 'ride.delivery.failed':
+      case 'ride.delivery.retry':
+      case 'ride.return.started':
+      case 'ride.returned':
         uids = passengerOnly;
+        break;
+      // Courier v2 — passenger actions the assigned driver must see.
+      case 'delivery.quote.responded':
+      case 'delivery.acknowledged':
+        uids = assignedDriverId ? [assignedDriverId] : [];
+        break;
+      case 'delivery.dispute.opened':
+        uids = both;
         break;
       case 'ride.offer.selected': {
         // Driver may not be on the ride doc yet — resolve from the offer doc.

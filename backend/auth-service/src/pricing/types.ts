@@ -53,6 +53,16 @@ export interface PricingRuleDoc {
   offerMinRatio: number;
   /** OfferBoundPolicy max ratio vs recommendedFareMinor. */
   offerMaxRatio: number;
+  /**
+   * Ora Courier v2 — optional fixed fee per stop beyond the first two
+   * (PKR minor units). Absent → 0.
+   */
+  perStopFeeMinor?: number;
+  /**
+   * Ora Courier v2 — optional disclosed shopping/handling fee for
+   * buy_deliver bookings (PKR minor units). Absent → 0.
+   */
+  shoppingServiceFeeMinor?: number;
 }
 
 /** Pure calculator inputs (storage-independent). */

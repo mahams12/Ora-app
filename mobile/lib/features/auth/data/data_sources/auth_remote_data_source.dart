@@ -48,4 +48,49 @@ class AuthRemoteDataSource {
     );
     return UserProfileModel.fromJson(response.data!);
   }
+
+  /// POST /v1/auth/mode — server-authoritative Passenger ⇄ Driver switch.
+  ///
+  /// The server refuses with conflict codes surfaced via AppFailure:
+  /// DRIVER_ONBOARDING_REQUIRED, DRIVER_APPROVAL_PENDING, DRIVER_SUSPENDED,
+  /// ACTIVE_JOB (live booking/trip — response also carries activeRideId).
+  Future<UserProfileModel> switchMode({
+    required String mode,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/auth/mode',
+      data: {'mode': mode},
+      context: context,
+      idempotent: true,
+    );
+    return UserProfileModel.fromJson(response.data!);
+  }
+
+  /// POST /v1/drivers/onboarding — first-time driver application.
+  /// Idempotent server-side: replaying while pending/approved returns the
+  /// current status unchanged.
+  Future<Map<String, dynamic>> submitDriverOnboarding({
+    required String vehicleType,
+    String? vehicleModel,
+    String? plateNumber,
+    String? homeCity,
+    required RequestContext context,
+  }) async {
+    final response = await _apiClient.post<Map<String, dynamic>>(
+      '/drivers/onboarding',
+      data: {
+        'vehicleType': vehicleType,
+        if (vehicleModel != null && vehicleModel.isNotEmpty)
+          'vehicleModel': vehicleModel,
+        if (plateNumber != null && plateNumber.isNotEmpty)
+          'plateNumber': plateNumber,
+        if (homeCity != null && homeCity.isNotEmpty) 'homeCity': homeCity,
+      },
+      context: context,
+      idempotent: true,
+    );
+    final data = response.data;
+    return data is Map<String, dynamic> ? data : const {};
+  }
 }

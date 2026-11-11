@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -56,14 +58,22 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
     });
   }
 
-  void _openRide(BuildContext context, Ride ride) {
+  Future<void> _openRide(BuildContext context, Ride ride) async {
+    // The list stays mounted in an IndexedStack — refresh on return so
+    // mutations made in the detail/offers screens (cancel, state changes)
+    // are reflected without a manual pull-to-refresh.
     switch (rideHistoryDestinationFor(ride.state)) {
       case RideHistoryDestination.offers:
-        context.push(AppRoutes.offersInboxPath(ride.rideId));
+        await context.push(AppRoutes.offersInboxPath(ride.rideId));
       case RideHistoryDestination.active:
-        context.push(AppRoutes.activeRidePath(ride.rideId));
+        await context.push(AppRoutes.activeRidePath(ride.rideId));
       case RideHistoryDestination.detail:
-        context.push(AppRoutes.rideHistoryDetailPath(ride.rideId));
+        await context.push(AppRoutes.rideHistoryDetailPath(ride.rideId));
+    }
+    if (mounted) {
+      unawaited(
+        ref.read(rideHistoryViewModelProvider.notifier).refresh(),
+      );
     }
   }
 

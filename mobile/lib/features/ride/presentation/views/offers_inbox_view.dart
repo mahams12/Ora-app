@@ -146,6 +146,45 @@ class _OffersBody extends ConsumerWidget {
   final ValueChanged<String> onSelect;
   final Future<void> Function() onRefresh;
 
+  Future<void> _confirmCancel(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: OraColors.surfaceElevated,
+          title: Text(
+            'Cancel request?',
+            style: OraTypography.title(OraColors.textPrimary),
+          ),
+          content: Text(
+            'This asks Ora\'s servers to cancel the ride request. The state '
+            'will update only after the server confirms.',
+            style: OraTypography.body(OraColors.textSecondary),
+          ),
+          actions: [
+            OraButton(
+              label: 'Keep request',
+              expand: false,
+              variant: OraButtonVariant.ghost,
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+            OraButton(
+              label: 'Cancel request',
+              expand: false,
+              variant: OraButtonVariant.danger,
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed == true) {
+      await ref
+          .read(offersInboxViewModelProvider(rideId).notifier)
+          .cancel();
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final phase = ref.watch(
@@ -168,6 +207,12 @@ class _OffersBody extends ConsumerWidget {
     );
     final ride = ref.watch(
       offersInboxViewModelProvider(rideId).select((s) => s.ride),
+    );
+    final canCancel = ref.watch(
+      offersInboxViewModelProvider(rideId).select((s) => s.canCancel),
+    );
+    final isCancelling = ref.watch(
+      offersInboxViewModelProvider(rideId).select((s) => s.isCancelling),
     );
 
     return RefreshIndicator(
@@ -242,6 +287,22 @@ class _OffersBody extends ConsumerWidget {
                       'Checking for updates…',
                       textAlign: TextAlign.center,
                       style: OraTypography.caption(OraColors.textMuted),
+                    ),
+                  ),
+                if (canCancel || isCancelling)
+                  Padding(
+                    padding: const EdgeInsets.only(top: OraSpacing.lg),
+                    child: Center(
+                      child: OraButton(
+                        label: isCancelling
+                            ? 'Cancelling…'
+                            : 'Cancel request',
+                        variant: OraButtonVariant.danger,
+                        expand: false,
+                        isLoading: isCancelling,
+                        onPressed:
+                            canCancel ? () => _confirmCancel(context, ref) : null,
+                      ),
                     ),
                   ),
               ]),

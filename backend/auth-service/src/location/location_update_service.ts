@@ -9,6 +9,7 @@ import { projectAcceptedTripLocationLatest } from '../rtdb/ride_location_lifecyc
 import { parseAndValidateLocationBody } from './validation';
 import {
   FirestoreLocationStreamStore,
+  streamDocExpiresAtMs,
   type LocationStreamStore,
 } from './stream_store';
 import {
@@ -29,6 +30,10 @@ export const LOCATION_PUBLISH_RIDE_STATES = [
   'DRIVER_EN_ROUTE',
   'DRIVER_ARRIVED',
   'RIDE_STARTED',
+  // Ora Courier — keep trip tracking live through failed-delivery handling
+  // and the return-to-sender leg.
+  'DELIVERY_FAILED',
+  'RETURNING',
 ] as const;
 
 export type LocationPublishRideState =
@@ -126,6 +131,15 @@ export interface LocationUpdateServiceOptions {
    * Firestore-backed store preserving the original transaction semantics.
    */
   streamStore?: LocationStreamStore;
+  /**
+   * LOCATION_IDLE_MERGED_CURSOR — when true AND the geo projection supports
+   * it, idle-mode packets validate + advance the stream cursor inside the
+   * geoDrivers/{driverId} marker transaction instead of a separate
+   * locationStreams/{driverId} write: one billed transaction per packet
+   * instead of two. Trip mode is unchanged — trip streams keep their own
+   * locationStreams/{rideId}_{driverId} cursor (close/lifecycle needs it).
+   */
+  idleMergedCursor?: boolean;
 }
 
 /**
@@ -138,6 +152,7 @@ export class LocationUpdateService {
   private readonly tripLocationRtdb: TripLocationRtdb;
   private readonly eligibilityCache: DriverEligibilityCache;
   private readonly streamStore: LocationStreamStore;
+  private readonly idleMergedCursor: boolean;
 
   constructor(
     private readonly db: Firestore,
@@ -150,6 +165,11 @@ export class LocationUpdateService {
       options.eligibilityCache ?? new DriverEligibilityCache();
     this.streamStore =
       options.streamStore ?? new FirestoreLocationStreamStore(db);
+    // Merged cursor needs the geo write to exist AND support cursor
+    // validation — degrade to the classic two-transaction path otherwise.
+    this.idleMergedCursor =
+      options.idleMergedCursor === true &&
+      (this.geoProjection?.supportsIdleCursor() ?? false);
   }
 
   async update(input: {
@@ -194,13 +214,27 @@ export class LocationUpdateService {
         : tripStreamDocId(parsed.rideId!, driverId);
 
     const acceptedAt = new Date(nowMs).toISOString();
-    const snapshot = await this.streamStore.accept({
-      docId,
-      driverId,
-      mode,
-      parsed,
-      acceptedAt,
-    });
+
+    // Merged idle cursor (Phase B): cursor validation + marker/geo write in
+    // a single geoDrivers transaction. SEQUENCE_VIOLATION surfaces via the
+    // projection's LocationDomainError passthrough — same 422 contract.
+    const mergedIdle = mode === 'idle' && this.idleMergedCursor;
+    const snapshot: LocationUpdateSnapshot = mergedIdle
+      ? {
+          driverId,
+          mode,
+          rideId: null,
+          locationStreamId: parsed.locationStreamId,
+          locationSeq: parsed.locationSeq,
+          acceptedAt,
+        }
+      : await this.streamStore.accept({
+          docId,
+          driverId,
+          mode,
+          parsed,
+          acceptedAt,
+        });
 
     // L2 Step 3: RTDB projection ONLY after durable locationStreams accept.
     // Failure must not roll back accept or change HTTP success.
@@ -224,7 +258,8 @@ export class LocationUpdateService {
       });
     }
 
-    // N2C: best-effort Redis projection — never fail the accepted N2A update.
+    // N2C: best-effort Redis projection — never fail the accepted N2A update
+    // (except merged-cursor SEQUENCE_VIOLATION, which IS the accept contract).
     if (this.geoProjection) {
       await this.geoProjection.projectAcceptedLocation({
         driverId,
@@ -237,6 +272,20 @@ export class LocationUpdateService {
         acceptedAt,
         homeCity: driverDoc?.homeCity,
         requestId: input.requestId,
+        publishIntervalMs: parsed.publishIntervalMs,
+        keepalive: parsed.presenceKeepalive,
+        ...(mergedIdle
+          ? {
+              idleCursor: {
+                locationStreamId: parsed.locationStreamId,
+                locationSeq: parsed.locationSeq,
+                updatedAtIso: acceptedAt,
+                expiresAtIso: new Date(
+                  streamDocExpiresAtMs('idle', acceptedAt),
+                ).toISOString(),
+              },
+            }
+          : {}),
       });
     }
 

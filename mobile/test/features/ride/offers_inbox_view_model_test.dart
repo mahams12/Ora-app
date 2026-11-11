@@ -18,6 +18,8 @@ class MockListOffersUseCase extends Mock implements ListOffersUseCase {}
 
 class MockSelectOfferUseCase extends Mock implements SelectOfferUseCase {}
 
+class MockCancelRideUseCase extends Mock implements CancelRideUseCase {}
+
 Ride _ride({
   String state = 'SEARCHING',
   int version = 1,
@@ -83,6 +85,7 @@ ProviderContainer _container({
   required MockGetRideUseCase getRide,
   required MockListOffersUseCase listOffers,
   required MockSelectOfferUseCase selectOffer,
+  MockCancelRideUseCase? cancelRide,
   OfferPollingPolicy policy = const OfferPollingPolicy(
     intervals: [Duration(milliseconds: 30), Duration(milliseconds: 40)],
     maxLifetime: Duration(seconds: 2),
@@ -93,6 +96,8 @@ ProviderContainer _container({
       getRideUseCaseProvider.overrideWithValue(getRide),
       listOffersUseCaseProvider.overrideWithValue(listOffers),
       selectOfferUseCaseProvider.overrideWithValue(selectOffer),
+      cancelRideUseCaseProvider
+          .overrideWithValue(cancelRide ?? MockCancelRideUseCase()),
       failureMapperProvider.overrideWithValue(const _PassthroughFailureMapper()),
       offerPollingPolicyProvider.overrideWithValue(policy),
       idempotencyNonceStoreProvider
@@ -502,5 +507,116 @@ void main() {
     vm.pausePolling();
     await vm.resumePolling();
     verify(() => getRide('ride-1')).called(1);
+  });
+
+  group('cancel while searching', () {
+    test('canCancel is true for SEARCHING/OFFERS_AVAILABLE only', () async {
+      when(() => getRide('ride-1')).thenAnswer((_) async => _ride());
+      when(() => listOffers('ride-1')).thenAnswer((_) async => []);
+
+      final c = _container(
+        getRide: getRide,
+        listOffers: listOffers,
+        selectOffer: selectOffer,
+        policy: const OfferPollingPolicy(
+          intervals: [Duration(days: 1)],
+          maxLifetime: Duration(days: 1),
+        ),
+      );
+      addTearDown(c.dispose);
+
+      await keepOffers(c);
+      expect(
+        c.read(offersInboxViewModelProvider('ride-1')).canCancel,
+        isTrue,
+      );
+
+      when(() => getRide('ride-1'))
+          .thenAnswer((_) async => _ride(state: 'OFFERS_AVAILABLE'));
+      await (await keepOffers(c)).refresh(force: true);
+      expect(
+        c.read(offersInboxViewModelProvider('ride-1')).canCancel,
+        isTrue,
+      );
+
+      when(() => getRide('ride-1'))
+          .thenAnswer((_) async => _ride(state: 'DRIVER_ASSIGNED'));
+      await (await keepOffers(c)).refresh(force: true);
+      expect(
+        c.read(offersInboxViewModelProvider('ride-1')).canCancel,
+        isFalse,
+      );
+    });
+
+    test('cancel() routes CANCELLED ride to terminal and stops polling',
+        () async {
+      when(() => getRide('ride-1')).thenAnswer((_) async => _ride());
+      when(() => listOffers('ride-1')).thenAnswer((_) async => []);
+      final cancelRide = MockCancelRideUseCase();
+      when(
+        () => cancelRide(
+          rideId: any(named: 'rideId'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).thenAnswer((_) async => _ride(state: 'CANCELLED'));
+
+      final c = _container(
+        getRide: getRide,
+        listOffers: listOffers,
+        selectOffer: selectOffer,
+        cancelRide: cancelRide,
+        policy: const OfferPollingPolicy(
+          intervals: [Duration(days: 1)],
+          maxLifetime: Duration(days: 1),
+        ),
+      );
+      addTearDown(c.dispose);
+
+      final vm = await keepOffers(c);
+      await vm.cancel();
+
+      final state = c.read(offersInboxViewModelProvider('ride-1'));
+      expect(state.phase, OffersInboxPhase.terminal);
+      expect(state.ride?.state, 'CANCELLED');
+      expect(state.isCancelling, isFalse);
+      verify(
+        () => cancelRide(
+          rideId: 'ride-1',
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).called(1);
+    });
+
+    test('cancel() failure surfaces error and keeps request live', () async {
+      when(() => getRide('ride-1')).thenAnswer((_) async => _ride());
+      when(() => listOffers('ride-1')).thenAnswer((_) async => []);
+      final cancelRide = MockCancelRideUseCase();
+      when(
+        () => cancelRide(
+          rideId: any(named: 'rideId'),
+          operationKey: any(named: 'operationKey'),
+        ),
+      ).thenThrow(const AppFailure.unknown(message: 'net down'));
+
+      final c = _container(
+        getRide: getRide,
+        listOffers: listOffers,
+        selectOffer: selectOffer,
+        cancelRide: cancelRide,
+        policy: const OfferPollingPolicy(
+          intervals: [Duration(days: 1)],
+          maxLifetime: Duration(days: 1),
+        ),
+      );
+      addTearDown(c.dispose);
+
+      final vm = await keepOffers(c);
+      await vm.cancel();
+
+      final state = c.read(offersInboxViewModelProvider('ride-1'));
+      expect(state.phase, OffersInboxPhase.ready);
+      expect(state.isCancelling, isFalse);
+      expect(state.errorMessage, 'net down');
+    });
   });
 }

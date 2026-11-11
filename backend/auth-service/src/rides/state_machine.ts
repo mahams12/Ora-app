@@ -31,6 +31,9 @@ const TERMINAL_FOR_OFFERS: ReadonlySet<RideState> = new Set([
   'DRIVER_ARRIVED',
   'RIDE_STARTED',
   'RIDE_COMPLETED',
+  'DELIVERY_FAILED',
+  'RETURNING',
+  'RETURNED',
   'RIDE_CLOSED',
   'CANCELLED',
   'EXPIRED',
@@ -43,6 +46,18 @@ const TERMINAL: ReadonlySet<RideState> = new Set([
   'EXPIRED',
   'RIDE_CLOSED',
   'NO_SHOW',
+]);
+
+/**
+ * Ora Courier — states where the parcel is physically in driver custody.
+ * Plain cancellation is forbidden here: a parcel must never be "cancelled"
+ * out of the driver's hands. The only exits are successful delivery,
+ * DELIVERY_FAILED → retry, or DELIVERY_FAILED → RETURNING → RETURNED.
+ */
+export const COURIER_PARCEL_IN_TRANSIT: ReadonlySet<RideState> = new Set([
+  'RIDE_STARTED',
+  'DELIVERY_FAILED',
+  'RETURNING',
 ]);
 
 export function assertOfferable(state: RideState): void {
@@ -100,11 +115,11 @@ export function assertProgression(
 }
 
 export function assertCloseable(state: RideState): void {
-  if (state !== 'RIDE_COMPLETED') {
+  if (state !== 'RIDE_COMPLETED' && state !== 'RETURNED') {
     throw new RideDomainError(
       'STATE_CONFLICT',
       409,
-      `Ride state ${state} cannot be closed (expected RIDE_COMPLETED).`,
+      `Ride state ${state} cannot be closed (expected RIDE_COMPLETED or RETURNED).`,
     );
   }
 }

@@ -43,6 +43,20 @@ class MapPreviewConfig {
   static String tilesPreflightUrl(String apiKey) =>
       'https://api.maptiler.com/tiles/v3/tiles.json?key=$apiKey';
 
+  /// $0 keyless fallback — OpenFreeMap (OpenMapTiles schema over OSM data,
+  /// free public CDN, no API key). Used only when no MapTiler key is
+  /// configured so previews still render instead of soft-failing.
+  static const String openFreeMapTilesUrl =
+      'https://tiles.openfreemap.org/planet';
+
+  static const String openFreeMapGlyphsUrl =
+      'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf';
+
+  static const String openFreeMapAttribution =
+      '<a href="https://openfreemap.org" target="_blank">&copy; OpenFreeMap</a>'
+      ' <a href="https://openmaptiles.org" target="_blank">&copy; OpenMapTiles</a>'
+      ' <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>';
+
   /// Approved Ora map accent blue (route core + glow).
   static const String routeBlue = '#4FA3D9';
   static const String routeGlow = '#7CC8F5';

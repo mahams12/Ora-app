@@ -16,17 +16,24 @@ export function createDriversRouter(
     driverId: string,
     state: import('./types').AvailabilityState,
   ) => void,
+  availabilityService?: DriverAvailabilityService,
   driverAutoApprove = true,
 ): Router {
   const router = Router();
-  const availability = new DriverAvailabilityService(
-    db,
-    geoProjection ?? null,
-    onAvailabilityTransition,
-  );
+  const availability =
+    availabilityService ??
+    new DriverAvailabilityService(
+      db,
+      geoProjection ?? null,
+      onAvailabilityTransition,
+    );
   const onboarding = new DriverOnboardingService(db, driverAutoApprove);
   const deviceTokens = new DeviceTokenService(db);
 
+  /**
+   * POST /v1/drivers/onboarding — driver self-registration application.
+   * Auto-approves until admin review exists (DRIVER_AUTO_APPROVE).
+   */
   router.post('/onboarding', async (req: AuthedRequest, res) => {
     if (!req.caller) {
       sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');

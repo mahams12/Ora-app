@@ -52,9 +52,10 @@ class AuthRouteGuard {
 
       // Server confirmed profileComplete — allow home; leave auth screens.
       // Driver shell requires approved driver from session /me profile.
+      // activeMode='driver' restores the last-used mode after restart.
       AuthStatus.authenticatedReady => () {
           if (isOnAuth || isOnOnboarding || isOnSplash) {
-            return AppRoutes.home;
+            return _restoredModeHome();
           }
           if (isOnDriver && !_isApprovedDriver()) {
             return AppRoutes.home;
@@ -67,6 +68,16 @@ class AuthRouteGuard {
   bool _isApprovedDriver() {
     final profile = _ref.read(sessionUserProfileProvider);
     return profile?.isApprovedDriver == true;
+  }
+
+  /// Landing route after auth bootstrap: driver mode restores the driver
+  /// shell; everyone else (and non-approved accounts) lands on passenger home.
+  String _restoredModeHome() {
+    final profile = _ref.read(sessionUserProfileProvider);
+    if (profile?.activeMode == 'driver' && profile?.isApprovedDriver == true) {
+      return AppRoutes.driverHome;
+    }
+    return AppRoutes.home;
   }
 
   /// The OTP screen is only reachable while an OTP session is in flight.

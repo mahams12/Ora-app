@@ -33,9 +33,7 @@ class MapPreviewStyleLoader {
 
   static Future<MapPreviewStyleLoadResult> load() async {
     if (!MapPreviewConfig.hasTileKey) {
-      return const MapPreviewStyleLoadResult.fail(
-        'Map preview unavailable · tile key not configured',
-      );
+      return _loadOpenFreeMap();
     }
 
     final apiKey = MapPreviewConfig.mapTilerApiKey;
@@ -44,7 +42,8 @@ class MapPreviewStyleLoader {
         HttpHeaders.userAgentHeader: MapPreviewConfig.mapTilerUserAgent,
       });
 
-      final preflight = await _preflightMapTiler(apiKey);
+      final preflight =
+          await _preflight(MapPreviewConfig.tilesPreflightUrl(apiKey));
       if (!preflight.ok) {
         return MapPreviewStyleLoadResult.fail(preflight.message);
       }
@@ -64,13 +63,49 @@ class MapPreviewStyleLoader {
     }
   }
 
-  static Future<({bool ok, String message})> _preflightMapTiler(
-    String apiKey,
+  /// Keyless $0 path — same Ora dark style retargeted to OpenFreeMap tiles +
+  /// glyphs (OpenMapTiles schema). Sprite is dropped (unused — no icon-image
+  /// layers) so no keyed MapTiler asset is referenced.
+  static Future<MapPreviewStyleLoadResult> _loadOpenFreeMap() async {
+    try {
+      await setHttpHeaders({
+        HttpHeaders.userAgentHeader: MapPreviewConfig.mapTilerUserAgent,
+      });
+
+      final preflight =
+          await _preflight(MapPreviewConfig.openFreeMapTilesUrl);
+      if (!preflight.ok) {
+        return MapPreviewStyleLoadResult.fail(preflight.message);
+      }
+
+      final raw =
+          await rootBundle.loadString(MapPreviewConfig.styleAssetPath);
+      final style = jsonDecode(raw) as Map<String, Object?>;
+      final sources = style['sources'];
+      if (sources is Map) {
+        final omt = sources['openmaptiles'];
+        if (omt is Map) {
+          omt['url'] = MapPreviewConfig.openFreeMapTilesUrl;
+          omt['attribution'] = MapPreviewConfig.openFreeMapAttribution;
+        }
+      }
+      style['glyphs'] = MapPreviewConfig.openFreeMapGlyphsUrl;
+      style.remove('sprite');
+      return MapPreviewStyleLoadResult.ok(jsonEncode(style));
+    } catch (_) {
+      return const MapPreviewStyleLoadResult.fail(
+        'Map preview unavailable · style failed to load',
+      );
+    }
+  }
+
+  static Future<({bool ok, String message})> _preflight(
+    String url,
   ) async {
     final client = HttpClient();
     try {
       client.userAgent = MapPreviewConfig.mapTilerUserAgent;
-      final uri = Uri.parse(MapPreviewConfig.tilesPreflightUrl(apiKey));
+      final uri = Uri.parse(url);
       final req = await client.getUrl(uri);
       req.headers.set(HttpHeaders.acceptHeader, 'application/json');
       req.headers.set(

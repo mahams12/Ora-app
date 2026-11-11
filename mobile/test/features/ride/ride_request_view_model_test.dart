@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:ora/app/di/providers.dart';
 import 'package:ora/core/errors/failure_mapper.dart';
 import 'package:ora/features/ride/domain/entities/ride.dart';
+import 'package:ora/features/ride/domain/models/delivery_stop_draft.dart';
 import 'package:ora/features/ride/domain/models/resolved_passenger_location.dart';
 import 'package:ora/features/ride/domain/ports/device_location_port.dart';
 import 'package:ora/features/ride/domain/ports/place_search_port.dart';
@@ -1351,7 +1352,7 @@ void main() {
       await confirmBoth(vm, places: places);
       final calls = pricing.estimateCalls;
 
-      vm.selectServiceType('courier'); // valid server-side, not exposed here
+      vm.selectServiceType('move'); // valid server-side, not exposed here
       vm.selectServiceType('ride'); // same as current → no-op
       await Future<void>.delayed(Duration.zero);
 
@@ -1649,6 +1650,327 @@ void main() {
         expect(
           c.read(rideRequestViewModelProvider).proposedPickup!.lat,
           _pickupResolved.lat,
+        );
+      },
+    );
+
+    test(
+      'regression — stops survive the estimate refresh that addStopDraft '
+      'triggers',
+      () async {
+        // _withPricingSurface used to hand-rebuild state and dropped stops,
+        // shopping, and config fields on every estimate update.
+        final pricing = FakePricingPort(estimateResult: _sampleEstimate());
+        final c = container(pricing: pricing);
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        vm.selectServiceType('courier');
+        await confirmBoth(vm);
+        vm.setCitySlug('lahore');
+        await Future<void>.delayed(Duration.zero);
+
+        const draft = DeliveryStopDraft(
+          type: 'DROPOFF',
+          locationText: 'Iqbal Town',
+          lat: 31.50,
+          lng: 74.28,
+          label: 'Office',
+        );
+        vm.addStopDraft(draft);
+        expect(c.read(rideRequestViewModelProvider).stops, hasLength(1));
+
+        // Let the triggered estimate (loading → success) fully settle.
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        final state = c.read(rideRequestViewModelProvider);
+        expect(state.stops, hasLength(1));
+        expect(state.stops.first.label, 'Office');
+        expect(state.pricingStatus, PricingStatus.success);
+      },
+    );
+
+    test(
+      'regression — stops also survive estimate load + failure surfaces',
+      () async {
+        final pricing = FakePricingPort(
+          error: const PricingClientException(
+            PricingFailureKind.pricingUnavailable,
+            'down',
+          ),
+        );
+        final c = container(pricing: pricing);
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        vm.selectServiceType('courier');
+        await confirmBoth(vm);
+        vm.setCitySlug('lahore');
+        await Future<void>.delayed(Duration.zero);
+
+        vm.addStopDraft(
+          const DeliveryStopDraft(
+            type: 'PICKUP',
+            locationText: 'Second pickup',
+            lat: 31.49,
+            lng: 74.30,
+          ),
+        );
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        final state = c.read(rideRequestViewModelProvider);
+        expect(state.stops, hasLength(1));
+      },
+    );
+
+    test(
+      'B&D — origin derives from the FIRST shop; create body has no '
+      'duplicate PICKUP head',
+      () async {
+        final createRide = MockCreateRideUseCase();
+        when(
+          () => createRide(
+            body: any(named: 'body'),
+            operationKey: any(named: 'operationKey'),
+          ),
+        ).thenAnswer((_) async => _sampleRide());
+        final places = FakePlaceSearch(resolved: _destResolved);
+        final pricing = FakePricingPort(
+          estimateResult: _sampleEstimate(category: 'courier'),
+        );
+        final c = container(
+          createRide: createRide,
+          places: places,
+          pricing: pricing,
+        );
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        vm.selectServiceType('buy_deliver');
+        // Buy & Deliver has NO separate pickup field — destination only.
+        await vm.selectPlaceSuggestion(
+          field: LocationField.destination,
+          suggestion: const PlaceSuggestion(
+            placeId: 'place-dest',
+            primaryText: 'Data Darbar',
+          ),
+        );
+        vm.confirmDestination();
+        expect(
+          c.read(rideRequestViewModelProvider).canAdvanceToReview,
+          isFalse,
+        );
+
+        vm.addStopDraft(
+          const DeliveryStopDraft(
+            type: 'SHOP',
+            locationText: 'Pharmacy, Gulberg',
+            lat: 31.52,
+            lng: 74.35,
+            label: 'Pharmacy',
+            items: [ShopItemDraft(name: 'Milk pack', quantity: 1)],
+          ),
+        );
+        vm.setShoppingBudgetText('1500');
+        vm.setAttestationAccepted(true);
+        vm.setCitySlug('lahore');
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        final s = c.read(rideRequestViewModelProvider);
+        // Derived origin = first shop coordinates.
+        expect(s.confirmedPickup?.lat, 31.52);
+        expect(s.confirmedPickup?.lng, 74.35);
+        expect(s.canAdvanceToReview, isTrue);
+        // Estimate request prices from the shop, not a separate pickup.
+        final req = pricing.requests.last;
+        expect(req.pickupLat, 31.52);
+        expect(req.pickupLng, 74.35);
+
+        vm.goToReview();
+        await vm.submit();
+
+        final body = verify(
+          () => createRide(
+            body: captureAny(named: 'body'),
+            operationKey: any(named: 'operationKey'),
+          ),
+        ).captured.single as Map<String, Object?>;
+        final pickup = body['pickup'] as Map<String, Object?>;
+        expect(pickup['lat'], 31.52);
+        expect(pickup['lng'], 74.35);
+        final stops = (body['stops'] as List)
+            .cast<Map<String, Object?>>();
+        // First stop is the SHOP itself — no extra PICKUP waypoint.
+        expect(stops.first['type'], 'SHOP');
+        expect(stops.last['type'], 'DROPOFF');
+        expect(stops, hasLength(2));
+      },
+    );
+
+    test(
+      'B&D multi-shop — pickup derives from the first shop, the second '
+      'shop stays an intermediate stop',
+      () async {
+        final createRide = MockCreateRideUseCase();
+        when(
+          () => createRide(
+            body: any(named: 'body'),
+            operationKey: any(named: 'operationKey'),
+          ),
+        ).thenAnswer((_) async => _sampleRide());
+        final places = FakePlaceSearch(resolved: _destResolved);
+        final pricing = FakePricingPort(
+          estimateResult: _sampleEstimate(category: 'courier'),
+        );
+        final c = container(
+          createRide: createRide,
+          places: places,
+          pricing: pricing,
+        );
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        vm.selectServiceType('buy_deliver');
+        await vm.selectPlaceSuggestion(
+          field: LocationField.destination,
+          suggestion: const PlaceSuggestion(
+            placeId: 'place-dest',
+            primaryText: 'Data Darbar',
+          ),
+        );
+        vm.confirmDestination();
+        vm.addStopDraft(
+          const DeliveryStopDraft(
+            type: 'SHOP',
+            locationText: 'Pharmacy, Gulberg',
+            lat: 31.52,
+            lng: 74.35,
+            label: 'Pharmacy',
+            items: [ShopItemDraft(name: 'Milk pack', quantity: 1)],
+          ),
+        );
+        vm.addStopDraft(
+          const DeliveryStopDraft(
+            type: 'SHOP',
+            locationText: 'Supermarket, DHA',
+            lat: 31.47,
+            lng: 74.37,
+            label: 'Supermarket',
+            items: [ShopItemDraft(name: 'Bread', quantity: 2)],
+          ),
+        );
+        vm.setShoppingBudgetText('1500');
+        vm.setAttestationAccepted(true);
+        vm.setCitySlug('lahore');
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        expect(
+          c.read(rideRequestViewModelProvider).confirmedPickup?.lat,
+          31.52,
+        );
+        vm.goToReview();
+        await vm.submit();
+
+        final body = verify(
+          () => createRide(
+            body: captureAny(named: 'body'),
+            operationKey: any(named: 'operationKey'),
+          ),
+        ).captured.single as Map<String, Object?>;
+        final pickup = body['pickup'] as Map<String, Object?>;
+        expect(pickup['lat'], 31.52);
+        final stops = (body['stops'] as List)
+            .cast<Map<String, Object?>>();
+        // SHOP, SHOP, DROPOFF — first shop is pickup AND stop 0, not both.
+        expect(stops, hasLength(3));
+        expect(stops[0]['type'], 'SHOP');
+        expect(stops[1]['type'], 'SHOP');
+        expect(stops[2]['type'], 'DROPOFF');
+        expect(stops.where((s) => s['type'] == 'PICKUP'), isEmpty);
+      },
+    );
+
+    test(
+      'B&D — removing the first shop re-derives the origin from the next '
+      'shop; removing all shops clears the pickup',
+      () async {
+        final places = FakePlaceSearch(resolved: _destResolved);
+        final c = container(places: places);
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        vm.selectServiceType('buy_deliver');
+        await vm.selectPlaceSuggestion(
+          field: LocationField.destination,
+          suggestion: const PlaceSuggestion(
+            placeId: 'place-dest',
+            primaryText: 'Data Darbar',
+          ),
+        );
+        vm.confirmDestination();
+        vm.addStopDraft(
+          const DeliveryStopDraft(
+            type: 'SHOP',
+            locationText: 'Pharmacy',
+            lat: 31.52,
+            lng: 74.35,
+            items: [ShopItemDraft(name: 'A', quantity: 1)],
+          ),
+        );
+        vm.addStopDraft(
+          const DeliveryStopDraft(
+            type: 'SHOP',
+            locationText: 'Supermarket',
+            lat: 31.47,
+            lng: 74.37,
+            items: [ShopItemDraft(name: 'B', quantity: 1)],
+          ),
+        );
+
+        vm.removeStopDraft(0);
+        expect(
+          c.read(rideRequestViewModelProvider).confirmedPickup?.lat,
+          31.47,
+        );
+
+        vm.removeStopDraft(0);
+        final s = c.read(rideRequestViewModelProvider);
+        expect(s.confirmedPickup, isNull);
+        expect(s.canAdvanceToReview, isFalse);
+      },
+    );
+
+    test(
+      'B&D — switching to buy_deliver clears a previously confirmed '
+      'pickup (it must come from a shop)',
+      () async {
+        final places = FakePlaceSearch(resolved: _pickupResolved);
+        final c = container(places: places);
+        addTearDown(c.dispose);
+        final sub = c.listen(rideRequestViewModelProvider, (_, __) {});
+        addTearDown(sub.close);
+        final vm = c.read(rideRequestViewModelProvider.notifier);
+
+        await confirmBoth(vm, places: places);
+        expect(
+          c.read(rideRequestViewModelProvider).hasConfirmedPickup,
+          isTrue,
+        );
+
+        vm.selectServiceType('buy_deliver');
+        expect(
+          c.read(rideRequestViewModelProvider).confirmedPickup,
+          isNull,
         );
       },
     );

@@ -197,3 +197,78 @@ describe('pricing rules repository', () => {
     ).rejects.toMatchObject({ code: 'PRICING_UNAVAILABLE' });
   });
 });
+
+describe('pricing rules cache (PRICING_RULES_CACHE_TTL_MS)', () => {
+  function seedEasy(db: ReturnType<typeof memoryDb>, baseFare = 100) {
+    const seed = buildPricingRuleSeed({
+      city: 'lahore',
+      category: 'easy',
+      version: 'v1',
+      baseFare,
+      ratePerKm: 20,
+      ratePerMin: 5,
+      minFare: 150,
+      maxFare: 5000,
+    });
+    db.seed(PRICING_RULES_COLLECTION, seed.ruleId, { ...seed });
+    return seed.ruleId;
+  }
+
+  it('second load hits the cache — zero extra reads', async () => {
+    const db = memoryDb();
+    const ruleId = seedEasy(db);
+    const rules = new PricingRulesRepository(db as never, {
+      cacheTtlMs: 60_000,
+    });
+    const first = await rules.loadActiveRule({
+      city: 'lahore',
+      category: 'easy',
+    });
+    // Delete the doc — a cached load must not touch Firestore at all.
+    db.store.delete(`${PRICING_RULES_COLLECTION}/${ruleId}`);
+    const second = await rules.loadActiveRule({
+      city: 'lahore',
+      category: 'easy',
+    });
+    expect(second.version).toBe(first.version);
+    expect(rules.cacheStats()).toMatchObject({ hits: 1, misses: 1 });
+  });
+
+  it('default ttl=0 stays uncached — a mutated doc is re-read', async () => {
+    const db = memoryDb();
+    const ruleId = seedEasy(db, 100);
+    const rules = new PricingRulesRepository(db as never);
+    await rules.loadActiveRule({ city: 'lahore', category: 'easy' });
+    const doc = db.store.get(
+      `${PRICING_RULES_COLLECTION}/${ruleId}`,
+    ) as Record<string, unknown>;
+    doc.baseFare = 999;
+    const reloaded = await rules.loadActiveRule({
+      city: 'lahore',
+      category: 'easy',
+    });
+    expect(reloaded.baseFare).toBe(999);
+  });
+
+  it('expired entries are re-fetched', async () => {
+    const db = memoryDb();
+    seedEasy(db);
+    const rules = new PricingRulesRepository(db as never, {
+      cacheTtlMs: -1, // already-expired on store
+    });
+    await rules.loadActiveRule({ city: 'lahore', category: 'easy' });
+    await rules.loadActiveRule({ city: 'lahore', category: 'easy' });
+    expect(rules.cacheStats().misses).toBe(2);
+  });
+
+  it('does not cache failed loads (fail-closed, no negative caching)', async () => {
+    const db = memoryDb();
+    const rules = new PricingRulesRepository(db as never, {
+      cacheTtlMs: 60_000,
+    });
+    await expect(
+      rules.loadActiveRule({ city: 'lahore', category: 'easy' }),
+    ).rejects.toMatchObject({ code: 'PRICING_UNAVAILABLE' });
+    expect(rules.cacheStats().size).toBe(0);
+  });
+});

@@ -20,6 +20,7 @@ class OraTextField extends StatelessWidget {
     this.onSubmitted,
     this.textInputAction,
     this.textCapitalization = TextCapitalization.none,
+    this.initialValue,
     this.autofillHints,
     this.enabled = true,
     this.prefixIcon,
@@ -41,6 +42,10 @@ class OraTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final TextCapitalization textCapitalization;
   final Iterable<String>? autofillHints;
+
+  /// Seed text for uncontrolled fields (no [controller]) — applied on the
+  /// field's first build so values survive section-level rebuilds.
+  final String? initialValue;
   final bool enabled;
   final IconData? prefixIcon;
   final Widget? suffixIcon;
@@ -66,15 +71,16 @@ class OraTextField extends StatelessWidget {
           Text(label!, style: OraTypography.label(labelColor)),
           const SizedBox(height: OraSpacing.xs),
         ],
-        TextField(
+        TextFormField(
           controller: controller,
+          initialValue: controller == null ? initialValue : null,
           focusNode: focusNode,
           inputFormatters: inputFormatters,
           obscureText: obscureText,
           enabled: enabled,
           keyboardType: keyboardType,
           onChanged: onChanged,
-          onSubmitted: onSubmitted,
+          onFieldSubmitted: onSubmitted,
           textInputAction: textInputAction,
           textCapitalization: textCapitalization,
           autofillHints: autofillHints,
