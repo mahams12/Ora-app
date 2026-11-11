@@ -6,13 +6,13 @@ import 'ora_colors.dart';
 class OraElevation {
   OraElevation._();
 
-  static const card = 0.0;
+  static const card = 2.0;
   static const raised = 2.0;
   static const modal = 8.0;
 
   static List<BoxShadow> get cardShadow => const [
     BoxShadow(
-      color: Color(0x73000000),
+      color: OraColors.shadow,
       blurRadius: 20,
       offset: Offset(0, 8),
       spreadRadius: -10,
@@ -21,7 +21,7 @@ class OraElevation {
 
   static List<BoxShadow> get raisedShadow => const [
     BoxShadow(
-      color: Color(0x73000000),
+      color: OraColors.shadow,
       blurRadius: 28,
       offset: Offset(0, 12),
       spreadRadius: -12,
@@ -30,7 +30,7 @@ class OraElevation {
 
   static List<BoxShadow> get sheetShadow => const [
     BoxShadow(
-      color: Color(0x4012182B),
+      color: OraColors.shadow,
       blurRadius: 30,
       offset: Offset(0, -12),
       spreadRadius: -14,
@@ -39,7 +39,7 @@ class OraElevation {
 
   static List<BoxShadow> get primaryButtonShadow => const [
     BoxShadow(
-      color: Color(0x8CD4A756),
+      color: OraColors.goldMuted,
       blurRadius: 22,
       offset: Offset(0, 10),
       spreadRadius: -8,
@@ -48,7 +48,7 @@ class OraElevation {
 
   static List<BoxShadow> get secondaryButtonShadow => const [
     BoxShadow(
-      color: Color(0x801F9C82),
+      color: OraColors.tealMuted,
       blurRadius: 22,
       offset: Offset(0, 10),
       spreadRadius: -8,

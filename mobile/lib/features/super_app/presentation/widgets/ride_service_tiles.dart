@@ -142,7 +142,10 @@ class RideServiceTile extends StatelessWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Color(0x26140F05), Color(0xC7140F05)],
+                          colors: [
+                            OraColors.photoScrim,
+                            OraColors.photoScrimStrong,
+                          ],
                         ),
                       ),
                     ),
@@ -153,7 +156,7 @@ class RideServiceTile extends StatelessWidget {
                         width: 30,
                         height: 30,
                         decoration: BoxDecoration(
-                          color: const Color(0xF2FFFFFF),
+                          color: OraColors.photoChip,
                           borderRadius: BorderRadius.circular(9),
                         ),
                         child: Icon(icon, size: 15, color: badgeColor),
@@ -169,7 +172,7 @@ class RideServiceTile extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xF2FFFFFF),
+                            color: OraColors.photoChip,
                             borderRadius: BorderRadius.circular(OraRadius.pill),
                           ),
                           child: Text(
@@ -194,7 +197,7 @@ class RideServiceTile extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: OraTypography.bodyEmphasis(
-                              Colors.white,
+                              OraColors.onPhoto,
                             ).copyWith(fontSize: 14, height: 1.1),
                           ),
                           Text(
@@ -202,7 +205,7 @@ class RideServiceTile extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: OraTypography.caption(
-                              const Color(0xD9FFFFFF),
+                              OraColors.onPhotoMuted,
                             ).copyWith(fontSize: 10.5, height: 1.15),
                           ),
                         ],

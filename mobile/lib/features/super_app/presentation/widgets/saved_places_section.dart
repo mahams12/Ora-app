@@ -27,8 +27,9 @@ class SavedPlacesSection extends StatelessWidget {
             onTap: () => onUnavailable('Saved places'),
             child: Text(
               'See all',
-              style: OraTypography.caption(OraColors.primary)
-                  .copyWith(fontWeight: FontWeight.w600),
+              style: OraTypography.caption(
+                OraColors.primary,
+              ).copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ),
@@ -88,7 +89,7 @@ class _SavedPlaceRow extends StatelessWidget {
               height: 40,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0x0FFFFFFF),
+                color: OraColors.surfaceElevated,
               ),
               child: Icon(icon, size: 18, color: OraColors.textSecondary),
             ),
@@ -101,15 +102,17 @@ class _SavedPlaceRow extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: OraTypography.bodyEmphasis(OraColors.textPrimary)
-                        .copyWith(fontSize: 13.5),
+                    style: OraTypography.bodyEmphasis(
+                      OraColors.textPrimary,
+                    ).copyWith(fontSize: 13.5),
                   ),
                   Text(
                     subtitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: OraTypography.caption(OraColors.textMuted)
-                        .copyWith(fontSize: 11.5),
+                    style: OraTypography.caption(
+                      OraColors.textMuted,
+                    ).copyWith(fontSize: 11.5),
                   ),
                 ],
               ),

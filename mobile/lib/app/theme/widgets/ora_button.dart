@@ -148,7 +148,7 @@ class _OraButtonState extends State<OraButton> {
     return switch (widget.variant) {
       OraButtonVariant.primary || OraButtonVariant.secondary => null,
       OraButtonVariant.ghost ||
-      OraButtonVariant.outline => const Color(0x14FFFFFF),
+      OraButtonVariant.outline => OraColors.surfaceElevated,
       OraButtonVariant.danger => OraColors.dangerMuted,
     };
   }

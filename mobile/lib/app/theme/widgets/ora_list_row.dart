@@ -100,11 +100,7 @@ class OraListRow extends StatelessWidget {
           label: subtitle == null ? title : '$title, $subtitle',
           child: content,
         ),
-        if (showDivider)
-          Divider(
-            height: 1,
-            color: isDark ? OraColors.divider : const Color(0xFFE4E7EC),
-          ),
+        if (showDivider) const Divider(height: 1, color: OraColors.divider),
       ],
     );
   }

@@ -42,7 +42,9 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
     super.initState();
     _page = widget.initialTab;
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _syncDispatchFcmToken());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _syncDispatchFcmToken(),
+    );
   }
 
   @override
@@ -140,7 +142,9 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
         .toList();
     if (parts.isEmpty) return 'DR';
     if (parts.length == 1) {
-      return parts.first.substring(0, parts.first.length.clamp(0, 2)).toUpperCase();
+      return parts.first
+          .substring(0, parts.first.length.clamp(0, 2))
+          .toUpperCase();
     }
     return ('${parts.first[0]}${parts.last[0]}').toUpperCase();
   }
@@ -240,14 +244,14 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
           OraDrawerItem(
             title: 'Driver settings',
             icon: Icons.settings_rounded,
-            iconBackground: const Color(0x14FFFFFF),
+            iconBackground: OraColors.surfaceElevated,
             iconColor: OraColors.textSecondary,
             onTap: () => _showUnavailable('Driver settings'),
           ),
           OraDrawerItem(
             title: 'Driver help',
             icon: Icons.help_outline_rounded,
-            iconBackground: const Color(0x14FFFFFF),
+            iconBackground: OraColors.surfaceElevated,
             iconColor: OraColors.textSecondary,
             onTap: () => _showUnavailable('Driver help'),
           ),
@@ -347,19 +351,19 @@ class _DriverSubpage extends StatelessWidget {
                   child: Text(
                     title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: OraColors.textPrimary,
-                          fontWeight: FontWeight.w700,
-                          fontFamily: 'Sora',
-                        ),
+                      color: OraColors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Sora',
+                    ),
                   ),
                 ),
                 Text(
                   AppConstants.appName,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: OraColors.primary,
-                        fontWeight: FontWeight.w800,
-                        fontFamily: 'Sora',
-                      ),
+                    color: OraColors.primary,
+                    fontWeight: FontWeight.w800,
+                    fontFamily: 'Sora',
+                  ),
                 ),
               ],
             ),

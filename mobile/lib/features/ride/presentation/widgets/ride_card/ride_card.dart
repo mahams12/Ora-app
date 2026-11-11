@@ -22,10 +22,7 @@ export 'ride_card_model.dart';
 
 /// Shared premium Ora ride card — epic layout with empty slots when data absent.
 class RideCard extends StatefulWidget {
-  const RideCard({
-    required this.model,
-    super.key,
-  });
+  const RideCard({required this.model, super.key});
 
   final RideCardModel model;
 
@@ -53,14 +50,14 @@ class _RideCardState extends State<RideCard> {
           end: Alignment.bottomRight,
           colors: active
               ? const [
-                  Color(0xFF1A2748),
-                  Color(0xFF141E36),
-                  Color(0xFF0F1628),
+                  OraColors.surfaceElevated,
+                  OraColors.surfaceElevated,
+                  OraColors.surfaceElevated,
                 ]
               : const [
-                  Color(0xFF181F36),
-                  Color(0xFF141A2E),
-                  Color(0xFF101624),
+                  OraColors.surfaceElevated,
+                  OraColors.surfaceElevated,
+                  OraColors.surfaceElevated,
                 ],
         ),
         border: Border.all(
@@ -70,16 +67,16 @@ class _RideCardState extends State<RideCard> {
           width: active ? 1.4 : 1,
         ),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.55),
+          const BoxShadow(
+            color: OraColors.shadow,
             blurRadius: 18,
-            offset: const Offset(0, 10),
+            offset: Offset(0, 10),
             spreadRadius: -10,
           ),
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.04),
+          const BoxShadow(
+            color: Colors.transparent,
             blurRadius: 0,
-            offset: const Offset(0, 1),
+            offset: Offset(0, 1),
           ),
           if (active)
             BoxShadow(
@@ -151,8 +148,8 @@ class _RideCardBody extends StatelessWidget {
           fareCaptionFallback: model.statusKind == RideCardStatusKind.danger
               ? 'Cancelled'
               : (model.paymentLabel == null
-                  ? null
-                  : 'Paid (${model.paymentLabel})'),
+                    ? null
+                    : 'Paid (${model.paymentLabel})'),
           showPhoneSlot: true,
         );
       case RideCardVariant.offer:
@@ -390,8 +387,9 @@ class _HistoryBody extends StatelessWidget {
         const SizedBox(height: OraSpacing.sm),
         RideCardVehicleRow(
           vehicle: model.vehicle,
-          fallbackAssetPath:
-              model.showCarAccent ? model.carAssetPath : model.carAssetPath,
+          fallbackAssetPath: model.showCarAccent
+              ? model.carAssetPath
+              : model.carAssetPath,
           // Empty plate outline looked like hidden registration — only when real.
           showPlateSlot: model.vehicle?.registration?.trim().isNotEmpty == true,
         ),

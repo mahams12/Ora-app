@@ -278,7 +278,7 @@ class _LogisticsHero extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [Color(0x000A1025), Color(0xE60A1025)],
+                  colors: [Colors.transparent, OraColors.photoScrimStrong],
                 ),
               ),
             ),
@@ -290,14 +290,14 @@ class _LogisticsHero extends StatelessWidget {
                 children: [
                   Text(
                     'Logistics',
-                    style: OraTypography.headline(Colors.white),
+                    style: OraTypography.headline(OraColors.onPhoto),
                   ),
                   const SizedBox(height: OraSpacing.xxs),
                   Text(
                     'Move goods with a vehicle that fits.',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: OraTypography.body(Colors.white70),
+                    style: OraTypography.body(OraColors.onPhotoMuted),
                   ),
                 ],
               ),

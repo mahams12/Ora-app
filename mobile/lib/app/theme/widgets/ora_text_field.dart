@@ -93,7 +93,7 @@ class OraTextField extends StatelessWidget {
             suffixIcon: suffixIcon,
             filled: true,
             fillColor: enabled
-                ? (isDark ? OraColors.surfaceElevated : Colors.white)
+                ? (isDark ? OraColors.surfaceElevated : OraColors.surface)
                 : OraColors.disabled.withValues(alpha: 0.25),
           ),
         ),
@@ -130,7 +130,7 @@ class OraPinBox extends StatelessWidget {
       height: 56,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: isDark ? OraColors.surfaceElevated : Colors.white,
+        color: isDark ? OraColors.surfaceElevated : OraColors.surface,
         borderRadius: BorderRadius.circular(OraRadius.input),
         border: Border.all(color: border, width: 1.5),
         boxShadow: focused

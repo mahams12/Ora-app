@@ -121,9 +121,9 @@ class DriverHomeView extends StatelessWidget {
               const SizedBox(height: OraSpacing.lg),
               Text(
                 'Quick actions',
-                style: OraTypography.title(OraColors.textPrimary).copyWith(
-                  fontSize: 15,
-                ),
+                style: OraTypography.title(
+                  OraColors.textPrimary,
+                ).copyWith(fontSize: 15),
               ),
               const SizedBox(height: OraSpacing.sm),
               GridView.count(
@@ -231,7 +231,7 @@ class _DriverHero extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [OraColors.teal, OraColors.tealDeep],
+          colors: [OraColors.textPrimary, OraColors.tealDeep],
         ),
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
       ),
@@ -246,7 +246,7 @@ class _DriverHero extends StatelessWidget {
                   tooltip: 'Menu',
                   onPressed: onOpenDrawer,
                   icon: const Icon(Icons.menu_rounded),
-                  color: Colors.white,
+                  color: OraColors.onPhoto,
                 ),
                 Expanded(
                   child: Center(
@@ -256,7 +256,7 @@ class _DriverHero extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0x1FFFFFFF),
+                        color: OraColors.onPhoto.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -273,10 +273,11 @@ class _DriverHero extends StatelessWidget {
                           const SizedBox(width: 6),
                           Text(
                             'Driver',
-                            style: OraTypography.caption(Colors.white).copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
+                            style: OraTypography.caption(OraColors.onPhoto)
+                                .copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: OraColors.onPhoto,
+                                ),
                           ),
                         ],
                       ),
@@ -296,9 +297,9 @@ class _DriverHero extends StatelessWidget {
                     ),
                     child: Text(
                       avatarInitials,
-                      style: OraTypography.label(Colors.white).copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                      style: OraTypography.label(
+                        OraColors.onPhoto,
+                      ).copyWith(fontWeight: FontWeight.w800),
                     ),
                   ),
                 ),
@@ -312,19 +313,18 @@ class _DriverHero extends StatelessWidget {
                 children: [
                   Text(
                     'Trip fares',
-                    style: OraTypography.caption(const Color(0xFFB9BDD1)),
+                    style: OraTypography.caption(OraColors.onPhotoMuted),
                   ),
                   Text(
                     'Earnings',
-                    style: OraTypography.display(Colors.white).copyWith(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: OraTypography.display(
+                      OraColors.onPhoto,
+                    ).copyWith(fontSize: 30, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Verified fares from completed trips · tap to view',
-                    style: OraTypography.caption(const Color(0xFFB9BDD1)),
+                    style: OraTypography.caption(OraColors.onPhotoMuted),
                   ),
                 ],
               ),
@@ -358,13 +358,19 @@ class _MapStub extends StatelessWidget {
             top: 60,
             left: 0,
             right: 0,
-            child: Container(height: 5, color: const Color(0x1FFFFFFF)),
+            child: Container(
+              height: 5,
+              color: OraColors.onPhoto.withValues(alpha: 0.12),
+            ),
           ),
           Positioned(
             top: 0,
             bottom: 0,
             left: 120,
-            child: Container(width: 5, color: const Color(0x1FFFFFFF)),
+            child: Container(
+              width: 5,
+              color: OraColors.onPhoto.withValues(alpha: 0.12),
+            ),
           ),
           Positioned(
             top: 60,
@@ -384,14 +390,14 @@ class _MapStub extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: const Color(0xE612182B),
+                color: OraColors.photoScrimStrong,
                 borderRadius: BorderRadius.circular(OraRadius.sm),
               ),
               child: Text(
                 'Map zones · coming later',
-                style: OraTypography.caption(Colors.white).copyWith(
+                style: OraTypography.caption(OraColors.onPhoto).copyWith(
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: OraColors.onPhoto,
                 ),
               ),
             ),
@@ -427,8 +433,8 @@ class _AvailabilityCard extends StatelessWidget {
     final subtitle = !loaded
         ? 'Checking availability…'
         : isOnline
-            ? 'Online — visible for nearby dispatches'
-            : 'Offline — tap to go online';
+        ? 'Online — visible for nearby dispatches'
+        : 'Offline — tap to go online';
     return OraCard(
       onTap: busy ? null : onTap,
       padding: const EdgeInsets.all(OraSpacing.md),
@@ -459,15 +465,13 @@ class _AvailabilityCard extends StatelessWidget {
               color: isOnline ? OraColors.secondary : OraColors.border,
               borderRadius: BorderRadius.circular(999),
             ),
-            alignment: isOnline
-                ? Alignment.centerRight
-                : Alignment.centerLeft,
+            alignment: isOnline ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
               width: 22,
               height: 22,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isOnline ? Colors.white : OraColors.slateMuted,
+                color: isOnline ? OraColors.onPhoto : OraColors.slateMuted,
               ),
             ),
           ),

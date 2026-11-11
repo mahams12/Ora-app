@@ -243,7 +243,7 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
           OraDrawerItem(
             title: 'Refer & earn',
             icon: Icons.card_giftcard_rounded,
-            iconBackground: const Color(0x33F08A6A),
+            iconBackground: OraColors.primaryMuted,
             iconColor: OraColors.accentCoral,
             subtitle: 'Get Rs 200 per friend',
             onTap: () => _showUnavailable('Refer & earn'),
@@ -275,7 +275,7 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
             title: 'MapLibre PoC',
             subtitle: 'Disposable renderer test — not production',
             icon: Icons.map_outlined,
-            iconBackground: const Color(0x384FA3D9),
+            iconBackground: OraColors.infoMuted,
             iconColor: OraColors.info,
             onTap: () {
               _closeDrawer();
@@ -285,14 +285,14 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
           OraDrawerItem(
             title: 'Settings',
             icon: Icons.settings_rounded,
-            iconBackground: const Color(0x14FFFFFF),
+            iconBackground: OraColors.surfaceElevated,
             iconColor: OraColors.textSecondary,
             onTap: () => _showUnavailable('Settings'),
           ),
           OraDrawerItem(
             title: 'Help centre',
             icon: Icons.help_outline_rounded,
-            iconBackground: const Color(0x14FFFFFF),
+            iconBackground: OraColors.surfaceElevated,
             iconColor: OraColors.textSecondary,
             onTap: () => _showUnavailable('Help centre'),
           ),

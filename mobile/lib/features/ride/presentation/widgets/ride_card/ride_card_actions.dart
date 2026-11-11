@@ -35,10 +35,7 @@ class RideCardActions extends StatelessWidget {
         for (var i = 0; i < actions.length; i++) ...[
           if (i > 0) const SizedBox(width: OraSpacing.sm),
           Expanded(
-            child: _ActionButton(
-              action: actions[i],
-              compact: compact,
-            ),
+            child: _ActionButton(action: actions[i], compact: compact),
           ),
         ],
       ],
@@ -78,7 +75,7 @@ class _ActionButtonState extends State<_ActionButton> {
     List<BoxShadow>? shadows;
 
     if (action.isDestructive) {
-      bg = const Color(0xFF1A1520);
+      bg = OraColors.surfaceElevated;
       fg = OraColors.dangerForeground;
       border = OraColors.danger.withValues(alpha: 0.45);
     } else if (isPrimary) {
@@ -92,14 +89,14 @@ class _ActionButtonState extends State<_ActionButton> {
       shadows = OraElevation.primaryButtonShadow;
     } else {
       // Sunken secondary (Decline / Navigate).
-      bg = const Color(0xFF151A28);
+      bg = OraColors.surfaceElevated;
       fg = OraColors.textPrimary;
       border = OraColors.border;
       shadows = [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.55),
+        const BoxShadow(
+          color: OraColors.shadow,
           blurRadius: 8,
-          offset: const Offset(0, 3),
+          offset: Offset(0, 3),
           spreadRadius: -2,
         ),
       ];
@@ -109,10 +106,7 @@ class _ActionButtonState extends State<_ActionButton> {
         ? SizedBox(
             width: 18,
             height: 18,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: fg,
-            ),
+            child: CircularProgressIndicator(strokeWidth: 2, color: fg),
           )
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,

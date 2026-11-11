@@ -26,29 +26,29 @@ class RideCardCategoryBadge extends StatelessWidget {
 
     final (Color bg, Color fg, IconData? icon, String? asset) = switch (tone) {
       RideCardCategoryTone.easy => (
-          const Color(0xFF1B4332),
-          const Color(0xFF95D5B2),
-          null,
-          RideCardAssets.shieldCheck,
-        ),
+        OraColors.successSurface,
+        OraColors.successBorder,
+        null,
+        RideCardAssets.shieldCheck,
+      ),
       RideCardCategoryTone.medium => (
-          const Color(0xFF3D2E0F),
-          const Color(0xFFFFD166),
-          Icons.flag_rounded,
-          null,
-        ),
+        OraColors.warningSurface,
+        OraColors.warning,
+        Icons.flag_rounded,
+        null,
+      ),
       RideCardCategoryTone.hard => (
-          const Color(0xFF3D1515),
-          const Color(0xFFF5A8A8),
-          Icons.warning_amber_rounded,
-          null,
-        ),
+        OraColors.errorSurface,
+        OraColors.dangerForeground,
+        Icons.warning_amber_rounded,
+        null,
+      ),
       RideCardCategoryTone.none => (
-          OraColors.navy,
-          OraColors.textSecondary,
-          Icons.circle,
-          null,
-        ),
+        OraColors.navy,
+        OraColors.textSecondary,
+        Icons.circle,
+        null,
+      ),
     };
 
     return Container(
@@ -69,10 +69,7 @@ class RideCardCategoryBadge extends StatelessWidget {
           else if (icon != null)
             Icon(icon, size: 12, color: fg),
           const SizedBox(width: 4),
-          Text(
-            label,
-            style: OraTypography.label(fg).copyWith(fontSize: 11),
-          ),
+          Text(label, style: OraTypography.label(fg).copyWith(fontSize: 11)),
         ],
       ),
     );

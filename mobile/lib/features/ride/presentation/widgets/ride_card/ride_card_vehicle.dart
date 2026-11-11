@@ -73,16 +73,15 @@ class RideCardVehicleRow extends StatelessWidget {
             ),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: const Color(0xFF151C2E),
+              color: OraColors.surfaceElevated,
               borderRadius: BorderRadius.circular(OraRadius.xs),
               border: Border.all(color: OraColors.border),
             ),
             child: Text(
               (plate == null || plate.isEmpty) ? '' : plate,
-              style: OraTypography.label(OraColors.textPrimary).copyWith(
-                fontSize: 11,
-                letterSpacing: 0.4,
-              ),
+              style: OraTypography.label(
+                OraColors.textPrimary,
+              ).copyWith(fontSize: 11, letterSpacing: 0.4),
             ),
           ),
         ],
@@ -99,11 +98,7 @@ class _AssetOrIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (assetPath != null) {
-      return RideCardAssetImage(
-        assetPath: assetPath!,
-        width: 56,
-        height: 36,
-      );
+      return RideCardAssetImage(assetPath: assetPath!, width: 56, height: 36);
     }
     return Container(
       width: 36,

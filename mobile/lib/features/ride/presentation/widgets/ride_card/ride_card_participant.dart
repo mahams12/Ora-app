@@ -38,9 +38,8 @@ class RideCardParticipantRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = participant;
     final avatarSize = compact ? 40.0 : 48.0;
-    final hasName = p != null &&
-        p.displayName != null &&
-        p.displayName!.trim().isNotEmpty;
+    final hasName =
+        p != null && p.displayName != null && p.displayName!.trim().isNotEmpty;
 
     return Row(
       children: [
@@ -59,9 +58,9 @@ class RideCardParticipantRow extends StatelessWidget {
                 child: hasName
                     ? Text(
                         p.displayName!.trim(),
-                        style:
-                            OraTypography.bodyEmphasis(OraColors.textPrimary)
-                                .copyWith(fontSize: compact ? 14 : 15),
+                        style: OraTypography.bodyEmphasis(
+                          OraColors.textPrimary,
+                        ).copyWith(fontSize: compact ? 14 : 15),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       )
@@ -172,17 +171,17 @@ class RideCardIconButton extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF151C2E),
+              color: OraColors.surfaceElevated,
               border: Border.all(color: OraColors.border),
               boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.35),
+                const BoxShadow(
+                  color: OraColors.shadow,
                   blurRadius: 8,
-                  offset: const Offset(0, 3),
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
-              child: Opacity(
+            child: Opacity(
               opacity: onPressed == null ? 0.45 : 1,
               child: assetPath != null
                   ? RideCardAssetImage(

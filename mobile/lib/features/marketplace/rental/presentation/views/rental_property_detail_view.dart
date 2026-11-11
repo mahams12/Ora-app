@@ -286,7 +286,7 @@ class RentalPropertyDetailView extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Color(0x12000000), Color(0xD9000000)],
+                  colors: [OraColors.shadow, OraColors.photoScrimStrong],
                 ),
               ),
             ),
@@ -297,7 +297,7 @@ class RentalPropertyDetailView extends StatelessWidget {
                 width: 30,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: const Color(0xF2FFFFFF),
+                  color: OraColors.photoChip,
                   borderRadius: BorderRadius.circular(9),
                 ),
                 child: const Icon(
@@ -325,14 +325,14 @@ class RentalPropertyDetailView extends StatelessWidget {
                     model.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: OraTypography.bodyEmphasis(Colors.white),
+                    style: OraTypography.bodyEmphasis(OraColors.onPhoto),
                   ),
                   if (model.address != null)
                     Text(
                       model.address!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: OraTypography.caption(const Color(0xD9FFFFFF)),
+                      style: OraTypography.caption(OraColors.onPhotoMuted),
                     ),
                 ],
               ),
@@ -372,7 +372,7 @@ class _GalleryStatus extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xF2FFFFFF),
+        color: OraColors.photoChip,
         borderRadius: BorderRadius.circular(OraRadius.pill),
       ),
       child: Text(

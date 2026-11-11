@@ -59,7 +59,7 @@ class ActiveRideMap extends StatefulWidget {
 
   /// Test hook — receives MAP-2C guide segments after each build (no camera).
   final void Function(List<ActiveRideMapGuideSegment> segments)?
-      onProgressionSegments;
+  onProgressionSegments;
 
   /// Test / instrumentation hook — fired when MAP-3 ownership latches change.
   final ValueChanged<bool>? onUserOwnsCameraChanged;
@@ -103,19 +103,20 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     final session = widget.locationSession;
     final latest = session.latest;
     if (latest == null || !latest.hasValidCoordinates) return null;
-    if (!const TripLocationFreshnessPolicy()
-        .shouldShowDriverMarker(session.freshness)) {
+    if (!const TripLocationFreshnessPolicy().shouldShowDriverMarker(
+      session.freshness,
+    )) {
       return null;
     }
     return LatLng(latest.lat, latest.lng);
   }
 
   String get _currentIdentity => ActiveRideMapCameraPolicy.fitIdentity(
-        rideState: widget.ride.state,
-        pickup: _pickup,
-        destination: _destination,
-        driver: _driverLatLng,
-      );
+    rideState: widget.ride.state,
+    pickup: _pickup,
+    destination: _destination,
+    driver: _driverLatLng,
+  );
 
   bool get _cameraReady =>
       _controller != null || widget.onAnimateCamera != null;
@@ -176,10 +177,12 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     if (!mounted) return;
     final session = widget.locationSession;
     final latest = session.latest;
-    final eligible = latest != null &&
+    final eligible =
+        latest != null &&
         latest.hasValidCoordinates &&
-        const TripLocationFreshnessPolicy()
-            .shouldShowDriverMarker(session.freshness);
+        const TripLocationFreshnessPolicy().shouldShowDriverMarker(
+          session.freshness,
+        );
     if (!eligible) {
       if (_renderedDriver != null || _interpolator.isAnimating) {
         _interpolator.reset();
@@ -363,7 +366,9 @@ class _ActiveRideMapState extends State<ActiveRideMap>
           markerId: const MarkerId('pickup'),
           position: pickup,
           infoWindow: const InfoWindow(title: 'Pickup'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueAzure,
+          ),
         ),
       );
     }
@@ -373,8 +378,9 @@ class _ActiveRideMapState extends State<ActiveRideMap>
           markerId: const MarkerId('destination'),
           position: destination,
           infoWindow: const InfoWindow(title: 'Destination'),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueOrange,
+          ),
         ),
       );
     }
@@ -387,9 +393,7 @@ class _ActiveRideMapState extends State<ActiveRideMap>
         TripLocationFreshness.fresh => 1.0,
         TripLocationFreshness.stale => 0.75,
         TripLocationFreshness.degraded => 0.55,
-        TripLocationFreshness.expired ||
-        TripLocationFreshness.missing =>
-          0.0,
+        TripLocationFreshness.expired || TripLocationFreshness.missing => 0.0,
       };
       if (alpha > 0) {
         markers.add(
@@ -442,7 +446,7 @@ class _ActiveRideMapState extends State<ActiveRideMap>
   }
 
   // Presentation constants — replaceable by Ora visual layer later.
-  static const Color _guideStrokeColor = Color(0xFF90A4AE);
+  static const Color _guideStrokeColor = OraColors.textMuted;
   static const int _guideStrokeWidth = 3;
   static final List<PatternItem> _guidePatterns = <PatternItem>[
     PatternItem.dash(18),
@@ -579,8 +583,9 @@ class _ActiveRideMapState extends State<ActiveRideMap>
   static LatLng? _driverFromSession(TripLocationSessionState session) {
     final latest = session.latest;
     if (latest == null || !latest.hasValidCoordinates) return null;
-    if (!const TripLocationFreshnessPolicy()
-        .shouldShowDriverMarker(session.freshness)) {
+    if (!const TripLocationFreshnessPolicy().shouldShowDriverMarker(
+      session.freshness,
+    )) {
       return null;
     }
     return LatLng(latest.lat, latest.lng);
@@ -600,10 +605,9 @@ class _StatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = statusOverride ??
-        (locationSession.isUnavailable
-            ? 'Live location unavailable'
-            : null);
+    final text =
+        statusOverride ??
+        (locationSession.isUnavailable ? 'Live location unavailable' : null);
     if (text == null || text.isEmpty) {
       return const SizedBox.shrink();
     }

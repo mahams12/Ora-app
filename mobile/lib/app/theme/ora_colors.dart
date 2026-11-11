@@ -9,56 +9,68 @@ class OraColors {
 
   // ── Brand primitives (prototype) ───────────────────────────────────────────
 
-  static const navy = Color(0xFF12182B);
-  static const navyElevated = Color(0xFF1B2340);
-  static const canvas = Color(0xFF0B0F1C);
+  static const navy = Color(0xFFF2E3DD);
+  static const navyElevated = Color(0xFFFFF7F3);
+  static const canvas = Color(0xFFF2E3DD);
 
-  static const gold = Color(0xFFD4A756);
-  static const goldMuted = Color(0x2ED4A756); // ~18%
-  static const goldSoft = Color(0xFFF3E3C2);
-  static const goldDeep = Color(0xFFC1943F);
+  static const gold = Color(0xFFF88733);
+  static const goldMuted = Color(0x33F88733);
+  static const goldSoft = Color(0xFFA67D68);
+  static const goldDeep = Color(0xFFE16F22);
 
-  static const teal = Color(0xFF1F9C82);
-  static const tealMuted = Color(0x301F9C82); // ~18%
-  static const tealBright = Color(0xFF7CFFCE);
-  static const tealDeep = Color(0xFF167A66);
+  static const teal = Color(0xFFA67D68);
+  static const tealMuted = Color(0x33E9C2AD);
+  static const tealBright = Color(0xFFA67D68);
+  static const tealDeep = Color(0xFF8A624E);
 
-  static const info = Color(0xFF4FA3D9);
-  static const infoMuted = Color(0x384FA3D9);
+  static const info = Color(0xFFA67D68);
+  static const infoMuted = Color(0x33A67D68);
 
-  static const accentPurple = Color(0xFFA78BFA);
-  static const accentCoral = Color(0xFFF08A6A);
+  static const accentPurple = Color(0xFFF88733);
+  static const accentCoral = Color(0xFFF88733);
 
-  static const ink = Color(0xFFF4F6FA);
-  static const slate = Color(0xFFA8AEBF);
-  static const slateMuted = Color(0xFF7A8196);
-  static const line = Color(0xFF2A334D);
-  static const starEmpty = Color(0xFF3A4560);
+  static const ink = Color(0xFF2A211D);
+  static const slate = Color(0xFFA67D68);
+  static const slateMuted = Color(0xFFA67D68);
+  static const line = Color(0xFFE9C2AD);
+  static const starEmpty = Color(0xFFE9C2AD);
 
-  static const danger = Color(0xFFC24A4A);
-  static const dangerForeground = Color(0xFFF5A8A8);
-  static const dangerMuted = Color(0x33C24A4A);
+  static const danger = Color(0xFFB33B36);
+  static const dangerForeground = Color(0xFF8F2926);
+  static const dangerMuted = Color(0x1AB33B36);
 
   static const success = Color(0xFF30A46C);
-  static const warning = Color(0xFFE8A317);
+  static const successSurface = Color(0xFFE8F5EC);
+  static const successForeground = Color(0xFF2D6A4F);
+  static const successBorder = Color(0xFF95D5B2);
+  static const warning = Color(0xFFE16F22);
+  static const warningSurface = Color(0xFFFFF0D6);
+  static const warningForeground = Color(0xFF8B6914);
+  static const errorSurface = Color(0xFFFCE9E7);
 
-  static const disabled = Color(0xFF3A4560);
-  static const disabledForeground = Color(0xFF7A8196);
+  static const disabled = Color(0xFFE9C2AD);
+  static const disabledForeground = Color(0xFFA67D68);
+  static const shadow = Color(0x142A211D);
+  static const photoScrim = Color(0x99000000);
+  static const photoScrimStrong = Color(0xE6000000);
+  static const onPhoto = Color(0xFFFFFFFF);
+  static const onPhotoMuted = Color(0xD9FFFFFF);
+  static const photoChip = Color(0xF2FFFFFF);
 
   // ── Semantic aliases (preferred) ───────────────────────────────────────────
 
   static const primary = gold;
-  static const primaryMuted = goldMuted;
-  static const primaryForeground = navy;
+  static const primaryMuted = Color(0xFFE9C2AD);
+  static const primaryForeground = Color(0xFFFFFFFF);
 
   static const secondary = teal;
   static const secondaryMuted = tealMuted;
-  static const secondaryForeground = Color(0xFFFFFFFF);
+  static const secondaryForeground = Color(0xFF2A211D);
 
   static const background = canvas;
-  static const surface = navy;
-  static const surfaceElevated = navyElevated;
-  static const surfaceStrong = Color(0xFF243056);
+  static const surface = Color(0xFFFFFFFF);
+  static const surfaceElevated = Color(0xFFFFF7F3);
+  static const surfaceStrong = Color(0xFFFFFFFF);
 
   static const textPrimary = ink;
   static const textSecondary = slate;
@@ -73,14 +85,14 @@ class OraColors {
   static const navy800 = navyElevated;
   static const navy700 = surfaceStrong;
   static const gold500 = gold;
-  static const gold400 = Color(0xFFD4B44A);
+  static const gold400 = Color(0xFFFFA45E);
   static const teal500 = teal;
-  static const teal400 = Color(0xFF33B8A8);
-  static const surfaceLight = Color(0xFFF5F7FA);
+  static const teal400 = Color(0xFFB48A73);
+  static const surfaceLight = Color(0xFFFFFFFF);
   static const surfaceDark = canvas;
   static const error = danger;
-  static const textPrimaryLight = Color(0xFF0A1628);
-  static const textSecondaryLight = Color(0xFF5C6B7A);
+  static const textPrimaryLight = Color(0xFF2A211D);
+  static const textSecondaryLight = Color(0xFFA67D68);
   static const textPrimaryDark = ink;
-  static const textSecondaryDark = Color(0xFFA8B3C2);
+  static const textSecondaryDark = Color(0xFFA67D68);
 }

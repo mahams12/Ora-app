@@ -75,7 +75,10 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Color(0x00000000), Color(0xD9000000)],
+                          colors: [
+                            Colors.transparent,
+                            OraColors.photoScrimStrong,
+                          ],
                         ),
                       ),
                     ),
@@ -90,7 +93,7 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.94),
+                            color: OraColors.onPhoto.withValues(alpha: 0.94),
                             borderRadius: BorderRadius.circular(OraRadius.pill),
                           ),
                           child: Text(
@@ -115,13 +118,17 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                             option.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: OraTypography.bodyEmphasis(Colors.white),
+                            style: OraTypography.bodyEmphasis(
+                              OraColors.onPhoto,
+                            ),
                           ),
                           Text(
                             option.blurb,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: OraTypography.caption(Colors.white70),
+                            style: OraTypography.caption(
+                              OraColors.onPhotoMuted,
+                            ),
                           ),
                         ],
                       ),

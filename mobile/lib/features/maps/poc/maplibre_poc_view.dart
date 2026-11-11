@@ -52,7 +52,9 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
       });
       _metrics.mark('maplibre_http_headers_set');
 
-      final preflight = await _preflightMapTiler(MapLibrePoCConfig.mapTilerApiKey);
+      final preflight = await _preflightMapTiler(
+        MapLibrePoCConfig.mapTilerApiKey,
+      );
       if (!preflight.ok) {
         if (!mounted) return;
         setState(() {
@@ -63,8 +65,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
       }
       _metrics.mark('maptiler_preflight_ok');
 
-      final raw =
-          await rootBundle.loadString(MapLibrePoCConfig.styleAssetPath);
+      final raw = await rootBundle.loadString(MapLibrePoCConfig.styleAssetPath);
       final injected = raw.replaceAll(
         MapLibrePoCConfig.styleKeyPlaceholder,
         MapLibrePoCConfig.mapTilerApiKey,
@@ -320,9 +321,9 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
                 'DISPOSABLE PoC — Lahore vector tiles · Ora dark style · '
                 'display-only route/markers · not production · not RTDB',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: OraColors.goldSoft,
-                      height: 1.35,
-                    ),
+                  color: OraColors.goldSoft,
+                  height: 1.35,
+                ),
               ),
             ),
           ),
@@ -387,9 +388,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              _chip(
-                _styleReady ? 'Style: Ora-controlled' : 'Style: loading…',
-              ),
+              _chip(_styleReady ? 'Style: Ora-controlled' : 'Style: loading…'),
               const SizedBox(height: 6),
               _chip('3D / pitch / rotate enabled'),
               const SizedBox(height: 6),
@@ -403,14 +402,14 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
 
   Widget _chip(String label) {
     return Material(
-      color: const Color(0xCC12182B),
+      color: OraColors.surfaceElevated,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         child: Text(
           label,
           style: const TextStyle(
-            color: OraColors.tealBright,
+            color: OraColors.textPrimary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -465,18 +464,18 @@ class _FailClosedPane extends StatelessWidget {
             Text(
               restricted ? 'MapTiler key rejected' : 'MapTiler key required',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: OraColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
+                color: OraColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: OraSpacing.sm),
             Text(
               message,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: OraColors.textSecondary,
-                    height: 1.4,
-                  ),
+                color: OraColors.textSecondary,
+                height: 1.4,
+              ),
             ),
           ],
         ),

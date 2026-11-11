@@ -48,7 +48,7 @@ class StatusPill extends StatelessWidget {
           vertical: OraSpacing.xxs,
         ),
         decoration: BoxDecoration(
-          color: inverse ? const Color(0xF2FFFFFF) : _background,
+          color: inverse ? OraColors.photoChip : _background,
           borderRadius: BorderRadius.circular(OraRadius.pill),
         ),
         child: Text(

@@ -492,7 +492,8 @@ class _RideMapPreviewState extends State<RideMapPreview> {
                 )
               else
                 _MapShellFallback(
-                  message: _styleError ??
+                  message:
+                      _styleError ??
                       (_styleLoading
                           ? 'Loading map…'
                           : 'Map preview unavailable'),
@@ -521,8 +522,7 @@ class _RideMapPreviewState extends State<RideMapPreview> {
                     if (widget.onBack != null ||
                         (widget.isExpanded && widget.onCollapse != null))
                       _MapChromeButton(
-                        tooltip:
-                            widget.isExpanded ? 'Collapse map' : 'Back',
+                        tooltip: widget.isExpanded ? 'Collapse map' : 'Back',
                         icon: widget.isExpanded
                             ? Icons.close_fullscreen_rounded
                             : Icons.arrow_back_rounded,
@@ -570,9 +570,7 @@ class _RideMapPreviewState extends State<RideMapPreview> {
                           const SizedBox(width: OraSpacing.xxs),
                           Text(
                             'Tap the map to set ${widget.pinAdjustLabel}',
-                            style: OraTypography.caption(
-                              OraColors.textPrimary,
-                            ),
+                            style: OraTypography.caption(OraColors.textPrimary),
                           ),
                           const SizedBox(width: OraSpacing.xs),
                           if (widget.onCancelPinAdjust != null)
@@ -647,10 +645,7 @@ class _RideMapPreviewState extends State<RideMapPreview> {
           screen: _pickupScreen,
           mapSize: mapSize,
           fallbackAlignment: const Alignment(-0.55, -0.35),
-          child: _EndpointCallout(
-            title: 'Pickup',
-            line1: pickupLabel,
-          ),
+          child: _EndpointCallout(title: 'Pickup', line1: pickupLabel),
         ),
       );
     }
@@ -702,8 +697,9 @@ class _RideMapPreviewState extends State<RideMapPreview> {
   CameraPosition _initialCamera() {
     final pickup = _toMl(widget.model.pickup);
     final destination = _toMl(widget.model.destination);
-    final tilt =
-        _effectiveThreeD ? MapPreviewConfig.threeDTilt : MapPreviewConfig.flatTilt;
+    final tilt = _effectiveThreeD
+        ? MapPreviewConfig.threeDTilt
+        : MapPreviewConfig.flatTilt;
     if (pickup != null && destination != null) {
       if (MapPreviewCameraPolicy.areExtremelyClose(pickup, destination)) {
         return CameraPosition(
@@ -753,7 +749,7 @@ class _EndpointCallout extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 168),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xE612182B),
+        color: OraColors.surface,
         borderRadius: BorderRadius.circular(OraRadius.md),
         border: Border.all(color: OraColors.info.withValues(alpha: 0.35)),
         boxShadow: [
@@ -770,29 +766,26 @@ class _EndpointCallout extends StatelessWidget {
         children: [
           Text(
             title,
-            style: OraTypography.caption(OraColors.textMuted).copyWith(
-              fontSize: 10,
-              letterSpacing: 0.2,
-            ),
+            style: OraTypography.caption(
+              OraColors.textMuted,
+            ).copyWith(fontSize: 10, letterSpacing: 0.2),
           ),
           const SizedBox(height: 2),
           Text(
             line1,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: OraTypography.label(OraColors.textPrimary).copyWith(
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
-              height: 1.2,
-            ),
+            style: OraTypography.label(
+              OraColors.textPrimary,
+            ).copyWith(fontWeight: FontWeight.w700, fontSize: 12, height: 1.2),
           ),
           if (line2 != null && line2!.isNotEmpty) ...[
             const SizedBox(height: 2),
             Text(
               line2!,
-              style: OraTypography.caption(OraColors.info).copyWith(
-                fontSize: 11,
-              ),
+              style: OraTypography.caption(
+                OraColors.info,
+              ).copyWith(fontSize: 11),
             ),
           ],
         ],
@@ -861,11 +854,11 @@ class _MapChromeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xE612182B),
+      color: OraColors.surface,
       shape: const CircleBorder(),
       clipBehavior: Clip.antiAlias,
       elevation: 2,
-      shadowColor: Colors.black54,
+      shadowColor: OraColors.shadow,
       child: IconButton(
         tooltip: tooltip,
         onPressed: onPressed,
@@ -894,11 +887,11 @@ class _MapTextChromeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xE612182B),
+      color: OraColors.surface,
       shape: const CircleBorder(),
       clipBehavior: Clip.antiAlias,
       elevation: 2,
-      shadowColor: Colors.black54,
+      shadowColor: OraColors.shadow,
       child: InkWell(
         onTap: onPressed,
         customBorder: const CircleBorder(),
@@ -938,9 +931,9 @@ class _MapShellFallback extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF0A1224),
-            Color(0xFF132038),
-            Color(0xFF1A2C48),
+            OraColors.background,
+            OraColors.surfaceElevated,
+            OraColors.surfaceElevated,
           ],
         ),
       ),
@@ -956,9 +949,9 @@ class _MapShellFallback extends StatelessWidget {
             const SizedBox(height: OraSpacing.xs),
             Text(
               'Map preview',
-              style: OraTypography.label(OraColors.textPrimary).copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: OraTypography.label(
+                OraColors.textPrimary,
+              ).copyWith(fontWeight: FontWeight.w600),
             ),
             if (message != null && message!.isNotEmpty) ...[
               const SizedBox(height: OraSpacing.xs),

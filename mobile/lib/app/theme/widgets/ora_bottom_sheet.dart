@@ -19,7 +19,7 @@ Future<T?> showOraBottomSheet<T>({
     isDismissible: isDismissible,
     enableDrag: enableDrag,
     backgroundColor: Colors.transparent,
-    barrierColor: Colors.black54,
+    barrierColor: OraColors.photoScrim,
     builder: (context) {
       final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
       final maxHeight = MediaQuery.sizeOf(context).height * factor;
@@ -58,7 +58,7 @@ class OraBottomSheetScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? OraColors.surfaceElevated : Colors.white;
+    final bg = isDark ? OraColors.surfaceElevated : OraColors.surface;
 
     return Material(
       color: bg,
@@ -89,7 +89,6 @@ class OraSheetHandle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: OraSpacing.sm),
       child: Center(
@@ -97,7 +96,7 @@ class OraSheetHandle extends StatelessWidget {
           width: 38,
           height: 4,
           decoration: BoxDecoration(
-            color: isDark ? OraColors.border : const Color(0xFFD0D5DD),
+            color: OraColors.border,
             borderRadius: BorderRadius.circular(OraRadius.pill),
           ),
         ),

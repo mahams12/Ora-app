@@ -19,7 +19,7 @@ Future<T?> showOraDialog<T>({
     builder: (context) {
       final isDark = Theme.of(context).brightness == Brightness.dark;
       return AlertDialog(
-        backgroundColor: isDark ? OraColors.surfaceElevated : Colors.white,
+        backgroundColor: isDark ? OraColors.surfaceElevated : OraColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(OraRadius.modal),
         ),

@@ -95,7 +95,10 @@ class _OraModuleCardState extends State<OraModuleCard> {
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [Color(0x00000000), Color(0xD9000000)],
+                                colors: [
+                                  Colors.transparent,
+                                  OraColors.photoScrimStrong,
+                                ],
                               ),
                             ),
                           ),
@@ -107,7 +110,7 @@ class _OraModuleCardState extends State<OraModuleCard> {
                             width: 30,
                             height: 30,
                             decoration: BoxDecoration(
-                              color: const Color(0xF2FFFFFF),
+                              color: OraColors.photoChip,
                               borderRadius: BorderRadius.circular(9),
                             ),
                             child: Icon(
@@ -129,14 +132,16 @@ class _OraModuleCardState extends State<OraModuleCard> {
                                 widget.title,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: OraTypography.bodyEmphasis(Colors.white),
+                                style: OraTypography.bodyEmphasis(
+                                  OraColors.onPhoto,
+                                ),
                               ),
                               Text(
                                 widget.subtitle,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: OraTypography.caption(
-                                  const Color(0xE6FFFFFF),
+                                  OraColors.onPhotoMuted,
                                 ),
                               ),
                             ],

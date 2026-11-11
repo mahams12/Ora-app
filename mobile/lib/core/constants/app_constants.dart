@@ -3,7 +3,8 @@ class AppConstants {
   AppConstants._();
 
   static const appName = 'ORA';
-  static const logoAsset = 'assets/branding/ora_logo.png';
+  static const logoAsset = 'assets/brand/ora_logo.png';
+  static const markAsset = 'assets/brand/ora_mark.png';
   static const serviceCityRidesAsset =
       'assets/branding/services/city_rides.jpg';
   static const serviceIntercityAsset = 'assets/branding/services/intercity.jpg';

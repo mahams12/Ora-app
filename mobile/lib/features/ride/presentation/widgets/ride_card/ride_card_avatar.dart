@@ -6,10 +6,7 @@ import '../../../../../app/theme/ora_colors.dart';
 ///
 /// Frozen product decision: do not use a PNG for the empty photo slot.
 class RideCardAvatarPlaceholder extends StatelessWidget {
-  const RideCardAvatarPlaceholder({
-    super.key,
-    this.size = 40,
-  });
+  const RideCardAvatarPlaceholder({super.key, this.size = 40});
 
   final double size;
 
@@ -20,7 +17,7 @@ class RideCardAvatarPlaceholder extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: const Color(0xFF12182B),
+        color: OraColors.background,
         border: Border.all(
           color: OraColors.info.withValues(alpha: 0.55),
           width: 1.4,

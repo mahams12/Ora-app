@@ -43,9 +43,9 @@ class RideCardRoutePreview extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF0E1528),
-            Color(0xFF152040),
-            Color(0xFF1A2A4A),
+            OraColors.surfaceElevated,
+            OraColors.surfaceElevated,
+            OraColors.surfaceElevated,
           ],
         ),
         border: Border.all(color: OraColors.border.withValues(alpha: 0.7)),
@@ -141,10 +141,7 @@ class _EndpointRow extends StatelessWidget {
               color: color,
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(
-                  color: color.withValues(alpha: 0.45),
-                  blurRadius: 6,
-                ),
+                BoxShadow(color: color.withValues(alpha: 0.45), blurRadius: 6),
               ],
             ),
           ),
@@ -154,10 +151,7 @@ class _EndpointRow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: OraTypography.caption(OraColors.textMuted),
-              ),
+              Text(label, style: OraTypography.caption(OraColors.textMuted)),
               Text(
                 value,
                 style: OraTypography.bodyEmphasis(OraColors.textPrimary),
@@ -191,7 +185,7 @@ class _RoutePreviewPainter extends CustomPainter {
       ..shader = const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Color(0x22152A4A), Color(0x00101828)],
+        colors: [OraColors.primaryMuted, Colors.transparent],
       ).createShader(Offset.zero & size);
     canvas.drawRect(Offset.zero & size, bgPaint);
 
@@ -245,7 +239,8 @@ class _RoutePreviewPainter extends CustomPainter {
     double? lng, {
     required bool isStart,
   }) {
-    final hasAll = pickupLat != null &&
+    final hasAll =
+        pickupLat != null &&
         pickupLng != null &&
         destinationLat != null &&
         destinationLng != null &&
@@ -282,7 +277,7 @@ class _RoutePreviewPainter extends CustomPainter {
       Paint()..color = color.withValues(alpha: 0.25),
     );
     canvas.drawCircle(center, 4.5, Paint()..color = color);
-    canvas.drawCircle(center, 2, Paint()..color = Colors.white);
+    canvas.drawCircle(center, 2, Paint()..color = OraColors.textPrimary);
   }
 
   @override

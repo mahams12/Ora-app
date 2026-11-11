@@ -68,8 +68,9 @@ class OraDrawerShell extends StatelessWidget {
                     ),
                     child: Text(
                       avatarInitials,
-                      style: OraTypography.title(OraColors.primaryForeground)
-                          .copyWith(fontWeight: FontWeight.w800),
+                      style: OraTypography.title(
+                        OraColors.primaryForeground,
+                      ).copyWith(fontWeight: FontWeight.w800),
                     ),
                   ),
                   const SizedBox(height: OraSpacing.sm),
@@ -98,7 +99,9 @@ class OraDrawerShell extends StatelessWidget {
                             subtitle,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: OraTypography.caption(OraColors.goldSoft),
+                            style: OraTypography.caption(
+                              OraColors.textSecondary,
+                            ),
                           ),
                         ),
                       ],

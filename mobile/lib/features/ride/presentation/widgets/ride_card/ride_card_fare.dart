@@ -28,13 +28,11 @@ class RideCardFare extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final fareStyle = OraTypography.numeric(
-      OraColors.textPrimary,
-    ).copyWith(
+    final fareStyle = OraTypography.numeric(OraColors.textPrimary).copyWith(
       fontSize: inline ? 18 : 20,
       height: 1.1,
       fontWeight: FontWeight.w700,
-      color: emphasized ? Colors.white : OraColors.textPrimary,
+      color: emphasized ? OraColors.textPrimary : OraColors.textPrimary,
     );
 
     if (inline && fareCaption == null && secondaryFareLabel == null) {
@@ -42,16 +40,14 @@ class RideCardFare extends StatelessWidget {
     }
 
     return Column(
-      crossAxisAlignment:
-          alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: alignEnd
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         if (fareLabel != null) Text(fareLabel!, style: fareStyle),
         if (fareCaption != null) ...[
           const SizedBox(height: 2),
-          Text(
-            fareCaption!,
-            style: OraTypography.caption(OraColors.textMuted),
-          ),
+          Text(fareCaption!, style: OraTypography.caption(OraColors.textMuted)),
         ],
         if (secondaryFareLabel != null)
           Text(

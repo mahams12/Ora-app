@@ -159,11 +159,11 @@ class _ThumbRoutePainter extends CustomPainter {
   final double? destinationLng;
   final bool wide;
 
-  static const _routeBlue = Color(0xFF4FA3D9);
-  static const _routeGlow = Color(0xFF7CC8F5);
-  static const _bgDeep = Color(0xFF070B14);
-  static const _bgMid = Color(0xFF10182A);
-  static const _bgLit = Color(0xFF1A2740);
+  static const _routeBlue = OraColors.primary;
+  static const _routeGlow = OraColors.gold400;
+  static const _bgDeep = OraColors.background;
+  static const _bgMid = OraColors.surfaceElevated;
+  static const _bgLit = OraColors.surfaceElevated;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -207,11 +207,7 @@ class _ThumbRoutePainter extends CustomPainter {
         ..shader = ui.Gradient.linear(
           points.first,
           points.last,
-          const [
-            _routeGlow,
-            _routeBlue,
-            Color(0xFF3D82FF),
-          ],
+          const [_routeGlow, _routeBlue, OraColors.goldDeep],
           const [0.0, 0.55, 1.0],
         )
         ..style = PaintingStyle.stroke
@@ -226,7 +222,7 @@ class _ThumbRoutePainter extends CustomPainter {
       canvas.drawCircle(
         p,
         wide ? 2.4 : 1.8,
-        Paint()..color = Colors.white.withValues(alpha: 0.92),
+        Paint()..color = OraColors.onPhoto.withValues(alpha: 0.92),
       );
     }
 
@@ -248,8 +244,8 @@ class _ThumbRoutePainter extends CustomPainter {
     );
 
     // Soft “block” patches — abstract dark cityread without labels.
-    final block = Paint()..color = const Color(0xFF162033).withValues(alpha: 0.55);
-    final lit = Paint()..color = const Color(0xFF243556).withValues(alpha: 0.35);
+    final block = Paint()..color = OraColors.primaryMuted;
+    final lit = Paint()..color = OraColors.surface;
     final rng = math.Random(_seed);
     for (var i = 0; i < (wide ? 18 : 12); i++) {
       final w = size.width * (0.12 + rng.nextDouble() * 0.18);
@@ -270,17 +266,14 @@ class _ThumbRoutePainter extends CustomPainter {
         ..shader = ui.Gradient.radial(
           Offset(size.width * 0.45, size.height * 0.55),
           size.longestSide * 0.85,
-          [
-            Colors.transparent,
-            _bgDeep.withValues(alpha: 0.55),
-          ],
+          [Colors.transparent, _bgDeep.withValues(alpha: 0.55)],
         ),
     );
   }
 
   void _paintFaintGrid(Canvas canvas, Size size) {
     final grid = Paint()
-      ..color = Colors.white.withValues(alpha: 0.045)
+      ..color = OraColors.border
       ..strokeWidth = 0.8;
     final stepY = size.height / 7;
     final stepX = size.width / 5;
@@ -325,7 +318,8 @@ class _ThumbRoutePainter extends CustomPainter {
   }
 
   Offset _endpoint(Size size, {required bool isStart}) {
-    final hasAll = pickupLat != null &&
+    final hasAll =
+        pickupLat != null &&
         pickupLng != null &&
         destinationLat != null &&
         destinationLng != null;
@@ -369,12 +363,8 @@ class _ThumbRoutePainter extends CustomPainter {
       mid,
       Paint()..color = _routeBlue.withValues(alpha: 0.85),
     );
-    canvas.drawCircle(c, core, Paint()..color = Colors.white);
-    canvas.drawCircle(
-      c,
-      core * 0.45,
-      Paint()..color = _routeGlow,
-    );
+    canvas.drawCircle(c, core, Paint()..color = OraColors.onPhoto);
+    canvas.drawCircle(c, core * 0.45, Paint()..color = _routeGlow);
   }
 
   void _destinationPin(Canvas canvas, Offset tip, {required bool wide}) {
@@ -407,14 +397,14 @@ class _ThumbRoutePainter extends CustomPainter {
     canvas.drawPath(
       path,
       Paint()
-        ..color = Colors.white.withValues(alpha: 0.2)
+        ..color = OraColors.shadow
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
     );
-    canvas.drawPath(path, Paint()..color = Colors.white);
+    canvas.drawPath(path, Paint()..color = OraColors.primary);
     canvas.drawCircle(
       Offset(top.dx, tip.dy - pinH * 0.72),
       pinW * 0.22,
-      Paint()..color = const Color(0xFF0B0F1C),
+      Paint()..color = OraColors.background,
     );
   }
 

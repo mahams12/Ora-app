@@ -92,7 +92,10 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [Color(0x00000000), Color(0xD9000000)],
+                            colors: [
+                              Colors.transparent,
+                              OraColors.photoScrimStrong,
+                            ],
                           ),
                         ),
                       ),
@@ -104,7 +107,7 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
                           widget.subcategory.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: OraTypography.bodyEmphasis(Colors.white),
+                          style: OraTypography.bodyEmphasis(OraColors.onPhoto),
                         ),
                       ),
                     ],

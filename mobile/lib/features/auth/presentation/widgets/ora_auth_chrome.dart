@@ -31,16 +31,16 @@ class OraBrandMark extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(size * 0.28),
-          color: OraColors.navy,
+          color: OraColors.surface,
           boxShadow: OraElevation.primaryButtonShadow,
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(size * 0.28),
           child: Image.asset(
-            AppConstants.logoAsset,
+            AppConstants.markAsset,
             width: size,
             height: size,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             alignment: Alignment.center,
             filterQuality: FilterQuality.high,
           ),
@@ -78,8 +78,8 @@ class OraAuthScaffold extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              OraColors.navy,
-              OraColors.navyElevated,
+              OraColors.background,
+              OraColors.surfaceElevated,
               OraColors.background,
             ],
             stops: [0, 0.55, 1],
@@ -168,7 +168,7 @@ class OraAuthBackButton extends StatelessWidget {
         color: OraColors.textPrimary,
         style: IconButton.styleFrom(
           minimumSize: const Size(48, 48),
-          backgroundColor: const Color(0x14FFFFFF),
+          backgroundColor: OraColors.surfaceElevated,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(OraRadius.sm),
           ),

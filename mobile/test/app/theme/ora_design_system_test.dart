@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ora/app/theme/theme.dart';
 
-Widget _harness(Widget child, {Brightness brightness = Brightness.dark}) {
+Widget _harness(Widget child, {Brightness brightness = Brightness.light}) {
   return MaterialApp(
     theme: OraTheme.light(),
     darkTheme: OraTheme.dark(),
@@ -13,12 +13,14 @@ Widget _harness(Widget child, {Brightness brightness = Brightness.dark}) {
 
 void main() {
   group('Ora design tokens', () {
-    test('semantic colors map to prototype gold/teal/navy', () {
-      expect(OraColors.primary, const Color(0xFFD4A756));
-      expect(OraColors.secondary, const Color(0xFF1F9C82));
-      expect(OraColors.background, const Color(0xFF0B0F1C));
-      expect(OraColors.surface, const Color(0xFF12182B));
-      expect(OraColors.surfaceElevated, const Color(0xFF1B2340));
+    test('semantic colors map to the light orange palette', () {
+      expect(OraColors.primary, const Color(0xFFF88733));
+      expect(OraColors.background, const Color(0xFFF2E3DD));
+      expect(OraColors.border, const Color(0xFFE9C2AD));
+      expect(OraColors.textPrimary, const Color(0xFF2A211D));
+      expect(OraColors.textSecondary, const Color(0xFFA67D68));
+      expect(OraColors.surface, const Color(0xFFFFFFFF));
+      expect(OraColors.surfaceElevated, const Color(0xFFFFF7F3));
       expect(OraColors.danger, isNot(OraColors.primary));
     });
 
@@ -37,16 +39,18 @@ void main() {
       expect(OraMotion.press.inMilliseconds, lessThan(200));
     });
 
-    testWidgets('dark theme uses Inter body family and Ora surfaces', (
+    testWidgets('light theme uses Inter body family and Ora surfaces', (
       tester,
     ) async {
       await tester.pumpWidget(_harness(const Text('ORA')));
       final material = tester.widget<MaterialApp>(find.byType(MaterialApp));
-      final dark = material.darkTheme!;
-      expect(dark.textTheme.bodyMedium?.fontFamily, OraTypography.bodyFamily);
-      expect(dark.scaffoldBackgroundColor, OraColors.background);
-      expect(dark.colorScheme.primary, OraColors.primary);
-      expect(dark.colorScheme.secondary, OraColors.secondary);
+      final theme = material.theme!;
+      expect(theme.brightness, Brightness.light);
+      expect(theme.textTheme.bodyMedium?.fontFamily, OraTypography.bodyFamily);
+      expect(theme.scaffoldBackgroundColor, OraColors.background);
+      expect(theme.colorScheme.primary, OraColors.primary);
+      expect(theme.colorScheme.secondary, OraColors.secondary);
+      expect(material.darkTheme!.brightness, Brightness.light);
     });
   });
 

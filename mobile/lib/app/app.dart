@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,9 +38,12 @@ class _OraAppState extends ConsumerState<OraApp> {
       debugShowCheckedModeBanner: !config.environment.isProduction,
       theme: OraTheme.light(),
       darkTheme: OraTheme.dark(),
-      // Prototype is dark-first; product surfaces default to Ora dark.
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       routerConfig: router,
+      builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        child: child ?? const SizedBox.shrink(),
+      ),
     );
   }
 }

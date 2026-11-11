@@ -136,7 +136,10 @@ class RentalListingCard extends StatelessWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Color(0x12000000), Color(0xE6000000)],
+                          colors: [
+                            OraColors.shadow,
+                            OraColors.photoScrimStrong,
+                          ],
                         ),
                       ),
                     ),
@@ -149,7 +152,7 @@ class RentalListingCard extends StatelessWidget {
                               width: 30,
                               height: 30,
                               decoration: BoxDecoration(
-                                color: const Color(0xF2FFFFFF),
+                                color: OraColors.photoChip,
                                 borderRadius: BorderRadius.circular(9),
                               ),
                               child: const Icon(
@@ -167,7 +170,7 @@ class RentalListingCard extends StatelessWidget {
                           tooltip: 'Save sample listing',
                           onPressed: onBookmark,
                           style: IconButton.styleFrom(
-                            backgroundColor: const Color(0xE6FFFFFF),
+                            backgroundColor: OraColors.onPhotoMuted,
                             foregroundColor: OraColors.navy,
                           ),
                           icon: const Icon(Icons.favorite_border_rounded),
@@ -191,7 +194,9 @@ class RentalListingCard extends StatelessWidget {
                             model.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: OraTypography.bodyEmphasis(Colors.white),
+                            style: OraTypography.bodyEmphasis(
+                              OraColors.onPhoto,
+                            ),
                           ),
                           if (model.location != null)
                             Text(
@@ -199,7 +204,7 @@ class RentalListingCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: OraTypography.caption(
-                                const Color(0xD9FFFFFF),
+                                OraColors.onPhotoMuted,
                               ),
                             ),
                           if (hasInformation)
@@ -440,7 +445,7 @@ class _CardMetric extends StatelessWidget {
     text,
     maxLines: 1,
     overflow: TextOverflow.ellipsis,
-    style: OraTypography.caption(const Color(0xD9FFFFFF)),
+    style: OraTypography.caption(OraColors.onPhotoMuted),
   );
 }
 
@@ -454,7 +459,7 @@ class _VerifiedBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xF2FFFFFF),
+        color: OraColors.photoChip,
         borderRadius: BorderRadius.circular(OraRadius.pill),
       ),
       child: Text(

@@ -65,10 +65,7 @@ class RideCardRouteCompact extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (showPickupCaption)
-                Text(
-                  'Pickup',
-                  style: OraTypography.caption(OraColors.info),
-                ),
+                Text('Pickup', style: OraTypography.caption(OraColors.info)),
               Text(
                 pickupLabel,
                 style: OraTypography.bodyEmphasis(OraColors.textPrimary),
@@ -138,7 +135,7 @@ class _SpinePainter extends CustomPainter {
     canvas.drawPath(path, line);
 
     canvas.drawCircle(top, 5, Paint()..color = OraColors.info);
-    canvas.drawCircle(top, 2, Paint()..color = Colors.white);
+    canvas.drawCircle(top, 2, Paint()..color = OraColors.textPrimary);
 
     canvas.drawCircle(
       bottom,
@@ -147,7 +144,7 @@ class _SpinePainter extends CustomPainter {
         ..color = Colors.transparent
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2
-        ..color = Colors.white,
+        ..color = OraColors.primary,
     );
   }
 

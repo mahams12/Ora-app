@@ -6,6 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:ora/app/di/providers.dart';
 import 'package:ora/app/router/routes.dart';
 import 'package:ora/app/theme/theme.dart';
+import 'package:ora/core/constants/app_constants.dart';
 import 'package:ora/features/auth/domain/entities/auth_user.dart';
 import 'package:ora/features/auth/domain/entities/user_profile.dart';
 import 'package:ora/features/auth/domain/use_cases/get_current_user_use_case.dart';
@@ -171,7 +172,15 @@ void main() {
     await tester.pumpWidget(_wrapShell(overrides: _baseOverrides()));
     await tester.pumpAndSettle();
 
-    expect(find.text('ORA'), findsWidgets);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Image &&
+            widget.image is AssetImage &&
+            (widget.image as AssetImage).assetName == AppConstants.logoAsset,
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Where are you headed?'), findsNothing);
     expect(find.text('Explore ORA'), findsOneWidget);
     expect(find.text('Travel beyond the city'), findsOneWidget);

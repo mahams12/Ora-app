@@ -19,7 +19,7 @@ class OraModuleBottomBar extends StatelessWidget {
       top: false,
       child: DecoratedBox(
         decoration: const BoxDecoration(
-          color: OraColors.navy,
+          color: OraColors.surface,
           border: Border(top: BorderSide(color: OraColors.border)),
         ),
         child: SizedBox(
@@ -96,7 +96,7 @@ class _ModuleItem extends StatelessWidget {
           child: SizedBox(
             height: 64,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: OraSpacing.xs),
+              padding: const EdgeInsets.only(top: OraSpacing.xs),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -110,6 +110,12 @@ class _ModuleItem extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                     ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    height: 2,
+                    width: double.infinity,
+                    color: selected ? OraColors.primary : Colors.transparent,
                   ),
                 ],
               ),

@@ -128,12 +128,11 @@ class _HomeHeroHeader extends StatelessWidget {
               color: OraColors.textPrimary,
             ),
             Expanded(
-              child: Text(
-                AppConstants.appName,
-                textAlign: TextAlign.center,
-                style: OraTypography.title(
-                  OraColors.textPrimary,
-                ).copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.4),
+              child: Image.asset(
+                AppConstants.logoAsset,
+                height: 30,
+                fit: BoxFit.contain,
+                alignment: Alignment.center,
               ),
             ),
             InkWell(
@@ -200,7 +199,10 @@ class _PromoCard extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.centerRight,
                         end: Alignment.centerLeft,
-                        colors: [Color(0x000A1025), Color(0xE60A1025)],
+                        colors: [
+                          Colors.transparent,
+                          OraColors.photoScrimStrong,
+                        ],
                       ),
                     ),
                   ),
@@ -219,14 +221,14 @@ class _PromoCard extends StatelessWidget {
                           'Travel beyond the city',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: OraTypography.title(Colors.white),
+                          style: OraTypography.title(OraColors.onPhoto),
                         ),
                         const SizedBox(height: OraSpacing.xxs),
                         Text(
                           'Continue with the existing Intercity ride flow.',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: OraTypography.caption(Colors.white70),
+                          style: OraTypography.caption(OraColors.onPhotoMuted),
                         ),
                       ],
                     ),

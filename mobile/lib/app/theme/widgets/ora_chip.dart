@@ -38,7 +38,7 @@ class OraChip extends StatelessWidget {
         ? OraColors.primaryMuted
         : isDark
         ? OraColors.surfaceElevated
-        : Colors.white;
+        : OraColors.surface;
 
     final border = !enabled
         ? OraColors.disabled

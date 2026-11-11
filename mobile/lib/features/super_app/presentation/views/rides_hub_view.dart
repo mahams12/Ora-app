@@ -194,7 +194,7 @@ class _RidesHero extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [Color(0x000A1025), Color(0xE60A1025)],
+                  colors: [Colors.transparent, OraColors.photoScrimStrong],
                 ),
               ),
             ),
@@ -206,14 +206,14 @@ class _RidesHero extends StatelessWidget {
                 children: [
                   Text(
                     'Move with ORA',
-                    style: OraTypography.headline(Colors.white),
+                    style: OraTypography.headline(OraColors.onPhoto),
                   ),
                   const SizedBox(height: OraSpacing.xxs),
                   Text(
                     'Choose a ride for wherever you’re headed.',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: OraTypography.body(Colors.white70),
+                    style: OraTypography.body(OraColors.onPhotoMuted),
                   ),
                 ],
               ),
