@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/views/otp_entry_view.dart';
 import '../../features/auth/presentation/views/phone_entry_view.dart';
+import '../../features/auth/presentation/views/profile_view.dart';
 import '../../features/auth/presentation/views/splash_view.dart';
 import '../../features/driver/presentation/views/driver_assigned_ride_view.dart';
 import '../../features/driver/presentation/views/driver_registration_view.dart';
@@ -75,6 +76,11 @@ GoRouter createAppRouter({
         path: AppRoutes.home,
         name: 'home',
         builder: (context, state) => const HomeShellView(),
+      ),
+      GoRoute(
+        path: AppRoutes.profile,
+        name: 'profile',
+        builder: (context, state) => const ProfileView(),
       ),
       GoRoute(
         path: AppRoutes.driverRegistration,

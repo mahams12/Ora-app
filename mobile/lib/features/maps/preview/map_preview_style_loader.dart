@@ -31,7 +31,18 @@ class MapPreviewStyleLoadResult {
 class MapPreviewStyleLoader {
   MapPreviewStyleLoader._();
 
+  /// `flutter test` sets FLUTTER_TEST=true — keep previews on the static
+  /// soft-fail shell there so widget tests never mount a real MapLibre
+  /// platform view (which schedules frames forever and hangs pumpAndSettle).
+  static bool get _isFlutterTest =>
+      Platform.environment['FLUTTER_TEST'] == 'true';
+
   static Future<MapPreviewStyleLoadResult> load() async {
+    if (_isFlutterTest) {
+      return const MapPreviewStyleLoadResult.fail(
+        'Map preview unavailable · test environment',
+      );
+    }
     if (!MapPreviewConfig.hasTileKey) {
       return _loadOpenFreeMap();
     }

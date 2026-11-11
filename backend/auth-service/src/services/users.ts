@@ -1,5 +1,5 @@
 import type { Firestore } from 'firebase-admin/firestore';
-import { toPublicProfile } from './profile';
+import { toPublicProfile, normalizeAvatarData } from './profile';
 import { normalizeDisplayName } from './display_name';
 import { N3_BUSY_RIDE_STATES } from '../drivers/nearby_service';
 import type {
@@ -245,8 +245,12 @@ export async function updateProfile(
   caller: AuthenticatedCaller,
   displayNameRaw: unknown,
   now: Date,
+  avatarDataRaw?: unknown,
 ): Promise<UserProfile> {
   const displayName = normalizeDisplayName(displayNameRaw);
+  // undefined → leave untouched; null/'' → clear; string → validate+set.
+  const avatarData =
+    avatarDataRaw === undefined ? undefined : normalizeAvatarData(avatarDataRaw);
   const ref = db.collection(USERS).doc(caller.uid);
 
   await db.runTransaction(async (tx) => {
@@ -254,10 +258,16 @@ export async function updateProfile(
     if (!snap.exists) {
       throw new UserNotFoundError();
     }
-    tx.update(ref, {
+    const patch: Record<string, unknown> = {
       displayName,
       updatedAt: now.toISOString(),
-    });
+    };
+    if (avatarData === null) {
+      patch.avatarData = null;
+    } else if (avatarData !== undefined) {
+      patch.avatarData = avatarData;
+    }
+    tx.update(ref, patch);
   });
 
   const after = await ref.get();

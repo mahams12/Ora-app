@@ -14,6 +14,7 @@ class UserProfile {
     this.isActive = true,
     this.banned = false,
     this.profileComplete = false,
+    this.avatarData,
   });
 
   final String uid;
@@ -29,6 +30,9 @@ class UserProfile {
   /// Server-authoritative operating mode (Switch to Driver):
   /// 'passenger' | 'driver'. Restored after app restart from GET /v1/auth/me.
   final String? activeMode;
+
+  /// Base64 image data URL (`data:image/...;base64,...`) set via profile edit.
+  final String? avatarData;
 
   final bool isActive;
   final bool banned;

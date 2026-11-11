@@ -20,6 +20,8 @@ export interface UserProfile {
   isActive: boolean;
   banned: boolean;
   profileComplete: boolean;
+  /** Base64 JPEG data URL (data:image/jpeg;base64,…). Null when unset. */
+  avatarData?: string | null;
 }
 
 export interface AuthenticatedCaller {

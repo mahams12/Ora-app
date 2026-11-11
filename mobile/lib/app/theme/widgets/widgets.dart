@@ -1,3 +1,4 @@
+export 'ora_avatar.dart';
 export 'ora_bottom_sheet.dart';
 export 'ora_button.dart';
 export 'ora_card.dart';

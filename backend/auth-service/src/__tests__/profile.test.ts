@@ -67,6 +67,50 @@ describe('PATCH /v1/auth/profile', () => {
     expect(db.getDoc('users', 'uid-1')?.role).toBe('passenger');
   });
 
+  it('stores and returns a valid avatarData data URL', async () => {
+    const db = memoryDb();
+    seedUser(db, 'uid-1', { displayName: 'Ada' });
+    const app = authedApp({ db });
+    const avatar = 'data:image/jpeg;base64,' + 'A'.repeat(100);
+
+    const res = await request(app)
+      .patch('/v1/auth/profile')
+      .set('Authorization', 'Bearer good')
+      .send({ displayName: 'Ada', avatarData: avatar });
+
+    expect(res.status).toBe(200);
+    expect(res.body.avatarData).toBe(avatar);
+    expect(db.getDoc('users', 'uid-1')?.avatarData).toBe(avatar);
+
+    const me = await request(app)
+      .get('/v1/auth/me')
+      .set('Authorization', 'Bearer good');
+    expect(me.body.avatarData).toBe(avatar);
+  });
+
+  it('clears avatarData on null and rejects malformed values', async () => {
+    const db = memoryDb();
+    seedUser(db, 'uid-1', {
+      displayName: 'Ada',
+      avatarData: 'data:image/jpeg;base64,AAAA',
+    });
+    const app = authedApp({ db });
+
+    const bad = await request(app)
+      .patch('/v1/auth/profile')
+      .set('Authorization', 'Bearer good')
+      .send({ displayName: 'Ada', avatarData: 'https://evil.example/x.png' });
+    expect(bad.status).toBe(400);
+
+    const cleared = await request(app)
+      .patch('/v1/auth/profile')
+      .set('Authorization', 'Bearer good')
+      .send({ displayName: 'Ada', avatarData: null });
+    expect(cleared.status).toBe(200);
+    expect(cleared.body.avatarData).toBeNull();
+    expect(db.getDoc('users', 'uid-1')?.avatarData).toBeNull();
+  });
+
   it('trims and collapses whitespace', async () => {
     const db = memoryDb();
     seedUser(db, 'uid-1');

@@ -14,6 +14,7 @@ class UserProfileModel {
     this.isActive = true,
     this.banned = false,
     this.profileComplete = false,
+    this.avatarData,
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -30,6 +31,7 @@ class UserProfileModel {
       // Absent means false, which routes the user to onboarding rather than
       // granting access to home.
       profileComplete: json['profileComplete'] as bool? ?? false,
+      avatarData: json['avatarData'] as String?,
     );
   }
 
@@ -47,6 +49,9 @@ class UserProfileModel {
   /// Server-derived completeness flag. The client does not define the rule.
   final bool profileComplete;
 
+  /// Profile photo as a `data:image/...;base64,...` URL (server-capped).
+  final String? avatarData;
+
   UserProfile toDomain() => UserProfile(
         uid: uid,
         phoneNumber: phoneNumber,
@@ -57,5 +62,6 @@ class UserProfileModel {
         isActive: isActive,
         banned: banned,
         profileComplete: profileComplete,
+        avatarData: avatarData,
       );
 }

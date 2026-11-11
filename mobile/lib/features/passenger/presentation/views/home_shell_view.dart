@@ -125,6 +125,11 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
     );
   }
 
+  void _openProfile() {
+    _closeDrawer();
+    context.push(AppRoutes.profile);
+  }
+
   void _openDriverTools() {
     _closeDrawer();
     context.go(AppRoutes.driverHome);
@@ -205,6 +210,7 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
     final vm = ref.read(homeViewModelProvider.notifier);
     final isApprovedDriver =
         ref.watch(sessionUserProfileProvider)?.isApprovedDriver == true;
+    final sessionProfile = ref.watch(sessionUserProfileProvider);
     final displayName = homeState.displayName?.trim().isNotEmpty == true
         ? homeState.displayName!.trim()
         : 'ORA passenger';
@@ -219,12 +225,10 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
       ),
       drawer: OraDrawerShell(
         avatarInitials: homeState.avatarInitials,
+        avatarData: sessionProfile?.avatarData,
         displayName: displayName,
         subtitle: 'View profile',
-        onProfileTap: () {
-          _closeDrawer();
-          _showUnavailable('Profile');
-        },
+        onProfileTap: _openProfile,
         children: [
           OraDrawerItem(
             title: 'Home',
@@ -311,10 +315,12 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
         children: [
           PassengerHomeView(
             state: homeState,
+            avatarData: sessionProfile?.avatarData,
+            profileDisplayName: sessionProfile?.displayName,
             onOpenDrawer: _openDrawer,
             onRetryProfile: vm.loadProfile,
             onRequestRideEntry: _openRideRequest,
-            onOpenProfile: () => _showUnavailable('Profile'),
+            onOpenProfile: _openProfile,
           ),
           RideHistoryView(
             active: _page == PassengerShellPage.rides,

@@ -22,10 +22,14 @@ class PassengerHomeView extends StatelessWidget {
     VoidCallback? onOpenRides,
     VoidCallback? onSwitchToDriver,
     ValueChanged<String>? onUnavailableFeature,
+    this.avatarData,
+    this.profileDisplayName,
     super.key,
   });
 
   final HomeUiState state;
+  final String? avatarData;
+  final String? profileDisplayName;
   final VoidCallback onOpenDrawer;
   final VoidCallback onRetryProfile;
   final void Function(String? categoryId, {String? serviceType})
@@ -57,6 +61,8 @@ class PassengerHomeView extends StatelessWidget {
         SliverToBoxAdapter(
           child: _HomeHeroHeader(
             state: state,
+            avatarData: avatarData,
+            profileDisplayName: profileDisplayName,
             onOpenDrawer: onOpenDrawer,
             onOpenProfile: onOpenProfile,
           ),
@@ -92,11 +98,23 @@ class _HomeHeroHeader extends StatelessWidget {
     required this.state,
     required this.onOpenDrawer,
     required this.onOpenProfile,
+    this.avatarData,
+    this.profileDisplayName,
   });
 
   final HomeUiState state;
+  final String? avatarData;
+  final String? profileDisplayName;
   final VoidCallback onOpenDrawer;
   final VoidCallback onOpenProfile;
+
+  String get _avatarInitials {
+    final name = (profileDisplayName ?? state.displayName)?.trim();
+    if (name == null || name.isEmpty) return state.avatarInitials;
+    final parts = name.split(RegExp(r'\s+')).where((p) => p.isNotEmpty);
+    final letters = parts.take(2).map((p) => p[0].toUpperCase()).join();
+    return letters.isEmpty ? state.avatarInitials : letters;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,22 +156,10 @@ class _HomeHeroHeader extends StatelessWidget {
             InkWell(
               onTap: onOpenProfile,
               borderRadius: BorderRadius.circular(OraRadius.avatar),
-              child: Container(
-                width: 38,
-                height: 38,
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [OraColors.gold, OraColors.goldDeep],
-                  ),
-                ),
-                child: Text(
-                  state.avatarInitials,
-                  style: OraTypography.label(
-                    OraColors.primaryForeground,
-                  ).copyWith(fontWeight: FontWeight.w800),
-                ),
+              child: OraAvatar(
+                initials: _avatarInitials,
+                avatarData: avatarData,
+                size: 38,
               ),
             ),
           ],

@@ -95,6 +95,11 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
     setState(() => _page = page);
   }
 
+  void _openProfile() {
+    _closeDrawer();
+    context.push(AppRoutes.profile);
+  }
+
   Future<void> _showUnavailable(String feature) {
     _closeDrawer();
     return showOraBottomSheet<void>(
@@ -224,9 +229,10 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
       backgroundColor: OraColors.background,
       drawer: OraDrawerShell(
         avatarInitials: initials,
+        avatarData: profile?.avatarData,
         displayName: displayName,
         subtitle: 'Driver profile',
-        onProfileTap: () => _showUnavailable('Driver profile'),
+        onProfileTap: _openProfile,
         children: [
           OraDrawerItem(
             title: 'Driver home',
@@ -326,8 +332,9 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
           DriverHomeView(
             displayName: displayName,
             avatarInitials: initials,
+            avatarData: profile?.avatarData,
             onOpenDrawer: _openDrawer,
-            onOpenProfile: () => _showUnavailable('Driver profile'),
+            onOpenProfile: _openProfile,
             onOpenRideRequests: () => _selectPage(DriverShellPage.open),
             onOpenAssignedTrips: () => _selectPage(DriverShellPage.assigned),
             onOpenDirectOffer: () => _selectPage(DriverShellPage.offer),

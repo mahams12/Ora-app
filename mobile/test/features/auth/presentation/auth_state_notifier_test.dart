@@ -79,6 +79,15 @@ class _FakeAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<UserProfile> updateProfile({
+    required String displayName,
+    String? avatarData,
+    bool clearAvatar = false,
+  }) async {
+    return profile!;
+  }
+
+  @override
   Future<UserProfile> switchMode({required String mode}) async {
     return profile!;
   }

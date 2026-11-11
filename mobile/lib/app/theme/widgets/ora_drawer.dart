@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../ora_colors.dart';
 import '../ora_radius.dart';
+import 'ora_avatar.dart';
 import '../ora_spacing.dart';
 import '../ora_typography.dart';
 
@@ -11,6 +12,7 @@ class OraDrawerShell extends StatelessWidget {
     required this.avatarInitials,
     required this.displayName,
     required this.children,
+    this.avatarData,
     this.subtitle = 'View profile',
     this.onProfileTap,
     this.showProfileStar = true,
@@ -18,6 +20,7 @@ class OraDrawerShell extends StatelessWidget {
   });
 
   final String avatarInitials;
+  final String? avatarData;
   final String displayName;
   final String subtitle;
   final List<Widget> children;
@@ -56,22 +59,11 @@ class OraDrawerShell extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [OraColors.gold, OraColors.goldDeep],
-                      ),
-                    ),
-                    child: Text(
-                      avatarInitials,
-                      style: OraTypography.title(
-                        OraColors.primaryForeground,
-                      ).copyWith(fontWeight: FontWeight.w800),
-                    ),
+                  OraAvatar(
+                    initials: avatarInitials,
+                    avatarData: avatarData,
+                    size: 52,
+                    fontSize: 18,
                   ),
                   const SizedBox(height: OraSpacing.sm),
                   Text(

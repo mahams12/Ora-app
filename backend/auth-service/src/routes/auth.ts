@@ -15,7 +15,7 @@ import {
 import type { DriverAvailabilityService } from '../drivers/driver_availability_service';
 import { DriverDomainError } from '../drivers/types';
 
-const PROFILE_ALLOWED_KEYS = new Set(['displayName']);
+const PROFILE_ALLOWED_KEYS = new Set(['displayName', 'avatarData']);
 const MODE_ALLOWED_KEYS = new Set(['mode']);
 
 function rejectUnknownProfileFields(
@@ -40,7 +40,7 @@ function rejectUnknownProfileFields(
       res,
       400,
       'VALIDATION_ERROR',
-      'Only displayName may be updated.',
+      'Only displayName and avatarData may be updated.',
     );
     return true;
   }
@@ -173,7 +173,7 @@ export function createAuthRouter(
    * PATCH /v1/auth/profile
    *
    * Caller identity is the verified token uid only. Body uid/role/security
-   * fields are rejected. Only displayName is written.
+   * fields are rejected. Only displayName and avatarData are written.
    */
   router.patch('/profile', async (req: AuthedRequest, res) => {
     const caller = req.caller;
@@ -214,6 +214,7 @@ export function createAuthRouter(
         caller,
         (req.body as { displayName?: unknown }).displayName,
         new Date(),
+        (req.body as { avatarData?: unknown }).avatarData,
       );
       logSafe('profile_update_ok', {
         requestId: getRequestId(req),

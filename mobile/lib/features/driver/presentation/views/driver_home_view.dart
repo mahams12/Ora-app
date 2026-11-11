@@ -16,6 +16,7 @@ class DriverHomeView extends StatelessWidget {
   const DriverHomeView({
     required this.displayName,
     required this.avatarInitials,
+    this.avatarData,
     required this.onOpenDrawer,
     required this.onOpenProfile,
     required this.onOpenRideRequests,
@@ -32,6 +33,7 @@ class DriverHomeView extends StatelessWidget {
 
   final String displayName;
   final String avatarInitials;
+  final String? avatarData;
   final VoidCallback onOpenDrawer;
   final VoidCallback onOpenProfile;
   final VoidCallback onOpenRideRequests;
@@ -54,6 +56,7 @@ class DriverHomeView extends StatelessWidget {
         SliverToBoxAdapter(
           child: _DriverHero(
             avatarInitials: avatarInitials,
+            avatarData: avatarData,
             onOpenDrawer: onOpenDrawer,
             onOpenProfile: onOpenProfile,
             onEarningsTap: onOpenEarnings,
@@ -207,12 +210,14 @@ class DriverHomeView extends StatelessWidget {
 class _DriverHero extends StatelessWidget {
   const _DriverHero({
     required this.avatarInitials,
+    this.avatarData,
     required this.onOpenDrawer,
     required this.onOpenProfile,
     required this.onEarningsTap,
   });
 
   final String avatarInitials;
+  final String? avatarData;
   final VoidCallback onOpenDrawer;
   final VoidCallback onOpenProfile;
   final VoidCallback onEarningsTap;
@@ -288,20 +293,11 @@ class _DriverHero extends StatelessWidget {
                 InkWell(
                   onTap: onOpenProfile,
                   borderRadius: BorderRadius.circular(OraRadius.avatar),
-                  child: Container(
-                    width: 38,
-                    height: 38,
-                    alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: OraColors.gold,
-                    ),
-                    child: Text(
-                      avatarInitials,
-                      style: OraTypography.label(
-                        OraColors.onPhoto,
-                      ).copyWith(fontWeight: FontWeight.w800),
-                    ),
+                  child: OraAvatar(
+                    initials: avatarInitials,
+                    avatarData: avatarData,
+                    size: 38,
+                    fontSize: 13,
                   ),
                 ),
               ],

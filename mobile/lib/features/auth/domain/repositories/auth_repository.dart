@@ -64,6 +64,15 @@ abstract interface class AuthRepository {
   /// Updates the authenticated user's displayName (`PATCH /v1/auth/profile`).
   Future<UserProfile> updateDisplayName({required String displayName});
 
+  /// Updates displayName and/or profile photo (`PATCH /v1/auth/profile`).
+  /// [avatarData] is a `data:image/...;base64,...` URL; pass [clearAvatar]
+  /// to remove the stored photo. When neither is given the photo is untouched.
+  Future<UserProfile> updateProfile({
+    required String displayName,
+    String? avatarData,
+    bool clearAvatar = false,
+  });
+
   /// Switches the server-authoritative operating mode (`POST /v1/auth/mode`).
   /// [mode] is 'passenger' or 'driver'. Throws AppFailure.conflict with codes
   /// DRIVER_ONBOARDING_REQUIRED / DRIVER_APPROVAL_PENDING / ACTIVE_JOB, or

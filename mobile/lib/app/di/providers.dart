@@ -31,6 +31,7 @@ import '../../features/auth/domain/use_cases/resolve_auth_profile_use_case.dart'
 import '../../features/auth/domain/use_cases/restore_session_use_case.dart';
 import '../../features/auth/domain/use_cases/switch_mode_use_case.dart';
 import '../../features/auth/domain/use_cases/update_display_name_use_case.dart';
+import '../../features/auth/domain/use_cases/update_profile_use_case.dart';
 import '../../features/auth/domain/use_cases/verify_otp_use_case.dart';
 import '../../features/auth/presentation/view_models/auth_state_notifier.dart';
 import '../../features/auth/presentation/view_models/auth_view_model.dart';
@@ -465,6 +466,10 @@ final switchModeUseCaseProvider = Provider<SwitchModeUseCase>(
 
 final updateDisplayNameUseCaseProvider = Provider<UpdateDisplayNameUseCase>(
   (ref) => UpdateDisplayNameUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final updateProfileUseCaseProvider = Provider<UpdateProfileUseCase>(
+  (ref) => UpdateProfileUseCase(ref.watch(authRepositoryProvider)),
 );
 
 // ── Auth ViewModels / state ───────────────────────────────────────────────────

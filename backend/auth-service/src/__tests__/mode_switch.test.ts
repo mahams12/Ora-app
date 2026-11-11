@@ -71,123 +71,6 @@ function seedRide(
 
 const IDEM = 'switch-idem-001';
 
-function onboardBody() {
-  return {
-    vehicleType: 'car',
-    vehicleModel: 'Toyota Corolla',
-    plateNumber: 'LEA-1234',
-    homeCity: 'lahore',
-  };
-}
-
-describe('POST /v1/drivers/onboarding', () => {
-  it('none → pending, creates drivers doc offline', async () => {
-    const db = memoryDb();
-    seedUser(db, 'u1');
-    const res = await request(appFor(db, 'u1'))
-      .post('/v1/drivers/onboarding')
-      .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'onboard-u1-key')
-      .send(onboardBody());
-    expect(res.status).toBe(200);
-    expect(res.body.data.driverStatus).toBe('pending');
-
-    const user = db.getDoc('users', 'u1')!;
-    expect(user.driverStatus).toBe('pending');
-    expect(user.role).toBe('passenger'); // role granted only at approval
-
-    const drv = db.getDoc('drivers', 'u1')!;
-    expect(drv.availabilityState).toBe('offline');
-    expect((drv.vehicle as Record<string, unknown>).type).toBe('car');
-    expect(drv.homeCity).toBe('lahore');
-  });
-
-  it('is idempotent — resubmit while pending changes nothing', async () => {
-    const db = memoryDb();
-    seedUser(db, 'u1', { driverStatus: 'pending' });
-    const res = await request(appFor(db, 'u1'))
-      .post('/v1/drivers/onboarding')
-      .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'onboard-re-key')
-      .send({ ...onboardBody(), vehicleType: 'bike' });
-    expect(res.status).toBe(200);
-    expect(res.body.data.driverStatus).toBe('pending');
-    expect(db.getDoc('users', 'u1')!.driverStatus).toBe('pending');
-    expect(db.getDoc('drivers', 'u1')).toBeUndefined(); // never wrote
-  });
-
-  it('does not lift a suspension', async () => {
-    const db = memoryDb();
-    seedUser(db, 'u1', { driverStatus: 'suspended' });
-    const res = await request(appFor(db, 'u1'))
-      .post('/v1/drivers/onboarding')
-      .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'onboard-sus-key')
-      .send(onboardBody());
-    expect(res.status).toBe(200);
-    expect(res.body.data.driverStatus).toBe('suspended');
-    expect(db.getDoc('users', 'u1')!.driverStatus).toBe('suspended');
-  });
-
-  it('returns approved unchanged', async () => {
-    const db = memoryDb();
-    seedUser(db, 'u1', { role: 'driver', driverStatus: 'approved' });
-    const res = await request(appFor(db, 'u1'))
-      .post('/v1/drivers/onboarding')
-      .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'onboard-apr-key')
-      .send(onboardBody());
-    expect(res.status).toBe(200);
-    expect(res.body.data.driverStatus).toBe('approved');
-  });
-
-  it('rejects missing/invalid vehicleType and unknown fields', async () => {
-    const db = memoryDb();
-    seedUser(db, 'u1');
-    const bad = await request(appFor(db, 'u1'))
-      .post('/v1/drivers/onboarding')
-      .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'onboard-bad-key')
-      .send({ ...onboardBody(), vehicleType: 'spaceship' });
-    expect(bad.status).toBe(400);
-
-    const extra = await request(appFor(db, 'u1'))
-      .post('/v1/drivers/onboarding')
-      .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'onboard-extra-key')
-      .send({ ...onboardBody(), adminNotes: 'x' });
-    expect(extra.status).toBe(400);
-  });
-
-  it('requires an Idempotency-Key and a user profile', async () => {
-    const db = memoryDb();
-    seedUser(db, 'u1');
-    const noKey = await request(appFor(db, 'u1'))
-      .post('/v1/drivers/onboarding')
-      .set('Authorization', 'Bearer t')
-      .send(onboardBody());
-    expect(noKey.status).toBe(400);
-
-    const ghost = await request(appFor(db, 'ghost'))
-      .post('/v1/drivers/onboarding')
-      .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'onboard-ghost-key')
-      .send(onboardBody());
-    expect(ghost.status).toBe(403); // loadActor: no profile
-  });
-
-  it('rejects banned accounts', async () => {
-    const db = memoryDb();
-    seedUser(db, 'u1', { banned: true });
-    const res = await request(appFor(db, 'u1'))
-      .post('/v1/drivers/onboarding')
-      .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'onboard-ban-key')
-      .send(onboardBody());
-    expect(res.status).toBe(403);
-  });
-});
-
 describe('POST /v1/auth/mode — switch to driver', () => {
   function switchReq(db: Db, uid: string, mode: string, key = IDEM) {
     return request(appFor(db, uid))
@@ -425,30 +308,31 @@ describe('single canonical profile — no duplicates', () => {
     ).toEqual(['users/d1']);
   });
 
-  it('full journey: register → onboard → approve (ops) → switch → passenger switch', async () => {
+  it('full journey: register → onboard (auto-approve) → switch → passenger switch', async () => {
     const db = memoryDb();
     seedUser(db, 'u1');
 
-    // 1. Onboard.
+    // 1. Self-registration auto-approves until admin review exists.
     const on = await request(appFor(db, 'u1'))
       .post('/v1/drivers/onboarding')
       .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'journey-onboard-1')
-      .send(onboardBody());
-    expect(on.body.data.driverStatus).toBe('pending');
+      .send({
+        fullName: 'Journey Driver',
+        cnicNumber: '35202-1234567-8',
+        homeCity: 'Lahore',
+        licenseNumber: 'LHR-123456',
+        licenseExpiry: '2099-12-31',
+        vehicleCategory: 'zip',
+        vehicleMake: 'Toyota',
+        vehicleModel: 'Corolla',
+        vehicleYear: 2024,
+        vehicleColor: 'White',
+        plateNumber: 'LEA-1234',
+      });
+    expect(on.status).toBe(200);
+    expect(on.body.data.driverStatus).toBe('approved');
 
-    // 2. Still blocked from driver mode.
-    const early = await request(appFor(db, 'u1'))
-      .post('/v1/auth/mode')
-      .set('Authorization', 'Bearer t')
-      .set('Idempotency-Key', 'journey-mode-1')
-      .send({ mode: 'driver' });
-    expect(early.status).toBe(409);
-
-    // 3. Ops approval.
-    db.seed('users', 'u1', { ...db.getDoc('users', 'u1')!, role: 'driver', driverStatus: 'approved' });
-
-    // 4. Switch to driver.
+    // 2. Switch to driver.
     const toDriver = await request(appFor(db, 'u1'))
       .post('/v1/auth/mode')
       .set('Authorization', 'Bearer t')

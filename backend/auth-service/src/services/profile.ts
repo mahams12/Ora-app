@@ -1,4 +1,5 @@
 import type { UserProfile } from '../types';
+import { DisplayNameValidationError } from './display_name';
 
 /**
  * Server-owned completeness rule for Phase 2A.
@@ -20,9 +21,40 @@ export function deriveProfileComplete(input: {
   return name.length > 0;
 }
 
+export const AVATAR_DATA_MAX_LENGTH = 400_000;
+const AVATAR_DATA_PREFIX = 'data:image/';
+
+/**
+ * Validates an avatar payload. Returns the canonical data URL, or null when
+ * the caller asked to clear it. Throws on malformed/oversized input.
+ */
+export function normalizeAvatarData(raw: unknown): string | null {
+  if (raw == null) return null;
+  if (typeof raw !== 'string') {
+    throw new DisplayNameValidationError('avatarData must be a string.');
+  }
+  const value = raw.trim();
+  if (value === '') return null;
+  if (
+    !value.startsWith(AVATAR_DATA_PREFIX) ||
+    value.length > AVATAR_DATA_MAX_LENGTH
+  ) {
+    throw new DisplayNameValidationError(
+      'avatarData must be a data:image/* URL under 400KB.',
+    );
+  }
+  return value;
+}
+
 export function toPublicProfile(doc: Record<string, unknown>, uid: string): UserProfile {
   const displayName =
     typeof doc.displayName === 'string' ? doc.displayName : null;
+  const avatarData =
+    typeof doc.avatarData === 'string' &&
+    doc.avatarData.startsWith(AVATAR_DATA_PREFIX) &&
+    doc.avatarData.length <= AVATAR_DATA_MAX_LENGTH
+      ? doc.avatarData
+      : null;
   const role = (doc.role as UserProfile['role']) ?? 'passenger';
   const driverStatus =
     (doc.driverStatus as UserProfile['driverStatus']) ?? 'none';
@@ -40,6 +72,7 @@ export function toPublicProfile(doc: Record<string, unknown>, uid: string): User
     activeMode,
     isActive,
     banned,
+    avatarData,
     profileComplete: deriveProfileComplete({
       role,
       isActive,

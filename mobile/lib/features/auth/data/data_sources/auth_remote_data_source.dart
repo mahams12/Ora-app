@@ -38,11 +38,19 @@ class AuthRemoteDataSource {
   /// Updates displayName only. Server derives profileComplete.
   Future<UserProfileModel> updateProfile({
     required String displayName,
+    String? avatarData,
+    bool clearAvatar = false,
     required RequestContext context,
   }) async {
     final response = await _apiClient.patch<Map<String, dynamic>>(
       '/auth/profile',
-      data: {'displayName': displayName},
+      data: {
+        'displayName': displayName,
+        if (clearAvatar)
+          'avatarData': null
+        else if (avatarData != null)
+          'avatarData': avatarData,
+      },
       context: context,
       idempotent: true,
     );

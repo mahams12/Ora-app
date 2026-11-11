@@ -160,6 +160,22 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<UserProfile> updateProfile({
+    required String displayName,
+    String? avatarData,
+    bool clearAvatar = false,
+  }) async {
+    final context = _apiClient.newContext(operationId: 'update_profile');
+    final model = await _remote.updateProfile(
+      displayName: displayName,
+      avatarData: avatarData,
+      clearAvatar: clearAvatar,
+      context: context,
+    );
+    return model.toDomain();
+  }
+
+  @override
   Future<UserProfile> switchMode({required String mode}) async {
     final context = _apiClient.newContext(
       operationId: 'switch_mode',
