@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/di/providers.dart';
 import '../../../../app/router/routes.dart';
 import '../../../../app/theme/ora_colors.dart';
+import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/widgets/widgets.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../super_app/recent/recent_activity.dart';
 import '../../../super_app/presentation/widgets/unavailable_feature_sheet.dart';
 import '../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../auth/presentation/view_models/session_user_profile.dart';
@@ -73,12 +76,53 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
           'service': serviceType,
       },
     );
-    context.push(uri.toString());
+    final route = uri.toString();
+    if (serviceType == 'intercity') {
+      ref
+          .read(recentActivityProvider.notifier)
+          .record(
+            RecentActivity(
+              kind: RecentActivityKind.intercity,
+              id: 'intercity',
+              title: 'Intercity',
+              subtitle: 'Book a ride',
+              imageAsset: AppConstants.homeIntercityRoadAsset,
+              route: route,
+              atMs: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+    }
+    context.push(route);
   }
 
   Future<void> _showUnavailable(String feature) {
     _closeDrawer();
     return showUnavailableFeatureSheet(context, feature);
+  }
+
+  Future<void> _showVendorPortal() async {
+    _closeDrawer();
+    await showOraBottomSheet<void>(
+      context: context,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const OraSectionHeader(
+            eyebrow: 'Coming soon',
+            title: 'Vendor portal',
+            description:
+                'Vendors will manage listings and bookings from the ORA '
+                'vendor web app. Coming soon.',
+          ),
+          const SizedBox(height: OraSpacing.lg),
+          OraButton(
+            label: 'Got it',
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
   }
 
   void _openDriverTools() {
@@ -170,33 +214,12 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
             onTap: () => _selectPage(PassengerShellPage.rides),
           ),
           OraDrawerItem(
-            title: 'Saved places',
-            icon: Icons.bookmark_rounded,
-            iconBackground: const Color(0x37A78BFA),
-            iconColor: OraColors.accentPurple,
-            onTap: () => _showUnavailable('Saved places'),
-          ),
-          OraDrawerItem(
-            title: 'Wallet',
-            icon: Icons.account_balance_wallet_rounded,
-            iconBackground: OraColors.secondaryMuted,
-            iconColor: OraColors.tealBright,
-            onTap: () => _showUnavailable('Wallet'),
-          ),
-          OraDrawerItem(
             title: 'Refer & earn',
             icon: Icons.card_giftcard_rounded,
             iconBackground: const Color(0x33F08A6A),
             iconColor: OraColors.accentCoral,
             subtitle: 'Get Rs 200 per friend',
             onTap: () => _showUnavailable('Refer & earn'),
-          ),
-          OraDrawerItem(
-            title: 'Safety centre',
-            icon: Icons.shield_rounded,
-            iconBackground: const Color(0x33D9F2EA),
-            iconColor: const Color(0xFF8A6423),
-            onTap: () => _showUnavailable('Safety centre'),
           ),
           const OraDrawerSeparator(),
           OraDrawerItem(
@@ -210,6 +233,16 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
             bareIcon: true,
             showChevron: true,
             onTap: _onSwitchToDriver,
+          ),
+          OraDrawerItem(
+            title: 'Switch to vendor mode',
+            subtitle: 'Vendor web portal',
+            icon: Icons.storefront_outlined,
+            iconBackground: Colors.transparent,
+            iconColor: OraColors.textPrimary,
+            bareIcon: true,
+            showChevron: true,
+            onTap: _showVendorPortal,
           ),
           OraDrawerItem(
             title: 'MapLibre PoC',
@@ -255,9 +288,6 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
             onRetryProfile: vm.loadProfile,
             onRequestRideEntry: _openRideRequest,
             onOpenProfile: () => _showUnavailable('Profile'),
-            onOpenRides: () => _selectPage(PassengerShellPage.rides),
-            onSwitchToDriver: _onSwitchToDriver,
-            onUnavailableFeature: _showUnavailable,
           ),
           RideHistoryView(
             active: _page == PassengerShellPage.rides,

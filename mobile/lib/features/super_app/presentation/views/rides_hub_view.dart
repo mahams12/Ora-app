@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/router/routes.dart';
@@ -8,23 +9,21 @@ import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
-import '../../../../app/theme/widgets/ora_card.dart';
 import '../../../../app/theme/widgets/ora_section_header.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../domain/ride_type_catalogue.dart';
+import '../../recent/recent_activity.dart';
 import '../widgets/ora_module_bottom_bar.dart';
 import '../widgets/ride_service_tiles.dart';
 import '../widgets/ride_type_photo_card.dart';
-import '../widgets/saved_places_section.dart';
 import '../widgets/service_coming_later_sheet.dart';
-import '../widgets/unavailable_feature_sheet.dart';
 
-class RidesHubView extends StatelessWidget {
+class RidesHubView extends ConsumerWidget {
   const RidesHubView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
       backgroundColor: OraColors.background,
@@ -53,22 +52,50 @@ class RidesHubView extends StatelessWidget {
                       const _RidesHero(),
                       const SizedBox(height: OraSpacing.lg),
                       RideServiceTiles(
-                        onCityRides: () => unawaited(
-                          context.push<void>(AppRoutes.rideRequestUri()),
-                        ),
-                        onIntercity: () => unawaited(
-                          context.push<void>(
-                            AppRoutes.rideRequestUri(service: 'intercity'),
-                          ),
-                        ),
+                        onCityRides: () {
+                          final route = AppRoutes.rideRequestUri();
+                          ref
+                              .read(recentActivityProvider.notifier)
+                              .record(
+                                RecentActivity(
+                                  kind: RecentActivityKind.ride,
+                                  id: 'city_rides',
+                                  title: 'City rides',
+                                  subtitle: 'Book a ride',
+                                  imageAsset:
+                                      AppConstants.serviceCityRidesAsset,
+                                  route: route,
+                                  atMs: DateTime.now().millisecondsSinceEpoch,
+                                ),
+                              );
+                          unawaited(context.push<void>(route));
+                        },
+                        onIntercity: () {
+                          final route = AppRoutes.rideRequestUri(
+                            service: 'intercity',
+                          );
+                          ref
+                              .read(recentActivityProvider.notifier)
+                              .record(
+                                RecentActivity(
+                                  kind: RecentActivityKind.intercity,
+                                  id: 'intercity',
+                                  title: 'Intercity',
+                                  subtitle: 'Book a ride',
+                                  imageAsset:
+                                      AppConstants.serviceIntercityAsset,
+                                  route: route,
+                                  atMs: DateTime.now().millisecondsSinceEpoch,
+                                ),
+                              );
+                          unawaited(context.push<void>(route));
+                        },
                         onCourier: () => unawaited(
                           showServiceComingLaterSheet(context, 'Courier'),
                         ),
-                        onMove: () => unawaited(
-                          showServiceComingLaterSheet(context, 'Move'),
-                        ),
+                        onMove: () =>
+                            unawaited(context.push<void>(AppRoutes.logistics)),
                         courierStatusLabel: 'Coming later',
-                        moveStatusLabel: 'Coming later',
                       ),
                       const SizedBox(height: OraSpacing.lg),
                       const OraSectionHeader(title: 'Choose a ride'),
@@ -92,19 +119,41 @@ class RidesHubView extends StatelessWidget {
                       onTap: () {
                         final action = option.action;
                         if (action is RideCategoryAction) {
-                          unawaited(
-                            context.push<void>(
-                              AppRoutes.rideRequestUri(
-                                category: action.categoryId,
-                              ),
-                            ),
+                          final route = AppRoutes.rideRequestUri(
+                            category: action.categoryId,
                           );
+                          ref
+                              .read(recentActivityProvider.notifier)
+                              .record(
+                                RecentActivity(
+                                  kind: RecentActivityKind.ride,
+                                  id: option.id,
+                                  title: option.name,
+                                  subtitle: 'Book a ride',
+                                  imageAsset: option.image,
+                                  route: route,
+                                  atMs: DateTime.now().millisecondsSinceEpoch,
+                                ),
+                              );
+                          unawaited(context.push<void>(route));
                         } else if (action is RideIntercityAction) {
-                          unawaited(
-                            context.push<void>(
-                              AppRoutes.rideRequestUri(service: 'intercity'),
-                            ),
+                          final route = AppRoutes.rideRequestUri(
+                            service: 'intercity',
                           );
+                          ref
+                              .read(recentActivityProvider.notifier)
+                              .record(
+                                RecentActivity(
+                                  kind: RecentActivityKind.intercity,
+                                  id: 'intercity',
+                                  title: option.name,
+                                  subtitle: 'Book a ride',
+                                  imageAsset: option.image,
+                                  route: route,
+                                  atMs: DateTime.now().millisecondsSinceEpoch,
+                                ),
+                              );
+                          unawaited(context.push<void>(route));
                         } else {
                           unawaited(
                             showServiceComingLaterSheet(context, option.name),
@@ -113,72 +162,6 @@ class RidesHubView extends StatelessWidget {
                       },
                     );
                   }, childCount: kRideTypeCatalogue.length),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  padding,
-                  OraSpacing.lg,
-                  padding,
-                  OraSpacing.md,
-                ),
-                sliver: SliverToBoxAdapter(
-                  child: SavedPlacesSection(
-                    onUnavailable: (feature) => unawaited(
-                      showUnavailableFeatureSheet(context, feature),
-                    ),
-                  ),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  padding,
-                  0,
-                  padding,
-                  OraSpacing.xxl,
-                ),
-                sliver: SliverToBoxAdapter(
-                  child: Semantics(
-                    button: true,
-                    label: 'Logistics — trucks, cargo & freight catalogue',
-                    child: OraCard(
-                      onTap: () =>
-                          unawaited(context.push<void>(AppRoutes.logistics)),
-                      padding: const EdgeInsets.all(OraSpacing.md),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: OraColors.infoMuted,
-                              borderRadius: BorderRadius.circular(OraRadius.sm),
-                            ),
-                            child: const Icon(
-                              Icons.local_shipping_outlined,
-                              color: OraColors.info,
-                              size: 20,
-                            ),
-                          ),
-                          const SizedBox(width: OraSpacing.sm),
-                          Expanded(
-                            child: Text(
-                              'Explore Logistics',
-                              style: OraTypography.bodyEmphasis(
-                                OraColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: OraSpacing.xs),
-                          const Icon(
-                            Icons.arrow_forward_rounded,
-                            color: OraColors.textMuted,
-                            size: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ],

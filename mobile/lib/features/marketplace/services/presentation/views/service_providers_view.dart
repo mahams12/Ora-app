@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../app/router/routes.dart';
 import '../../../../../app/theme/ora_colors.dart';
 import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../core/utils/responsive.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
+import '../../../../super_app/recent/recent_activity.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
 import '../../../shared/demo/demo_listings.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/provider_card.dart';
 
-class ServiceProvidersView extends ConsumerWidget {
+class ServiceProvidersView extends ConsumerStatefulWidget {
   const ServiceProvidersView({
     required this.categoryId,
     required this.subcategoryId,
@@ -28,7 +30,52 @@ class ServiceProvidersView extends ConsumerWidget {
   final String? previewBannerLabel;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ServiceProvidersView> createState() =>
+      _ServiceProvidersViewState();
+}
+
+class _ServiceProvidersViewState extends ConsumerState<ServiceProvidersView> {
+  String? _recordedSubcategoryKey;
+
+  @override
+  void didUpdateWidget(covariant ServiceProvidersView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.categoryId != widget.categoryId ||
+        oldWidget.subcategoryId != widget.subcategoryId) {
+      _recordedSubcategoryKey = null;
+    }
+  }
+
+  void _recordActivity(
+    ServiceCategory category,
+    ServiceSubcategory subcategory,
+  ) {
+    final activityKey = '${category.id}:${subcategory.id}';
+    if (_recordedSubcategoryKey == activityKey) return;
+    _recordedSubcategoryKey = activityKey;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref
+          .read(recentActivityProvider.notifier)
+          .record(
+            RecentActivity(
+              kind: RecentActivityKind.service,
+              id: activityKey,
+              title: subcategory.name,
+              subtitle: 'Services',
+              imageAsset: 'assets/marketplace/${subcategory.image}',
+              route: AppRoutes.servicesSubcategoryPath(
+                category.id,
+                subcategory.id,
+              ),
+              atMs: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final catalogue = ref.watch(catalogueProvider);
     final demoEnabled = ref.watch(demoListingsEnabledProvider);
     final padding = Responsive.horizontalPadding(context);
@@ -43,11 +90,11 @@ class ServiceProvidersView extends ConsumerWidget {
         error: (error, stackTrace) =>
             const MarketplaceEmptyState(title: 'Catalogue unavailable'),
         data: (data) {
-          final category = data.serviceCategory(categoryId);
+          final category = data.serviceCategory(widget.categoryId);
           ServiceSubcategory? subcategory;
           if (category != null) {
             for (final item in category.subcategories) {
-              if (item.id == subcategoryId) {
+              if (item.id == widget.subcategoryId) {
                 subcategory = item;
                 break;
               }
@@ -56,8 +103,9 @@ class ServiceProvidersView extends ConsumerWidget {
           if (category == null || subcategory == null) {
             return const MarketplaceEmptyState(title: 'Service not found');
           }
-          final visibleProviders = providers.isNotEmpty
-              ? providers
+          _recordActivity(category, subcategory);
+          final visibleProviders = widget.providers.isNotEmpty
+              ? widget.providers
               : demoEnabled
               ? demoServiceProviders(subcategory)
               : const <ServiceProviderSummary>[];
@@ -67,7 +115,7 @@ class ServiceProvidersView extends ConsumerWidget {
               constraints: const BoxConstraints(maxWidth: 760),
               child: CustomScrollView(
                 slivers: [
-                  if (previewBannerLabel != null)
+                  if (widget.previewBannerLabel != null)
                     SliverToBoxAdapter(
                       child: Container(
                         margin: EdgeInsets.fromLTRB(
@@ -82,7 +130,7 @@ class ServiceProvidersView extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          previewBannerLabel!,
+                          widget.previewBannerLabel!,
                           style: const TextStyle(
                             color: OraColors.navy,
                             fontWeight: FontWeight.w700,

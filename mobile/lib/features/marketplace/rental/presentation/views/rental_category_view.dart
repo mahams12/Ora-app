@@ -8,6 +8,7 @@ import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../core/utils/responsive.dart';
+import '../../../../super_app/recent/recent_activity.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
@@ -32,6 +33,7 @@ class RentalCategoryView extends ConsumerStatefulWidget {
 
 class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
   String _query = '';
+  String? _recordedActivityKey;
 
   @override
   void didUpdateWidget(covariant RentalCategoryView oldWidget) {
@@ -39,7 +41,37 @@ class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
     if (oldWidget.categoryId != widget.categoryId ||
         oldWidget.subcategoryId != widget.subcategoryId) {
       _query = '';
+      _recordedActivityKey = null;
     }
+  }
+
+  void _recordActivity(
+    RentalCategory category,
+    RentalSubcategory? subcategory,
+  ) {
+    final activityKey = '${category.id}:${subcategory?.id ?? ''}';
+    if (_recordedActivityKey == activityKey) return;
+    _recordedActivityKey = activityKey;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref
+          .read(recentActivityProvider.notifier)
+          .record(
+            RecentActivity(
+              kind: RecentActivityKind.rental,
+              id: activityKey,
+              title: subcategory?.name ?? category.name,
+              subtitle: 'Rental',
+              imageAsset:
+                  'assets/marketplace/${subcategory?.image ?? category.image}',
+              route: AppRoutes.rentalCategoryPath(
+                category.id,
+                subcategoryId: subcategory?.id,
+              ),
+              atMs: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+    });
   }
 
   @override
@@ -76,6 +108,7 @@ class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
               title: 'Property type not found',
             );
           }
+          _recordActivity(category, selectedSubcategory);
           final query = _query.trim().toLowerCase();
           final visibleSubcategories = category.subcategories
               .where((item) {

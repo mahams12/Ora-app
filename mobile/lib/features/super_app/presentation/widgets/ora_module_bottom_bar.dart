@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,7 +5,6 @@ import '../../../../app/router/routes.dart';
 import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
-import 'unavailable_feature_sheet.dart';
 
 enum OraModuleDestination { rides, logistics, rental, services }
 
@@ -56,14 +53,6 @@ class OraModuleBottomBar extends StatelessWidget {
                 label: 'Services',
                 selected: selected == OraModuleDestination.services,
                 onTap: () => _replace(context, AppRoutes.services),
-              ),
-              _ModuleItem(
-                icon: Icons.account_balance_wallet_outlined,
-                selectedIcon: Icons.account_balance_wallet_rounded,
-                label: 'Wallet',
-                selected: false,
-                onTap: () =>
-                    unawaited(showUnavailableFeatureSheet(context, 'Wallet')),
               ),
             ],
           ),

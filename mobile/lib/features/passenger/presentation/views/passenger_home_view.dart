@@ -8,7 +8,7 @@ import '../../../../app/theme/widgets/widgets.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../super_app/presentation/widgets/ora_module_grid.dart';
-import '../../../super_app/presentation/widgets/saved_places_section.dart';
+import '../../../super_app/presentation/widgets/recent_activity_section.dart';
 import '../view_models/home_view_model.dart';
 
 /// Authenticated passenger Home — matches the Ora HTML prototype shell.
@@ -19,9 +19,9 @@ class PassengerHomeView extends StatelessWidget {
     required this.onRetryProfile,
     required this.onRequestRideEntry,
     required this.onOpenProfile,
-    required this.onOpenRides,
-    required this.onSwitchToDriver,
-    required this.onUnavailableFeature,
+    VoidCallback? onOpenRides,
+    VoidCallback? onSwitchToDriver,
+    ValueChanged<String>? onUnavailableFeature,
     super.key,
   });
 
@@ -31,9 +31,6 @@ class PassengerHomeView extends StatelessWidget {
   final void Function(String? categoryId, {String? serviceType})
   onRequestRideEntry;
   final VoidCallback onOpenProfile;
-  final VoidCallback onOpenRides;
-  final VoidCallback onSwitchToDriver;
-  final ValueChanged<String> onUnavailableFeature;
 
   @override
   Widget build(BuildContext context) {
@@ -81,45 +78,7 @@ class PassengerHomeView extends StatelessWidget {
               const SizedBox(height: OraSpacing.sm),
               const OraModuleGrid(),
               const SizedBox(height: OraSpacing.lg),
-              SavedPlacesSection(
-                onUnavailable: onUnavailableFeature,
-                onSavedPlaceTap: () => onRequestRideEntry(null),
-              ),
-              const SizedBox(height: OraSpacing.lg),
-              const OraSectionHeader(title: 'Quick actions'),
-              const SizedBox(height: OraSpacing.sm),
-              Row(
-                children: [
-                  Expanded(
-                    child: _QuickActionTile(
-                      icon: Icons.history_rounded,
-                      label: 'My rides',
-                      color: OraColors.info,
-                      onTap: onOpenRides,
-                    ),
-                  ),
-                  const SizedBox(width: OraSpacing.sm),
-                  Expanded(
-                    child: _QuickActionTile(
-                      icon: Icons.account_balance_wallet_rounded,
-                      label: 'Wallet',
-                      color: OraColors.tealBright,
-                      onTap: () => onUnavailableFeature('Wallet'),
-                    ),
-                  ),
-                  const SizedBox(width: OraSpacing.sm),
-                  Expanded(
-                    child: _QuickActionTile(
-                      icon: Icons.shield_rounded,
-                      label: 'Safety',
-                      color: OraColors.goldSoft,
-                      onTap: () => onUnavailableFeature('Safety centre'),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: OraSpacing.lg),
-              _DriverModeCard(onTap: onSwitchToDriver),
+              const RecentActivitySection(),
             ]),
           ),
         ),
@@ -275,106 +234,6 @@ class _PromoCard extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DriverModeCard extends StatelessWidget {
-  const _DriverModeCard({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return OraCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(OraSpacing.md),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: OraColors.navy,
-              borderRadius: BorderRadius.circular(OraRadius.sm),
-            ),
-            child: const Icon(
-              Icons.directions_car_filled_rounded,
-              color: OraColors.primary,
-              size: 18,
-            ),
-          ),
-          const SizedBox(width: OraSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Earn on ${AppConstants.appName}',
-                  style: OraTypography.bodyEmphasis(OraColors.textPrimary),
-                ),
-                Text(
-                  'Passenger & driver — switch anytime',
-                  style: OraTypography.caption(OraColors.textMuted),
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.chevron_right_rounded, color: OraColors.textMuted),
-        ],
-      ),
-    );
-  }
-}
-
-class _QuickActionTile extends StatelessWidget {
-  const _QuickActionTile({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: OraColors.surfaceElevated,
-      borderRadius: BorderRadius.circular(OraRadius.lg),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(OraRadius.lg),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(OraRadius.lg),
-            border: Border.all(color: OraColors.border),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: color, size: 20),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: OraTypography.caption(OraColors.textPrimary).copyWith(
-                  fontFamily: OraTypography.displayFamily,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11.5,
-                ),
-              ),
-            ],
           ),
         ),
       ),

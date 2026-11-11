@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ora/app/router/routes.dart';
 import 'package:ora/app/theme/theme.dart';
 import 'package:ora/features/ride/domain/models/ride_category_option.dart';
+import 'package:ora/features/super_app/recent/recent_activity.dart';
 import 'package:ora/features/super_app/domain/ride_type_catalogue.dart';
 import 'package:ora/features/super_app/presentation/views/rides_hub_view.dart';
 
@@ -27,14 +29,21 @@ GoRouter _router() => GoRouter(
   ],
 );
 
-Widget _app(GoRouter router, {double textScale = 1}) => MaterialApp.router(
-  theme: OraTheme.dark(),
-  routerConfig: router,
-  builder: (context, child) => MediaQuery(
-    data: MediaQuery.of(
-      context,
-    ).copyWith(textScaler: TextScaler.linear(textScale)),
-    child: child!,
+Widget _app(GoRouter router, {double textScale = 1}) => ProviderScope(
+  overrides: [
+    recentActivityStorageProvider.overrideWithValue(
+      InMemoryRecentActivityStorage(),
+    ),
+  ],
+  child: MaterialApp.router(
+    theme: OraTheme.dark(),
+    routerConfig: router,
+    builder: (context, child) => MediaQuery(
+      data: MediaQuery.of(
+        context,
+      ).copyWith(textScaler: TextScaler.linear(textScale)),
+      child: child!,
+    ),
   ),
 );
 
@@ -73,7 +82,7 @@ void main() {
     expect(find.text('/rides/request?service=intercity'), findsOneWidget);
   });
 
-  testWidgets('Courier and Move keep Coming Later behavior and pills', (
+  testWidgets('Courier stays coming later and Move opens Logistics', (
     tester,
   ) async {
     final router = _router();
@@ -82,7 +91,7 @@ void main() {
     await tester.pumpWidget(_app(router));
     await tester.pumpAndSettle();
 
-    expect(find.text('Coming later'), findsNWidgets(2));
+    expect(find.text('Coming later'), findsOneWidget);
 
     await tester.tap(find.text('Courier'));
     await tester.pumpAndSettle();
@@ -100,28 +109,8 @@ void main() {
 
     await tester.tap(find.text('Move'));
     await tester.pumpAndSettle();
-    expect(
-      find.text(
-        'Move is planned for Ora but is not wired to the backend '
-        'in this build. Nothing is faked.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Got it'), findsOneWidget);
-  });
-
-  testWidgets('Logistics catalogue card opens Logistics', (tester) async {
-    final router = _router();
-    addTearDown(router.dispose);
-
-    await tester.pumpWidget(_app(router));
-    await tester.pumpAndSettle();
-
-    final logisticsCard = find.text('Explore Logistics');
-    await _scrollHubTo(tester, logisticsCard, swipes: 8);
-    await tester.tap(logisticsCard);
-    await tester.pumpAndSettle();
     expect(find.text('/logistics'), findsOneWidget);
+    expect(find.text('Coming later'), findsNothing);
   });
 
   test('ride type catalogue keeps typed actions and category IDs', () {
@@ -156,7 +145,7 @@ void main() {
     );
   });
 
-  testWidgets('Rides hub shows all ride types and Saved places', (
+  testWidgets('Rides hub shows all ride types without Saved places', (
     tester,
   ) async {
     final router = _router();
@@ -194,12 +183,8 @@ void main() {
       await tester.pumpAndSettle();
     }
     expect(seenRideTypes, containsAll(rideNames));
-
-    await tester.ensureVisible(find.text('Saved places'));
-    await tester.pumpAndSettle();
-    expect(find.text('Saved places'), findsOneWidget);
-    expect(find.text('Home'), findsOneWidget);
-    expect(find.text('Work'), findsOneWidget);
+    expect(find.text('Saved places'), findsNothing);
+    expect(find.text('Explore Logistics'), findsNothing);
   });
 
   testWidgets('Rides hub Zip opens its ride request URI', (tester) async {
@@ -244,29 +229,6 @@ void main() {
       ),
       findsOneWidget,
     );
-  });
-
-  testWidgets('Rides hub saved places use the unavailable sheet', (
-    tester,
-  ) async {
-    final router = _router();
-    addTearDown(router.dispose);
-
-    await tester.pumpWidget(_app(router));
-    await tester.pumpAndSettle();
-    await _scrollHubTo(tester, find.text('Saved places'), swipes: 8);
-    await tester.ensureVisible(find.text('Home'));
-
-    await tester.tap(find.text('Home'));
-    await tester.pumpAndSettle();
-    expect(
-      find.text(
-        'Home is planned for Ora but is not wired to the backend '
-        'in this build. Nothing is faked.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Got it'), findsOneWidget);
   });
 
   testWidgets('Rides hub fits compact and large phone sizes', (tester) async {

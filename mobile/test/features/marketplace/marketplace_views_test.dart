@@ -163,7 +163,7 @@ void main() {
     expect(find.text('Logistics'), findsOneWidget);
     expect(find.text('Rental'), findsOneWidget);
     expect(find.text('Services'), findsNWidgets(2));
-    expect(find.text('Wallet'), findsOneWidget);
+    expect(find.text('Wallet'), findsNothing);
     expect(find.text('Popular'), findsNothing);
     expect(tester.takeException(), isNull);
   });
@@ -340,32 +340,25 @@ void main() {
     expect(find.byType(SubcategoryPhotoCard), findsWidgets);
   });
 
-  testWidgets(
-    'module navigation switches modules and keeps Wallet unavailable',
-    (tester) async {
-      await pumpMarketplaceRoute(
-        tester,
-        location: AppRoutes.services,
-        catalogue: catalogue,
-      );
+  testWidgets('module navigation has four tabs and switches modules', (
+    tester,
+  ) async {
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.services,
+      catalogue: catalogue,
+    );
 
-      await tester.tap(find.text('Logistics'));
-      for (var frame = 0; frame < 6; frame++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
-      expect(find.byType(LogisticsHomeView), findsOneWidget);
-
-      await tester.tap(find.text('Wallet').last);
-      await tester.pumpAndSettle();
-      expect(
-        find.text(
-          'Wallet is planned for Ora but is not wired to the backend '
-          'in this build. Nothing is faked.',
-        ),
-        findsOneWidget,
-      );
-    },
-  );
+    expect(find.text('Wallet'), findsNothing);
+    expect(find.text('Rides'), findsOneWidget);
+    expect(find.text('Rental'), findsOneWidget);
+    await tester.tap(find.text('Logistics'));
+    for (var frame = 0; frame < 6; frame++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(find.byType(LogisticsHomeView), findsOneWidget);
+    expect(find.text('Wallet'), findsNothing);
+  });
 
   testWidgets('rental filters are local and expose all requested controls', (
     tester,

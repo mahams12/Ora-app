@@ -8,6 +8,7 @@ import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../core/utils/responsive.dart';
+import '../../../../super_app/recent/recent_activity.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
@@ -30,6 +31,7 @@ class LogisticsCategoryView extends ConsumerStatefulWidget {
 class _LogisticsCategoryViewState extends ConsumerState<LogisticsCategoryView> {
   String? _selectedTypeId;
   String _query = '';
+  String? _recordedCategoryId;
 
   @override
   void didUpdateWidget(covariant LogisticsCategoryView oldWidget) {
@@ -37,7 +39,29 @@ class _LogisticsCategoryViewState extends ConsumerState<LogisticsCategoryView> {
     if (oldWidget.categoryId != widget.categoryId) {
       _selectedTypeId = null;
       _query = '';
+      _recordedCategoryId = null;
     }
+  }
+
+  void _recordActivity(LogisticsCategory category) {
+    if (_recordedCategoryId == category.id) return;
+    _recordedCategoryId = category.id;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref
+          .read(recentActivityProvider.notifier)
+          .record(
+            RecentActivity(
+              kind: RecentActivityKind.logistics,
+              id: category.id,
+              title: category.name,
+              subtitle: 'Logistics',
+              imageAsset: 'assets/marketplace/${category.image}',
+              route: AppRoutes.logisticsCategoryPath(category.id),
+              atMs: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
+    });
   }
 
   @override
@@ -62,6 +86,7 @@ class _LogisticsCategoryViewState extends ConsumerState<LogisticsCategoryView> {
           if (category == null) {
             return const MarketplaceEmptyState(title: 'Category not found');
           }
+          _recordActivity(category);
           final query = _query.trim().toLowerCase();
           final List<DemoLogisticsOperator> operators = demoEnabled
               ? demoLogisticsOperators(category, typeId: _selectedTypeId)

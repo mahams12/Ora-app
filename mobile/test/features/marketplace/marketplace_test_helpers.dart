@@ -10,6 +10,7 @@ import 'package:ora/app/theme/ora_theme.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_models.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_provider.dart';
 import 'package:ora/features/marketplace/shared/demo/demo_listings.dart';
+import 'package:ora/features/super_app/recent/recent_activity.dart';
 
 Future<MarketplaceCatalogue> loadMarketplaceCatalogue() async {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,9 @@ Future<GoRouter> pumpMarketplaceRoute(
       overrides: [
         catalogueProvider.overrideWith((ref) async => catalogue),
         demoListingsEnabledProvider.overrideWithValue(demoListingsEnabled),
+        recentActivityStorageProvider.overrideWithValue(
+          InMemoryRecentActivityStorage(),
+        ),
       ],
       child: MaterialApp.router(
         theme: OraTheme.dark(),
