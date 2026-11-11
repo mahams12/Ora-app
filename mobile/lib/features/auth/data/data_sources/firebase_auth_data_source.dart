@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -22,9 +26,9 @@ class FirebaseAuthDataSource {
     required FailureMapper failureMapper,
     required AppLogger logger,
     FirebaseAuth? firebaseAuth,
-  })  : _auth = firebaseAuth ?? FirebaseAuth.instance,
-        _failureMapper = failureMapper,
-        _logger = logger;
+  }) : _auth = firebaseAuth ?? FirebaseAuth.instance,
+       _failureMapper = failureMapper,
+       _logger = logger;
 
   final FirebaseAuth _auth;
   final FailureMapper _failureMapper;
@@ -44,10 +48,7 @@ class FirebaseAuthDataSource {
   Future<PhoneVerificationResult> startPhoneVerification({
     required String phoneE164,
   }) async {
-    _logger.info(
-      'OTP request initiated',
-      metadata: {'op': 'request_otp'},
-    );
+    _logger.info('OTP request initiated', metadata: {'op': 'request_otp'});
 
     final coordinator = PhoneVerificationCoordinator(
       phoneE164: phoneE164,
@@ -99,9 +100,10 @@ class FirebaseAuthDataSource {
   }) async {
     _logger.info('OTP verify attempt', metadata: {'op': 'verify_otp'});
     try {
+      final smsCode = await _localDevBypassCode(verificationId, otpCode);
       final credential = PhoneAuthProvider.credential(
         verificationId: verificationId,
-        smsCode: otpCode,
+        smsCode: smsCode,
       );
       return await _auth.signInWithCredential(credential);
     } on FirebaseAuthException catch (e) {
@@ -111,6 +113,33 @@ class FirebaseAuthDataSource {
       );
       throw _failureMapper.fromFirebaseAuthException(e);
     }
+  }
+
+  // LOCAL TEST BUILD ONLY (not committed): with the Auth emulator in a debug
+  // build, "000000" is swapped for the emulator's real code for this session.
+  Future<String> _localDevBypassCode(String verificationId, String otpCode) async {
+    const emulatorHost = String.fromEnvironment('ORA_FIREBASE_EMULATOR_HOST');
+    if (!kDebugMode || emulatorHost.isEmpty || otpCode != '000000') {
+      return otpCode;
+    }
+    final client = HttpClient();
+    try {
+      final projectId = _auth.app.options.projectId;
+      final req = await client.getUrl(Uri.parse(
+          'http://$emulatorHost:9099/emulator/v1/projects/$projectId/verificationCodes'));
+      final res = await req.close();
+      final body = jsonDecode(await res.transform(utf8.decoder).join())
+          as Map<String, dynamic>;
+      final codes = (body['verificationCodes'] as List? ?? const [])
+          .cast<Map<String, dynamic>>();
+      for (final c in codes.reversed) {
+        if (c['sessionInfo'] == verificationId) return c['code'] as String;
+      }
+    } catch (_) {
+    } finally {
+      client.close();
+    }
+    return otpCode;
   }
 
   Future<String?> getIdToken({bool forceRefresh = false}) async {
