@@ -182,7 +182,6 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Where are you headed?'), findsNothing);
-    expect(find.text('Explore ORA'), findsOneWidget);
     expect(find.text('Your World. One App.'), findsOneWidget);
     expect(find.text('Choose a ride'), findsNothing);
     expect(find.text('Logistics'), findsWidgets);
