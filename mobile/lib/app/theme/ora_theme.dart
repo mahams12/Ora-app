@@ -26,6 +26,10 @@ class OraTheme {
       surface: OraColors.surface,
       onSurface: OraColors.textPrimary,
       outline: OraColors.border,
+      // Tonal fills (IconButton.filledTonal, tonal chips) read as bright
+      // orange instead of the muted brown secondary tint.
+      secondaryContainer: OraColors.gold,
+      onSecondaryContainer: OraColors.primaryForeground,
     );
 
     final textTheme = OraTypography.textTheme(brightness);
@@ -39,14 +43,20 @@ class OraTheme {
       textTheme: textTheme,
       primaryTextTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: OraColors.navyElevated,
-        foregroundColor: colorScheme.onSurface,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        backgroundColor: OraColors.gold,
+        foregroundColor: OraColors.primaryForeground,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 3,
-        shadowColor: const Color(0x33F88733),
+        shadowColor: const Color(0x55C25E10),
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
-        titleTextStyle: textTheme.titleLarge,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          color: OraColors.primaryForeground,
+        ),
+        iconTheme: const IconThemeData(color: OraColors.primaryForeground),
+        actionsIconTheme: const IconThemeData(
+          color: OraColors.primaryForeground,
+        ),
       ),
       cardTheme: CardThemeData(
         color: OraColors.surface,
@@ -65,9 +75,14 @@ class OraTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: OraColors.surfaceElevated,
-        selectedColor: OraColors.primaryMuted,
+        selectedColor: OraColors.gold,
+        checkmarkColor: OraColors.primaryForeground,
         disabledColor: OraColors.disabled,
         labelStyle: textTheme.labelMedium,
+        secondaryLabelStyle: textTheme.labelMedium?.copyWith(
+          color: OraColors.primaryForeground,
+          fontWeight: FontWeight.w700,
+        ),
         padding: const EdgeInsets.symmetric(
           horizontal: OraSpacing.sm,
           vertical: OraSpacing.xs,
@@ -91,9 +106,9 @@ class OraTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(48, 48),
-          foregroundColor: OraColors.textSecondary,
-          textStyle: OraTypography.button(OraColors.textSecondary),
-          side: BorderSide(color: colorScheme.outline),
+          foregroundColor: OraColors.goldDeep,
+          textStyle: OraTypography.button(OraColors.goldDeep),
+          side: const BorderSide(color: OraColors.gold, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(OraRadius.button),
           ),
@@ -102,8 +117,8 @@ class OraTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           minimumSize: const Size(48, 48),
-          foregroundColor: OraColors.textSecondary,
-          textStyle: OraTypography.button(OraColors.textSecondary),
+          foregroundColor: OraColors.goldDeep,
+          textStyle: OraTypography.button(OraColors.goldDeep),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +9,6 @@ import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../app/theme/widgets/ora_section_header.dart';
 import '../../../../../core/utils/responsive.dart';
-import '../../../../super_app/presentation/widgets/service_coming_later_sheet.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
@@ -315,26 +312,6 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
                         ),
                       ),
                     ),
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(
-                      padding,
-                      OraSpacing.lg,
-                      padding,
-                      OraSpacing.xs,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: OutlinedButton.icon(
-                        onPressed: () => unawaited(
-                          showServiceComingLaterSheet(
-                            context,
-                            'List your property',
-                          ),
-                        ),
-                        icon: const Icon(Icons.add_home_work_outlined),
-                        label: const Text('List your property'),
-                      ),
-                    ),
-                  ),
                   if (_filters.cityArea.isNotEmpty ||
                       _filters.minimumPrice.isNotEmpty ||
                       _filters.maximumPrice.isNotEmpty ||

@@ -131,9 +131,15 @@ class _LogisticsCategoryViewState extends ConsumerState<LogisticsCategoryView> {
                             avatar: Icon(
                               Icons.location_on_outlined,
                               size: 16,
-                              color: OraColors.gold,
+                              color: OraColors.primaryForeground,
                             ),
                             label: Text('My location'),
+                            labelStyle: TextStyle(
+                              color: OraColors.primaryForeground,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            backgroundColor: OraColors.gold,
+                            side: BorderSide.none,
                             visualDensity: VisualDensity.compact,
                           ),
                         ],

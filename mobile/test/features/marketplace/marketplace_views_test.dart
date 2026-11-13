@@ -441,33 +441,6 @@ void main() {
     expect(find.text('SAMPLE'), findsWidgets);
   });
 
-  testWidgets('rental property listing action is coming later', (tester) async {
-    await pumpMarketplaceRoute(
-      tester,
-      location: AppRoutes.rental,
-      catalogue: catalogue,
-    );
-    await tester.scrollUntilVisible(
-      find.text('List your property'),
-      160,
-      scrollable: find
-          .descendant(
-            of: find.byType(CustomScrollView).first,
-            matching: find.byType(Scrollable),
-          )
-          .first,
-    );
-    await tester.tap(find.text('List your property'));
-    await tester.pumpAndSettle();
-    expect(
-      find.text(
-        'List your property is planned for Ora but is not wired to the backend '
-        'in this build. Nothing is faked.',
-      ),
-      findsOneWidget,
-    );
-  });
-
   testWidgets('rental categories open subcategories and honest empty state', (
     tester,
   ) async {
