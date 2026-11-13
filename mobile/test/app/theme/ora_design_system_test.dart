@@ -20,7 +20,7 @@ void main() {
       expect(OraColors.textPrimary, const Color(0xFF2A211D));
       expect(OraColors.textSecondary, const Color(0xFF8A6A56));
       expect(OraColors.surface, const Color(0xFFFFFFFF));
-      expect(OraColors.surfaceElevated, const Color(0xFFFAF1EA));
+      expect(OraColors.surfaceElevated, const Color(0xFFFBEAD8));
       expect(OraColors.danger, isNot(OraColors.primary));
     });
 

@@ -210,7 +210,7 @@ class _CargoRegistrationViewState
     return OraRegistrationScaffold(
       title: 'Cargo\nRegistration',
       subtitle: 'Join ORA and grow your business!',
-      heroAsset: 'assets/marketplace/modules/logistics.webp',
+      heroAsset: 'assets/brand/reg_cargo.webp',
       footer: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

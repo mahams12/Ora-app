@@ -367,7 +367,7 @@ class _DriverRegistrationViewState
     return OraRegistrationScaffold(
       title: 'Driver\nRegistration',
       subtitle: 'Join ORA and start earning today!',
-      heroAsset: 'assets/marketplace/modules/rides.webp',
+      heroAsset: 'assets/brand/reg_rides.webp',
       footer: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -472,11 +472,6 @@ class _DriverRegistrationViewState
               errorText: _errors['vehicleColor'],
               onTap: _pickVehicleColour,
             ),
-          ],
-        ),
-        const SizedBox(height: OraSpacing.sm),
-        RegRow(
-          children: [
             _field(
               field: 'plate-number',
               icon: Icons.pin_outlined,
@@ -486,6 +481,11 @@ class _DriverRegistrationViewState
               capitalization: TextCapitalization.characters,
               verified: _plateController.text.trim().length >= 2,
             ),
+          ],
+        ),
+        const SizedBox(height: OraSpacing.sm),
+        RegRow(
+          children: [
             _field(
               field: 'vehicle-make',
               icon: Icons.factory_outlined,
@@ -494,11 +494,6 @@ class _DriverRegistrationViewState
               hint: 'e.g. Toyota',
               capitalization: TextCapitalization.words,
             ),
-          ],
-        ),
-        const SizedBox(height: OraSpacing.sm),
-        RegRow(
-          children: [
             _field(
               field: 'vehicle-model',
               icon: Icons.directions_car_outlined,
@@ -546,11 +541,6 @@ class _DriverRegistrationViewState
               file: _drivingLicence,
               onPick: () => _pickPhoto((f) => _drivingLicence = f),
             ),
-          ],
-        ),
-        const SizedBox(height: OraSpacing.sm),
-        RegRow(
-          children: [
             RegUploadTile(
               title: 'CNIC',
               subtitle: 'Front & Back',
@@ -558,7 +548,6 @@ class _DriverRegistrationViewState
               file: _cnicPhoto,
               onPick: () => _pickPhoto((f) => _cnicPhoto = f),
             ),
-            const SizedBox(),
           ],
         ),
         const SizedBox(height: OraSpacing.sm),

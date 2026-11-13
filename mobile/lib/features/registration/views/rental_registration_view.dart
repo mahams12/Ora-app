@@ -196,7 +196,7 @@ class _RentalRegistrationViewState
     return OraRegistrationScaffold(
       title: 'Rentals\nRegistration',
       subtitle: 'List your property and start earning today!',
-      heroAsset: 'assets/marketplace/modules/rental.webp',
+      heroAsset: 'assets/brand/reg_rental.webp',
       footer: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -285,23 +285,22 @@ class _RentalRegistrationViewState
               hint: 'Grand View Hotel',
               capitalization: TextCapitalization.words,
             ),
+            RegDropdownTile(
+              tileKey: const ValueKey('rental-location'),
+              icon: Icons.location_on_outlined,
+              label: 'Location *',
+              value: _location,
+              placeholder: 'DHA Phase 6, Karachi',
+              errorText: _errors['location'],
+              onTap: () => _pick(
+                'location',
+                'Location',
+                _locations,
+                (v) => _location = v,
+                selected: _location,
+              ),
+            ),
           ],
-        ),
-        const SizedBox(height: OraSpacing.sm),
-        RegDropdownTile(
-          tileKey: const ValueKey('rental-location'),
-          icon: Icons.location_on_outlined,
-          label: 'Location *',
-          value: _location,
-          placeholder: 'DHA Phase 6, Karachi',
-          errorText: _errors['location'],
-          onTap: () => _pick(
-            'location',
-            'Location',
-            _locations,
-            (v) => _location = v,
-            selected: _location,
-          ),
         ),
         const SizedBox(height: OraSpacing.sm),
         RegRow(

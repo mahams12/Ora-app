@@ -22,14 +22,12 @@ class OraRegistrationScaffold extends StatelessWidget {
     required this.heroAsset,
     required this.children,
     super.key,
-    this.heroAssetHeight = 128,
     this.footer,
   });
 
   final String title;
   final String subtitle;
   final String heroAsset;
-  final double heroAssetHeight;
   final List<Widget> children;
 
   /// Optional widget rendered under the form (banner, submit, support row).
@@ -50,7 +48,6 @@ class OraRegistrationScaffold extends StatelessWidget {
               title: title,
               subtitle: subtitle,
               heroAsset: heroAsset,
-              heroAssetHeight: heroAssetHeight,
             ),
           ),
           Expanded(
@@ -102,13 +99,11 @@ class _RegistrationHeroHeader extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.heroAsset,
-    required this.heroAssetHeight,
   });
 
   final String title;
   final String subtitle;
   final String heroAsset;
-  final double heroAssetHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -121,75 +116,90 @@ class _RegistrationHeroHeader extends StatelessWidget {
           stops: [0.0, 0.55, 1.0],
         ),
       ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            OraSpacing.md,
-            OraSpacing.sm,
-            OraSpacing.xs,
-            OraSpacing.xl + OraSpacing.sm,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Module banner art fills the header; aligned right so the
+          // artwork (car / truck / home / tools) shows through.
+          Positioned.fill(
+            child: Image.asset(
+              heroAsset,
+              fit: BoxFit.cover,
+              alignment: Alignment.centerRight,
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          // Orange scrim over the left side hides the art's baked text
+          // and keeps the live title readable.
+          const Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Color(0xFFF68733),
+                    Color(0xD8F68733),
+                    Color(0x00F68733),
+                  ],
+                  stops: [0.0, 0.42, 0.74],
+                ),
+              ),
+            ),
+          ),
+          SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                OraSpacing.md,
+                OraSpacing.sm,
+                OraSpacing.md,
+                OraSpacing.xl + OraSpacing.sm,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _BackBubble(),
-                  const SizedBox(width: OraSpacing.sm),
-                  Image.asset(
-                    AppConstants.logoAsset,
-                    height: 30,
-                    fit: BoxFit.contain,
+                  Row(
+                    children: [
+                      _BackBubble(),
+                      const SizedBox(width: OraSpacing.sm),
+                      Image.asset(
+                        AppConstants.logoAsset,
+                        height: 30,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(width: OraSpacing.xs),
+                      Text(
+                        'Faster, Safer and Easy...',
+                        style: OraTypography.caption(
+                          OraColors.primaryForeground.withValues(
+                            alpha: 0.9,
+                          ),
+                        ).copyWith(fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Text(
+                    title,
+                    style: OraTypography.display(
+                      OraColors.primaryForeground,
+                    ).copyWith(fontSize: 26),
+                  ),
+                  const SizedBox(height: OraSpacing.xxs),
+                  FractionallySizedBox(
+                    widthFactor: 0.62,
+                    child: Text(
+                      subtitle,
+                      style: OraTypography.body(
+                        OraColors.primaryForeground.withValues(alpha: 0.92),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: OraSpacing.xs),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: OraTypography.display(
-                              OraColors.primaryForeground,
-                            ).copyWith(fontSize: 26),
-                          ),
-                          const SizedBox(height: OraSpacing.xxs),
-                          Text(
-                            subtitle,
-                            style: OraTypography.body(
-                              OraColors.primaryForeground.withValues(
-                                alpha: 0.9,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: OraFloaty(
-                        amplitude: 10,
-                        child: Image.asset(
-                          heroAsset,
-                          height: heroAssetHeight,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -341,22 +351,20 @@ class RegFieldTile extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(
             horizontal: OraSpacing.sm,
-            vertical: OraSpacing.xs,
+            vertical: OraSpacing.sm,
           ),
           decoration: BoxDecoration(
             color: OraColors.surface,
             borderRadius: BorderRadius.circular(OraRadius.input),
-            border: Border.all(
-              color: errorText != null
-                  ? OraColors.danger.withValues(alpha: 0.6)
-                  : OraColors.border.withValues(alpha: 0.8),
-            ),
+            border: errorText != null
+                ? Border.all(color: OraColors.danger.withValues(alpha: 0.6))
+                : null,
             boxShadow: OraElevation.cardShadow,
           ),
           child: Row(
             children: [
               _TileIcon(icon),
-              const SizedBox(width: OraSpacing.sm),
+              const SizedBox(width: OraSpacing.xs),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,7 +402,7 @@ class RegFieldTile extends StatelessWidget {
                 const Icon(
                   Icons.check_circle_rounded,
                   color: OraColors.success,
-                  size: 20,
+                  size: 18,
                 ),
             ],
           ),
@@ -416,21 +424,22 @@ class RegFieldTile extends StatelessWidget {
 }
 
 class _TileIcon extends StatelessWidget {
-  const _TileIcon(this.icon);
+  const _TileIcon(this.icon, {this.size = 30});
 
   final IconData icon;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 34,
-      height: 34,
+      width: size,
+      height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: OraColors.primaryMuted.withValues(alpha: 0.45),
         shape: BoxShape.circle,
       ),
-      child: Icon(icon, size: 17, color: OraColors.goldDeep),
+      child: Icon(icon, size: size * 0.53, color: OraColors.goldDeep),
     );
   }
 }
@@ -475,17 +484,17 @@ class RegDropdownTile extends StatelessWidget {
               decoration: BoxDecoration(
                 color: OraColors.surface,
                 borderRadius: BorderRadius.circular(OraRadius.input),
-                border: Border.all(
-                  color: errorText != null
-                      ? OraColors.danger.withValues(alpha: 0.6)
-                      : OraColors.border.withValues(alpha: 0.8),
-                ),
+                border: errorText != null
+                    ? Border.all(
+                        color: OraColors.danger.withValues(alpha: 0.6),
+                      )
+                    : null,
                 boxShadow: OraElevation.cardShadow,
               ),
               child: Row(
                 children: [
                   _TileIcon(icon),
-                  const SizedBox(width: OraSpacing.sm),
+                  const SizedBox(width: OraSpacing.xs),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,6 +520,7 @@ class RegDropdownTile extends StatelessWidget {
                   ),
                   const Icon(
                     Icons.keyboard_arrow_down_rounded,
+                    size: 18,
                     color: OraColors.textMuted,
                   ),
                 ],
@@ -755,11 +765,9 @@ class RegUploadTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: OraColors.surface,
         borderRadius: BorderRadius.circular(OraRadius.card),
-        border: Border.all(
-          color: picked
-              ? OraColors.success.withValues(alpha: 0.5)
-              : OraColors.border.withValues(alpha: 0.8),
-        ),
+        border: picked
+            ? Border.all(color: OraColors.success.withValues(alpha: 0.5))
+            : null,
         boxShadow: OraElevation.cardShadow,
       ),
       child: Column(
@@ -852,10 +860,7 @@ class RegCategoryChip extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(
-            horizontal: OraSpacing.xs,
-            vertical: OraSpacing.sm,
-          ),
+          padding: const EdgeInsets.all(OraSpacing.xxs),
           decoration: BoxDecoration(
             gradient: selected
                 ? const LinearGradient(
@@ -878,12 +883,12 @@ class RegCategoryChip extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 22,
+                size: 18,
                 color: selected
                     ? OraColors.primaryForeground
                     : OraColors.goldDeep,
               ),
-              const SizedBox(height: OraSpacing.xxs),
+              const SizedBox(height: 3),
               Text(
                 label,
                 textAlign: TextAlign.center,
@@ -893,7 +898,7 @@ class RegCategoryChip extends StatelessWidget {
                   selected
                       ? OraColors.primaryForeground
                       : OraColors.textPrimary,
-                ).copyWith(fontWeight: FontWeight.w600),
+                ).copyWith(fontWeight: FontWeight.w600, fontSize: 9.5),
               ),
             ],
           ),
@@ -988,7 +993,7 @@ class RegRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth < 440 || children.length == 1) {
+        if (constraints.maxWidth < 360 || children.length == 1) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

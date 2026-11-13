@@ -213,7 +213,7 @@ class _ServiceVendorRegistrationViewState
     return OraRegistrationScaffold(
       title: 'Services\nRegistration',
       subtitle: 'Offer your services on ORA and grow your business!',
-      heroAsset: 'assets/marketplace/modules/services.webp',
+      heroAsset: 'assets/brand/reg_services.webp',
       footer: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -298,7 +298,7 @@ class _ServiceVendorRegistrationViewState
           crossAxisCount: 5,
           mainAxisSpacing: OraSpacing.xs,
           crossAxisSpacing: OraSpacing.xs,
-          childAspectRatio: 0.92,
+          childAspectRatio: 0.78,
           children: [
             for (final category in _categories)
               RegCategoryChip(
