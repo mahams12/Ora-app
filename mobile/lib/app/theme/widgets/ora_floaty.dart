@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 /// and pulses its scale, staggered per instance so siblings don't move in
 /// lockstep.
 class OraFloaty extends StatefulWidget {
+  /// Tests set this via flutter_test_config.dart so pumpAndSettle can settle.
+  static bool debugSkipRepeat = false;
+
   const OraFloaty({
     required this.child,
     this.amplitude = 14.0,
@@ -34,7 +37,7 @@ class _OraFloatyState extends State<OraFloaty>
   late final AnimationController _ctrl = AnimationController(
     vsync: this,
     duration: widget.period,
-  )..repeat(reverse: true);
+  );
   late final Animation<double> _anim = CurvedAnimation(
     parent: _ctrl,
     curve: Curves.easeInOut,
@@ -43,7 +46,10 @@ class _OraFloatyState extends State<OraFloaty>
   @override
   void initState() {
     super.initState();
+    // Seed the phase first — assigning value stops the controller, so the
+    // repeat must be started after it.
     _ctrl.value = (widget.child.hashCode.abs() % 100) / 100;
+    if (!OraFloaty.debugSkipRepeat) _ctrl.repeat(reverse: true);
   }
 
   @override
