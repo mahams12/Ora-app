@@ -192,9 +192,9 @@ class _BlendedHeroArt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final padding = Responsive.horizontalPadding(context);
-    final height = (MediaQuery.sizeOf(context).height * 0.44).clamp(
-      300.0,
-      420.0,
+    final height = (MediaQuery.sizeOf(context).height * 0.32).clamp(
+      230.0,
+      310.0,
     );
     return Semantics(
       button: true,
@@ -246,7 +246,7 @@ class _BlendedHeroArt extends StatelessWidget {
               Positioned(
                 left: padding + 4,
                 right: padding + 24,
-                bottom: height * 0.16,
+                bottom: height * 0.12,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -267,13 +267,6 @@ class _BlendedHeroArt extends StatelessWidget {
                         color: OraColors.gold,
                         borderRadius: BorderRadius.circular(2),
                       ),
-                    ),
-                    const SizedBox(height: OraSpacing.xs),
-                    Text(
-                      'Wherever life takes you, ORA makes it easier.',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: OraTypography.body(OraColors.slate),
                     ),
                   ],
                 ),

@@ -138,15 +138,15 @@ class _OraModuleCardState extends State<OraModuleCard> {
                         ),
                       ),
                       Positioned(
-                        top: 34,
-                        left: 10,
-                        right: 10,
-                        height: cardHeight * 0.56,
+                        top: _imageOverlap - 6,
+                        left: 4,
+                        right: 4,
+                        height: cardHeight * 0.64,
                         child: Image.asset(
                           widget.imageAsset,
                           cacheWidth: 480,
                           fit: BoxFit.contain,
-                          alignment: Alignment.bottomCenter,
+                          alignment: Alignment.center,
                           filterQuality: FilterQuality.medium,
                         ),
                       ),
@@ -249,9 +249,9 @@ class _BlobCardPainter extends CustomPainter {
         ..color = const Color(0xE6FFFFFF),
     );
 
-    // orange sun centered behind the 3D icon so they blend together
-    final sunCenter = Offset(150 * sx, 62 * sy);
-    final sunRadius = 62 * sx;
+    // orange sun peeking top-right behind the 3D icon so they blend together
+    final sunCenter = Offset(182 * sx, 66 * sy);
+    final sunRadius = 60 * sx;
     canvas.drawCircle(
       sunCenter,
       sunRadius,
