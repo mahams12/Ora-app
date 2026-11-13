@@ -392,6 +392,11 @@ class RegFieldTile extends StatelessWidget {
                           OraColors.textMuted.withValues(alpha: 0.7),
                         ),
                         border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
                         contentPadding: const EdgeInsets.only(top: 2),
                       ),
                     ),
@@ -424,22 +429,21 @@ class RegFieldTile extends StatelessWidget {
 }
 
 class _TileIcon extends StatelessWidget {
-  const _TileIcon(this.icon, {this.size = 30});
+  const _TileIcon(this.icon);
 
   final IconData icon;
-  final double size;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size,
-      height: size,
+      width: 30,
+      height: 30,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: OraColors.primaryMuted.withValues(alpha: 0.45),
         shape: BoxShape.circle,
       ),
-      child: Icon(icon, size: size * 0.53, color: OraColors.goldDeep),
+      child: Icon(icon, size: 16, color: OraColors.goldDeep),
     );
   }
 }
