@@ -108,7 +108,6 @@ class RideServiceTile extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(OraRadius.card),
           child: OraFloaty(
-            amplitude: 4,
             child: OraTapScale(
               child: SizedBox(
                 height: 112,
@@ -134,7 +133,6 @@ class RideServiceTile extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: OraFloaty(
-                            amplitude: 4,
                             child: Image.asset(
                               imageAsset,
                               fit: BoxFit.contain,

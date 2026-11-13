@@ -242,7 +242,6 @@ class _ServiceCategoryTile extends StatelessWidget {
       label: category.name,
       onTap: onTap,
       child: OraFloaty(
-        amplitude: 4,
         child: OraTapScale(
           child: SizedBox(
             width: 96,
@@ -260,7 +259,6 @@ class _ServiceCategoryTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   OraFloaty(
-                    amplitude: 3,
                     child: Image.asset(
                       'assets/marketplace/${category.image}',
                       width: 44,

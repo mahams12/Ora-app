@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 import '../../../../../app/theme/ora_colors.dart';
 import '../../../../../app/theme/ora_elevation.dart';
-import '../../../../../app/theme/ora_motion.dart';
 import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../app/theme/widgets/ora_floaty.dart';
@@ -24,13 +23,6 @@ class SubcategoryPhotoCard extends StatefulWidget {
 }
 
 class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
-  var _pressed = false;
-
-  void _setPressed(bool value) {
-    if (_pressed == value) return;
-    setState(() => _pressed = value);
-  }
-
   Widget _photoPlaceholder() => const ColoredBox(
     color: OraColors.surfaceElevated,
     child: Center(
@@ -48,17 +40,10 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
       button: true,
       label: widget.subcategory.name,
       onTap: widget.onTap,
-      child: GestureDetector(
-        onTapDown: (_) => _setPressed(true),
-        onTapUp: (_) => _setPressed(false),
-        onTapCancel: () => _setPressed(false),
-        child: OraFloaty(
-          amplitude: 5,
-          child: AnimatedScale(
-            scale: _pressed ? 0.97 : 1,
-            duration: OraMotion.press,
-            curve: OraMotion.standard,
-            child: DecoratedBox(
+      child: OraFloaty(
+        child: OraTapScale(
+          child: ExcludeSemantics(
+          child: DecoratedBox(
             decoration: BoxDecoration(
               color: OraColors.surfaceElevated,
               borderRadius: radius,
@@ -70,7 +55,6 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  excludeFromSemantics: true,
                   onTap: () {
                     HapticFeedback.selectionClick();
                     widget.onTap();

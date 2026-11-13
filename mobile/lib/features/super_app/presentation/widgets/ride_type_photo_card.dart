@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../app/theme/ora_colors.dart';
-import '../../../../app/theme/ora_motion.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/ora_floaty.dart';
@@ -23,8 +22,6 @@ class RideTypePhotoCard extends StatefulWidget {
 }
 
 class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
-  var _pressed = false;
-
   @override
   Widget build(BuildContext context) {
     final option = widget.option;
@@ -34,21 +31,14 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
           '${option.name}, ${option.blurb}'
           '${option.comingLater ? ', coming later' : ''}',
       onTap: widget.onTap,
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) => setState(() => _pressed = false),
-        onTapCancel: () => setState(() => _pressed = false),
-        child: OraFloaty(
-          child: AnimatedScale(
-            scale: _pressed ? 0.97 : 1,
-            duration: OraMotion.press,
-            curve: OraMotion.standard,
-            child: ClipRRect(
+      child: OraFloaty(
+        child: OraTapScale(
+          child: ExcludeSemantics(
+          child: ClipRRect(
             borderRadius: BorderRadius.circular(OraRadius.card),
             child: Material(
               color: OraColors.surfaceElevated,
               child: InkWell(
-                excludeFromSemantics: true,
                 onTap: () {
                   HapticFeedback.selectionClick();
                   widget.onTap();
@@ -133,7 +123,7 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                 ),
               ),
             ),
-          ),
+            ),
           ),
         ),
       ),

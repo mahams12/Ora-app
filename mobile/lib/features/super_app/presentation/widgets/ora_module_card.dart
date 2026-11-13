@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/ora_colors.dart';
-import '../../../../app/theme/ora_motion.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/ora_floaty.dart';
 
@@ -34,8 +33,6 @@ class OraModuleCard extends StatefulWidget {
 }
 
 class _OraModuleCardState extends State<OraModuleCard> {
-  var _pressed = false;
-
   void _openRoute(BuildContext context) {
     HapticFeedback.selectionClick();
     unawaited(context.push<void>(widget.route));
@@ -49,20 +46,13 @@ class _OraModuleCardState extends State<OraModuleCard> {
       button: true,
       label: '${widget.title}. ${widget.subtitle}',
       onTap: () => _openRoute(context),
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) => setState(() => _pressed = false),
-        onTapCancel: () => setState(() => _pressed = false),
-        child: OraFloaty(
-          child: AnimatedScale(
-            scale: _pressed ? 0.96 : 1,
-            duration: OraMotion.press,
-            curve: OraMotion.standard,
-            child: LayoutBuilder(
+      child: OraFloaty(
+        child: OraTapScale(
+          child: LayoutBuilder(
             builder: (context, constraints) {
               final cardHeight = constraints.maxWidth * (240 / 275);
-              return InkWell(
-                excludeFromSemantics: true,
+              return ExcludeSemantics(
+              child: InkWell(
                 onTap: () => _openRoute(context),
                 child: SizedBox(
                   height: cardHeight + _imageOverlap,
@@ -155,9 +145,9 @@ class _OraModuleCardState extends State<OraModuleCard> {
                     ],
                   ),
                 ),
+              ),
               );
             },
-          ),
           ),
         ),
       ),

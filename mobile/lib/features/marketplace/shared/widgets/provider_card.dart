@@ -82,7 +82,6 @@ class ProviderCard extends StatelessWidget {
         if (isSample) 'Sample data',
       ].join(', '),
       child: OraFloaty(
-        amplitude: 4,
         child: Container(
           padding: const EdgeInsets.all(OraSpacing.sm),
           decoration: BoxDecoration(

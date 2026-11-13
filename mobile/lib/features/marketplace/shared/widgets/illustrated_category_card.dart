@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 
 import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_elevation.dart';
-import '../../../../app/theme/ora_motion.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/ora_floaty.dart';
@@ -37,13 +36,6 @@ class IllustratedCategoryCard extends StatefulWidget {
 }
 
 class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
-  var _pressed = false;
-
-  void _setPressed(bool value) {
-    if (_pressed == value) return;
-    setState(() => _pressed = value);
-  }
-
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(OraRadius.card);
@@ -58,18 +50,12 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
         if (status != null) widget.statusVariant!.name,
       ].join(', '),
       onTap: widget.onTap,
-      child: GestureDetector(
-        onTapDown: (_) => _setPressed(true),
-        onTapUp: (_) => _setPressed(false),
-        onTapCancel: () => _setPressed(false),
-        child: OraFloaty(
-          child: AnimatedScale(
-            scale: _pressed ? 0.96 : 1,
-            duration: OraMotion.press,
-            curve: OraMotion.standard,
-            child: SizedBox(
+      child: OraFloaty(
+        child: OraTapScale(
+          child: SizedBox(
               width: widget.width,
               height: widget.height,
+            child: ExcludeSemantics(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: OraColors.navyElevated,

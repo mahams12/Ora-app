@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 
-/// Gentle up-down float for 3D art/icons — lightweight loop, staggered per
-/// instance so sibling elements don't bob in lockstep.
+/// Prominent buoyant float for cards/3D art — drifts up/down, sways gently,
+/// and pulses its scale, staggered per instance so siblings don't move in
+/// lockstep.
 class OraFloaty extends StatefulWidget {
   const OraFloaty({
     required this.child,
-    this.amplitude = 8.0,
-    this.period = const Duration(milliseconds: 2200),
+    this.amplitude = 14.0,
+    this.scaleAmplitude = 0.045,
+    this.tilt = 0.035,
+    this.period = const Duration(milliseconds: 1700),
     super.key,
   });
 
   final Widget child;
+
+  /// Peak-to-peak vertical drift in logical pixels.
   final double amplitude;
+
+  /// Extra grow/shrink on top of the drift (1 ± scaleAmplitude).
+  final double scaleAmplitude;
+
+  /// Peak-to-peak rotation sway in radians (~2° at 0.035).
+  final double tilt;
   final Duration period;
 
   @override
@@ -45,55 +56,90 @@ class _OraFloatyState extends State<OraFloaty>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _anim,
-      builder: (context, child) => Transform.translate(
-        offset: Offset(
-          0,
-          -widget.amplitude / 2 + widget.amplitude * _anim.value,
-        ),
-        child: child,
-      ),
+      builder: (context, child) {
+        final v = _anim.value;
+        return Transform.translate(
+          offset: Offset(0, -widget.amplitude / 2 + widget.amplitude * v),
+          child: Transform.rotate(
+            angle: (v - 0.5) * widget.tilt,
+            child: Transform.scale(
+              scale: 1 - widget.scaleAmplitude / 2 + widget.scaleAmplitude * v,
+              child: child,
+            ),
+          ),
+        );
+      },
       child: widget.child,
     );
   }
 }
 
-/// Press-in scale for tappable surfaces — pairs with InkWell: tracks
-/// down/up/cancel for the squash while the inner InkWell fires the tap.
+/// Springy squash-and-pop for tappable surfaces — presses in fast, then
+/// bounces back with an elastic overshoot (Lottie "click" style). Uses a
+/// Listener so the inner InkWell still receives the tap.
 class OraTapScale extends StatefulWidget {
   const OraTapScale({
     required this.child,
-    this.scale = 0.95,
-    this.duration = const Duration(milliseconds: 130),
+    this.downScale = 0.9,
     super.key,
   });
 
   final Widget child;
-  final double scale;
-  final Duration duration;
+
+  /// Scale while the pointer is held down.
+  final double downScale;
 
   @override
   State<OraTapScale> createState() => _OraTapScaleState();
 }
 
-class _OraTapScaleState extends State<OraTapScale> {
-  var _pressed = false;
+class _OraTapScaleState extends State<OraTapScale>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 550),
+    value: 1,
+  );
 
-  void _set(bool v) {
-    if (_pressed == v) return;
-    setState(() => _pressed = v);
+  double _from = 1;
+  double _scale = 1;
+  bool _held = false;
+
+  void _pressDown() {
+    _ctrl.stop();
+    _held = true;
+    setState(() => _scale = widget.downScale);
+  }
+
+  void _release() {
+    if (!_held) return;
+    _held = false;
+    _from = _scale;
+    _ctrl.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Listener(
-      onPointerDown: (_) => _set(true),
-      onPointerUp: (_) => _set(false),
-      onPointerCancel: (_) => _set(false),
-      child: AnimatedScale(
-        scale: _pressed ? widget.scale : 1,
-        duration: widget.duration,
-        curve: Curves.easeOut,
+      onPointerDown: (_) => _pressDown(),
+      onPointerUp: (_) => _release(),
+      onPointerCancel: (_) => _release(),
+      child: AnimatedBuilder(
+        animation: _ctrl,
         child: widget.child,
+        builder: (context, child) {
+          // elasticOut overshoots past 1 mid-flight, giving the pop, then
+          // settles exactly at 1.
+          final t = Curves.elasticOut.transform(_ctrl.value);
+          final scale = _held ? _scale : _from + (1 - _from) * t;
+          return Transform.scale(scale: scale, child: child);
+        },
       ),
     );
   }
