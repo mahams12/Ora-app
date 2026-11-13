@@ -192,9 +192,9 @@ class _BlendedHeroArt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final padding = Responsive.horizontalPadding(context);
-    final height = (MediaQuery.sizeOf(context).height * 0.34).clamp(
-      250.0,
-      340.0,
+    final height = (MediaQuery.sizeOf(context).height * 0.38).clamp(
+      270.0,
+      360.0,
     );
     return Semantics(
       button: true,
@@ -211,22 +211,36 @@ class _BlendedHeroArt extends StatelessWidget {
             children: [
               ShaderMask(
                 shaderCallback: (rect) => const LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                   colors: [
                     Colors.white,
                     Colors.white,
                     Colors.transparent,
                   ],
-                  stops: [0.0, 0.55, 1.0],
+                  stops: [0.0, 0.42, 0.9],
                 ).createShader(rect),
                 blendMode: BlendMode.dstIn,
-                child: Image.asset(
-                  AppConstants.homeIntercityRoadAsset,
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topRight,
-                  filterQuality: FilterQuality.high,
-                  cacheWidth: 1100,
+                child: ShaderMask(
+                  shaderCallback: (rect) => const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.transparent,
+                      Colors.white,
+                      Colors.white,
+                      Colors.transparent,
+                    ],
+                    stops: [0.0, 0.14, 0.8, 1.0],
+                  ).createShader(rect),
+                  blendMode: BlendMode.dstIn,
+                  child: Image.asset(
+                    AppConstants.homeIntercityRoadAsset,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                    filterQuality: FilterQuality.high,
+                    cacheWidth: 1100,
+                  ),
                 ),
               ),
               Positioned(

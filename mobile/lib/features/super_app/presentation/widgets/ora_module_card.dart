@@ -138,10 +138,10 @@ class _OraModuleCardState extends State<OraModuleCard> {
                         ),
                       ),
                       Positioned(
-                        top: 14,
+                        top: 28,
                         left: 6,
                         right: 6,
-                        height: _imageOverlap + cardHeight * 0.52,
+                        height: cardHeight * 0.58,
                         child: Image.asset(
                           widget.imageAsset,
                           cacheWidth: 480,
