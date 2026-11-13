@@ -65,6 +65,7 @@ class PassengerHomeView extends StatelessWidget {
             profileDisplayName: profileDisplayName,
             onOpenDrawer: onOpenDrawer,
             onOpenProfile: onOpenProfile,
+            onHeroTap: () => onRequestRideEntry(null, serviceType: 'intercity'),
           ),
         ),
         SliverPadding(
@@ -76,10 +77,6 @@ class PassengerHomeView extends StatelessWidget {
           ),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              _PromoCard(
-                onTap: () => onRequestRideEntry(null, serviceType: 'intercity'),
-              ),
-              const SizedBox(height: OraSpacing.md),
               const OraModuleGrid(),
               const SizedBox(height: OraSpacing.lg),
               const RecentActivitySection(),
@@ -96,6 +93,7 @@ class _HomeHeroHeader extends StatelessWidget {
     required this.state,
     required this.onOpenDrawer,
     required this.onOpenProfile,
+    required this.onHeroTap,
     this.avatarData,
     this.profileDisplayName,
   });
@@ -105,6 +103,7 @@ class _HomeHeroHeader extends StatelessWidget {
   final String? profileDisplayName;
   final VoidCallback onOpenDrawer;
   final VoidCallback onOpenProfile;
+  final VoidCallback onHeroTap;
 
   String get _avatarInitials {
     final name = (profileDisplayName ?? state.displayName)?.trim();
@@ -117,125 +116,159 @@ class _HomeHeroHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final padding = Responsive.horizontalPadding(context);
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(
-        padding,
-        OraSpacing.sm,
-        padding,
-        OraSpacing.lg,
-      ),
-      // transparent — header blends into the page gradient until the cards
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            IconButton(
-              tooltip: 'Menu',
-              onPressed: onOpenDrawer,
-              icon: const Icon(Icons.menu_rounded),
-              color: OraColors.textPrimary,
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(
+            padding,
+            OraSpacing.sm,
+            padding,
+            OraSpacing.lg,
+          ),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [OraColors.navyElevated, OraColors.primaryMuted],
             ),
-            Expanded(
-              child: Image.asset(
-                AppConstants.logoAsset,
-                height: 30,
-                fit: BoxFit.contain,
-                alignment: Alignment.center,
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+            border: Border(
+              bottom: BorderSide(color: Color(0x66F88733), width: 1.4),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0x33F88733),
+                blurRadius: 18,
+                offset: Offset(0, 6),
+                spreadRadius: -8,
               ),
+            ],
+          ),
+          child: SafeArea(
+            bottom: false,
+            child: Row(
+              children: [
+                IconButton(
+                  tooltip: 'Menu',
+                  onPressed: onOpenDrawer,
+                  icon: const Icon(Icons.menu_rounded),
+                  color: OraColors.textPrimary,
+                ),
+                Expanded(
+                  child: Image.asset(
+                    AppConstants.logoAsset,
+                    height: 30,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.center,
+                  ),
+                ),
+                InkWell(
+                  onTap: onOpenProfile,
+                  borderRadius: BorderRadius.circular(OraRadius.avatar),
+                  child: OraAvatar(
+                    initials: _avatarInitials,
+                    avatarData: avatarData,
+                    size: 38,
+                  ),
+                ),
+              ],
             ),
-            InkWell(
-              onTap: onOpenProfile,
-              borderRadius: BorderRadius.circular(OraRadius.avatar),
-              child: OraAvatar(
-                initials: _avatarInitials,
-                avatarData: avatarData,
-                size: 38,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        _BlendedHeroArt(onTap: onHeroTap),
+      ],
     );
   }
 }
 
-class _PromoCard extends StatelessWidget {
-  const _PromoCard({required this.onTap});
+/// Full-bleed 3D road art that melts into the page gradient — the tagline
+/// floats freely on the blended area like the reference hero.
+class _BlendedHeroArt extends StatelessWidget {
+  const _BlendedHeroArt({required this.onTap});
 
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final padding = Responsive.horizontalPadding(context);
+    final height = (MediaQuery.sizeOf(context).height * 0.34).clamp(
+      250.0,
+      340.0,
+    );
     return Semantics(
       button: true,
       label: 'Intercity rides',
       onTap: onTap,
-      child: Material(
-        color: OraColors.navy,
-        borderRadius: BorderRadius.circular(OraRadius.lg),
-        child: InkWell(
-          excludeFromSemantics: true,
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(OraRadius.lg),
-          child: SizedBox(
-            height: 176,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(OraRadius.lg),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.asset(
-                    AppConstants.homeIntercityRoadAsset,
-                    cacheWidth: 800,
-                    fit: BoxFit.cover,
-                    filterQuality: FilterQuality.medium,
-                  ),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.centerRight,
-                        end: Alignment.centerLeft,
-                        colors: [
-                          Colors.transparent,
-                          OraColors.photoScrimStrong,
-                        ],
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: SizedBox(
+          width: double.infinity,
+          height: height,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              ShaderMask(
+                shaderCallback: (rect) => const LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    Colors.white,
+                    Colors.white,
+                    Colors.transparent,
+                  ],
+                  stops: [0.0, 0.55, 1.0],
+                ).createShader(rect),
+                blendMode: BlendMode.dstIn,
+                child: Image.asset(
+                  AppConstants.homeIntercityRoadAsset,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topRight,
+                  filterQuality: FilterQuality.high,
+                  cacheWidth: 1100,
+                ),
+              ),
+              Positioned(
+                left: padding + 4,
+                right: padding + 24,
+                bottom: height * 0.16,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ORA',
+                      style: OraTypography.sectionTitle(OraColors.goldDeep),
+                    ),
+                    const SizedBox(height: OraSpacing.xxs),
+                    Text(
+                      'Your World.\nOne App.',
+                      style: OraTypography.display(OraColors.ink),
+                    ),
+                    const SizedBox(height: OraSpacing.xs),
+                    Container(
+                      width: 34,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: OraColors.gold,
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(OraSpacing.md),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'ORA',
-                          style: OraTypography.sectionTitle(OraColors.goldSoft),
-                        ),
-                        const SizedBox(height: OraSpacing.xxs),
-                        Text(
-                          'Your World. One App.',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: OraTypography.title(OraColors.onPhoto),
-                        ),
-                        const SizedBox(height: OraSpacing.xxs),
-                        Text(
-                          'Wherever life takes you, ORA makes it easier.',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: OraTypography.caption(OraColors.onPhotoMuted),
-                        ),
-                      ],
+                    const SizedBox(height: OraSpacing.xs),
+                    Text(
+                      'Wherever life takes you, ORA makes it easier.',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: OraTypography.body(OraColors.slate),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
   }
 }
+
