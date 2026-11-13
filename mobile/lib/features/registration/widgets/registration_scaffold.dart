@@ -10,11 +10,10 @@ import '../../../app/theme/ora_radius.dart';
 import '../../../app/theme/ora_spacing.dart';
 import '../../../app/theme/ora_typography.dart';
 import '../../../app/theme/widgets/widgets.dart';
-import '../../../core/constants/app_constants.dart';
 
 /// Registration-flow scaffolding matching the partner-registration designs:
-/// orange gradient hero header (back button, ORA logo, title, subtitle, 3D
-/// art) with a white rounded sheet sliding over it that hosts the form.
+/// full-bleed module banner (back button + baked ORA branding) with a white
+/// rounded sheet under it that hosts the form.
 class OraRegistrationScaffold extends StatelessWidget {
   const OraRegistrationScaffold({
     required this.title,
@@ -33,8 +32,9 @@ class OraRegistrationScaffold extends StatelessWidget {
   /// Optional widget rendered under the form (banner, submit, support row).
   final Widget? footer;
 
-  static const double _headerHeight = 246;
-  static const double _sheetOverlap = 30;
+  /// Banner art is drawn 1024x342 — height tracks the view width so the
+  /// whole picture is always visible (never cropped or zoomed).
+  static const double _heroAspect = 342 / 1024;
 
   @override
   Widget build(BuildContext context) {
@@ -42,48 +42,50 @@ class OraRegistrationScaffold extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: Column(
         children: [
-          SizedBox(
-            height: _headerHeight + MediaQuery.of(context).padding.top,
-            child: _RegistrationHeroHeader(
-              title: title,
-              subtitle: subtitle,
-              heroAsset: heroAsset,
-            ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final top = MediaQuery.of(context).padding.top;
+              return SizedBox(
+                height: top + constraints.maxWidth * _heroAspect,
+                child: _RegistrationHeroHeader(
+                  title: title,
+                  subtitle: subtitle,
+                  heroAsset: heroAsset,
+                ),
+              );
+            },
           ),
           Expanded(
-            child: Transform.translate(
-              offset: const Offset(0, -_sheetOverlap),
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: OraColors.surface,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(28),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x2A8A4A1E),
-                      blurRadius: 30,
-                      offset: Offset(0, -6),
-                      spreadRadius: -10,
-                    ),
-                  ],
+            child: Container(
+              decoration: const BoxDecoration(
+                color: OraColors.surface,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(28),
                 ),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x2A8A4A1E),
+                    blurRadius: 30,
+                    offset: Offset(0, -6),
+                    spreadRadius: -10,
                   ),
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(
-                      OraSpacing.md,
-                      OraSpacing.lg,
-                      OraSpacing.md,
-                      OraSpacing.xl,
-                    ),
-                    children: [
-                      ...children,
-                      if (footer != null) footer!,
-                    ],
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
+                ),
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(
+                    OraSpacing.md,
+                    OraSpacing.lg,
+                    OraSpacing.md,
+                    OraSpacing.xl,
                   ),
+                  children: [
+                    ...children,
+                    if (footer != null) footer!,
+                  ],
                 ),
               ),
             ),
@@ -107,105 +109,38 @@ class _RegistrationHeroHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFFA45E), OraColors.gold, OraColors.goldDeep],
-          stops: [0.0, 0.55, 1.0],
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // The module banner is shown complete — no scrim, no crop.
+        Semantics(
+          image: true,
+          label: '$title — $subtitle',
+          child: Image.asset(heroAsset, fit: BoxFit.fill),
         ),
-      ),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Module banner art fills the header; aligned right so the
-          // artwork (car / truck / home / tools) shows through.
-          Positioned.fill(
-            child: Image.asset(
-              heroAsset,
-              fit: BoxFit.cover,
-              alignment: Alignment.centerRight,
+        const SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              OraSpacing.md,
+              OraSpacing.xs,
+              OraSpacing.md,
+              0,
+            ),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: _BackBubble(),
             ),
           ),
-          // Orange scrim over the left side hides the art's baked text
-          // and keeps the live title readable.
-          const Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Color(0xFFF68733),
-                    Color(0xD8F68733),
-                    Color(0x00F68733),
-                  ],
-                  stops: [0.0, 0.42, 0.74],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                OraSpacing.md,
-                OraSpacing.sm,
-                OraSpacing.md,
-                OraSpacing.xl + OraSpacing.sm,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      _BackBubble(),
-                      const SizedBox(width: OraSpacing.sm),
-                      Image.asset(
-                        AppConstants.logoAsset,
-                        height: 30,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(width: OraSpacing.xs),
-                      Text(
-                        'Faster, Safer and Easy...',
-                        style: OraTypography.caption(
-                          OraColors.primaryForeground.withValues(
-                            alpha: 0.9,
-                          ),
-                        ).copyWith(fontStyle: FontStyle.italic),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Text(
-                    title,
-                    style: OraTypography.display(
-                      OraColors.primaryForeground,
-                    ).copyWith(fontSize: 26),
-                  ),
-                  const SizedBox(height: OraSpacing.xxs),
-                  FractionallySizedBox(
-                    widthFactor: 0.62,
-                    child: Text(
-                      subtitle,
-                      style: OraTypography.body(
-                        OraColors.primaryForeground.withValues(alpha: 0.92),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
 class _BackBubble extends StatelessWidget {
+  const _BackBubble();
+
   @override
   Widget build(BuildContext context) {
     return OraTapScale(
@@ -220,16 +155,20 @@ class _BackBubble extends StatelessWidget {
           child: Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(
-              color: OraColors.primaryForeground.withValues(alpha: 0.22),
+            decoration: const BoxDecoration(
+              color: OraColors.primaryForeground,
               shape: BoxShape.circle,
-              border: Border.all(
-                color: OraColors.primaryForeground.withValues(alpha: 0.5),
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x332A211D),
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
             child: const Icon(
               Icons.arrow_back_rounded,
-              color: OraColors.primaryForeground,
+              color: OraColors.textPrimary,
               size: 20,
             ),
           ),
