@@ -18,20 +18,6 @@ import '../../../shared/widgets/provider_card.dart';
 import '../widgets/subcategory_photo_card.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
-const _serviceCategoryIcons = <String, IconData>{
-  'home_repair': Icons.home_repair_service,
-  'cleaning': Icons.cleaning_services,
-  'pest_control': Icons.pest_control,
-  'beauty': Icons.face_retouching_natural,
-  'solar_garden_property': Icons.solar_power,
-  'professional': Icons.business_center,
-  'education': Icons.school,
-  'health': Icons.medical_services,
-  'family_pet': Icons.pets,
-  'automobile': Icons.car_repair,
-  'daily_life': Icons.local_laundry_service,
-};
-
 class ServicesHomeView extends ConsumerStatefulWidget {
   const ServicesHomeView({super.key});
 
@@ -121,9 +107,6 @@ class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
                             ),
                             child: _ServiceCategoryTile(
                               category: category,
-                              icon:
-                                  _serviceCategoryIcons[category.id] ??
-                                  Icons.category_outlined,
                               onTap: () => context.push(
                                 AppRoutes.servicesCategoryPath(category.id),
                               ),
@@ -245,14 +228,9 @@ class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
 }
 
 class _ServiceCategoryTile extends StatelessWidget {
-  const _ServiceCategoryTile({
-    required this.category,
-    required this.icon,
-    required this.onTap,
-  });
+  const _ServiceCategoryTile({required this.category, required this.onTap});
 
   final ServiceCategory category;
-  final IconData icon;
   final VoidCallback onTap;
 
   @override
@@ -277,7 +255,18 @@ class _ServiceCategoryTile extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 26, color: OraColors.primary),
+                  Image.asset(
+                    'assets/marketplace/${category.image}',
+                    width: 44,
+                    height: 44,
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.medium,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.category_outlined,
+                      size: 26,
+                      color: OraColors.primary,
+                    ),
+                  ),
                   const SizedBox(height: OraSpacing.xs),
                   Text(
                     category.name,

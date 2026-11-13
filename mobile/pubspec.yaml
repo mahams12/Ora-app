@@ -48,10 +48,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/brand/
-    - assets/branding/services/city_rides.jpg
-    - assets/branding/services/intercity.jpg
-    - assets/branding/services/courier.jpg
-    - assets/branding/services/move.jpg
+    - assets/branding/services/city_rides.webp
+    - assets/branding/services/intercity.webp
+    - assets/branding/services/courier.webp
+    - assets/branding/services/move.webp
     - assets/marketplace/modules/
     - assets/marketplace/catalogue_v1.json
     - assets/marketplace/logistics/
