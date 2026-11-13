@@ -67,7 +67,7 @@ class OraModuleBottomBar extends StatelessWidget {
 
   final OraModuleDestination? selected;
 
-  static const double _barHeight = 64;
+  static const double _barHeight = 68;
   static const double _badgeLift = 24;
 
   @override
@@ -218,7 +218,7 @@ class _ModuleItemState extends State<_ModuleItem> {
               excludeFromSemantics: true,
               onTap: widget.onTap,
               child: Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 4),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -235,7 +235,7 @@ class _ModuleItemState extends State<_ModuleItem> {
                         child: _OrangeIconBadge(icon: widget.item.icon),
                       ),
                     ),
-                    SizedBox(height: selected ? 4 : 3),
+                    SizedBox(height: selected ? 3 : 2),
                     Text(
                       widget.item.label,
                       maxLines: 1,
@@ -268,8 +268,8 @@ class _OrangeIconBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 30,
-      height: 30,
+      width: 40,
+      height: 40,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
@@ -278,23 +278,23 @@ class _OrangeIconBadge extends StatelessWidget {
           colors: [Color(0xFFFFA14A), OraColors.goldSharp],
         ),
         border: Border.fromBorderSide(
-          BorderSide(color: Color(0xB3FFFFFF), width: 1.2),
+          BorderSide(color: Color(0xB3FFFFFF), width: 1.4),
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0x59FF6A0D),
-            blurRadius: 8,
-            offset: Offset(0, 3),
+            color: Color(0x73FF6A0D),
+            blurRadius: 12,
+            offset: Offset(0, 4),
           ),
           BoxShadow(
-            color: Color(0x262A211D),
-            blurRadius: 10,
-            offset: Offset(0, 6),
+            color: Color(0x2E2A211D),
+            blurRadius: 12,
+            offset: Offset(0, 7),
             spreadRadius: -4,
           ),
         ],
       ),
-      child: Icon(icon, size: 15, color: Colors.white),
+      child: Icon(icon, size: 20, color: Colors.white),
     );
   }
 }
