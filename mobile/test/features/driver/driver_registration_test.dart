@@ -89,6 +89,16 @@ UserProfile _profile(String status) => UserProfile(
   profileComplete: true,
 );
 
+/// The form lives in a lazily-built ListView — enlarge the surface so every
+/// field is built and plain finders/taps work.
+Future<void> _pump(WidgetTester tester, Widget app) async {
+  tester.view.physicalSize = const Size(900, 4200);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(app);
+  await tester.pumpAndSettle();
+}
+
 Future<void> _enter(WidgetTester tester, String key, String value) async {
   final field = find.byKey(ValueKey('driver-$key'));
   await tester.ensureVisible(field);
@@ -109,77 +119,57 @@ Future<void> _tapKey(WidgetTester tester, String key) async {
   await tester.pumpAndSettle();
   final target = find.byKey(ValueKey(key));
   await tester.ensureVisible(target);
-  await tester.tap(target);
+  await tester.tap(target.last);
   await tester.pumpAndSettle();
+}
+
+Future<void> _pickVehicleType(WidgetTester tester) async {
+  await _tapKey(tester, 'driver-vehicle-type');
+  await _tapKey(tester, 'driver-category-zip');
+}
+
+Future<void> _pickVehicleColour(WidgetTester tester) async {
+  await _tapKey(tester, 'driver-vehicle-colour');
+  await _tapKey(tester, 'driver-colour-white');
 }
 
 Future<void> _fillApplication(WidgetTester tester) async {
   await _enter(tester, 'cnic-number', '3520212345678');
   await _enter(tester, 'home-city', 'Lahore');
-  await _tapVisible(tester, 'Continue');
+  await _pickVehicleType(tester);
+  await _pickVehicleColour(tester);
+  await _enter(tester, 'vehicle-make', 'Toyota');
+  await _enter(tester, 'vehicle-model', 'Corolla');
+  await _enter(tester, 'vehicle-year', '2024');
+  await _enter(tester, 'plate-number', 'LEA-1234');
   await _enter(tester, 'license-number', 'LHR-123456');
   await _tapKey(tester, 'driver-license-expiry');
   await tester.pumpAndSettle();
   await tester.tap(find.text('OK'));
   await tester.pumpAndSettle();
-  await _tapVisible(tester, 'Continue');
-  await _tapKey(tester, 'driver-category-zip');
-  await _enter(tester, 'vehicle-make', 'Toyota');
-  await _enter(tester, 'vehicle-model', 'Corolla');
-  await _enter(tester, 'vehicle-year', '2024');
-  await _enter(tester, 'vehicle-color', 'White');
-  await _enter(tester, 'plate-number', 'LEA-1234');
-  await _tapVisible(tester, 'Continue');
-  await tester.ensureVisible(
-    find.byKey(const ValueKey('driver-confirm-details')),
-  );
   await _tapKey(tester, 'driver-confirm-details');
-  await _tapVisible(tester, 'Submit application');
+  await _tapVisible(tester, 'Submit Registration');
 }
 
 void main() {
-  testWidgets('validates Personal, Licence, Vehicle, and Review steps', (
-    tester,
-  ) async {
+  testWidgets('validates all fields on submit', (tester) async {
     final repo = _FakeOnboardingRepository(
       const DriverOnboardingResult(driverStatus: 'pending', approved: false),
     );
-    await tester.pumpWidget(_app(profile: _profile('none'), repository: repo));
-    await tester.pumpAndSettle();
+    await _pump(tester, _app(profile: _profile('none'), repository: repo));
 
-    await _tapVisible(tester, 'Continue');
+    await _tapVisible(tester, 'Submit Registration');
     expect(find.text('Enter a valid 13-digit CNIC.'), findsOneWidget);
     expect(find.text('Home city must be 2–64 characters.'), findsOneWidget);
-
-    await _enter(tester, 'cnic-number', '3520212345678');
-    await _enter(tester, 'home-city', 'Lahore');
-    await _tapVisible(tester, 'Continue');
-    await _tapVisible(tester, 'Continue');
+    expect(find.text('Select a vehicle category.'), findsOneWidget);
+    expect(find.text('Select a vehicle colour.'), findsOneWidget);
+    expect(find.text('Vehicle make must be 1–64 characters.'), findsOneWidget);
+    expect(find.textContaining('Enter a year from 1980 to'), findsOneWidget);
     expect(
       find.text('Licence number must be 3–32 characters.'),
       findsOneWidget,
     );
     expect(find.textContaining('Choose a valid date'), findsOneWidget);
-
-    await _enter(tester, 'license-number', 'LHR-123456');
-    await _tapKey(tester, 'driver-license-expiry');
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('OK'));
-    await tester.pumpAndSettle();
-    await _tapVisible(tester, 'Continue');
-    await _tapVisible(tester, 'Continue');
-    expect(find.text('Select a vehicle category.'), findsOneWidget);
-    expect(find.text('Vehicle make must be 1–64 characters.'), findsOneWidget);
-    expect(find.textContaining('Enter a year from 1980 to'), findsOneWidget);
-
-    await _tapKey(tester, 'driver-category-zip');
-    await _enter(tester, 'vehicle-make', 'Toyota');
-    await _enter(tester, 'vehicle-model', 'Corolla');
-    await _enter(tester, 'vehicle-year', '2024');
-    await _enter(tester, 'vehicle-color', 'White');
-    await _enter(tester, 'plate-number', 'LEA-1234');
-    await _tapVisible(tester, 'Continue');
-    await _tapVisible(tester, 'Submit application');
     expect(
       find.text('Confirm these details before submitting.'),
       findsOneWidget,
@@ -195,14 +185,12 @@ void main() {
       approved: true,
     );
     final repo = _FakeOnboardingRepository(result);
-    await tester.pumpWidget(
-      _app(profile: _profile('approved'), repository: repo),
-    );
-    await tester.pumpAndSettle();
+    await _pump(tester, _app(profile: _profile('approved'), repository: repo));
     await _fillApplication(tester);
 
     expect(find.text('Driver home target'), findsOneWidget);
     expect(repo.applications, hasLength(1));
+    expect(repo.applications.single.vehicleColor, 'White');
   });
 
   testWidgets('pending submission shows receipt sheet then returns Home', (
@@ -213,10 +201,7 @@ void main() {
       approved: false,
     );
     final repo = _FakeOnboardingRepository(result);
-    await tester.pumpWidget(
-      _app(profile: _profile('pending'), repository: repo),
-    );
-    await tester.pumpAndSettle();
+    await _pump(tester, _app(profile: _profile('pending'), repository: repo));
     await _fillApplication(tester);
 
     expect(

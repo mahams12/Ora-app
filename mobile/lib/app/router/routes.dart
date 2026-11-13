@@ -15,6 +15,11 @@ class AppRoutes {
   static const profile = '/profile';
   static const driverRegistration = '/become-driver';
 
+  /// Partner/vendor registrations (single-scroll forms).
+  static const cargoRegistration = '/register/cargo';
+  static const rentalRegistration = '/register/rental';
+  static const serviceVendorRegistration = '/register/services';
+
   /// Passenger's ride services hub.
   static const ridesHub = '/rides';
   static const logistics = '/logistics';

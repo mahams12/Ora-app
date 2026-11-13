@@ -109,16 +109,43 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const OraSectionHeader(
-            eyebrow: 'Coming soon',
-            title: 'Vendor portal',
+            eyebrow: 'Partner with ORA',
+            title: 'Vendor registration',
             description:
-                'Vendors will manage listings and bookings from the ORA '
-                'vendor web app. Coming soon.',
+                'Choose how you want to earn — deliver cargo, list a '
+                'property, or offer your services.',
           ),
-          const SizedBox(height: OraSpacing.lg),
-          OraButton(
-            label: 'Got it',
-            onPressed: () => Navigator.of(context).pop(),
+          const SizedBox(height: OraSpacing.md),
+          OraListRow(
+            leading: const OraIconBadge(
+              icon: Icons.local_shipping_outlined,
+            ),
+            title: 'Cargo partner',
+            subtitle: 'Register your truck or cargo vehicle',
+            onTap: () {
+              Navigator.of(context).pop();
+              context.push(AppRoutes.cargoRegistration);
+            },
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          OraListRow(
+            leading: const OraIconBadge(icon: Icons.home_work_outlined),
+            title: 'Rental host',
+            subtitle: 'List your property and start earning',
+            onTap: () {
+              Navigator.of(context).pop();
+              context.push(AppRoutes.rentalRegistration);
+            },
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          OraListRow(
+            leading: const OraIconBadge(icon: Icons.handyman_outlined),
+            title: 'Service provider',
+            subtitle: 'Offer services on the ORA marketplace',
+            onTap: () {
+              Navigator.of(context).pop();
+              context.push(AppRoutes.serviceVendorRegistration);
+            },
           ),
         ],
       ),

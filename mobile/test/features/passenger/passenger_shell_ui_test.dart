@@ -367,16 +367,10 @@ void main() {
     expect(find.text('Safety centre'), findsNothing);
     await tester.tap(find.text('Switch to vendor mode'));
     await tester.pumpAndSettle();
-    expect(find.text('COMING SOON'), findsOneWidget);
-    expect(find.text('Vendor portal'), findsOneWidget);
-    expect(
-      find.text(
-        'Vendors will manage listings and bookings from the ORA vendor web '
-        'app. Coming soon.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Got it'), findsOneWidget);
+    expect(find.text('Vendor registration'), findsOneWidget);
+    expect(find.text('Cargo partner'), findsOneWidget);
+    expect(find.text('Rental host'), findsOneWidget);
+    expect(find.text('Service provider'), findsOneWidget);
   });
 
   testWidgets('no overflow on compact phone with large text', (tester) async {

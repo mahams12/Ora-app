@@ -12,6 +12,9 @@ import '../../features/driver/presentation/views/driver_shell_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/maps/poc/maplibre_poc_view.dart';
 import '../../features/passenger/presentation/views/home_shell_view.dart';
+import '../../features/registration/views/cargo_registration_view.dart';
+import '../../features/registration/views/rental_registration_view.dart';
+import '../../features/registration/views/service_vendor_registration_view.dart';
 import '../../features/marketplace/logistics/presentation/views/logistics_category_view.dart';
 import '../../features/marketplace/logistics/presentation/views/logistics_home_view.dart';
 import '../../features/marketplace/logistics/presentation/views/logistics_search_results_view.dart';
@@ -86,6 +89,21 @@ GoRouter createAppRouter({
         path: AppRoutes.driverRegistration,
         name: 'driver-registration',
         builder: (context, state) => const DriverRegistrationView(),
+      ),
+      GoRoute(
+        path: AppRoutes.cargoRegistration,
+        name: 'cargo-registration',
+        builder: (context, state) => const CargoRegistrationView(),
+      ),
+      GoRoute(
+        path: AppRoutes.rentalRegistration,
+        name: 'rental-registration',
+        builder: (context, state) => const RentalRegistrationView(),
+      ),
+      GoRoute(
+        path: AppRoutes.serviceVendorRegistration,
+        name: 'service-vendor-registration',
+        builder: (context, state) => const ServiceVendorRegistrationView(),
       ),
       GoRoute(
         path: AppRoutes.ridesHub,
