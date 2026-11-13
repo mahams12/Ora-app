@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../app/theme/ora_colors.dart';
+import '../../../../app/theme/ora_elevation.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/ora_floaty.dart';
@@ -34,10 +35,16 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
       child: OraFloaty(
         child: OraTapScale(
           child: ExcludeSemantics(
+          child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: OraColors.surfaceElevated,
+            borderRadius: BorderRadius.circular(OraRadius.card),
+            boxShadow: OraElevation.cardShadow,
+          ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(OraRadius.card),
             child: Material(
-              color: OraColors.surfaceElevated,
+              color: Colors.transparent,
               child: InkWell(
                 onTap: () {
                   HapticFeedback.selectionClick();
@@ -122,6 +129,7 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                   ],
                 ),
               ),
+            ),
             ),
             ),
           ),

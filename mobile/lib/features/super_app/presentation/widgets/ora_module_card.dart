@@ -179,12 +179,12 @@ class _BlobCardPainter extends CustomPainter {
 
     // soft drop shadow
     canvas.save();
-    canvas.translate(0, size.height * 0.045);
+    canvas.translate(0, size.height * 0.05);
     canvas.drawPath(
       scaled,
       Paint()
-        ..color = const Color(0x47BE5F28)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+        ..color = const Color(0x5CBE5F28)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
     );
     canvas.restore();
 

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../app/router/routes.dart';
 import '../../../../../app/theme/ora_colors.dart';
+import '../../../../../app/theme/ora_elevation.dart';
 import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
@@ -246,8 +247,14 @@ class _ServiceCategoryTile extends StatelessWidget {
           child: SizedBox(
             width: 96,
             height: 108,
-            child: Material(
+            child: DecoratedBox(
+            decoration: BoxDecoration(
               color: OraColors.surfaceElevated,
+              borderRadius: radius,
+              boxShadow: OraElevation.cardShadow,
+            ),
+            child: Material(
+              color: Colors.transparent,
               borderRadius: radius,
               child: InkWell(
             excludeFromSemantics: true,
@@ -284,6 +291,7 @@ class _ServiceCategoryTile extends StatelessWidget {
               ),
             ),
           ),
+            ),
             ),
           ),
         ),
