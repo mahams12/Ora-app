@@ -183,7 +183,7 @@ class _RidesHero extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Image.asset(
-              'assets/marketplace/modules/rides.webp',
+              'assets/brand/mod_rides.webp',
               cacheWidth: 720,
               fit: BoxFit.cover,
             ),
@@ -192,7 +192,7 @@ class _RidesHero extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [Colors.transparent, OraColors.photoScrimStrong],
+                  colors: [Colors.transparent, Color(0x73000000)],
                 ),
               ),
             ),

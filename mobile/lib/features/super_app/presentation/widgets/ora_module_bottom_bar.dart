@@ -157,11 +157,14 @@ class _FloatingBadge extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFB877), Color(0xFFF0700F)],
+            colors: [Color(0xFFFFA14A), OraColors.goldSharp],
+          ),
+          border: Border.fromBorderSide(
+            BorderSide(color: Color(0xB3FFFFFF), width: 1.4),
           ),
           boxShadow: [
             BoxShadow(
-              color: Color(0x66F88733),
+              color: Color(0x73FF6A0D),
               blurRadius: 14,
               offset: Offset(0, 5),
             ),
@@ -195,9 +198,9 @@ class _ModuleItemState extends State<_ModuleItem> {
   @override
   Widget build(BuildContext context) {
     final selected = widget.selected;
-    final color = selected ? OraColors.primary : OraColors.textMuted;
+    final color = selected ? OraColors.goldSharp : OraColors.textMuted;
     final lift = _pressed ? 1.0 : (_hovered ? -2.0 : 0.0);
-    final scale = _pressed ? 0.88 : (_hovered ? 1.25 : 1.0);
+    final scale = _pressed ? 0.88 : (_hovered ? 1.15 : 1.0);
     return Expanded(
       child: Semantics(
         button: true,
@@ -229,11 +232,7 @@ class _ModuleItemState extends State<_ModuleItem> {
                             Matrix4.translationValues(0, lift, 0)
                               ..scaleByDouble(scale, scale, scale, 1),
                         transformAlignment: Alignment.center,
-                        child: Icon(
-                          widget.item.icon,
-                          size: 21,
-                          color: color,
-                        ),
+                        child: _OrangeIconBadge(icon: widget.item.icon),
                       ),
                     ),
                     SizedBox(height: selected ? 4 : 3),
@@ -255,6 +254,47 @@ class _ModuleItemState extends State<_ModuleItem> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Small 3D orange-gradient circle badge used for unselected tabs —
+/// matches the sidebar icon badges.
+class _OrangeIconBadge extends StatelessWidget {
+  const _OrangeIconBadge({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 30,
+      height: 30,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFFA14A), OraColors.goldSharp],
+        ),
+        border: Border.fromBorderSide(
+          BorderSide(color: Color(0xB3FFFFFF), width: 1.2),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x59FF6A0D),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          ),
+          BoxShadow(
+            color: Color(0x262A211D),
+            blurRadius: 10,
+            offset: Offset(0, 6),
+            spreadRadius: -4,
+          ),
+        ],
+      ),
+      child: Icon(icon, size: 15, color: Colors.white),
     );
   }
 }
@@ -306,14 +346,14 @@ class _NotchBarPainter extends CustomPainter {
       ..lineTo(size.width, size.height)
       ..close();
 
-    canvas.drawShadow(path, const Color(0x40F88733), 12, true);
+    canvas.drawShadow(path, const Color(0x4DFF6A0D), 12, true);
     canvas.drawPath(path, Paint()..color = OraColors.navyElevated);
     canvas.drawPath(
       path,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.2
-        ..color = const Color(0x59F88733),
+        ..color = const Color(0x73FF6A0D),
     );
   }
 

@@ -27,6 +27,59 @@ class ServicesHomeView extends ConsumerStatefulWidget {
   ConsumerState<ServicesHomeView> createState() => _ServicesHomeViewState();
 }
 
+class _ServicesHero extends StatelessWidget {
+  const _ServicesHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(OraRadius.card),
+      child: SizedBox(
+        height: 168,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/brand/mod_services.webp',
+              cacheWidth: 720,
+              fit: BoxFit.cover,
+            ),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                  colors: [Colors.transparent, Color(0x73000000)],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(OraSpacing.md),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Services',
+                    style: OraTypography.headline(OraColors.onPhoto),
+                  ),
+                  const SizedBox(height: OraSpacing.xxs),
+                  Text(
+                    'Book trusted pros for every job.',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: OraTypography.body(OraColors.onPhotoMuted),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
   String _query = '';
 
@@ -69,6 +122,8 @@ class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const _ServicesHero(),
+                          const SizedBox(height: OraSpacing.md),
                           MarketplaceSearchField(
                             hintText: 'Search services',
                             onChanged: (value) =>

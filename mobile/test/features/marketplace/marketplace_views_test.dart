@@ -225,7 +225,12 @@ void main() {
       catalogue: catalogue,
     );
 
-    await tester.ensureVisible(find.text('See all').first);
+    await tester.scrollUntilVisible(
+      find.text('See all').first,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.text('See all').first);
     for (var frame = 0; frame < 6; frame++) {
       await tester.pump(const Duration(milliseconds: 50));
@@ -242,7 +247,12 @@ void main() {
       catalogue: catalogue,
     );
     final card = find.byType(SubcategoryPhotoCard).first;
-    await tester.ensureVisible(card);
+    await tester.scrollUntilVisible(
+      card,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(card);
     for (var frame = 0; frame < 6; frame++) {
       await tester.pump(const Duration(milliseconds: 50));

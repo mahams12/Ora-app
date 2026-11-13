@@ -27,6 +27,7 @@ class OraColors {
   static const goldMuted = Color(0x33F88733);
   static const goldSoft = Color(0xFFA67D68);
   static const goldDeep = Color(0xFFE16F22);
+  static const goldSharp = Color(0xFFFF6A0D);
 
   static const teal = Color(0xFFA67D68);
   static const tealMuted = Color(0x33E9C2AD);

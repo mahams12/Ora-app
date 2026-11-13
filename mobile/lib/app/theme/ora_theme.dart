@@ -43,7 +43,7 @@ class OraTheme {
       textTheme: textTheme,
       primaryTextTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: OraColors.gold,
+        backgroundColor: OraColors.goldSharp,
         foregroundColor: OraColors.primaryForeground,
         systemOverlayStyle: SystemUiOverlayStyle.light,
         elevation: 3,

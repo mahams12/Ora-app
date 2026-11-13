@@ -355,16 +355,16 @@ class _RentalHero extends StatelessWidget {
               child: ColoredBox(color: OraColors.primaryMuted),
             ),
             Image.asset(
-              'assets/marketplace/modules/rental.webp',
+              'assets/brand/mod_rental.webp',
               cacheWidth: 720,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
             ),
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [Colors.transparent, OraColors.photoScrimStrong],
+                  colors: [Colors.transparent, Color(0x73000000)],
                 ),
               ),
             ),
