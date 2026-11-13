@@ -10,7 +10,7 @@ class OraColors {
   // ── Brand primitives (prototype) ───────────────────────────────────────────
 
   static const navy = Color(0xFFF2E3DD);
-  static const navyElevated = Color(0xFFFAF1EA);
+  static const navyElevated = Color(0xFFFBEAD8);
   static const canvas = Color(0xFFF2E3DD);
 
   /// Warm light-orange → pastel-gray-orange gradient used behind every
@@ -19,7 +19,7 @@ class OraColors {
   static const backgroundGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFFF7EAE2), canvas, canvasDeep],
+    colors: [Color(0xFFF9EDE6), Color(0xFFF3E2D8), Color(0xFFE7C8B6)],
     stops: [0.0, 0.45, 1.0],
   );
 
@@ -79,7 +79,7 @@ class OraColors {
 
   static const background = canvas;
   static const surface = Color(0xFFFFFFFF);
-  static const surfaceElevated = Color(0xFFFAF1EA);
+  static const surfaceElevated = Color(0xFFFBEAD8);
   static const surfaceStrong = Color(0xFFFFFFFF);
 
   static const textPrimary = ink;

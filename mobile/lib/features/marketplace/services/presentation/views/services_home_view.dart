@@ -7,6 +7,7 @@ import '../../../../../app/theme/ora_colors.dart';
 import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
+import '../../../../../app/theme/widgets/ora_floaty.dart';
 import '../../../../../app/theme/widgets/ora_section_header.dart';
 import '../../../../../core/utils/responsive.dart';
 import '../../../catalogue/catalogue_models.dart';
@@ -240,13 +241,16 @@ class _ServiceCategoryTile extends StatelessWidget {
       button: true,
       label: category.name,
       onTap: onTap,
-      child: SizedBox(
-        width: 96,
-        height: 108,
-        child: Material(
-          color: OraColors.surfaceElevated,
-          borderRadius: radius,
-          child: InkWell(
+      child: OraFloaty(
+        amplitude: 4,
+        child: OraTapScale(
+          child: SizedBox(
+            width: 96,
+            height: 108,
+            child: Material(
+              color: OraColors.surfaceElevated,
+              borderRadius: radius,
+              child: InkWell(
             excludeFromSemantics: true,
             onTap: onTap,
             borderRadius: radius,
@@ -255,16 +259,19 @@ class _ServiceCategoryTile extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/marketplace/${category.image}',
-                    width: 44,
-                    height: 44,
-                    fit: BoxFit.contain,
-                    filterQuality: FilterQuality.medium,
-                    errorBuilder: (context, error, stackTrace) => const Icon(
-                      Icons.category_outlined,
-                      size: 26,
-                      color: OraColors.primary,
+                  OraFloaty(
+                    amplitude: 3,
+                    child: Image.asset(
+                      'assets/marketplace/${category.image}',
+                      width: 44,
+                      height: 44,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.medium,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.category_outlined,
+                        size: 26,
+                        color: OraColors.primary,
+                      ),
                     ),
                   ),
                   const SizedBox(height: OraSpacing.xs),
@@ -277,6 +284,8 @@ class _ServiceCategoryTile extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
             ),
           ),
         ),

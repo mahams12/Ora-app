@@ -6,6 +6,7 @@ import '../../../../app/theme/ora_elevation.dart';
 import '../../../../app/theme/ora_motion.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_typography.dart';
+import '../../../../app/theme/widgets/ora_floaty.dart';
 import 'status_pill.dart';
 
 class IllustratedCategoryCard extends StatefulWidget {
@@ -61,13 +62,14 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
         onTapDown: (_) => _setPressed(true),
         onTapUp: (_) => _setPressed(false),
         onTapCancel: () => _setPressed(false),
-        child: AnimatedScale(
-          scale: _pressed ? 0.96 : 1,
-          duration: OraMotion.press,
-          curve: OraMotion.standard,
-          child: SizedBox(
-            width: widget.width,
-            height: widget.height,
+        child: OraFloaty(
+          child: AnimatedScale(
+            scale: _pressed ? 0.96 : 1,
+            duration: OraMotion.press,
+            curve: OraMotion.standard,
+            child: SizedBox(
+              width: widget.width,
+              height: widget.height,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: OraColors.navyElevated,
@@ -90,7 +92,7 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
                       clipBehavior: Clip.hardEdge,
                       children: [
                         const Positioned.fill(
-                          child: ColoredBox(color: OraColors.surface),
+                          child: ColoredBox(color: OraColors.surfaceElevated),
                         ),
                         Positioned.fill(
                           bottom: 44,
@@ -155,6 +157,7 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
                   ),
                 ),
               ),
+            ),
             ),
           ),
         ),

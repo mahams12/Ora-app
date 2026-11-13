@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_motion.dart';
 import '../../../../app/theme/ora_typography.dart';
+import '../../../../app/theme/widgets/ora_floaty.dart';
 
 /// Organic glass-blob module card with the orange sun accent — matches the
 /// ORA prototype shape (svg path ported 1:1 from the HTML reference).
@@ -52,11 +53,12 @@ class _OraModuleCardState extends State<OraModuleCard> {
         onTapDown: (_) => setState(() => _pressed = true),
         onTapUp: (_) => setState(() => _pressed = false),
         onTapCancel: () => setState(() => _pressed = false),
-        child: AnimatedScale(
-          scale: _pressed ? 0.96 : 1,
-          duration: OraMotion.press,
-          curve: OraMotion.standard,
-          child: LayoutBuilder(
+        child: OraFloaty(
+          child: AnimatedScale(
+            scale: _pressed ? 0.96 : 1,
+            duration: OraMotion.press,
+            curve: OraMotion.standard,
+            child: LayoutBuilder(
             builder: (context, constraints) {
               final cardHeight = constraints.maxWidth * (240 / 275);
               return InkWell(
@@ -156,6 +158,7 @@ class _OraModuleCardState extends State<OraModuleCard> {
               );
             },
           ),
+          ),
         ),
       ),
     );
@@ -203,9 +206,9 @@ class _BlobCardPainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFFFFFDFC),
-            Color(0xFFFDF1EA),
-            Color(0xFFFDE6D8),
+            Color(0xFFFFF9EF),
+            Color(0xFFFCE9CE),
+            Color(0xFFF6D6AE),
           ],
           stops: [0, 0.55, 1],
         ).createShader(bounds),
@@ -231,7 +234,7 @@ class _BlobCardPainter extends CustomPainter {
         ..shader = const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0x8CFFFFFF), Color(0xE6FFE9DC)],
+          colors: [Color(0x8CFFFFFF), Color(0xE6FFEDCE)],
         ).createShader(bounds),
     );
     canvas.drawRect(

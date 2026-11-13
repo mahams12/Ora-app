@@ -4,6 +4,7 @@ import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
+import '../../../../app/theme/widgets/ora_floaty.dart';
 import '../../../../core/constants/app_constants.dart';
 
 class RideServiceTiles extends StatelessWidget {
@@ -106,9 +107,12 @@ class RideServiceTile extends StatelessWidget {
           excludeFromSemantics: true,
           onTap: onTap,
           borderRadius: BorderRadius.circular(OraRadius.card),
-          child: SizedBox(
-            height: 112,
-            child: Ink(
+          child: OraFloaty(
+            amplitude: 4,
+            child: OraTapScale(
+              child: SizedBox(
+                height: 112,
+                child: Ink(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(OraRadius.card),
                 color: OraColors.navyElevated,
@@ -120,7 +124,7 @@ class RideServiceTile extends StatelessWidget {
                   clipBehavior: Clip.hardEdge,
                   children: [
                     const Positioned.fill(
-                      child: ColoredBox(color: OraColors.surface),
+                      child: ColoredBox(color: OraColors.surfaceElevated),
                     ),
                     Align(
                       alignment: Alignment.centerRight,
@@ -129,10 +133,13 @@ class RideServiceTile extends StatelessWidget {
                         heightFactor: 0.72,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 8),
-                          child: Image.asset(
-                            imageAsset,
-                            fit: BoxFit.contain,
-                            filterQuality: FilterQuality.medium,
+                          child: OraFloaty(
+                            amplitude: 4,
+                            child: Image.asset(
+                              imageAsset,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.medium,
+                            ),
                           ),
                         ),
                       ),
@@ -200,6 +207,8 @@ class RideServiceTile extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+              ),
                 ),
               ),
             ),

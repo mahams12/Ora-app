@@ -43,9 +43,7 @@ class _OraCardState extends State<OraCard> {
 
     final bg = widget.selected
         ? OraColors.primaryMuted
-        : isDark
-        ? OraColors.surfaceElevated
-        : OraColors.surface;
+        : OraColors.surfaceElevated;
 
     final borderColor = widget.selected
         ? OraColors.primary

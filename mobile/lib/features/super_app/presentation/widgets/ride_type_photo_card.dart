@@ -5,6 +5,7 @@ import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_motion.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_typography.dart';
+import '../../../../app/theme/widgets/ora_floaty.dart';
 import '../../domain/ride_type_catalogue.dart';
 
 class RideTypePhotoCard extends StatefulWidget {
@@ -37,11 +38,12 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
         onTapDown: (_) => setState(() => _pressed = true),
         onTapUp: (_) => setState(() => _pressed = false),
         onTapCancel: () => setState(() => _pressed = false),
-        child: AnimatedScale(
-          scale: _pressed ? 0.97 : 1,
-          duration: OraMotion.press,
-          curve: OraMotion.standard,
-          child: ClipRRect(
+        child: OraFloaty(
+          child: AnimatedScale(
+            scale: _pressed ? 0.97 : 1,
+            duration: OraMotion.press,
+            curve: OraMotion.standard,
+            child: ClipRRect(
             borderRadius: BorderRadius.circular(OraRadius.card),
             child: Material(
               color: OraColors.surfaceElevated,
@@ -55,7 +57,7 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                   fit: StackFit.expand,
                   children: [
                     const Positioned.fill(
-                      child: ColoredBox(color: OraColors.surface),
+                      child: ColoredBox(color: OraColors.surfaceElevated),
                     ),
                     Positioned.fill(
                       bottom: 46,
@@ -131,6 +133,7 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                 ),
               ),
             ),
+          ),
           ),
         ),
       ),

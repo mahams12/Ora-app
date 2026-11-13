@@ -6,6 +6,7 @@ import '../../../../../app/theme/ora_elevation.dart';
 import '../../../../../app/theme/ora_motion.dart';
 import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_typography.dart';
+import '../../../../../app/theme/widgets/ora_floaty.dart';
 import '../../../catalogue/catalogue_models.dart';
 
 class SubcategoryPhotoCard extends StatefulWidget {
@@ -51,11 +52,13 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
         onTapDown: (_) => _setPressed(true),
         onTapUp: (_) => _setPressed(false),
         onTapCancel: () => _setPressed(false),
-        child: AnimatedScale(
-          scale: _pressed ? 0.97 : 1,
-          duration: OraMotion.press,
-          curve: OraMotion.standard,
-          child: DecoratedBox(
+        child: OraFloaty(
+          amplitude: 5,
+          child: AnimatedScale(
+            scale: _pressed ? 0.97 : 1,
+            duration: OraMotion.press,
+            curve: OraMotion.standard,
+            child: DecoratedBox(
             decoration: BoxDecoration(
               color: OraColors.surfaceElevated,
               borderRadius: radius,
@@ -77,7 +80,7 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
                     clipBehavior: Clip.hardEdge,
                     children: [
                       const Positioned.fill(
-                        child: ColoredBox(color: OraColors.surface),
+                        child: ColoredBox(color: OraColors.surfaceElevated),
                       ),
                       Positioned.fill(
                         bottom: 44,
@@ -114,6 +117,7 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
                   ),
                 ),
               ),
+            ),
             ),
           ),
         ),

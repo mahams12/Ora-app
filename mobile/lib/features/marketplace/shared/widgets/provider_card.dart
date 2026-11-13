@@ -4,6 +4,7 @@ import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
+import '../../../../app/theme/widgets/ora_floaty.dart';
 
 @immutable
 class ServiceProviderSummary {
@@ -80,10 +81,12 @@ class ProviderCard extends StatelessWidget {
         if (model.location != null) model.location!,
         if (isSample) 'Sample data',
       ].join(', '),
-      child: Container(
-        padding: const EdgeInsets.all(OraSpacing.sm),
-        decoration: BoxDecoration(
-          color: OraColors.surfaceElevated,
+      child: OraFloaty(
+        amplitude: 4,
+        child: Container(
+          padding: const EdgeInsets.all(OraSpacing.sm),
+          decoration: BoxDecoration(
+            color: OraColors.surfaceElevated,
           borderRadius: BorderRadius.circular(OraRadius.card),
           border: Border.all(color: OraColors.border),
         ),
@@ -262,6 +265,7 @@ class ProviderCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
