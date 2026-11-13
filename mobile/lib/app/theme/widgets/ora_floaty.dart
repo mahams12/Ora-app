@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 
-/// Prominent buoyant float for cards/3D art — drifts up/down, sways gently,
-/// and pulses its scale, staggered per instance so siblings don't move in
-/// lockstep.
+/// Slow, straight up-down float for cards/3D art — a smooth ease-in-out loop
+/// with no tilt or stagger so siblings rise and fall uniformly.
 class OraFloaty extends StatefulWidget {
   /// Tests set this via flutter_test_config.dart so pumpAndSettle can settle.
   static bool debugSkipRepeat = false;
 
   const OraFloaty({
     required this.child,
-    this.amplitude = 14.0,
-    this.scaleAmplitude = 0.045,
-    this.tilt = 0.035,
-    this.period = const Duration(milliseconds: 1700),
+    this.amplitude = 12.0,
+    this.period = const Duration(milliseconds: 3200),
     super.key,
   });
 
@@ -20,12 +17,6 @@ class OraFloaty extends StatefulWidget {
 
   /// Peak-to-peak vertical drift in logical pixels.
   final double amplitude;
-
-  /// Extra grow/shrink on top of the drift (1 ± scaleAmplitude).
-  final double scaleAmplitude;
-
-  /// Peak-to-peak rotation sway in radians (~2° at 0.035).
-  final double tilt;
   final Duration period;
 
   @override
@@ -46,9 +37,6 @@ class _OraFloatyState extends State<OraFloaty>
   @override
   void initState() {
     super.initState();
-    // Seed the phase first — assigning value stops the controller, so the
-    // repeat must be started after it.
-    _ctrl.value = (widget.child.hashCode.abs() % 100) / 100;
     if (!OraFloaty.debugSkipRepeat) _ctrl.repeat(reverse: true);
   }
 
@@ -62,19 +50,13 @@ class _OraFloatyState extends State<OraFloaty>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _anim,
-      builder: (context, child) {
-        final v = _anim.value;
-        return Transform.translate(
-          offset: Offset(0, -widget.amplitude / 2 + widget.amplitude * v),
-          child: Transform.rotate(
-            angle: (v - 0.5) * widget.tilt,
-            child: Transform.scale(
-              scale: 1 - widget.scaleAmplitude / 2 + widget.scaleAmplitude * v,
-              child: child,
-            ),
-          ),
-        );
-      },
+      builder: (context, child) => Transform.translate(
+        offset: Offset(
+          0,
+          -widget.amplitude / 2 + widget.amplitude * _anim.value,
+        ),
+        child: child,
+      ),
       child: widget.child,
     );
   }
