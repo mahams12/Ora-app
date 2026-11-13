@@ -71,15 +71,22 @@ class PassengerHomeView extends StatelessWidget {
         SliverPadding(
           padding: EdgeInsets.fromLTRB(
             padding,
-            OraSpacing.md,
+            0,
             padding,
             OraSpacing.xxl,
           ),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              const OraModuleGrid(),
-              const SizedBox(height: OraSpacing.lg),
-              const RecentActivitySection(),
+              Transform.translate(
+                offset: const Offset(0, -44),
+                child: const Column(
+                  children: [
+                    OraModuleGrid(),
+                    SizedBox(height: OraSpacing.lg),
+                    RecentActivitySection(),
+                  ],
+                ),
+              ),
             ]),
           ),
         ),
@@ -116,8 +123,12 @@ class _HomeHeroHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final padding = Responsive.horizontalPadding(context);
-    return Column(
+    return Stack(
       children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 92),
+          child: _BlendedHeroArt(onTap: onHeroTap),
+        ),
         Container(
           width: double.infinity,
           padding: EdgeInsets.fromLTRB(
@@ -176,7 +187,6 @@ class _HomeHeroHeader extends StatelessWidget {
             ),
           ),
         ),
-        _BlendedHeroArt(onTap: onHeroTap),
       ],
     );
   }
@@ -192,9 +202,9 @@ class _BlendedHeroArt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final padding = Responsive.horizontalPadding(context);
-    final height = (MediaQuery.sizeOf(context).height * 0.32).clamp(
-      230.0,
-      310.0,
+    final height = (MediaQuery.sizeOf(context).height * 0.36).clamp(
+      260.0,
+      340.0,
     );
     return Semantics(
       button: true,
