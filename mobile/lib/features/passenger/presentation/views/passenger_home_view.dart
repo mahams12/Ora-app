@@ -192,9 +192,9 @@ class _BlendedHeroArt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final padding = Responsive.horizontalPadding(context);
-    final height = (MediaQuery.sizeOf(context).height * 0.38).clamp(
-      270.0,
-      360.0,
+    final height = (MediaQuery.sizeOf(context).height * 0.44).clamp(
+      300.0,
+      420.0,
     );
     return Semantics(
       button: true,

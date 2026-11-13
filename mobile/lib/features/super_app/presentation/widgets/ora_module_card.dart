@@ -138,10 +138,10 @@ class _OraModuleCardState extends State<OraModuleCard> {
                         ),
                       ),
                       Positioned(
-                        top: 28,
-                        left: 6,
-                        right: 6,
-                        height: cardHeight * 0.58,
+                        top: 34,
+                        left: 10,
+                        right: 10,
+                        height: cardHeight * 0.56,
                         child: Image.asset(
                           widget.imageAsset,
                           cacheWidth: 480,
@@ -249,9 +249,9 @@ class _BlobCardPainter extends CustomPainter {
         ..color = const Color(0xE6FFFFFF),
     );
 
-    // orange sun (drawn above the blob, like the reference)
-    final sunCenter = Offset(190 * sx, 68 * sy);
-    final sunRadius = 58 * sx;
+    // orange sun centered behind the 3D icon so they blend together
+    final sunCenter = Offset(150 * sx, 62 * sy);
+    final sunRadius = 62 * sx;
     canvas.drawCircle(
       sunCenter,
       sunRadius,
