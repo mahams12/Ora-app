@@ -32,28 +32,16 @@ class OraRegistrationScaffold extends StatelessWidget {
   /// Optional widget rendered under the form (banner, submit, support row).
   final Widget? footer;
 
-  /// Banner art is drawn 1024x342 — height tracks the view width so the
-  /// whole picture is always visible (never cropped or zoomed).
-  static const double _heroAspect = 342 / 1024;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
         children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final top = MediaQuery.of(context).padding.top;
-              return SizedBox(
-                height: top + constraints.maxWidth * _heroAspect,
-                child: _RegistrationHeroHeader(
-                  title: title,
-                  subtitle: subtitle,
-                  heroAsset: heroAsset,
-                ),
-              );
-            },
+          _RegistrationHeroHeader(
+            title: title,
+            subtitle: subtitle,
+            heroAsset: heroAsset,
           ),
           Expanded(
             child: Container(
@@ -110,13 +98,17 @@ class _RegistrationHeroHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      fit: StackFit.expand,
       children: [
-        // The module banner is shown complete — no scrim, no crop.
+        // The banner sizes itself: full width at its natural aspect —
+        // always the complete picture, never cropped or zoomed.
         Semantics(
           image: true,
           label: '$title — $subtitle',
-          child: Image.asset(heroAsset, fit: BoxFit.fill),
+          child: Image.asset(
+            heroAsset,
+            width: double.infinity,
+            fit: BoxFit.fitWidth,
+          ),
         ),
         const SafeArea(
           bottom: false,
