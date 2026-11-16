@@ -349,6 +349,14 @@ class RideCardAdapters {
     return parts;
   }
 
+  /// Ora Courier — sender-requested vehicle class, phrased so a driver
+  /// instantly sees whether their vehicle qualifies ("needs bike").
+  static List<String> _courierVehicleParts(String? vehicle) {
+    final v = vehicle?.trim().toLowerCase();
+    if (v == null || v.isEmpty) return const [];
+    return <String>['needs $v'];
+  }
+
   static String? _openRideServiceLabel(OpenRide ride) {
     final base = ride.serviceType.trim().isEmpty
         ? null
@@ -356,6 +364,7 @@ class RideCardAdapters {
     final parts = <String>[
       if (base != null) base,
       ..._v2Parts(stops: ride.stops, shopping: ride.shopping),
+      ..._courierVehicleParts(ride.courierVehicle),
       if (ride.parcel != null) ..._courierParcelParts(ride.parcel!),
     ];
     return parts.isEmpty ? base : parts.join(' · ');
@@ -368,6 +377,7 @@ class RideCardAdapters {
     final parts = <String>[
       if (base != null) base,
       ..._v2Parts(stops: invite.stops, shopping: invite.shopping),
+      ..._courierVehicleParts(invite.courierVehicle),
       if (invite.parcel != null) ..._courierParcelParts(invite.parcel!),
     ];
     return parts.isEmpty ? base : parts.join(' · ');

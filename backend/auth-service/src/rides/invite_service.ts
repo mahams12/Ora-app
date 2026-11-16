@@ -75,6 +75,8 @@ export interface InvitedRideItem {
     handlingInstructions: string | null;
     photoUrl: string | null;
   };
+  /** Ora Courier — sender-requested vehicle class (null = any vehicle). */
+  courierVehicle?: string | null;
   /** Ora Courier v2 — itinerary + budget for invite evaluation. */
   courierProtocolVersion?: number | null;
   stops?: Array<{
@@ -197,6 +199,7 @@ export class InviteService {
                 handlingInstructions: ride.parcel.handlingInstructions,
                 photoUrl: ride.parcel.photoUrl,
               },
+              courierVehicle: ride.courierVehicle ?? null,
             }
           : {}),
         // Ora Courier v2 — itinerary + shopping budget for invite eval.

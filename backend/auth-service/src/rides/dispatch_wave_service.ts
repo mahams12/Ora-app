@@ -18,7 +18,7 @@ import {
   type N3InviteRevalidationContext,
 } from '../drivers/nearby_service';
 import { logSafe } from '../http/errors';
-import type { RideDoc } from './types';
+import { driverCourierVehicle, type RideDoc } from './types';
 import { RideDomainError } from './types';
 import {
   DISPATCH_WAVES,
@@ -265,6 +265,20 @@ export class DispatchWaveService {
         throw err;
       }
       if (!stillOk) continue;
+
+      // Ora Courier — sender-requested vehicle class: only invite drivers
+      // whose registered vehicle maps to it. Driver docs are already in the
+      // batched revalidation context — no extra reads.
+      if (ride.serviceType === 'courier' && ride.courierVehicle) {
+        const driverDoc =
+          revalidationCtx?.prefetched.driverByDriverId.get(
+            candidate.driverId,
+          ) ?? null;
+        if (driverCourierVehicle(driverDoc) !== ride.courierVehicle) {
+          continue;
+        }
+      }
+
       selected.push(candidate.driverId);
     }
 

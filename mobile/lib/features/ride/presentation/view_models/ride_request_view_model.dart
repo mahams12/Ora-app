@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -93,6 +93,24 @@ const kRideRequestServiceTypes = <String>{
   'buy_deliver',
 };
 
+/// Ora Courier — vehicle classes a sender may request (inDrive-style).
+/// Backend validates the same set; keep in sync with COURIER_VEHICLES.
+const kCourierVehicleOptions = ['bike', 'car', 'rickshaw'];
+
+String courierVehicleLabel(String vehicle) => switch (vehicle) {
+      'bike' => 'Bike',
+      'car' => 'Car',
+      'rickshaw' => 'Rickshaw',
+      _ => 'Any vehicle',
+    };
+
+IconData courierVehicleIcon(String vehicle) => switch (vehicle) {
+      'bike' => Icons.two_wheeler_outlined,
+      'car' => Icons.directions_car_outlined,
+      'rickshaw' => Icons.electric_rickshaw_outlined,
+      _ => Icons.local_shipping_outlined,
+    };
+
 String rideRequestServiceTypeLabel(String serviceType) => switch (serviceType) {
       'intercity' => 'Intercity',
       'courier' => 'Send parcel',
@@ -135,6 +153,7 @@ class RideRequestUiState {
     this.passengerOfferDraftText = '',
     this.passengerOfferError,
     this.parcel = const ParcelDraft(),
+    this.courierVehicle = 'bike',
     this.stops = const [],
     this.shoppingBudgetText = '',
     this.attestationAccepted = false,
@@ -197,6 +216,10 @@ class RideRequestUiState {
   /// Ora Courier — parcel manifest draft (only meaningful when
   /// [serviceType] == 'courier').
   final ParcelDraft parcel;
+
+  /// Ora Courier — sender-requested vehicle class (`bike|car|rickshaw`).
+  /// Dispatch only invites matching drivers; backend re-validates at offer.
+  final String courierVehicle;
 
   /// Ora Courier v2 — intermediate waypoints between pickup and
   /// destination (PICKUP/DROPOFF for courier, SHOP for buy_deliver).
@@ -326,6 +349,7 @@ class RideRequestUiState {
     String? passengerOfferDraftText,
     String? passengerOfferError,
     ParcelDraft? parcel,
+    String? courierVehicle,
     List<DeliveryStopDraft>? stops,
     String? shoppingBudgetText,
     bool? attestationAccepted,
@@ -419,6 +443,7 @@ class RideRequestUiState {
           ? null
           : (passengerOfferError ?? this.passengerOfferError),
       parcel: parcel ?? this.parcel,
+      courierVehicle: courierVehicle ?? this.courierVehicle,
       stops: stops ?? this.stops,
       shoppingBudgetText: shoppingBudgetText ?? this.shoppingBudgetText,
       attestationAccepted: attestationAccepted ?? this.attestationAccepted,
@@ -738,6 +763,15 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   /// Buy & Deliver prices on the same delivery category.
   String get _effectiveCategoryId =>
       state.isDelivery ? 'courier' : state.categoryId;
+
+  /// Ora Courier — sender picks which vehicle class should carry the
+  /// parcel (bike | car | rickshaw). Dispatch + offer gates enforce it.
+  void selectCourierVehicle(String vehicle) {
+    final normalized = vehicle.trim().toLowerCase();
+    if (!kCourierVehicleOptions.contains(normalized)) return;
+    if (normalized == state.courierVehicle) return;
+    state = state.copyWith(courierVehicle: normalized);
+  }
 
   /// Ora Courier — parcel form edits; validity is enforced at submit.
   void updateParcel(ParcelDraft parcel) {
@@ -1990,6 +2024,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
           // Ora Courier — the parcel manifest is required for courier
           // bookings and forbidden on every other service type.
           if (state.isCourier) 'parcel': state.parcel.toApiMap(),
+          // Ora Courier — sender-requested vehicle class (bike/car/rickshaw).
+          if (state.isCourier) 'courierVehicle': state.courierVehicle,
           // Ora Courier v2 — ordered itinerary (pickup + intermediates +
           // destination). All new courier/B&D bookings are code-free v2.
           if (state.isDelivery && _fullItinerary() != null)

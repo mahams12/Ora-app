@@ -600,6 +600,7 @@ class RideRemoteDataSource {
       parcel: json['parcel'] is Map
           ? Map<String, Object?>.from(json['parcel'] as Map)
           : null,
+      courierVehicle: json['courierVehicle'] as String?,
       stops: _parseStops(json['stops']),
       shopping: _mapOrNull(json['shopping']),
     );
@@ -631,6 +632,7 @@ class RideRemoteDataSource {
       parcel: json['parcel'] is Map
           ? Map<String, Object?>.from(json['parcel'] as Map)
           : null,
+      courierVehicle: json['courierVehicle'] as String?,
       stops: _parseStops(json['stops']),
       shopping: _mapOrNull(json['shopping']),
     );
@@ -675,6 +677,7 @@ class RideRemoteDataSource {
       parcel: json['parcel'] is Map
           ? Map<String, Object?>.from(json['parcel'] as Map)
           : null,
+      courierVehicle: json['courierVehicle'] as String?,
       otpCodes: json['otpCodes'] is Map
           ? Map<String, Object?>.from(json['otpCodes'] as Map)
           : null,

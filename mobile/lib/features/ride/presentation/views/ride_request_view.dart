@@ -334,6 +334,8 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                           onSelectServiceType:
                                               vm.selectServiceType,
                                           onUpdateParcel: vm.updateParcel,
+                                          onSelectCourierVehicle:
+                                              vm.selectCourierVehicle,
                                           onEditLocations: vm.goToCompose,
                                           onSubmit: vm.submit,
                                           onRetryPricing: vm.retryPricing,
@@ -805,8 +807,14 @@ class _ComposePane extends StatelessWidget {
                         : 'Destination needed',
                 ok: state.hasConfirmedDestination,
               ),
-              // Ora Courier — parcel manifest form (courier only).
+              // Ora Courier — sender picks the vehicle class that should
+              // carry the parcel (inDrive-style), then the parcel manifest.
               if (state.isCourier) ...[
+                const SizedBox(height: OraSpacing.lg),
+                _CourierVehicleSelector(
+                  selected: state.courierVehicle,
+                  onSelect: vm.selectCourierVehicle,
+                ),
                 const SizedBox(height: OraSpacing.lg),
                 _ParcelSection(
                   parcel: state.parcel,
@@ -978,6 +986,7 @@ class _ReviewPane extends StatelessWidget {
     required this.onSelectCategory,
     required this.onSelectServiceType,
     required this.onUpdateParcel,
+    required this.onSelectCourierVehicle,
     required this.onEditLocations,
     required this.onSubmit,
     required this.onRetryPricing,
@@ -992,6 +1001,7 @@ class _ReviewPane extends StatelessWidget {
   final ValueChanged<String> onSelectCategory;
   final ValueChanged<String> onSelectServiceType;
   final ValueChanged<ParcelDraft> onUpdateParcel;
+  final ValueChanged<String> onSelectCourierVehicle;
   final VoidCallback onEditLocations;
   final VoidCallback onSubmit;
   final VoidCallback onRetryPricing;
@@ -1096,14 +1106,16 @@ class _ReviewPane extends StatelessWidget {
                 citySlug: state.citySlug,
                 onSelectCity: onSelectCity,
               ),
-              // Ora Courier — parcel manifest is part of the booking. The
-              // ride-category selector is hidden: courier has one vehicle
-              // class ('courier'); parcel size drives the offer instead.
+              // Ora Courier — parcel manifest + requested vehicle class are
+              // part of the booking. The ride-category selector stays hidden
+              // (single 'courier' pricing class); vehicle is courierVehicle.
               if (state.isCourier) ...[
                 const SizedBox(height: OraSpacing.md),
                 _ParcelSummaryCard(
                   parcel: state.parcel,
+                  courierVehicle: state.courierVehicle,
                   onChanged: onUpdateParcel,
+                  onSelectVehicle: onSelectCourierVehicle,
                 ),
               ],
               // Ora Courier v2 — ordered itinerary + B&D shopping summary.
@@ -1486,6 +1498,59 @@ class _ServiceTypeSelector extends StatelessWidget {
 
 // ── Ora Courier ─────────────────────────────────────────────────────────────
 
+/// Ora Courier — sender-requested vehicle class (inDrive-style bike/car/
+/// rickshaw chips). Shown above the parcel manifest in the compose pane.
+class _CourierVehicleSelector extends StatelessWidget {
+  const _CourierVehicleSelector({
+    required this.selected,
+    required this.onSelect,
+  });
+
+  final String selected;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Vehicle for delivery',
+            style: OraTypography.title(OraColors.textPrimary),
+          ),
+          const SizedBox(height: OraSpacing.xxs),
+          Text(
+            'Only drivers with a matching vehicle are notified.',
+            style: OraTypography.caption(OraColors.textMuted),
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          Wrap(
+            spacing: OraSpacing.xs,
+            runSpacing: OraSpacing.xs,
+            children: [
+              for (final v in kCourierVehicleOptions)
+                OraChip(
+                  label: courierVehicleLabel(v),
+                  leading: Icon(
+                    courierVehicleIcon(v),
+                    size: 16,
+                    color: selected == v
+                        ? OraColors.primary
+                        : OraColors.textSecondary,
+                  ),
+                  selected: selected == v,
+                  onTap: () => onSelect(v),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Courier parcel manifest form — shown in the compose pane when
 /// serviceType == 'courier'. Server re-validates every field on create.
 class _ParcelSection extends StatelessWidget {
@@ -1647,9 +1712,16 @@ class _ParcelSection extends StatelessWidget {
 /// Courier parcel summary — shown on the review pane in place of the
 /// ride-category selector. Inline size correction stays possible.
 class _ParcelSummaryCard extends StatelessWidget {
-  const _ParcelSummaryCard({required this.parcel, required this.onChanged});
+  const _ParcelSummaryCard({
+    required this.parcel,
+    required this.courierVehicle,
+    required this.onChanged,
+    required this.onSelectVehicle,
+  });
 
   final ParcelDraft parcel;
+  final String courierVehicle;
+  final ValueChanged<String> onSelectVehicle;
   final ValueChanged<ParcelDraft> onChanged;
 
   @override
@@ -1691,6 +1763,30 @@ class _ParcelSummaryCard extends StatelessWidget {
                   label: s.toLowerCase(),
                   selected: parcel.size == s,
                   onTap: () => onChanged(parcel.copyWith(size: s)),
+                ),
+            ],
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          Text(
+            'Vehicle',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
+          const SizedBox(height: OraSpacing.xxs),
+          Wrap(
+            spacing: OraSpacing.xs,
+            children: [
+              for (final v in kCourierVehicleOptions)
+                OraChip(
+                  label: courierVehicleLabel(v),
+                  leading: Icon(
+                    courierVehicleIcon(v),
+                    size: 16,
+                    color: courierVehicle == v
+                        ? OraColors.primary
+                        : OraColors.textSecondary,
+                  ),
+                  selected: courierVehicle == v,
+                  onTap: () => onSelectVehicle(v),
                 ),
             ],
           ),

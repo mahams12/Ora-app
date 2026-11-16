@@ -50,9 +50,11 @@ import {
 } from '../pricing/fee_policy';
 import {
   COURIER_PROTOCOL_EVIDENCE,
+  COURIER_VEHICLES,
   DELIVERY_FAILURE_REASONS,
   DISPUTE_CATEGORIES,
   DISPUTES_COLLECTION,
+  driverCourierVehicle,
   IDEMPOTENCY_TTL_MS,
   IdempotencyReplay,
   MAX_OFFERS_SUPERSEDE_IN_TXN,
@@ -64,6 +66,7 @@ import {
   RideDomainError,
   SETTLEMENT_REPORTS,
   STOP_FAILURE_REASONS,
+  type CourierVehicle,
   type DeliveryFailureReason,
   type DisputeCategory,
   type DisputeDoc,
@@ -763,6 +766,7 @@ function publicOpenRide(ride: RideDoc) {
             quantity: ride.parcel.quantity,
             description: ride.parcel.description,
           },
+          courierVehicle: ride.courierVehicle ?? null,
         }
       : {}),
     // Ora Courier v2 — itinerary summary for driver offer evaluation:
@@ -879,6 +883,7 @@ function publicRide(ride: RideDoc, viewer: RideViewer) {
     ...(ride.serviceType === 'courier' && ride.parcel
       ? {
           parcel: ride.parcel,
+          courierVehicle: ride.courierVehicle ?? null,
         }
       : {}),
     ...((ride.serviceType === 'courier' ||
@@ -1212,6 +1217,7 @@ export class RideService {
         'parcel',
         'stops',
         'shopping',
+        'courierVehicle',
       ]),
     );
 
@@ -1280,6 +1286,32 @@ export class RideService {
         400,
         'parcel is only valid for courier bookings.',
       );
+    }
+
+    // Ora Courier — optional sender-requested vehicle class (bike/car/
+    // rickshaw). Absent keeps legacy no-filter behaviour for old APKs.
+    let courierVehicle: CourierVehicle | undefined;
+    if (body.courierVehicle !== undefined) {
+      if (serviceType !== 'courier') {
+        throw new RideDomainError(
+          'VALIDATION_ERROR',
+          400,
+          'courierVehicle is only valid for courier bookings.',
+        );
+      }
+      if (
+        typeof body.courierVehicle !== 'string' ||
+        !(COURIER_VEHICLES as readonly string[]).includes(
+          body.courierVehicle,
+        )
+      ) {
+        throw new RideDomainError(
+          'VALIDATION_ERROR',
+          400,
+          `courierVehicle must be one of: ${COURIER_VEHICLES.join(', ')}.`,
+        );
+      }
+      courierVehicle = body.courierVehicle as CourierVehicle;
     }
 
     // Ora Courier v2 — stops itinerary. `buy_deliver` requires stops;
@@ -1461,6 +1493,7 @@ export class RideService {
       paymentIntentId: null,
       passengerCount,
       ...(parcel ? { parcel } : {}),
+      ...(courierVehicle ? { courierVehicle } : {}),
       // Ora Courier v2 — protocol stamp + itinerary. v1 (no stops) keeps the
       // OTP-era contract so the shipped APK continues to work.
       ...(stops
@@ -1935,6 +1968,24 @@ export class RideService {
             422,
             'Driver already has an active assigned ride.',
           );
+        }
+
+        // Ora Courier — sender-requested vehicle class is authoritative:
+        // a mismatched driver cannot offer even if an invite leaked to them.
+        if (ride.serviceType === 'courier' && ride.courierVehicle) {
+          const driverSnap = await tx.get(
+            this.db.collection('drivers').doc(input.caller.uid),
+          );
+          const driverDoc = driverSnap.exists
+            ? (driverSnap.data() as Record<string, unknown>)
+            : null;
+          if (driverCourierVehicle(driverDoc) !== ride.courierVehicle) {
+            throw new RideDomainError(
+              'DRIVER_VEHICLE_MISMATCH',
+              422,
+              `This courier request needs a ${ride.courierVehicle}.`,
+            );
+          }
         }
 
         const amountMinor = assertPositiveIntegerMinor(

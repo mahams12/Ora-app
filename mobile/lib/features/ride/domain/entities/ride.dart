@@ -100,6 +100,7 @@ class Ride {
     this.cancelledBy,
     this.cancellationReason,
     this.parcel,
+    this.courierVehicle,
     this.otpCodes,
     this.pickupPhotoUrl,
     this.deliveryFailedAt,
@@ -158,6 +159,9 @@ class Ride {
   /// Ora Courier — parcel manifest (present only when
   /// [serviceType] == 'courier'). Raw server projection.
   final Map<String, Object?>? parcel;
+
+  /// Ora Courier — sender-requested vehicle class (null = any).
+  final String? courierVehicle;
 
   /// Ora Courier — confirmation codes, exposed to the passenger only.
   /// Keys: pickup, delivery, return, expiresAt, pickupUsedAt,
@@ -246,6 +250,7 @@ class OpenRide {
     this.distanceKm,
     this.estimatedDurationMin,
     this.parcel,
+    this.courierVehicle,
     this.stops,
     this.shopping,
   });
@@ -268,6 +273,9 @@ class OpenRide {
 
   /// Ora Courier — non-contact parcel summary on open discovery.
   final Map<String, Object?>? parcel;
+
+  /// Ora Courier — sender-requested vehicle class (null = any).
+  final String? courierVehicle;
 
   /// Ora Courier v2 — itinerary summary for driver offer evaluation.
   final List<RideStop>? stops;
@@ -309,6 +317,7 @@ class DriverInvite {
     this.offerId,
     this.distanceKm,
     this.parcel,
+    this.courierVehicle,
     this.stops,
     this.shopping,
   });
@@ -331,6 +340,9 @@ class DriverInvite {
 
   /// Ora Courier — driver-visible parcel summary (no contact info).
   final Map<String, Object?>? parcel;
+
+  /// Ora Courier — sender-requested vehicle class (null = any).
+  final String? courierVehicle;
 
   /// Ora Courier v2 — itinerary + shopping budget for invite evaluation.
   final List<RideStop>? stops;
