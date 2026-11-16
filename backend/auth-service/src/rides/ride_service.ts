@@ -1954,24 +1954,9 @@ export class RideService {
           );
         }
 
-        // Driver may not create offers while already assigned on another ride.
-        const activeAssigned = await tx.get(
-          this.db
-            .collection(RIDES)
-            .where('assignedDriverId', '==', input.caller.uid)
-            .where('state', '==', 'DRIVER_ASSIGNED')
-            .limit(1),
-        );
-        if (!activeAssigned.empty) {
-          throw new RideDomainError(
-            'DRIVER_NOT_ELIGIBLE',
-            422,
-            'Driver already has an active assigned ride.',
-          );
-        }
-
-        // Ora Courier — sender-requested vehicle class is authoritative:
-        // a mismatched driver cannot offer even if an invite leaked to them.
+        // Ora Courier — sender-requested vehicle class is authoritative and
+        // checked before the busy gate: a driver who can never do this job
+        // gets the clearer mismatch error.
         if (ride.serviceType === 'courier' && ride.courierVehicle) {
           const driverSnap = await tx.get(
             this.db.collection('drivers').doc(input.caller.uid),
@@ -1986,6 +1971,22 @@ export class RideService {
               `This courier request needs a ${ride.courierVehicle}.`,
             );
           }
+        }
+
+        // Driver may not create offers while already assigned on another ride.
+        const activeAssigned = await tx.get(
+          this.db
+            .collection(RIDES)
+            .where('assignedDriverId', '==', input.caller.uid)
+            .where('state', '==', 'DRIVER_ASSIGNED')
+            .limit(1),
+        );
+        if (!activeAssigned.empty) {
+          throw new RideDomainError(
+            'DRIVER_NOT_ELIGIBLE',
+            422,
+            'Driver already has an active assigned ride.',
+          );
         }
 
         const amountMinor = assertPositiveIntegerMinor(
