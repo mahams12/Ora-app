@@ -90,10 +90,26 @@ class RidesHubView extends ConsumerWidget {
                               );
                           unawaited(context.push<void>(route));
                         },
-                        onCourier: () => unawaited(
-                          showServiceComingLaterSheet(context, 'Courier'),
-                        ),
-                        courierStatusLabel: 'Coming later',
+                        onCourier: () {
+                          final route = AppRoutes.rideRequestUri(
+                            service: 'courier',
+                          );
+                          ref
+                              .read(recentActivityProvider.notifier)
+                              .record(
+                                RecentActivity(
+                                  kind: RecentActivityKind.ride,
+                                  id: 'courier',
+                                  title: 'Courier',
+                                  subtitle: 'Send a parcel',
+                                  imageAsset:
+                                      AppConstants.serviceCourierAsset,
+                                  route: route,
+                                  atMs: DateTime.now().millisecondsSinceEpoch,
+                                ),
+                              );
+                          unawaited(context.push<void>(route));
+                        },
                       ),
                       const SizedBox(height: OraSpacing.lg),
                       const OraSectionHeader(title: 'Choose a ride'),
@@ -146,6 +162,24 @@ class RidesHubView extends ConsumerWidget {
                                   id: 'intercity',
                                   title: option.name,
                                   subtitle: 'Book a ride',
+                                  imageAsset: option.image,
+                                  route: route,
+                                  atMs: DateTime.now().millisecondsSinceEpoch,
+                                ),
+                              );
+                          unawaited(context.push<void>(route));
+                        } else if (action is RideCourierAction) {
+                          final route = AppRoutes.rideRequestUri(
+                            service: 'courier',
+                          );
+                          ref
+                              .read(recentActivityProvider.notifier)
+                              .record(
+                                RecentActivity(
+                                  kind: RecentActivityKind.ride,
+                                  id: 'courier',
+                                  title: option.name,
+                                  subtitle: 'Send a parcel',
                                   imageAsset: option.image,
                                   route: route,
                                   atMs: DateTime.now().millisecondsSinceEpoch,

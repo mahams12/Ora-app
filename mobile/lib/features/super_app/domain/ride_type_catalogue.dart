@@ -14,6 +14,10 @@ class RideIntercityAction extends RideTypeAction {
   const RideIntercityAction();
 }
 
+class RideCourierAction extends RideTypeAction {
+  const RideCourierAction();
+}
+
 class RideComingLaterAction extends RideTypeAction {
   const RideComingLaterAction();
 }
@@ -120,6 +124,13 @@ const kRideTypeCatalogue = <RideTypeOption>[
     blurb: 'Travel between cities',
     image: AppConstants.serviceIntercityAsset,
     action: RideIntercityAction(),
+  ),
+  RideTypeOption(
+    id: 'courier',
+    name: 'Courier',
+    blurb: 'Send a parcel across the city',
+    image: AppConstants.serviceCourierAsset,
+    action: RideCourierAction(),
   ),
   RideTypeOption(
     id: 'women_only',
