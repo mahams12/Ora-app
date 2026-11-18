@@ -2,6 +2,9 @@
 # launchd / long-lived dev entry — sources .env then runs auth-service (no watch).
 set -euo pipefail
 
+# launchd runs with a minimal PATH (/usr/bin:/bin:...) — node lives in Homebrew.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
