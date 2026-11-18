@@ -11,7 +11,7 @@ import {
 } from '../src/maintenance/expires_at_cleanup_service';
 import { PRICING_SNAPSHOTS_COLLECTION } from '../src/pricing/estimate_service';
 
-const PROJECT = 'ora-app-d8112';
+const PROJECT = 'oraapp-a9be5';
 const PREFIX = process.env.PREFIX ?? 'ttl-remote-proof-';
 const MODE = process.argv[2] ?? 'seed';
 

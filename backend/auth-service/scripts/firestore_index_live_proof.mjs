@@ -8,7 +8,7 @@ import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const SA_PATH = new URL('../secrets/service-account.json', import.meta.url);
-const PROJECT = 'ora-app-d8112';
+const PROJECT = 'oraapp-a9be5';
 
 if (!getApps().length) {
   const sa = JSON.parse(readFileSync(SA_PATH, 'utf8'));

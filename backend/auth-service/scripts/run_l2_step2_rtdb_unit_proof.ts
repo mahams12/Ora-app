@@ -38,14 +38,14 @@ function assert(cond: unknown, msg: string): asserts cond {
 async function main(): Promise<void> {
   await test('1. RTDB config resolves projectId + optional databaseURL', () => {
     const base = resolveFirebaseAdminAppOptions({
-      FIREBASE_PROJECT_ID: 'ora-app-d8112',
+      FIREBASE_PROJECT_ID: 'oraapp-a9be5',
     });
-    assert(base.projectId === 'ora-app-d8112', 'projectId');
+    assert(base.projectId === 'oraapp-a9be5', 'projectId');
     assert(base.databaseURL === undefined, 'no url');
     const withUrl = resolveFirebaseAdminAppOptions({
-      FIREBASE_PROJECT_ID: 'ora-app-d8112',
+      FIREBASE_PROJECT_ID: 'oraapp-a9be5',
       FIREBASE_DATABASE_URL:
-        'https://ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app',
+        'https://oraapp-a9be5-default-rtdb.asia-southeast1.firebasedatabase.app',
     });
     assert(typeof withUrl.databaseURL === 'string', 'url present');
     assert(isRtdbConfigured({}) === false, 'not configured');

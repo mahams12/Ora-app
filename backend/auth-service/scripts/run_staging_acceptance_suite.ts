@@ -129,7 +129,7 @@ async function main() {
         ),
       ),
       databaseURL:
-        'https://ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app',
+        'https://oraapp-a9be5-default-rtdb.asia-southeast1.firebasedatabase.app',
     });
   }
   const db = getFirestore();

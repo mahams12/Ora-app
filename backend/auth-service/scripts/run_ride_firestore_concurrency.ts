@@ -326,7 +326,7 @@ async function main(): Promise<void> {
   );
 
   if (getApps().length === 0) {
-    initializeApp({ projectId: 'ora-app-d8112' });
+    initializeApp({ projectId: 'oraapp-a9be5' });
   }
   const db = getFirestore();
   const stats = instrumentRunTransaction(db);
