@@ -72,3 +72,9 @@ mobile/android/key.properties
 *.aab
 *.ipa
 database-debug.log
+
+# Test-run artifacts — screenshots, UI dumps, logcats, build logs, pids.
+# Generated on every run; proof reports already committed stay tracked.
+**/.e2e_artifacts/**
+mobile/test_outputs/
+*.pid
