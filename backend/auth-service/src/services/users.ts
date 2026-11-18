@@ -6,10 +6,17 @@ import type {
   ActiveMode,
   AuthenticatedCaller,
   UserProfile,
+  VendorType,
 } from '../types';
 
 const USERS = 'users';
 const RIDES = 'rides';
+
+export const VENDOR_TYPES: readonly VendorType[] = [
+  'cargo',
+  'rental',
+  'service',
+];
 
 export const ACTIVE_MODES: readonly ActiveMode[] = ['passenger', 'driver'];
 
@@ -156,6 +163,12 @@ export async function switchMode(
     const driverStatus =
       typeof data.driverStatus === 'string' ? data.driverStatus : 'none';
     const isApprovedDriver = driverStatus === 'approved';
+    const cargoApp = ((data.vendorApplications ?? {}) as Record<
+      string,
+      unknown
+    >)['cargo'] as Record<string, unknown> | undefined;
+    const isDeliveryOperator =
+      isApprovedDriver || cargoApp?.['status'] === 'approved';
 
     if (mode === 'driver') {
       if (driverStatus === 'pending') {
@@ -207,8 +220,9 @@ export async function switchMode(
       return;
     }
 
-    // mode === 'passenger': block while assigned driver on an in-flight job.
-    if (isApprovedDriver) {
+    // mode === 'passenger': block while assigned on an in-flight job
+    // (approved driver or logistics partner).
+    if (isDeliveryOperator) {
       const activeAsDriver = await tx.get(
         db
           .collection(RIDES)
@@ -227,6 +241,147 @@ export async function switchMode(
       }
     }
     tx.update(ref, { activeMode: 'passenger', updatedAt: nowIso });
+  });
+
+  const profile = await getMe(db, caller);
+  if (!profile) {
+    throw new UserNotFoundError();
+  }
+  return profile;
+}
+
+export class VendorApplicationError extends Error {
+  constructor(
+    readonly code: string,
+    readonly httpStatus: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'VendorApplicationError';
+  }
+}
+
+const VENDOR_DETAILS_MAX_KEYS = 20;
+const VENDOR_DETAILS_MAX_VALUE_LEN = 500;
+const VENDOR_DETAILS_MAX_BYTES = 4_000;
+
+/**
+ * Keeps only shallow scalar fields from a vendor application payload —
+ * enough for admin review, too small to abuse as free-form storage.
+ */
+function normalizeVendorDetails(
+  raw: unknown,
+): Record<string, string | number | boolean> | undefined {
+  if (raw === undefined || raw === null) {
+    return undefined;
+  }
+  if (typeof raw !== 'object' || Array.isArray(raw)) {
+    throw new VendorApplicationError(
+      'VALIDATION_ERROR',
+      400,
+      'details must be a JSON object.',
+    );
+  }
+  const out: Record<string, string | number | boolean> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (Object.keys(out).length >= VENDOR_DETAILS_MAX_KEYS) break;
+    if (typeof key !== 'string' || key.length === 0 || key.length > 60) {
+      continue;
+    }
+    if (
+      typeof value === 'string' &&
+      value.trim().length > 0 &&
+      value.length <= VENDOR_DETAILS_MAX_VALUE_LEN
+    ) {
+      out[key] = value.trim();
+    } else if (
+      (typeof value === 'number' && Number.isFinite(value)) ||
+      typeof value === 'boolean'
+    ) {
+      out[key] = value;
+    }
+  }
+  if (JSON.stringify(out).length > VENDOR_DETAILS_MAX_BYTES) {
+    throw new VendorApplicationError(
+      'VALIDATION_ERROR',
+      400,
+      'details payload too large.',
+    );
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
+/**
+ * Server-authoritative partner application. Mirrors the driver onboarding
+ * gate: apply once → pending until an admin flips vendorApplications.{type}
+ * to approved/rejected/suspended (seed script or console).
+ *
+ * Idempotent: re-submitting while pending or approved is a no-op that
+ * returns the current profile. Rejected applicants may re-apply; suspended
+ * is hard-blocked like DRIVER_SUSPENDED.
+ */
+export async function applyVendorApplication(
+  db: Firestore,
+  caller: AuthenticatedCaller,
+  typeRaw: unknown,
+  detailsRaw: unknown,
+  now: Date,
+): Promise<UserProfile> {
+  if (
+    typeof typeRaw !== 'string' ||
+    !(VENDOR_TYPES as readonly string[]).includes(typeRaw)
+  ) {
+    throw new VendorApplicationError(
+      'VALIDATION_ERROR',
+      400,
+      "type must be 'cargo', 'rental', or 'service'.",
+    );
+  }
+  const type = typeRaw as VendorType;
+  const details = normalizeVendorDetails(detailsRaw);
+  const ref = db.collection(USERS).doc(caller.uid);
+  const nowIso = now.toISOString();
+
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) {
+      throw new UserNotFoundError();
+    }
+    const data = snap.data() ?? {};
+    if (data.isActive === false || data.banned === true) {
+      throw new VendorApplicationError(
+        'ACCOUNT_DISABLED',
+        403,
+        'This account is disabled.',
+      );
+    }
+    const apps = (data.vendorApplications ?? {}) as Record<
+      string,
+      { status?: unknown }
+    >;
+    const existing = apps[type];
+    if (
+      existing &&
+      (existing.status === 'pending' || existing.status === 'approved')
+    ) {
+      // Idempotent no-op — profile is re-read below.
+      return;
+    }
+    if (existing && existing.status === 'suspended') {
+      throw new VendorApplicationError(
+        'VENDOR_SUSPENDED',
+        403,
+        'This partner access is suspended — contact support.',
+      );
+    }
+    tx.update(ref, {
+      [`vendorApplications.${type}`]: {
+        status: 'pending',
+        submittedAt: nowIso,
+        ...(details ? { details } : {}),
+      },
+      updatedAt: nowIso,
+    });
   });
 
   const profile = await getMe(db, caller);

@@ -9,6 +9,8 @@ import 'package:ora/app/router/app_router.dart';
 import 'package:ora/app/theme/ora_theme.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_models.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_provider.dart';
+import 'package:ora/features/marketplace/data/marketplace_models.dart';
+import 'package:ora/features/marketplace/data/marketplace_providers.dart';
 import 'package:ora/features/marketplace/shared/demo/demo_listings.dart';
 import 'package:ora/features/super_app/recent/recent_activity.dart';
 
@@ -28,6 +30,7 @@ Future<GoRouter> pumpMarketplaceRoute(
   required MarketplaceCatalogue catalogue,
   double textScale = 1,
   bool demoListingsEnabled = false,
+  List<MarketplaceListing> publishedListings = const [],
 }) async {
   final router = createAppRouter(initialLocation: location);
   addTearDown(router.dispose);
@@ -36,6 +39,18 @@ Future<GoRouter> pumpMarketplaceRoute(
       overrides: [
         catalogueProvider.overrideWith((ref) async => catalogue),
         demoListingsEnabledProvider.overrideWithValue(demoListingsEnabled),
+        publishedListingsProvider.overrideWith(
+          (ref, query) async => publishedListings
+              .where(
+                (listing) =>
+                    listing.type == query.type &&
+                    (query.categoryId == null ||
+                        listing.categoryId == query.categoryId) &&
+                    (query.subcategoryId == null ||
+                        listing.subcategoryId == query.subcategoryId),
+              )
+              .toList(),
+        ),
         recentActivityStorageProvider.overrideWithValue(
           InMemoryRecentActivityStorage(),
         ),

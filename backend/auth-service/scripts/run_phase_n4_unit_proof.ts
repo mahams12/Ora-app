@@ -1,17 +1,17 @@
 /**
- * Standalone N4 unit proof (MemoryDb + MemoryRedis).
+ * Standalone N4 unit proof (MemoryDb + MemoryGeoStore).
  * Usage: npm run test:phase-n4-unit-proof
  */
 import request from 'supertest';
 import { createApp } from '../src/app';
 import { memoryDb } from '../src/__tests__/helpers/memory_db';
-import { createMemoryRedis } from '../src/redis/memory_redis';
+import { createMemoryGeoStore } from '../src/geo/memory_geo_store';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   type DriverOnlineMarker,
-} from '../src/redis/types';
+} from '../src/geo/types';
 import { waveDocId } from '../src/rides/dispatch_types';
 
 const WORKER = 'n4-unit-proof-worker-token';
@@ -56,13 +56,13 @@ function seedApprovedOnline(
 }
 
 async function seedGeo(
-  redis: ReturnType<typeof createMemoryRedis>,
+  geoStore: ReturnType<typeof createMemoryGeoStore>,
   driverId: string,
   lng: number,
   lat: number,
   lastLocationTs: number,
 ) {
-  await redis.geoadd(GEO_DRIVERS_KEY, lng, lat, driverId);
+  await geoStore.geoadd(GEO_DRIVERS_KEY, lng, lat, driverId);
   const full: DriverOnlineMarker = {
     driverId,
     accuracy: 8,
@@ -72,7 +72,7 @@ async function seedGeo(
     acceptedAt: new Date().toISOString(),
     lastLocationTs,
   };
-  await redis.set(
+  await geoStore.set(
     driverOnlineKey(driverId),
     JSON.stringify(full),
     DRIVER_ONLINE_TTL_SECONDS,
@@ -81,14 +81,14 @@ async function seedGeo(
 
 async function main(): Promise<void> {
   const db = memoryDb();
-  const redis = createMemoryRedis();
+  const geoStore = createMemoryGeoStore();
   const now = Date.now();
   const ids: string[] = [];
   for (let i = 0; i < 12; i += 1) {
     const id = `n4d${i}`;
     ids.push(id);
     seedApprovedOnline(db, id);
-    await seedGeo(redis, id, PICKUP.lng + i * 0.001, PICKUP.lat, now);
+    await seedGeo(geoStore, id, PICKUP.lng + i * 0.001, PICKUP.lat, now);
   }
 
   db.seed('rides', 'n4ride1', {
@@ -136,7 +136,7 @@ async function main(): Promise<void> {
     requireAppCheck: false,
     rateLimit: { windowMs: 60_000, max: 50_000 },
     internalWorkerToken: WORKER,
-    redis,
+    geoStore,
   });
 
   await test('worker auth required', async () => {

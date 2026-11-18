@@ -1,5 +1,5 @@
 import type { Firestore } from 'firebase-admin/firestore';
-import { normalizeCitySlug } from '../redis/types';
+import { normalizeCitySlug } from '../geo/types';
 import {
   CITY_COUNTRY_CODE_PK,
   CityCatalogError,

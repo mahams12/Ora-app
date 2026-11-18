@@ -66,11 +66,7 @@ class _OraFloatyState extends State<OraFloaty>
 /// bounces back with an elastic overshoot (Lottie "click" style). Uses a
 /// Listener so the inner InkWell still receives the tap.
 class OraTapScale extends StatefulWidget {
-  const OraTapScale({
-    required this.child,
-    this.downScale = 0.9,
-    super.key,
-  });
+  const OraTapScale({required this.child, this.downScale = 0.9, super.key});
 
   final Widget child;
 

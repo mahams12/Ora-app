@@ -14,11 +14,7 @@ const rideHistoryServiceTypes = [
 const rideHistoryDefaultLimit = 10;
 
 /// Where a history row should navigate based on authoritative [state].
-enum RideHistoryDestination {
-  offers,
-  active,
-  detail,
-}
+enum RideHistoryDestination { offers, active, detail }
 
 RideHistoryDestination rideHistoryDestinationFor(String state) {
   final s = state.toUpperCase();

@@ -28,10 +28,10 @@ class RideLocationPlaceholder extends StatelessWidget {
     final status = pickupConfirmed && destinationConfirmed
         ? 'Pickup & destination confirmed'
         : pickupConfirmed
-            ? 'Pickup confirmed · destination needed'
-            : destinationConfirmed
-                ? 'Destination confirmed · pickup needed'
-                : 'Confirm pickup & destination to continue';
+        ? 'Pickup confirmed · destination needed'
+        : destinationConfirmed
+        ? 'Destination confirmed · pickup needed'
+        : 'Confirm pickup & destination to continue';
 
     return SizedBox(
       height: height,

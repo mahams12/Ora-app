@@ -96,6 +96,7 @@ class DriverLocationLifecycleController {
   bool _signedIn = true;
   bool _foreground = true;
   bool _disposed = false;
+
   /// When true, do not auto-restart after a terminal acquisition failure
   /// (permission denied / services off). User action clears this.
   bool _holdRestart = false;

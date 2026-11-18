@@ -19,7 +19,7 @@ if [[ -f "$ROOT/.env" ]]; then
 fi
 
 export PORT="${PORT:-8080}"
-export FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-ora-app-d8112}"
+export FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-oraapp-a9be5}"
 export REQUIRE_APP_CHECK="${REQUIRE_APP_CHECK:-false}"
 export ORA_INTERNAL_WORKER_TOKEN="${ORA_INTERNAL_WORKER_TOKEN:-local-dev-worker-token-xx}"
 # Geo store is Firestore-native (geoDrivers) — no REDIS_URL needed.

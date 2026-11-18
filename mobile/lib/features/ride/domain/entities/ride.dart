@@ -2,11 +2,7 @@
 library;
 
 class LatLngPoint {
-  const LatLngPoint({
-    required this.lat,
-    required this.lng,
-    this.address,
-  });
+  const LatLngPoint({required this.lat, required this.lng, this.address});
 
   final double lat;
   final double lng;
@@ -219,10 +215,7 @@ class Ride {
 
 /// Paginated ride history page from GET /v1/rides.
 class RideListPage {
-  const RideListPage({
-    required this.rides,
-    this.nextCursor,
-  });
+  const RideListPage({required this.rides, this.nextCursor});
 
   final List<Ride> rides;
   final String? nextCursor;
@@ -284,10 +277,7 @@ class OpenRide {
 
 /// Paginated open-ride discovery page from GET /v1/rides/open.
 class OpenRideListPage {
-  const OpenRideListPage({
-    required this.rides,
-    this.nextCursor,
-  });
+  const OpenRideListPage({required this.rides, this.nextCursor});
 
   final List<OpenRide> rides;
   final String? nextCursor;
@@ -352,12 +342,10 @@ class DriverInvite {
 }
 
 class DriverInvitePage {
-  const DriverInvitePage({
-    required this.items,
-    required this.serverNowMs,
-  });
+  const DriverInvitePage({required this.items, required this.serverNowMs});
 
   final List<DriverInvite> items;
+
   /// Server wall-clock at response time — used to offset client clock skew
   /// so countdowns stay consistent across devices/restarts.
   final int serverNowMs;

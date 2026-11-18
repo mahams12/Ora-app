@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 
-import '../../../../app/di/providers.dart';
 import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
@@ -14,20 +12,34 @@ import '../../../../core/utils/responsive.dart';
 import '../../../ride/domain/entities/ride.dart';
 import '../../../ride/domain/models/ride_category_option.dart';
 import '../../../ride/presentation/history/ride_history_display.dart';
-import '../../../ride/presentation/models/ride_map_preview_model.dart';
 import '../../../ride/presentation/widgets/ride_card/ride_card.dart';
-import '../../../ride/presentation/widgets/ride_map_preview.dart';
+import '../../../ride/presentation/widgets/ride_card/ride_card_assets.dart';
+import '../../../ride/presentation/widgets/ride_card/ride_card_map_thumb.dart';
 import '../open_ride_display.dart';
-import '../view_models/driver_direct_offer_view_model.dart';
 import '../view_models/driver_invites_view_model.dart';
 import '../view_models/driver_open_rides_view_model.dart';
 import '../widgets/driver_invites_section.dart';
+import '../widgets/driver_ui_kit.dart';
 
 /// Open ride requests — GET /v1/rides/open. Not nearby / GEO.
 class DriverOpenRidesView extends ConsumerStatefulWidget {
-  const DriverOpenRidesView({super.key, this.active = false});
+  const DriverOpenRidesView({
+    super.key,
+    this.active = false,
+    this.infoText =
+        'Available ride requests from Ora\'s servers for approved drivers.',
+    this.sheetTitle = 'New Ride Request',
+    this.offerLabel = 'Passenger Offer',
+    this.invitesSectionLabel = 'Ride requests for you',
+  });
 
   final bool active;
+
+  /// Copy overrides — logistics partners show delivery wording.
+  final String infoText;
+  final String sheetTitle;
+  final String offerLabel;
+  final String invitesSectionLabel;
 
   @override
   ConsumerState<DriverOpenRidesView> createState() =>
@@ -78,7 +90,11 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
           padding: EdgeInsets.only(
             bottom: MediaQuery.viewInsetsOf(context).bottom,
           ),
-          child: _OpenRideOfferSheet(ride: ride),
+          child: _OpenRideOfferSheet(
+            ride: ride,
+            sheetTitle: widget.sheetTitle,
+            offerLabel: widget.offerLabel,
+          ),
         );
       },
     );
@@ -95,6 +111,7 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
     final padding = Responsive.horizontalPadding(context);
 
     return SafeArea(
+      top: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -108,15 +125,32 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Open rides',
-                  style: OraTypography.headline(OraColors.textPrimary),
-                ),
-                const SizedBox(height: OraSpacing.xxs),
-                Text(
-                  'Available ride requests from Ora\'s servers for approved '
-                  'drivers. Not a GPS or map-radius feed.',
-                  style: OraTypography.caption(OraColors.textMuted),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: OraSpacing.sm,
+                    vertical: OraSpacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: OraColors.surfaceElevated,
+                    borderRadius: BorderRadius.circular(OraRadius.pill),
+                    border: Border.all(color: OraColors.border),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.info_outline_rounded,
+                        size: 14,
+                        color: OraColors.goldSharp,
+                      ),
+                      const SizedBox(width: OraSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          widget.infoText,
+                          style: OraTypography.caption(OraColors.textMuted),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 if (state.offerInfoMessage != null) ...[
                   const SizedBox(height: OraSpacing.sm),
@@ -204,16 +238,19 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.symmetric(horizontal: padding),
           children: [
-            const DriverInvitesSection(),
+            DriverInvitesSection(
+              sectionLabel: widget.invitesSectionLabel,
+              sheetTitle: widget.sheetTitle,
+              offerLabel: widget.offerLabel,
+            ),
             const SizedBox(height: OraSpacing.xxl),
             OraEmptyState(
-              title:
-                  filtered ? 'No open rides match' : 'No open ride requests',
+              title: filtered ? 'No open rides match' : 'No open ride requests',
               message: filtered
                   ? 'No open ride requests match the selected filters. '
-                      'Clear them or pull to refresh.'
+                        'Clear them or pull to refresh.'
                   : 'There are currently no open ride requests available. '
-                      'Pull to refresh when you want to check again.',
+                        'Pull to refresh when you want to check again.',
             ),
             if (filtered) ...[
               const SizedBox(height: OraSpacing.md),
@@ -244,14 +281,17 @@ class _DriverOpenRidesViewState extends ConsumerState<DriverOpenRidesView> {
           padding,
           OraSpacing.xxl,
         ),
-        itemCount: state.rides.length +
-            2 +
-            (state.errorMessage != null ? 1 : 0),
+        itemCount:
+            state.rides.length + 2 + (state.errorMessage != null ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == 0) {
-            return const Padding(
-              padding: EdgeInsets.only(bottom: OraSpacing.sm),
-              child: DriverInvitesSection(),
+            return Padding(
+              padding: const EdgeInsets.only(bottom: OraSpacing.sm),
+              child: DriverInvitesSection(
+                sectionLabel: widget.invitesSectionLabel,
+                sheetTitle: widget.sheetTitle,
+                offerLabel: widget.offerLabel,
+              ),
             );
           }
           final shifted = index - 1;
@@ -321,31 +361,16 @@ class _OpenRidesFilterRow extends StatelessWidget {
   }
 }
 
-/// Real pickup→destination preview for the offer sheet — same MapLibre model
-/// as the passenger request preview, built from the authoritative open-ride
-/// coordinates (no route polyline; backend does not expose one on discovery).
-RideMapPreviewModel _offerPreviewModel(OpenRide ride) {
-  final pickup = gmaps.LatLng(ride.pickup.lat, ride.pickup.lng);
-  final destination = gmaps.LatLng(ride.destination.lat, ride.destination.lng);
-  return RideMapPreviewModel(
-    routeIdentity: RideMapPreviewModel.buildRouteIdentity(
-      pickup: pickup,
-      destination: destination,
-    ),
-    status: RideMapPreviewStatus.ready,
-    pickup: pickup,
-    destination: destination,
-    pickupLabel: rideCardLocationLabel(ride.pickup),
-    destinationLabel: rideCardLocationLabel(ride.destination),
-    distanceKm: ride.distanceKm,
-    durationMin: ride.estimatedDurationMin?.toDouble(),
-  );
-}
-
 class _OpenRideOfferSheet extends ConsumerStatefulWidget {
-  const _OpenRideOfferSheet({required this.ride});
+  const _OpenRideOfferSheet({
+    required this.ride,
+    required this.sheetTitle,
+    required this.offerLabel,
+  });
 
   final OpenRide ride;
+  final String sheetTitle;
+  final String offerLabel;
 
   @override
   ConsumerState<_OpenRideOfferSheet> createState() =>
@@ -353,37 +378,58 @@ class _OpenRideOfferSheet extends ConsumerStatefulWidget {
 }
 
 class _OpenRideOfferSheetState extends ConsumerState<_OpenRideOfferSheet> {
-  late String _type;
+  bool _counterMode = false;
   late final TextEditingController _amountController;
+  Timer? _ticker;
+  Duration? _remaining;
+  Duration _window = Duration.zero;
 
   @override
   void initState() {
     super.initState();
-    _type = 'PASSENGER_PRICE_ACCEPTED';
     _amountController = TextEditingController(
       text: openRideOfferRupeesFieldText(widget.ride.passengerOfferMinor),
     );
+    final expiresAt = DateTime.tryParse(widget.ride.expiresAt);
+    if (expiresAt != null) {
+      final left = expiresAt.difference(DateTime.now());
+      if (left > Duration.zero) {
+        _remaining = left;
+        _window = left;
+        _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+          final next = expiresAt.difference(DateTime.now());
+          if (!mounted) return;
+          if (next <= Duration.zero) {
+            _ticker?.cancel();
+          }
+          setState(() => _remaining = next);
+        });
+      }
+    }
   }
 
   @override
   void dispose() {
+    _ticker?.cancel();
     _amountController.dispose();
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    final amountMinor =
-        parseOpenRideOfferRupeesToMinor(_amountController.text);
+  Future<void> _submit({required bool counter}) async {
+    final amountMinor = counter
+        ? parseOpenRideOfferRupeesToMinor(_amountController.text)
+        : widget.ride.passengerOfferMinor;
     if (amountMinor == null) return;
     final vm = ref.read(driverOpenRidesViewModelProvider.notifier);
     await vm.submitOffer(
       ride: widget.ride,
-      type: _type,
+      type: counter ? 'DRIVER_COUNTEROFFER' : 'PASSENGER_PRICE_ACCEPTED',
       amountMinor: amountMinor,
     );
     if (!mounted) return;
     final after = ref.read(driverOpenRidesViewModelProvider);
-    final success = after.lastCreatedOffer?.rideId == widget.ride.rideId &&
+    final success =
+        after.lastCreatedOffer?.rideId == widget.ride.rideId &&
         after.offerErrorMessage == null;
     final removed = !after.rides.any((r) => r.rideId == widget.ride.rideId);
     if (success || removed) {
@@ -396,85 +442,150 @@ class _OpenRideOfferSheetState extends ConsumerState<_OpenRideOfferSheet> {
     final state = ref.watch(driverOpenRidesViewModelProvider);
     final offering = state.offeringRideId == widget.ride.rideId;
     final ride = widget.ride;
+    final distanceLabel = formatOpenRideDistanceKm(ride.distanceKm);
+    final durationLabel = formatOpenRideDurationMin(ride.estimatedDurationMin);
 
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(OraSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Submit offer',
-              style: OraTypography.headline(OraColors.textPrimary),
+            DriverRequestSheetHeader(
+              title: widget.sheetTitle,
+              onBack: offering ? null : () => Navigator.of(context).pop(),
+              trailing:
+                  (_remaining != null && _remaining! > Duration.zero)
+                  ? DriverCountdownRing(
+                      remaining: _remaining!,
+                      total: _window,
+                      bright: true,
+                    )
+                  : null,
             ),
-            const SizedBox(height: OraSpacing.sm),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(OraRadius.md),
-              child: RideMapPreview(
-                model: _offerPreviewModel(ride),
-                height: 180,
-                enableMaps: ref.watch(activeRideMapsEnabledProvider),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                OraSpacing.lg,
+                OraSpacing.sm,
+                OraSpacing.lg,
+                OraSpacing.lg,
               ),
-            ),
-            const SizedBox(height: OraSpacing.md),
-            Wrap(
-              spacing: OraSpacing.xs,
-              runSpacing: OraSpacing.xs,
-              children: [
-                for (final type in driverOfferTypes)
-                  OraChip(
-                    label: type == 'PASSENGER_PRICE_ACCEPTED'
-                        ? 'Accept passenger price'
-                        : 'Counteroffer',
-                    selected: _type == type,
-                    onTap: offering
-                        ? null
-                        : () {
-                            setState(() {
-                              _type = type;
-                              if (type == 'PASSENGER_PRICE_ACCEPTED') {
-                                _amountController.text =
-                                    openRideOfferRupeesFieldText(
-                                  ride.passengerOfferMinor,
-                                );
-                              }
-                            });
-                          },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RideCardMapBanner(
+                    pickupLat: ride.pickup.lat,
+                    pickupLng: ride.pickup.lng,
+                    destinationLat: ride.destination.lat,
+                    destinationLng: ride.destination.lng,
+                    height: 118,
+                    carAssetPath: RideCardAssets.carWhite,
                   ),
-              ],
-            ),
-            const SizedBox(height: OraSpacing.md),
-            OraTextField(
-              controller: _amountController,
-              label: 'Your offer',
-              hint: 'Amount in PKR',
-              keyboardType: TextInputType.number,
-              enabled: !offering,
-            ),
-            const SizedBox(height: OraSpacing.sm),
-            Text(
-              'Passenger offer: ${formatOpenRideFareMinor(ride.passengerOfferMinor)}',
-              style: OraTypography.caption(OraColors.textMuted),
-            ),
-            if (state.offerErrorMessage != null) ...[
-              const SizedBox(height: OraSpacing.sm),
-              Text(
-                state.offerErrorMessage!,
-                style: OraTypography.caption(OraColors.dangerForeground),
+                  const SizedBox(height: OraSpacing.sm),
+                  DriverRouteCard(
+                    pickupLabel: rideCardLocationLabel(ride.pickup),
+                    destinationLabel: rideCardLocationLabel(ride.destination),
+                    pickupCaption: distanceLabel != null
+                        ? 'Pickup ($distanceLabel)'
+                        : 'Pickup',
+                  ),
+                  const SizedBox(height: OraSpacing.sm),
+                  Row(
+                    children: [
+                      if (distanceLabel != null) ...[
+                        DriverStatPill(
+                          icon: Icons.route_rounded,
+                          label: distanceLabel,
+                        ),
+                        const SizedBox(width: OraSpacing.xs),
+                      ],
+                      if (durationLabel != null) ...[
+                        DriverStatPill(
+                          icon: Icons.schedule_rounded,
+                          label: durationLabel,
+                        ),
+                        const SizedBox(width: OraSpacing.xs),
+                      ],
+                      DriverStatPill(
+                        icon: Icons.directions_car_rounded,
+                        label: ride.paymentMethod,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: OraSpacing.sm),
+                  DriverOfferCard(
+                    label: widget.offerLabel,
+                    amountLabel: formatOpenRideFareMinor(
+                      ride.passengerOfferMinor,
+                    ),
+                    onEdit: offering
+                        ? null
+                        : () => setState(() => _counterMode = !_counterMode),
+                    trailing: Image.asset(
+                      'assets/driver_tiles/wallet_3d.png',
+                      width: 56,
+                      height: 56,
+                      filterQuality: FilterQuality.medium,
+                    ),
+                  ),
+                  if (_counterMode) ...[
+                    const SizedBox(height: OraSpacing.md),
+                    OraTextField(
+                      controller: _amountController,
+                      label: 'Your offer',
+                      hint: 'Amount in PKR',
+                      keyboardType: TextInputType.number,
+                      enabled: !offering,
+                    ),
+                  ],
+                  if (state.offerErrorMessage != null) ...[
+                    const SizedBox(height: OraSpacing.sm),
+                    Text(
+                      state.offerErrorMessage!,
+                      style: OraTypography.caption(OraColors.dangerForeground),
+                    ),
+                  ],
+                  const SizedBox(height: OraSpacing.lg),
+                  if (_counterMode)
+                    DriverActionButton(
+                      label: 'Submit counteroffer',
+                      isLoading: offering,
+                      onPressed: offering ? null : () => _submit(counter: true),
+                    )
+                  else
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DriverActionButton.accept(
+                            label: 'Accept',
+                            isLoading: offering,
+                            onPressed: offering
+                                ? null
+                                : () => _submit(counter: false),
+                          ),
+                        ),
+                        const SizedBox(width: OraSpacing.sm),
+                        Expanded(
+                          child: DriverActionButton.decline(
+                            label: 'Decline',
+                            onPressed: offering
+                                ? null
+                                : () {
+                                    ref
+                                        .read(
+                                          driverOpenRidesViewModelProvider
+                                              .notifier,
+                                        )
+                                        .dismissRideLocally(ride.rideId);
+                                    Navigator.of(context).pop();
+                                  },
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
               ),
-            ],
-            const SizedBox(height: OraSpacing.lg),
-            OraButton(
-              label: 'Submit offer',
-              isLoading: offering,
-              onPressed: offering ? null : _submit,
-            ),
-            const SizedBox(height: OraSpacing.sm),
-            OraButton(
-              label: 'Cancel',
-              variant: OraButtonVariant.ghost,
-              onPressed: offering ? null : () => Navigator.of(context).pop(),
             ),
           ],
         ),
@@ -484,10 +595,7 @@ class _OpenRideOfferSheetState extends ConsumerState<_OpenRideOfferSheet> {
 }
 
 class _OpenPaginationFooter extends StatelessWidget {
-  const _OpenPaginationFooter({
-    required this.state,
-    required this.onLoadMore,
-  });
+  const _OpenPaginationFooter({required this.state, required this.onLoadMore});
 
   final DriverOpenRidesUiState state;
   final Future<void> Function() onLoadMore;

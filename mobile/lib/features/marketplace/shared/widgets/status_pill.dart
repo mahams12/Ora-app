@@ -5,13 +5,15 @@ import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 
-enum StatusPillVariant { quotation, comingSoon, notActive }
+enum StatusPillVariant { quotation, book, comingSoon, notActive }
 
 class StatusPill extends StatelessWidget {
   const StatusPill({required this.variant, super.key, this.inverse = false});
 
   const StatusPill.quotation({super.key, this.inverse = false})
     : variant = StatusPillVariant.quotation;
+  const StatusPill.book({super.key, this.inverse = false})
+    : variant = StatusPillVariant.book;
   const StatusPill.comingSoon({super.key, this.inverse = false})
     : variant = StatusPillVariant.comingSoon;
   const StatusPill.notActive({super.key, this.inverse = false})
@@ -22,18 +24,21 @@ class StatusPill extends StatelessWidget {
 
   String get _label => switch (variant) {
     StatusPillVariant.quotation => 'Quotation',
+    StatusPillVariant.book => 'Book',
     StatusPillVariant.comingSoon => 'Coming soon',
     StatusPillVariant.notActive => 'Not active',
   };
 
   Color get _foreground => switch (variant) {
     StatusPillVariant.quotation => OraColors.info,
+    StatusPillVariant.book => OraColors.success,
     StatusPillVariant.comingSoon => OraColors.gold,
     StatusPillVariant.notActive => OraColors.textMuted,
   };
 
   Color get _background => switch (variant) {
     StatusPillVariant.quotation => OraColors.infoMuted,
+    StatusPillVariant.book => OraColors.successSurface,
     StatusPillVariant.comingSoon => OraColors.goldMuted,
     StatusPillVariant.notActive => OraColors.border,
   };

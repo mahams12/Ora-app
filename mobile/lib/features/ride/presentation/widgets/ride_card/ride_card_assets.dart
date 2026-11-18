@@ -59,4 +59,3 @@ class RideCardAssetImage extends StatelessWidget {
     return Opacity(opacity: opacity, child: image);
   }
 }
-

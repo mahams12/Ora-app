@@ -216,11 +216,11 @@ async function main(): Promise<void> {
     assert(rulesOk, 'see firestore.rules locationStreams deny');
   });
 
-  await test('11. no RTDB/Redis dependency required', async () => {
+  await test('11. no RTDB/geo-store dependency required', async () => {
     // Proof ran with Firestore emulator only (FIRESTORE_EMULATOR_HOST).
-    // N2A accept must not require Redis/RTDB; URL may be set for other slices.
+    // N2A accept must not require geo-store/RTDB; URL may be set for other slices.
     assert(!!process.env.FIRESTORE_EMULATOR_HOST, 'firestore emulator');
-    assert(!process.env.REDIS_URL, 'no redis required for this N2A proof');
+    assert(!process.env.REDIS_URL, 'no geoStore required for this N2A proof');
   });
 
   await test('12. unrelated ride sentinel unchanged', async () => {

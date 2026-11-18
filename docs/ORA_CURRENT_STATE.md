@@ -38,6 +38,8 @@ Read this first in any new Cursor/engineering session. Then follow links to phas
 | API surface | [`docs/architecture/API_CONTRACT_INDEX.md`](architecture/API_CONTRACT_INDEX.md) |
 | ADRs | [`docs/architecture/DECISION_INDEX.md`](architecture/DECISION_INDEX.md) |
 | Engineering rules | [`docs/ENGINEERING_RULES.md`](ENGINEERING_RULES.md) |
+| Architecture cost audit (2026-11) | [`docs/audits/ORA_ARCHITECTURE_COST_AUDIT.md`](audits/ORA_ARCHITECTURE_COST_AUDIT.md) — cost-first audit + live GCP inventory + geo benchmark; adaptive flags wired+verified; H3 rejected; ~$0 idle cost |
+| 2026-11-18 stabilization fixes | Redis-free codebase rename (`src/geo`), wallet/fee mutual exclusion (`SUPERSEDED_BY_COMMISSION`), `DRIVER_AUTO_APPROVE` default OFF + `POST /v1/internal/drivers/:uid/status` admin path, project-ID default fixes, index dedup, test-fork bound — all locally verified (784/784 unit, 52/52 emulator E2E) |
 
 ---
 
@@ -97,10 +99,136 @@ Plan: [`implementation/marketplace/ORA_MARKETPLACE_AUDIT_AND_PLAN.md`](implement
 | Step | Scope | Status |
 | ---- | ----- | ------ |
 | 1 | Four-module home + Rides hub | IMPLEMENTED (frontend only, PR #2) |
-| 2 | Logistics, Services and Rental catalogues (no backend submissions or fake listings) | IMPLEMENTED (frontend only, redesign branch) |
-| 3+ | Vendor registration, admin, Storage, marketplace booking backend | NOT STARTED — needs approval (Storage requires Blaze) |
+| 2 | Logistics, Services and Rental catalogues | IMPLEMENTED |
+| 3 | Vendor registration + admin approval (per-role: service/rental/cargo) | IMPLEMENTED — local verified |
+| 4 | Listing CRUD APIs (all three verticals, Firestore-backed) | IMPLEMENTED — local verified |
+| 5 | Booking/quotation workflow APIs | IMPLEMENTED — local verified |
+| 6 | Mobile: vendor dashboards, posting forms, customer discovery, booking UIs | IMPLEMENTED — local verified |
+| 7 | Photo uploads | data-URL payloads only; GCS Storage deferred (needs Blaze) |
 
-The home and module screens use the Ora navy/gold/teal theme, Sora/Inter typography and locally bundled CC0/PDM photos. Logistics quotations remain disabled; production provider/listing/operator lists show honest empty states. The shared module bar routes to Rides, Logistics, Rental and Services; Wallet opens the existing unavailable sheet. No marketplace backend routes, Firestore collections, rules or indexes were added. Ride matching, geo projection, pricing and passenger/driver workflows are untouched by this work.
+### Vendor application gate
+
+`users/{uid}.vendorApplications` is a server-managed map `{service|rental|cargo → {status, submittedAt, reviewedAt}}`. `POST /v1/auth/vendor-application` submits an application (idempotent, validated). Status flow: none → pending → approved / rejected; suspended blocks all vendor actions server-side. Admin approval is currently via `SEED_ACTION=vendor-status` in `scripts/seed_device_test_accounts.ts` (no admin UI). Mobile gates every `/vendor*`, `/rental-vendor*`, `/logistics-vendor*` route on approval; unregistered users see only the registration flow, pending users see "under review", approved users land on their role's dashboard only. Verified by `scripts/verify_vendor_gate.ts` (10/10 checks).
+
+### Marketplace backend
+
+`src/marketplace/` (`listings.ts`, `bookings.ts`, `routes.ts`, `types.ts`, generated `catalogue_v1.ts` from `mobile/assets/marketplace/catalogue_v1.json`):
+
+- `POST/GET/PATCH/DELETE /v1/vendor/listings` — role-approved vendors only, ownership enforced, catalogue-validated category/subcategory, per-type price units, photos as bounded JPEG data URLs (≤6, size-budgeted).
+- `GET /v1/marketplace/listings[/:id]` — customer discovery, published-only.
+- `POST/GET /v1/marketplace/bookings[/:id]` — booking lifecycle `requested → quoted → confirmed → in_progress → completed`, plus `rejected`/`cancelled`. Vendor actions `quote|accept|reject|cancel|start|complete`; customer actions `accept|cancel`. Duplicate-active-booking guard (409), rental date-overlap check at confirm time (409), invalid transitions (409), suspended-vendor enforcement, per-request status history.
+
+Firestore collections: `marketplaceListings`, `marketplaceBookings` (indexes added to `firestore.indexes.json`). Scoped JSON body parser raised for marketplace mounts only (photo data URLs); global 32KB limit unchanged.
+
+### Mobile marketplace
+
+Unified `MarketplaceListing`/`MarketplaceBooking` models (`mobile/lib/features/marketplace/data/`). All three vendor posting forms submit real API requests (create + edit via route extra); dashboards show live listings + booking inboxes. Customer surfaces (services/rental/logistics category views, home rows, detail views) query `publishedListingsProvider`; demo fixtures remain behind `demoListingsEnabledProvider` and are sample-only. Booking request sheet for service/rental; logistics quote form submits real requests with operator picker. Vendor action sheets (quote/accept/reject/start/complete/cancel) and customer booking history + accept-quote/cancel wired.
+
+### Verification (local emulators only, zero cloud calls)
+
+- `scripts/test_marketplace_e2e.ts` — **45/45 checks** against live emulator stack: per-role gating, multi-role vendors, listing CRUD/discovery/ownership/pause, full booking lifecycles (service accept→start→complete, cargo quote→customer-accept, rental overlap 409), idempotent replay, duplicate guard, invalid transitions, suspended-vendor blocks, inbox isolation.
+- `scripts/test_marketplace_fidelity.ts` — **42/42 checks**: zero data substitution verified at raw-Firestore-doc level. All 11 listing fields (incl. unicode titles, Urdu/emoji/special-char descriptions, photo order, per-vertical `details` maps) round-trip exactly through create → Firestore → discovery → detail → edit → booking → quote → inbox. Two vendors in the same category confirmed isolated (no cross-vendor field bleed). Booking docs snapshot `listingId`, `listingTitle`, `vendorId`, `customerId`, and the quoted `amount`/`note`; confirmed bookings preserve the same references. Listings survive backend-process restart (Firestore is SoT).
+- `src/__tests__/marketplace.test.ts` — 19 backend tests pass.
+- Flutter: `flutter analyze` clean; marketplace suite 20/20; full suite 878 tests pass.
+- Frontend↔backend contract audited: `MarketplaceListing.fromJson` maps backend fields 1:1; per-vertical display keys (`subcategoryName`, `amenities`/`features`, `availableFrom/To`, `vehicleTypeName`, `capacity`, `serviceArea`, `availability`, `whatsappNumber`) are written by the vendor forms into `details` and read back verbatim — no client-side substitution. Demo fixtures require `--dart-define=ORA_DEMO_LISTINGS` (defaults off).
+
+### Known gaps — NOT production-ready
+
+- Not deployed anywhere; no production traffic validated. App Check enforcement, photo upload to Storage, admin approval UI, and push notifications for booking events are unimplemented.
+- Listing photos live inside Firestore docs (data URLs) — fine locally, but a real Storage upload path is needed before launch.
+- `vendorApplications` approval is seed-script-driven; there is no admin console.
+
+Ride matching, geo projection, pricing, cash payments and passenger/driver workflows are untouched by this work. The driver wallet now exists (see Shared Partner Wallet below) but is local-only.
+
+---
+
+## Shared Partner Wallet & Commission (local, verified)
+
+inDrive-style prepaid points wallet shared by all four partner roles.
+**One wallet per UID** — `driverStatus`/`vendorApplications` approvals map to
+roles on the same account; a multi-role partner sees one balance on every
+dashboard. Customers never need a wallet.
+
+### Collections (all server-only — `firestore.rules` denies client writes)
+
+- `walletAccounts/{uid}` — `balanceMinor` (paisa), version; lazily created.
+- `walletLedgerEntries/{entryId}` — append-only; `type` ∈ TOPUP_CREDIT /
+  COMMISSION_DEBIT / WITHDRAWAL_DEBIT / ADJUSTMENT; carries `sourceType`
+  (ride|booking), `sourceId`, `role`, `grossMinor`, `commissionBps`,
+  `pointsDelta`, `balanceAfterMinor`, `idempotencyKey`. Deterministic entry
+  id `commission-{ride|booking}-{id}` makes deduction exactly-once.
+- `walletTopups/{topupId}` — PENDING → CREDITED/PAID/REJECTED; idempotent
+  per (uid, Idempotency-Key). Client POSTs create PENDING only — points
+  never credit from a client call.
+- `walletConfig/global` — `minorPerPoint` (default 100 → 1 pt = Rs 1),
+  `commissionBps` per role (default 1000 = 10%), `lowBalanceWarnMinor`.
+
+### HTTP surface
+
+- `GET /v1/wallet` — account + points + config + roles + `lowBalance` +
+  `acceptBlocked` (403 NOT_A_PARTNER for non-partners).
+- `GET /v1/wallet/transactions`, `GET /v1/wallet/topups`.
+- `POST /v1/wallet/topups` — `{kind: credit|debit, points, method,
+  reference?}` → 201 PENDING. Methods: easypaisa/jazzcash/bank_transfer/other.
+- `POST /v1/internal/wallet/topups/:id/resolve` — worker-token only
+  (`X-Ora-Worker-Token`); `approve` posts the ledger entry + moves balance
+  atomically; replay-safe; withdrawal approve enforces sufficient balance
+  (409 INSUFFICIENT_BALANCE). Stands in for the PSP webhook until real
+  payment integration is approved.
+
+### Commission (locked rules)
+
+10% of the completed gross, per-role bps configurable; floor rounding in
+minor units. Charged **inside the same Firestore transaction** that marks
+the work completed — `progressAssignedRide` (settleInTx hook, agreed fare)
+and marketplace `vendorTransition(action:'complete')` (amount priority:
+request.finalAmount → quote → request.amount → listing price). Never on
+post/accept/start. Booking/ride docs record `commission{points,bps,
+ledgerEntryId}`.
+
+### Insufficient balance
+
+Completion is never blocked; the balance may go **negative**. While
+negative, the partner cannot accept new work — `acceptInvite` and
+marketplace `accept` return **402 WALLET_BALANCE_LOW**. Recharge restores
+eligibility. (Note: `POST /rides/:id/offers` counteroffers are not gated —
+a posted offer doesn't guarantee assignment; gating is at accept time.)
+
+### Mobile
+
+`lib/features/wallet/partner_wallet.dart` — `PartnerWalletApi`,
+`partnerWalletProvider` (account + ledger + topups), actions provider.
+Shared `DriverWalletView`/`DriverAddPointsView` mounted under every role
+shell: `/driver/wallet`, `/logistics-vendor/wallet`, `/rental-vendor/wallet`,
+`/vendor/wallet` (+ add-points). Dashboard entries: driver bottom-nav,
+drawer + profile row, logistics wallet tab, services/rental home Wallet
+buttons. UI shows balance, Add Points, Withdraw (PENDING debit), real
+per-role commission rates, Recent Transactions, Recharge History with
+status pills, low-balance / accept-blocked warnings, pull-to-refresh.
+The UI never credits points locally — submit → PENDING → "points credit
+once payment is verified".
+
+### Verification (2026-11-18)
+
+- `src/__tests__/wallet.test.ts` — 14 tests: partner gating, shared
+  multi-role balance, PENDING top-up + idempotent approve/reject, client
+  self-resolve forbidden, commission at completion only, exactly-once
+  ledger, quote/finalAmount/config-override amounts, negative balance →
+  402 accept block → recharge restore, ride-completion commission,
+  withdrawal insufficient-balance.
+- Full backend suite: **770 tests / 49 files pass**, zero regressions.
+- `flutter analyze` clean on all touched files; drive harness shots saved
+  for wallet in driver + logistics shells.
+
+### Remaining gaps
+
+- Top-up verification is an internal admin/worker call — no real PSP
+  webhook, no billing, nothing deployed (intentional pending approval).
+- Customer-side completion confirm/dispute timeout is not automated;
+  settlement currently keys on partner "complete" (+ marketplace payment
+  confirm flags in request).
+- Withdrawal payout execution is manual/ops-side.
+- No admin console for config/top-up review yet.
 
 ---
 

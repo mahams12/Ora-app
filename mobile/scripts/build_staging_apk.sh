@@ -80,7 +80,7 @@ flutter build apk --debug \
   --dart-define=ORA_APP_CHECK=false \
   --dart-define=ORA_API_BASE_URL="$ORA_API_BASE_URL" \
   --dart-define=ORA_GOOGLE_PLACES_API_KEY="$ORA_GOOGLE_PLACES_API_KEY" \
-  --dart-define=ORA_FIREBASE_DATABASE_URL="${ORA_FIREBASE_DATABASE_URL:-https://ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app}" \
+  --dart-define=ORA_FIREBASE_DATABASE_URL="${ORA_FIREBASE_DATABASE_URL:-https://oraapp-a9be5-default-rtdb.asia-southeast1.firebasedatabase.app}" \
   --dart-define=ORA_ADAPTIVE_PRESENCE="${ORA_ADAPTIVE_PRESENCE:-true}" \
   --dart-define=MAPLIBRE_TILE_KEY="${MAPLIBRE_TILE_KEY:-}"
 

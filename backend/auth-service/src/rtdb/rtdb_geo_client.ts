@@ -3,8 +3,8 @@ import {
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   type GeoRadiusHit,
-  type RedisGeoClient,
-} from '../redis/types';
+  type GeoStoreClient,
+} from '../geo/types';
 import {
   GEO_KEY_PRECISION,
   GEO_MAX_CELL_QUERIES,
@@ -97,7 +97,7 @@ function kmToLngDegrees(km: number, atLat: number): number {
 export function createRtdbGeoClient(
   rootRef: RtdbRefLike,
   options?: RtdbGeoClientOptions,
-): RedisGeoClient & { flushdb(): Promise<'OK'>; quit(): Promise<'OK'> } {
+): GeoStoreClient & { flushdb(): Promise<'OK'>; quit(): Promise<'OK'> } {
   const geoRef = rootRef.child(GEO_ROOT);
   const now = options?.nowMs ?? Date.now;
   const scanLimit = options?.scanLimit ?? GEO_QUERY_SCAN_LIMIT;
@@ -348,7 +348,7 @@ export function createRtdbGeoClient(
         const ref = geoRef.child(markerDocId(key));
         const snap = await ref.get();
         if (!snap.exists()) continue;
-        // null = field delete — mirrors Redis DEL leaving GEO membership.
+        // null = field delete — mirrors geo-store DEL leaving GEO membership.
         await ref.update({
           markerValue: null,
           markerExpiresAtMs: null,

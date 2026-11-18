@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,6 +14,8 @@ class RentalListingCardModel {
     required this.title,
     this.location,
     this.imageAsset,
+    this.imagePath,
+    this.image,
     this.rating,
     this.reviewCount,
     this.priceLabel,
@@ -24,6 +28,14 @@ class RentalListingCardModel {
   final String title;
   final String? location;
   final String? imageAsset;
+
+  /// Local file path for vendor-posted photos — takes precedence over
+  /// [imageAsset] since real listings ship device files, not assets.
+  final String? imagePath;
+
+  /// Decoded provider (e.g. `MemoryImage` from a listing data-URL) —
+  /// takes precedence over both path and asset when set.
+  final ImageProvider? image;
   final double? rating;
   final int? reviewCount;
   final String? priceLabel;
@@ -125,7 +137,24 @@ class RentalListingCard extends StatelessWidget {
                     const Positioned.fill(
                       child: ColoredBox(color: OraColors.primaryMuted),
                     ),
-                    if (model.imageAsset != null)
+                    if (model.image != null)
+                      Image(
+                        image: model.image!,
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.medium,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const ColoredBox(color: OraColors.surfaceStrong),
+                      )
+                    else if (model.imagePath != null)
+                      Image.file(
+                        File(model.imagePath!),
+                        cacheWidth: 900,
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.medium,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const ColoredBox(color: OraColors.surfaceStrong),
+                      )
+                    else if (model.imageAsset != null)
                       Image.asset(
                         model.imageAsset!,
                         cacheWidth: 900,
@@ -281,7 +310,23 @@ class _HorizontalRentalListingCard extends StatelessWidget {
                       const Positioned.fill(
                         child: ColoredBox(color: OraColors.primaryMuted),
                       ),
-                      if (model.imageAsset != null)
+                      if (model.image != null)
+                        Image(
+                          image: model.image!,
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.medium,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const ColoredBox(color: OraColors.surfaceStrong),
+                        )
+                      else if (model.imagePath != null)
+                        Image.file(
+                          File(model.imagePath!),
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.medium,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const ColoredBox(color: OraColors.surfaceStrong),
+                        )
+                      else if (model.imageAsset != null)
                         Image.asset(
                           model.imageAsset!,
                           fit: BoxFit.contain,
@@ -471,7 +516,9 @@ class _VerifiedBadge extends StatelessWidget {
       child: Text(
         isVerified ? 'Verified host' : 'Not verified',
         maxLines: 1,
-        style: OraTypography.caption(OraColors.textPrimary).copyWith(fontSize: 9),
+        style: OraTypography.caption(
+          OraColors.textPrimary,
+        ).copyWith(fontSize: 9),
       ),
     );
   }

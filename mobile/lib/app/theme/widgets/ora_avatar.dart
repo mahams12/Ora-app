@@ -43,12 +43,11 @@ class OraAvatar extends StatelessWidget {
           : Center(
               child: Text(
                 initials,
-                style: OraTypography.label(
-                  OraColors.primaryForeground,
-                ).copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: fontSize ?? size * 0.36,
-                ),
+                style: OraTypography.label(OraColors.primaryForeground)
+                    .copyWith(
+                      fontWeight: FontWeight.w800,
+                      fontSize: fontSize ?? size * 0.36,
+                    ),
               ),
             ),
     );

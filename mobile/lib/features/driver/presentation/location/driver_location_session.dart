@@ -154,6 +154,4 @@ final driverTripLatestFixProvider = StateProvider.autoDispose
 /// Whether a trip location publisher is actively streaming for any ride.
 /// Consumed by the adaptive presence publisher to suppress redundant idle
 /// publishes while trip packets keep the shared geo marker fresh.
-final driverTripLocationActiveProvider = StateProvider<bool>(
-  (ref) => false,
-);
+final driverTripLocationActiveProvider = StateProvider<bool>((ref) => false);

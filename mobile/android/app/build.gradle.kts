@@ -28,21 +28,11 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
-// Maps SDK Android key — NEVER commit the raw key.
-// Preference: env ORA_GOOGLE_MAPS_ANDROID_API_KEY, else local.properties.
 val localPropertiesFile = rootProject.file("local.properties")
 val localProperties = Properties()
 if (localPropertiesFile.exists()) {
     localProperties.load(FileInputStream(localPropertiesFile))
 }
-val mapsAndroidApiKey: String =
-    System.getenv("ORA_GOOGLE_MAPS_ANDROID_API_KEY")
-        ?.trim()
-        ?.takeIf { it.isNotEmpty() }
-        ?: localProperties.getProperty("ORA_GOOGLE_MAPS_ANDROID_API_KEY")
-            ?.trim()
-            ?.takeIf { it.isNotEmpty() }
-        ?: ""
 
 android {
     namespace = "com.ora.ora"
@@ -65,7 +55,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        manifestPlaceholders["ORA_GOOGLE_MAPS_ANDROID_API_KEY"] = mapsAndroidApiKey
+
     }
 
     signingConfigs {

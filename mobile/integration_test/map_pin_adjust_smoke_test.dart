@@ -33,8 +33,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            deviceLocationPortProvider
-                .overrideWithValue(_FakeDeviceLocation()),
+            deviceLocationPortProvider.overrideWithValue(_FakeDeviceLocation()),
           ],
           child: const MaterialApp(home: RideRequestView()),
         ),
@@ -45,23 +44,21 @@ void main() {
         await tester.pump(const Duration(milliseconds: 500));
       }
       // ignore: avoid_print
-      print(
-        'STAGE=mounted map=${tester.any(find.byType(MapLibreMap))}',
-      );
+      print('STAGE=mounted map=${tester.any(find.byType(MapLibreMap))}');
 
       final element = tester.element(find.byType(RideRequestView));
       final container = ProviderScope.containerOf(element);
-      final vm =
-          container.read(rideRequestViewModelProvider.notifier);
+      final vm = container.read(rideRequestViewModelProvider.notifier);
 
       // Real naming path can hang on Places HTTP (billing-blocked project)
       // before the device geocoder runs — bound it so the test can proceed.
-      await vm
-          .useCurrentLocationForPickup()
-          .timeout(const Duration(seconds: 45), onTimeout: () {
-        // ignore: avoid_print
-        print('STAGE=gps_name_lookup_timed_out');
-      });
+      await vm.useCurrentLocationForPickup().timeout(
+        const Duration(seconds: 45),
+        onTimeout: () {
+          // ignore: avoid_print
+          print('STAGE=gps_name_lookup_timed_out');
+        },
+      );
       for (var i = 0; i < 10; i++) {
         await tester.pump(const Duration(milliseconds: 500));
       }
@@ -90,9 +87,7 @@ void main() {
       if (tester.any(mapFinder)) {
         // Tap off-center so the pickup symbol does not consume the gesture.
         final center = tester.getCenter(mapFinder);
-        await tester.tapAt(
-          Offset(center.dx + 55, center.dy - 80),
-        );
+        await tester.tapAt(Offset(center.dx + 55, center.dy - 80));
         for (var i = 0; i < 30; i++) {
           await tester.pump(const Duration(milliseconds: 500));
         }

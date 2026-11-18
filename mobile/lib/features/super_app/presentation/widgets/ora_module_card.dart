@@ -65,7 +65,7 @@ class _OraModuleCardState extends State<OraModuleCard> {
                         right: 0,
                         height: cardHeight,
                         child: CustomPaint(
-                          painter: _BlobCardPainter(),
+                          painter: const OraBlobCardPainter(),
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(
                               20,
@@ -156,8 +156,9 @@ class _OraModuleCardState extends State<OraModuleCard> {
 }
 
 /// Paints the glass blob + orange sun, scaled from the prototype's
-/// 275x240 viewBox.
-class _BlobCardPainter extends CustomPainter {
+/// 275x240 viewBox. Public so the driver module tiles match pixel-for-pixel.
+class OraBlobCardPainter extends CustomPainter {
+  const OraBlobCardPainter();
   @override
   void paint(Canvas canvas, Size size) {
     final sx = size.width / 275;
@@ -261,5 +262,5 @@ class _BlobCardPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_BlobCardPainter oldDelegate) => false;
+  bool shouldRepaint(OraBlobCardPainter oldDelegate) => false;
 }

@@ -6,12 +6,7 @@ import '../../../ride/domain/entities/ride.dart';
 import '../../../ride/domain/use_cases/ride_use_cases.dart';
 import '../../domain/driver_earnings_summary.dart';
 
-enum DriverEarningsPhase {
-  initialLoading,
-  ready,
-  empty,
-  fatalError,
-}
+enum DriverEarningsPhase { initialLoading, ready, empty, fatalError }
 
 /// Completed rides only (server filter `status=completed` →
 /// RIDE_COMPLETED + RIDE_CLOSED). Totals are verified trip fares —
@@ -127,8 +122,7 @@ class DriverEarningsViewModel
   }
 
   Future<void> refresh() async {
-    if (_refreshInFlight ||
-        state.phase == DriverEarningsPhase.initialLoading) {
+    if (_refreshInFlight || state.phase == DriverEarningsPhase.initialLoading) {
       return;
     }
     _refreshInFlight = true;
@@ -278,7 +272,8 @@ class DriverEarningsViewModel
   }
 }
 
-final driverEarningsViewModelProvider = NotifierProvider.autoDispose<
-    DriverEarningsViewModel, DriverEarningsUiState>(
-  DriverEarningsViewModel.new,
-);
+final driverEarningsViewModelProvider =
+    NotifierProvider.autoDispose<
+      DriverEarningsViewModel,
+      DriverEarningsUiState
+    >(DriverEarningsViewModel.new);

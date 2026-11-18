@@ -13,6 +13,9 @@ import '../../../../../app/theme/widgets/ora_section_header.dart';
 import '../../../../../core/utils/responsive.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
+import '../../../data/marketplace_models.dart';
+import '../../../data/marketplace_providers.dart';
+import '../../../presentation/widgets/booking_request_sheet.dart';
 import '../../../shared/demo/demo_listings.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/marketplace_search_field.dart';
@@ -101,11 +104,23 @@ class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
           message: 'Please try again later.',
         ),
         data: (data) {
+          final vendorListings =
+              (ref
+                          .watch(
+                            publishedListingsProvider(
+                              const PublishedQuery(type: 'service'),
+                            ),
+                          )
+                          .value ??
+                      const <MarketplaceListing>[])
+                  .take(4)
+                  .toList();
           final nearYouProviders = demoEnabled && data.services.isNotEmpty
               ? demoServiceProviders(
                   data.services.first.subcategories.first,
                 ).take(2).toList()
               : const <ServiceProviderSummary>[];
+          final nearYouCount = vendorListings.length + nearYouProviders.length;
           return Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 960),
@@ -173,7 +188,7 @@ class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
                       ),
                     ),
                   ),
-                  if (nearYouProviders.isNotEmpty)
+                  if (nearYouCount > 0)
                     SliverPadding(
                       padding: EdgeInsets.fromLTRB(
                         padding,
@@ -187,15 +202,43 @@ class _ServicesHomeViewState extends ConsumerState<ServicesHomeView> {
                           children: [
                             const OraSectionHeader(title: 'Near you'),
                             const SizedBox(height: OraSpacing.sm),
-                            for (final provider in nearYouProviders) ...[
-                              ProviderCard(
-                                model: provider,
-                                isSample: true,
-                                onBookmark: () => showDemoBookingSheet(context),
-                                onContact: () => showDemoBookingSheet(context),
-                                onViewProfile: () =>
-                                    showDemoBookingSheet(context),
-                              ),
+                            for (
+                              var index = 0;
+                              index < nearYouCount;
+                              index++
+                            ) ...[
+                              if (index < vendorListings.length)
+                                ProviderCard(
+                                  model: ServiceProviderSummary(
+                                    name: vendorListings[index].vendorName,
+                                    specialization: vendorListings[index].title,
+                                    location: vendorListings[index].location,
+                                    photo: vendorListings[index].coverImage,
+                                    rate: vendorListings[index].priceLabel,
+                                    isVerified: true,
+                                  ),
+                                  onContact: () => showBookingRequestSheet(
+                                    context,
+                                    vendorListings[index],
+                                  ),
+                                  onViewProfile: () => showBookingRequestSheet(
+                                    context,
+                                    vendorListings[index],
+                                  ),
+                                )
+                              else
+                                ProviderCard(
+                                  model:
+                                      nearYouProviders[index -
+                                          vendorListings.length],
+                                  isSample: true,
+                                  onBookmark: () =>
+                                      showDemoBookingSheet(context),
+                                  onContact: () =>
+                                      showDemoBookingSheet(context),
+                                  onViewProfile: () =>
+                                      showDemoBookingSheet(context),
+                                ),
                               const SizedBox(height: OraSpacing.sm),
                             ],
                           ],
@@ -303,50 +346,51 @@ class _ServiceCategoryTile extends StatelessWidget {
             width: 96,
             height: 108,
             child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: OraColors.surfaceElevated,
-              borderRadius: radius,
-              boxShadow: OraElevation.cardShadow,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              borderRadius: radius,
-              child: InkWell(
-            excludeFromSemantics: true,
-            onTap: onTap,
-            borderRadius: radius,
-            child: Padding(
-              padding: const EdgeInsets.all(OraSpacing.xs),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  OraFloaty(
-                    child: Image.asset(
-                      'assets/marketplace/${category.image}',
-                      width: 44,
-                      height: 44,
-                      fit: BoxFit.contain,
-                      filterQuality: FilterQuality.medium,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.category_outlined,
-                        size: 26,
-                        color: OraColors.primary,
-                      ),
+              decoration: BoxDecoration(
+                color: OraColors.surfaceElevated,
+                borderRadius: radius,
+                boxShadow: OraElevation.cardShadow,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: radius,
+                child: InkWell(
+                  excludeFromSemantics: true,
+                  onTap: onTap,
+                  borderRadius: radius,
+                  child: Padding(
+                    padding: const EdgeInsets.all(OraSpacing.xs),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        OraFloaty(
+                          child: Image.asset(
+                            'assets/marketplace/${category.image}',
+                            width: 44,
+                            height: 44,
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.medium,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                                  Icons.category_outlined,
+                                  size: 26,
+                                  color: OraColors.primary,
+                                ),
+                          ),
+                        ),
+                        const SizedBox(height: OraSpacing.xs),
+                        Text(
+                          category.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: OraTypography.caption(OraColors.textPrimary),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: OraSpacing.xs),
-                  Text(
-                    category.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: OraTypography.caption(OraColors.textPrimary),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-            ),
             ),
           ),
         ),

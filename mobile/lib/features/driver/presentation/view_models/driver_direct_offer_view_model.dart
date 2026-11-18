@@ -10,16 +10,9 @@ import '../../../../core/storage/idempotency_nonce_store.dart';
 import '../../../ride/domain/entities/ride.dart';
 import '../../../ride/domain/use_cases/ride_use_cases.dart';
 
-const driverOfferTypes = [
-  'PASSENGER_PRICE_ACCEPTED',
-  'DRIVER_COUNTEROFFER',
-];
+const driverOfferTypes = ['PASSENGER_PRICE_ACCEPTED', 'DRIVER_COUNTEROFFER'];
 
-enum DriverDirectOfferPhase {
-  idle,
-  creating,
-  withdrawing,
-}
+enum DriverDirectOfferPhase { idle, creating, withdrawing }
 
 class DriverDirectOfferUiState {
   const DriverDirectOfferUiState({
@@ -116,10 +109,7 @@ class DriverDirectOfferViewModel
   }
 
   void setExpectedRequestVersion(String value) {
-    state = state.copyWith(
-      expectedRequestVersion: value,
-      clearError: true,
-    );
+    state = state.copyWith(expectedRequestVersion: value, clearError: true);
   }
 
   void setType(String value) {
@@ -135,8 +125,9 @@ class DriverDirectOfferViewModel
     if (!state.canCreate) return;
 
     final rideId = state.rideId.trim();
-    final expectedRequestVersion =
-        int.parse(state.expectedRequestVersion.trim());
+    final expectedRequestVersion = int.parse(
+      state.expectedRequestVersion.trim(),
+    );
     final amountMinor = int.parse(state.amountMinor.trim());
     final type = state.type;
 
@@ -231,7 +222,8 @@ class DriverDirectOfferViewModel
       orElse: () => null,
     );
 
-    final definitive = code == 'VERSION_CONFLICT' ||
+    final definitive =
+        code == 'VERSION_CONFLICT' ||
         code == 'STATE_CONFLICT' ||
         code == 'IDEMPOTENCY_KEY_REUSED';
 
@@ -255,7 +247,8 @@ class DriverDirectOfferViewModel
   }
 }
 
-final driverDirectOfferViewModelProvider = NotifierProvider.autoDispose<
-    DriverDirectOfferViewModel, DriverDirectOfferUiState>(
-  DriverDirectOfferViewModel.new,
-);
+final driverDirectOfferViewModelProvider =
+    NotifierProvider.autoDispose<
+      DriverDirectOfferViewModel,
+      DriverDirectOfferUiState
+    >(DriverDirectOfferViewModel.new);

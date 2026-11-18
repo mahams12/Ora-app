@@ -9,7 +9,7 @@
  */
 
 import type { Firestore } from 'firebase-admin/firestore';
-import { normalizeCitySlug } from '../redis/types';
+import { normalizeCitySlug } from '../geo/types';
 import {
   DEFAULT_OFFER_MAX_RATIO,
   DEFAULT_OFFER_MIN_RATIO,

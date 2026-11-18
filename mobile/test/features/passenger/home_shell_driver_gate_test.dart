@@ -135,7 +135,7 @@ void main() {
 
       await tester.tap(find.byTooltip('Menu').first);
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Switch to driver mode'));
+      await tester.ensureVisible(find.text('Earn on ORA'));
       await tester.drag(
         find
             .descendant(
@@ -146,11 +146,15 @@ void main() {
         const Offset(0, -120),
       );
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Switch to driver mode'));
-      await tester.tap(find.text('Switch to driver mode'));
+      await tester.ensureVisible(find.text('Earn on ORA'));
+      await tester.tap(find.text('Earn on ORA'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Switch to Driver'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Open ride requests'), findsOneWidget);
+      // Quick tile + recents row both expose the entry point on driver home —
+      // at least one visible "Open ride requests" without opening the drawer.
+      expect(find.text('Open ride requests'), findsWidgets);
       expect(find.text('Coming later'), findsNothing);
       expect(find.text('Driver mode'), findsNothing);
     },

@@ -23,11 +23,7 @@ final class LocationPublishAccepted extends LocationPublishResult {
 }
 
 final class LocationPublishFailed extends LocationPublishResult {
-  const LocationPublishFailed({
-    required this.kind,
-    this.statusCode,
-    this.code,
-  });
+  const LocationPublishFailed({required this.kind, this.statusCode, this.code});
 
   final LocationPublishFailureKind kind;
   final int? statusCode;
@@ -202,41 +198,41 @@ class ApiDriverLocationRemoteDataSource
 
   LocationPublishFailed _fromAppFailure(AppFailure failure) {
     return switch (failure) {
-      UnauthorizedFailure() || SessionExpiredFailure() =>
-        const LocationPublishFailed(
-          kind: LocationPublishFailureKind.unauthorized,
-          statusCode: 401,
-        ),
-      ForbiddenFailure() || AccountDisabledFailure() =>
-        const LocationPublishFailed(
-          kind: LocationPublishFailureKind.forbidden,
-          statusCode: 403,
-        ),
+      UnauthorizedFailure() ||
+      SessionExpiredFailure() => const LocationPublishFailed(
+        kind: LocationPublishFailureKind.unauthorized,
+        statusCode: 401,
+      ),
+      ForbiddenFailure() ||
+      AccountDisabledFailure() => const LocationPublishFailed(
+        kind: LocationPublishFailureKind.forbidden,
+        statusCode: 403,
+      ),
       TimeoutFailure() => const LocationPublishFailed(
-          kind: LocationPublishFailureKind.timeout,
-        ),
+        kind: LocationPublishFailureKind.timeout,
+      ),
       NetworkFailure(:final statusCode, :final code) => _fromStatus(
-          statusCode: statusCode,
-          code: code,
-        ),
+        statusCode: statusCode,
+        code: code,
+      ),
       ValidationFailure(:final message) => LocationPublishFailed(
-          kind: _isSequenceMessage(message)
-              ? LocationPublishFailureKind.sequenceViolation
-              : LocationPublishFailureKind.invalidOrStale,
-          statusCode: 422,
-          code: _isSequenceMessage(message) ? 'SEQUENCE_VIOLATION' : null,
-        ),
+        kind: _isSequenceMessage(message)
+            ? LocationPublishFailureKind.sequenceViolation
+            : LocationPublishFailureKind.invalidOrStale,
+        statusCode: 422,
+        code: _isSequenceMessage(message) ? 'SEQUENCE_VIOLATION' : null,
+      ),
       TooManyAttemptsFailure() => const LocationPublishFailed(
-          kind: LocationPublishFailureKind.rateLimited,
-          statusCode: 429,
-        ),
+        kind: LocationPublishFailureKind.rateLimited,
+        statusCode: 429,
+      ),
       ServerFailure(:final statusCode) => LocationPublishFailed(
-          kind: LocationPublishFailureKind.server,
-          statusCode: statusCode,
-        ),
+        kind: LocationPublishFailureKind.server,
+        statusCode: statusCode,
+      ),
       _ => const LocationPublishFailed(
-          kind: LocationPublishFailureKind.unknown,
-        ),
+        kind: LocationPublishFailureKind.unknown,
+      ),
     };
   }
 
@@ -259,7 +255,8 @@ class ApiDriverLocationRemoteDataSource
       );
     }
     if (statusCode == 422) {
-      final sequence = code == 'SEQUENCE_VIOLATION' ||
+      final sequence =
+          code == 'SEQUENCE_VIOLATION' ||
           (code != null && code.toUpperCase().contains('SEQUENCE'));
       return LocationPublishFailed(
         kind: sequence

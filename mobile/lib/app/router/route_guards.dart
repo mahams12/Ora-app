@@ -31,7 +31,8 @@ class AuthRouteGuard {
     final isOnAuth = location.startsWith('/auth');
     final isOnOnboarding = location == AppRoutes.onboarding;
     final isOnSplash = location == AppRoutes.splash;
-    final isOnDriver = location == AppRoutes.driverHome ||
+    final isOnDriver =
+        location == AppRoutes.driverHome ||
         location.startsWith('${AppRoutes.driverHome}/');
 
     return switch (authStatus) {
@@ -54,16 +55,69 @@ class AuthRouteGuard {
       // Driver shell requires approved driver from session /me profile.
       // activeMode='driver' restores the last-used mode after restart.
       AuthStatus.authenticatedReady => () {
-          if (isOnAuth || isOnOnboarding || isOnSplash) {
-            return _restoredModeHome();
-          }
-          if (isOnDriver && !_isApprovedDriver()) {
-            return AppRoutes.home;
-          }
-          return null;
-        }(),
+        if (isOnAuth || isOnOnboarding || isOnSplash) {
+          return _restoredModeHome();
+        }
+        if (isOnDriver && !_isApprovedDriver()) {
+          return AppRoutes.home;
+        }
+        return _partnerRouteGate(location);
+      }(),
     };
   }
+
+  /// Per-role gates for partner posting + registration routes.
+  ///
+  /// Posting dashboards require the matching approved vendor application in
+  /// the server /me profile; anything else (none/pending/rejected/
+  /// suspended) bounces to home where the partner sheet shows the real
+  /// state. Registration routes disappear for approved users (sent to their
+  /// dashboard) and are unreachable while pending or suspended. Deep links
+  /// and typed-in URLs hit the same guard.
+  String? _partnerRouteGate(String location) {
+    final profile = _ref.read(sessionUserProfileProvider);
+
+    const postingRoutes = <String, String>{
+      AppRoutes.vendorHome: 'service',
+      AppRoutes.logisticsVendorHome: 'cargo',
+      AppRoutes.rentalVendorHome: 'rental',
+    };
+    for (final entry in postingRoutes.entries) {
+      if (location == entry.key || location.startsWith('${entry.key}/')) {
+        return profile?.isApprovedVendor(entry.value) == true
+            ? null
+            : AppRoutes.home;
+      }
+    }
+
+    const registrationRoutes = <String, String>{
+      AppRoutes.cargoRegistration: 'cargo',
+      AppRoutes.rentalRegistration: 'rental',
+      AppRoutes.serviceVendorRegistration: 'service',
+    };
+    for (final entry in registrationRoutes.entries) {
+      if (location == entry.key) {
+        return switch (profile?.vendorStatusFor(entry.value)) {
+          'approved' => _dashboardFor(entry.value),
+          'pending' || 'suspended' => AppRoutes.home,
+          _ => null, // never applied or rejected → form reachable
+        };
+      }
+    }
+
+    // An approved driver never sees the onboarding form again.
+    if (location == AppRoutes.driverRegistration &&
+        profile?.isApprovedDriver == true) {
+      return AppRoutes.driverHome;
+    }
+    return null;
+  }
+
+  String _dashboardFor(String type) => switch (type) {
+    'cargo' => AppRoutes.logisticsVendorHome,
+    'rental' => AppRoutes.rentalVendorHome,
+    _ => AppRoutes.vendorHome,
+  };
 
   bool _isApprovedDriver() {
     final profile = _ref.read(sessionUserProfileProvider);
@@ -100,12 +154,11 @@ class AuthRouteGuard {
   /// [AuthFlowError] is unwrapped so that a rejected code keeps the user on the
   /// OTP screen to read the error, instead of bouncing back to phone entry.
   static bool _carriesOtpSession(AuthFlowState? state) => switch (state) {
-        AuthFlowOtpSent() => true,
-        AuthFlowVerifyingOtp() => true,
-        AuthFlowResendingOtp() => true,
-        AuthFlowResendCooldown() => true,
-        AuthFlowError(:final previousState) =>
-          _carriesOtpSession(previousState),
-        _ => false,
-      };
+    AuthFlowOtpSent() => true,
+    AuthFlowVerifyingOtp() => true,
+    AuthFlowResendingOtp() => true,
+    AuthFlowResendCooldown() => true,
+    AuthFlowError(:final previousState) => _carriesOtpSession(previousState),
+    _ => false,
+  };
 }

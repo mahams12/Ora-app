@@ -13,12 +13,7 @@ import '../../../ride/presentation/offers/offer_display.dart';
 import '../open_ride_display.dart';
 import 'driver_direct_offer_view_model.dart';
 
-enum DriverOpenRidesPhase {
-  initialLoading,
-  ready,
-  empty,
-  fatalError,
-}
+enum DriverOpenRidesPhase { initialLoading, ready, empty, fatalError }
 
 class DriverOpenRidesUiState {
   const DriverOpenRidesUiState({
@@ -102,8 +97,9 @@ class DriverOpenRidesUiState {
       paginationError: clearPaginationError
           ? null
           : (paginationError ?? this.paginationError),
-      offeringRideId:
-          clearOffering ? null : (offeringRideId ?? this.offeringRideId),
+      offeringRideId: clearOffering
+          ? null
+          : (offeringRideId ?? this.offeringRideId),
       lastCreatedOffer: clearLastOffer
           ? null
           : (lastCreatedOffer ?? this.lastCreatedOffer),
@@ -194,8 +190,9 @@ class DriverOpenRidesViewModel
     final id = rideId.trim();
     if (id.isEmpty) return;
     _sessionDismissedRideIds.add(id);
-    final remaining =
-        state.rides.where((r) => r.rideId != id).toList(growable: false);
+    final remaining = state.rides
+        .where((r) => r.rideId != id)
+        .toList(growable: false);
     state = state.copyWith(
       rides: remaining,
       phase: remaining.isEmpty
@@ -213,10 +210,7 @@ class DriverOpenRidesViewModel
 
     _loadMoreInFlight = true;
     final seq = ++_requestSeq;
-    state = state.copyWith(
-      isLoadingMore: true,
-      clearPaginationError: true,
-    );
+    state = state.copyWith(isLoadingMore: true, clearPaginationError: true);
     try {
       await _fetchPage(
         seq: seq,
@@ -321,11 +315,13 @@ class DriverOpenRidesViewModel
       orElse: () => null,
     );
 
-    final unavailable = code == 'ALREADY_ASSIGNED' ||
+    final unavailable =
+        code == 'ALREADY_ASSIGNED' ||
         code == 'STATE_CONFLICT' ||
         code == 'VERSION_CONFLICT';
 
-    final definitiveKeyClear = unavailable ||
+    final definitiveKeyClear =
+        unavailable ||
         code == 'IDEMPOTENCY_KEY_REUSED' ||
         code == 'VALIDATION' ||
         code == 'FORBIDDEN';
@@ -427,7 +423,10 @@ class DriverOpenRidesViewModel
     }
   }
 
-  List<OpenRide> _dedupeAppend(List<OpenRide> existing, List<OpenRide> incoming) {
+  List<OpenRide> _dedupeAppend(
+    List<OpenRide> existing,
+    List<OpenRide> incoming,
+  ) {
     final seen = existing.map((r) => r.rideId).toSet();
     final out = List<OpenRide>.from(existing);
     for (final ride in incoming) {
@@ -439,7 +438,8 @@ class DriverOpenRidesViewModel
   }
 }
 
-final driverOpenRidesViewModelProvider = NotifierProvider.autoDispose<
-    DriverOpenRidesViewModel, DriverOpenRidesUiState>(
-  DriverOpenRidesViewModel.new,
-);
+final driverOpenRidesViewModelProvider =
+    NotifierProvider.autoDispose<
+      DriverOpenRidesViewModel,
+      DriverOpenRidesUiState
+    >(DriverOpenRidesViewModel.new);

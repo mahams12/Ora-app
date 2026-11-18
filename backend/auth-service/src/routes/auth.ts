@@ -5,18 +5,21 @@ import { sendApiError, logSafe } from '../http/errors';
 import { getRequestId } from '../http/request_id';
 import { DisplayNameValidationError } from '../services/display_name';
 import {
+  applyVendorApplication,
   getMe,
   ModeSwitchBlockedError,
   registerUser,
   switchMode,
   updateProfile,
   UserNotFoundError,
+  VendorApplicationError,
 } from '../services/users';
 import type { DriverAvailabilityService } from '../drivers/driver_availability_service';
 import { DriverDomainError } from '../drivers/types';
 
 const PROFILE_ALLOWED_KEYS = new Set(['displayName', 'avatarData']);
 const MODE_ALLOWED_KEYS = new Set(['mode']);
+const VENDOR_APP_ALLOWED_KEYS = new Set(['type', 'details']);
 
 function rejectUnknownProfileFields(
   req: AuthedRequest,
@@ -292,12 +295,15 @@ export function createAuthRouter(
         new Date(),
       );
 
-      // Driver → passenger: take the driver offline durably so passenger mode
-      // can never keep broadcasting presence. Missing drivers doc / already
-      // offline are idempotent no-ops inside the availability service.
+      // Driver/logistics → passenger: take the operator offline durably so
+      // passenger mode can never keep broadcasting presence. Missing drivers
+      // doc / already offline are idempotent no-ops inside the availability
+      // service.
+      const cargoApproved =
+        profile.vendorApplications?.cargo?.status === 'approved';
       if (
         profile.activeMode === 'passenger' &&
-        profile.driverStatus === 'approved' &&
+        (profile.driverStatus === 'approved' || cargoApproved) &&
         driverAvailability
       ) {
         try {
@@ -344,6 +350,84 @@ export function createAuthRouter(
         errorType: err instanceof Error ? err.name : 'unknown',
       });
       sendApiError(req, res, 500, 'INTERNAL', 'Failed to switch mode.');
+    }
+  });
+
+  /**
+   * POST /v1/auth/vendor-application
+   *
+   * Partner onboarding (cargo / rental host / service provider). uid comes
+   * only from the verified token; type is validated; an existing pending or
+   * approved application is an idempotent no-op. Status transitions
+   * (pending → approved/rejected/suspended) are admin-only writes on the
+   * users doc — never accepted from this endpoint.
+   */
+  router.post('/vendor-application', async (req: AuthedRequest, res) => {
+    const caller = req.caller;
+    if (!caller) {
+      sendApiError(req, res, 401, 'UNAUTHENTICATED', 'Not authenticated.');
+      return;
+    }
+    const idempotencyKey = req.header('Idempotency-Key');
+    if (!idempotencyKey || idempotencyKey.trim().length < 8) {
+      sendApiError(
+        req,
+        res,
+        400,
+        'IDEMPOTENCY_KEY_REQUIRED',
+        'Idempotency-Key header (min 8 chars) is required.',
+      );
+      return;
+    }
+    const body = req.body;
+    if (body == null || typeof body !== 'object' || Array.isArray(body)) {
+      sendApiError(req, res, 400, 'VALIDATION_ERROR', 'Request body must be a JSON object.');
+      return;
+    }
+    const extra = Object.keys(body).filter(
+      (k) => !VENDOR_APP_ALLOWED_KEYS.has(k),
+    );
+    if (extra.length > 0) {
+      sendApiError(req, res, 400, 'VALIDATION_ERROR', 'Only type and details may be set.');
+      return;
+    }
+
+    try {
+      const profile = await applyVendorApplication(
+        db,
+        caller,
+        (body as { type?: unknown }).type,
+        (body as { details?: unknown }).details,
+        new Date(),
+      );
+      logSafe('vendor_application_ok', {
+        requestId: getRequestId(req),
+        uid: caller.uid,
+        op: 'vendor_application',
+      });
+      res.status(200).json(profile);
+    } catch (err) {
+      if (err instanceof VendorApplicationError) {
+        sendApiError(req, res, err.httpStatus, err.code, err.message);
+        return;
+      }
+      if (err instanceof UserNotFoundError) {
+        sendApiError(
+          req,
+          res,
+          404,
+          'USER_NOT_FOUND',
+          'User profile does not exist. Call POST /v1/auth/register.',
+        );
+        return;
+      }
+      logSafe('vendor_application_failed', {
+        requestId: getRequestId(req),
+        uid: caller.uid,
+        op: 'vendor_application',
+        errorType: err instanceof Error ? err.name : 'unknown',
+      });
+      sendApiError(req, res, 500, 'INTERNAL', 'Failed to submit application.');
     }
   });
 

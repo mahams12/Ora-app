@@ -9,7 +9,7 @@ import { LocationDomainError } from './types';
 
 export function createLocationRouter(
   db: Firestore,
-  geoProjection?: import('../redis/geo_projection').RedisGeoProjectionService | null,
+  geoProjection?: import('../geo/geo_projection').GeoProjectionService | null,
   tripLocationRtdb?: import('../rtdb/types').TripLocationRtdb | null,
   eligibilityCache?: import('./location_update_service').DriverEligibilityCache,
   streamStore?: import('./stream_store').LocationStreamStore | null,

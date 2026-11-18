@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../app/di/providers.dart';
 import '../../../app/router/routes.dart';
+import '../../../app/theme/ora_colors.dart';
 import '../../../app/theme/ora_spacing.dart';
+import '../../../app/theme/ora_typography.dart';
 import '../../../app/theme/widgets/widgets.dart';
 import '../../auth/presentation/view_models/session_user_profile.dart';
 import '../widgets/registration_scaffold.dart';
@@ -30,8 +33,8 @@ const _locations = [
 ];
 
 /// Rental host registration — host details, property info and the optional
-/// documents shown in the rentals registration design. Stored locally until
-/// the host onboarding API lands.
+/// documents shown in the rentals registration design. Submits server-side
+/// via POST /v1/auth/vendor-application (status → pending).
 class RentalRegistrationView extends ConsumerStatefulWidget {
   const RentalRegistrationView({super.key});
 
@@ -57,6 +60,7 @@ class _RentalRegistrationViewState
   XFile? _ownershipDocument;
   XFile? _businessLicense;
   bool _submitting = false;
+  String? _submitError;
 
   @override
   void initState() {
@@ -134,28 +138,60 @@ class _RentalRegistrationViewState
 
   Future<void> _submit() async {
     if (_submitting || !_validate()) return;
-    setState(() => _submitting = true);
-    await showOraBottomSheet<void>(
-      context: context,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const OraSectionHeader(
-            title: "Application received — we'll notify you after review",
-            description:
-                'Your rental host registration is saved. Our team will '
-                'contact you once it is reviewed.',
-          ),
-          const SizedBox(height: OraSpacing.lg),
-          OraButton(
-            label: 'Back to Home',
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    );
-    if (mounted) context.go(AppRoutes.home);
+    setState(() {
+      _submitting = true;
+      _submitError = null;
+    });
+    try {
+      await ref.read(submitVendorApplicationUseCaseProvider).call(
+        type: 'rental',
+        details: {
+          'fullName': _fullNameController.text.trim(),
+          'contactNumber': _contactController.text.trim(),
+          'address': _addressController.text.trim(),
+          'propertyType': _propertyType ?? '',
+          'propertyName': _propertyNameController.text.trim(),
+          'location': _location ?? '',
+          'details': _detailsController.text.trim(),
+        },
+      );
+      await ref
+          .read(authStateNotifierProvider.notifier)
+          .refreshCanonicalProfile();
+      if (!mounted) return;
+      setState(() => _submitting = false);
+      await showOraBottomSheet<void>(
+        context: context,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const OraSectionHeader(
+              title: "Application received — we'll notify you after review",
+              description:
+                  'Your rental host registration is saved. The rental '
+                  'dashboard unlocks once an admin approves it.',
+            ),
+            const SizedBox(height: OraSpacing.lg),
+            OraButton(
+              label: 'Back to Home',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+      if (mounted) context.go(AppRoutes.home);
+    } catch (error) {
+      if (!mounted) return;
+      setState(
+        () => _submitError = ref
+            .read(failureMapperProvider)
+            .fromException(error)
+            .userMessage,
+      );
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
   }
 
   Widget _field({
@@ -202,6 +238,14 @@ class _RentalRegistrationViewState
         children: [
           const SizedBox(height: OraSpacing.sm),
           const RegInfoBanner(),
+          if (_submitError != null) ...[
+            const SizedBox(height: OraSpacing.sm),
+            Text(
+              _submitError!,
+              key: const ValueKey('rental-submit-error'),
+              style: OraTypography.body(OraColors.danger),
+            ),
+          ],
           const SizedBox(height: OraSpacing.md),
           OraButton(
             label: 'Submit Registration',

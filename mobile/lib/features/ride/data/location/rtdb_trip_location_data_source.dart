@@ -15,9 +15,9 @@ class RtdbTripLocationDataSource implements TripLocationPort {
     required String databaseUrl,
     required AppLogger logger,
     FirebaseDatabase? database,
-  })  : _databaseUrl = databaseUrl.trim(),
-        _logger = logger,
-        _database = database;
+  }) : _databaseUrl = databaseUrl.trim(),
+       _logger = logger,
+       _database = database;
 
   final String _databaseUrl;
   final AppLogger _logger;
@@ -86,9 +86,7 @@ class RtdbTripLocationDataSource implements TripLocationPort {
           // permission_denied after terminal cleanup is expected.
           _logger.info(
             'trip_location_watch_unavailable',
-            metadata: {
-              'errorType': error.runtimeType.toString(),
-            },
+            metadata: {'errorType': error.runtimeType.toString()},
           );
           if (!controller.isClosed) {
             controller.add(null);

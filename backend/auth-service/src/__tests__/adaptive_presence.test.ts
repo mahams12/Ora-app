@@ -6,15 +6,15 @@ import { describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../app';
 import { memoryDb } from './helpers/memory_db';
-import { createFirestoreGeoClient } from '../redis/firestore_geo_client';
-import { RedisGeoProjectionService } from '../redis/geo_projection';
+import { createFirestoreGeoClient } from '../geo/firestore_geo_client';
+import { GeoProjectionService } from '../geo/geo_projection';
 import { parseAndValidateLocationBody } from '../location/validation';
 import { NearbyDriversService } from '../drivers/nearby_service';
 import {
   GEO_DRIVERS_KEY,
   N3_FRESHNESS_GRACE_MS,
   driverOnlineKey,
-} from '../redis/types';
+} from '../geo/types';
 
 const pickup = { lat: 31.52, lng: 74.35 };
 
@@ -58,7 +58,7 @@ function appFor(
   } = {},
 ) {
   const geoClient = createFirestoreGeoClient(db as never);
-  const geoProjection = new RedisGeoProjectionService(geoClient, {
+  const geoProjection = new GeoProjectionService(geoClient, {
     adaptiveFreshness: opts.adaptiveFreshness,
   });
   return createApp({
@@ -69,7 +69,7 @@ function appFor(
     requireAppCheck: false,
     rateLimit: { windowMs: 60_000, max: 10_000 },
     geoProjection,
-    redis: geoClient,
+    geoStore: geoClient,
     adaptiveFreshness: opts.adaptiveFreshness,
     idleMergedCursor: opts.idleMergedCursor,
   });
@@ -384,7 +384,7 @@ describe('coalesced sweeps (Phase D)', () => {
       db: db as never,
       requireAppCheck: false,
       rateLimit: { windowMs: 60_000, max: 10_000 },
-      redis: geoClient,
+      geoStore: geoClient,
       internalWorkerToken: 'test-worker-token-16',
     });
   }
@@ -461,7 +461,7 @@ describe('coalesced sweeps (Phase D)', () => {
       db: db as never,
       requireAppCheck: false,
       rateLimit: { windowMs: 60_000, max: 10_000 },
-      redis: failing,
+      geoStore: failing,
       internalWorkerToken: 'test-worker-token-16',
     });
     const res = await request(app)

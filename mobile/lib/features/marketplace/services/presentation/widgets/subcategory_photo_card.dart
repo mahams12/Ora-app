@@ -43,65 +43,65 @@ class _SubcategoryPhotoCardState extends State<SubcategoryPhotoCard> {
       child: OraFloaty(
         child: OraTapScale(
           child: ExcludeSemantics(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: OraColors.surfaceElevated,
-              borderRadius: radius,
-              border: Border.fromBorderSide(OraElevation.cardBorder),
-              boxShadow: OraElevation.cardShadow,
-            ),
-            child: ClipRRect(
-              borderRadius: radius,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                    widget.onTap();
-                  },
-                  child: Stack(
-                    fit: StackFit.expand,
-                    clipBehavior: Clip.hardEdge,
-                    children: [
-                      const Positioned.fill(
-                        child: ColoredBox(color: OraColors.surfaceElevated),
-                      ),
-                      Positioned.fill(
-                        bottom: 44,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-                          child: widget.subcategory.image == 'placeholder'
-                              ? _photoPlaceholder()
-                              : Image.asset(
-                                  'assets/marketplace/${widget.subcategory.image}',
-                                  cacheWidth: 360,
-                                  fit: BoxFit.contain,
-                                  alignment: Alignment.topCenter,
-                                  filterQuality: FilterQuality.medium,
-                                  errorBuilder:
-                                      (context, error, stackTrace) =>
-                                          _photoPlaceholder(),
-                                ),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: OraColors.surfaceElevated,
+                borderRadius: radius,
+                border: Border.fromBorderSide(OraElevation.cardBorder),
+                boxShadow: OraElevation.cardShadow,
+              ),
+              child: ClipRRect(
+                borderRadius: radius,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      widget.onTap();
+                    },
+                    child: Stack(
+                      fit: StackFit.expand,
+                      clipBehavior: Clip.hardEdge,
+                      children: [
+                        const Positioned.fill(
+                          child: ColoredBox(color: OraColors.surfaceElevated),
                         ),
-                      ),
-                      Positioned(
-                        left: 10,
-                        right: 10,
-                        bottom: 9,
-                        child: Text(
-                          widget.subcategory.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: OraTypography.bodyEmphasis(
-                            OraColors.textPrimary,
+                        Positioned.fill(
+                          bottom: 44,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                            child: widget.subcategory.image == 'placeholder'
+                                ? _photoPlaceholder()
+                                : Image.asset(
+                                    'assets/marketplace/${widget.subcategory.image}',
+                                    cacheWidth: 360,
+                                    fit: BoxFit.contain,
+                                    alignment: Alignment.topCenter,
+                                    filterQuality: FilterQuality.medium,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            _photoPlaceholder(),
+                                  ),
                           ),
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          left: 10,
+                          right: 10,
+                          bottom: 9,
+                          child: Text(
+                            widget.subcategory.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: OraTypography.bodyEmphasis(
+                              OraColors.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
             ),
           ),
         ),

@@ -23,11 +23,7 @@ import '../../../../app/di/providers.dart';
 /// the GPS again. Soft-fails to an honest shell when tiles or location are
 /// unavailable — never shows fabricated zones or positions.
 class DriverHomeMap extends ConsumerStatefulWidget {
-  const DriverHomeMap({
-    super.key,
-    this.height = 150,
-    this.enableMaps = true,
-  });
+  const DriverHomeMap({super.key, this.height = 150, this.enableMaps = true});
 
   final double height;
 
@@ -168,14 +164,11 @@ class _DriverHomeMapState extends ConsumerState<DriverHomeMap> {
           ),
         );
       } else {
-        await c.updateCircle(
-          circle,
-          CircleOptions(geometry: target),
-        );
+        await c.updateCircle(circle, CircleOptions(geometry: target));
       }
       final last = _lastCameraTarget;
-      final moved = last == null ||
-          _distanceMeters(last, target) > _recentreMinMeters;
+      final moved =
+          last == null || _distanceMeters(last, target) > _recentreMinMeters;
       if (moved || jump) {
         _lastCameraTarget = target;
         final update = jump || last == null
@@ -192,7 +185,8 @@ class _DriverHomeMapState extends ConsumerState<DriverHomeMap> {
     const r = 6371000.0;
     final dLat = (b.latitude - a.latitude) * math.pi / 180;
     final dLng = (b.longitude - a.longitude) * math.pi / 180;
-    final h = math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final h =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(a.latitude * math.pi / 180) *
             math.cos(b.latitude * math.pi / 180) *
             math.sin(dLng / 2) *
@@ -255,7 +249,8 @@ class _DriverHomeMapState extends ConsumerState<DriverHomeMap> {
               )
             else
               _MapShellFallback(
-                message: _styleError ??
+                message:
+                    _styleError ??
                     (widget.enableMaps
                         ? 'Loading map…'
                         : 'Map preview unavailable'),
@@ -320,10 +315,7 @@ class _MapShellFallback extends StatelessWidget {
         ),
       ),
       child: Center(
-        child: Text(
-          message,
-          style: OraTypography.caption(OraColors.textMuted),
-        ),
+        child: Text(message, style: OraTypography.caption(OraColors.textMuted)),
       ),
     );
   }

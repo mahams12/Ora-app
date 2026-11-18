@@ -88,7 +88,9 @@ class _OffersInboxViewState extends ConsumerState<OffersInboxView>
           if (phase == OffersInboxPhase.ready)
             IconButton(
               tooltip: 'Refresh',
-              onPressed: (!canRefresh || isRefreshing) ? null : () => vm.refresh(),
+              onPressed: (!canRefresh || isRefreshing)
+                  ? null
+                  : () => vm.refresh(),
               icon: isRefreshing
                   ? const SizedBox(
                       width: 18,
@@ -102,31 +104,31 @@ class _OffersInboxViewState extends ConsumerState<OffersInboxView>
       body: SafeArea(
         child: switch (phase) {
           OffersInboxPhase.initialLoading => const Center(
-              child: OraLoadingIndicator(message: 'Loading offers…'),
-            ),
+            child: OraLoadingIndicator(message: 'Loading offers…'),
+          ),
           OffersInboxPhase.fatalError => OraErrorState(
-              title: 'Could not load offers',
-              message: errorMessage ?? 'Something went wrong.',
-              onRetry: () => vm.start(),
-            ),
+            title: 'Could not load offers',
+            message: errorMessage ?? 'Something went wrong.',
+            onRetry: () => vm.start(),
+          ),
           OffersInboxPhase.assigned => _AssignedPane(
-              rideId: rideId,
-              padding: padding,
-              onOpenActiveRide: () =>
-                  context.go(AppRoutes.activeRidePath(rideId)),
-              onHome: () => context.go(AppRoutes.home),
-            ),
+            rideId: rideId,
+            padding: padding,
+            onOpenActiveRide: () =>
+                context.go(AppRoutes.activeRidePath(rideId)),
+            onHome: () => context.go(AppRoutes.home),
+          ),
           OffersInboxPhase.terminal => _TerminalPane(
-              rideId: rideId,
-              padding: padding,
-              onHome: () => context.go(AppRoutes.home),
-            ),
+            rideId: rideId,
+            padding: padding,
+            onHome: () => context.go(AppRoutes.home),
+          ),
           OffersInboxPhase.ready || OffersInboxPhase.selecting => _OffersBody(
-              rideId: rideId,
-              padding: padding,
-              onSelect: vm.selectOffer,
-              onRefresh: canRefresh ? () => vm.refresh() : () async {},
-            ),
+            rideId: rideId,
+            padding: padding,
+            onSelect: vm.selectOffer,
+            onRefresh: canRefresh ? () => vm.refresh() : () async {},
+          ),
         },
       ),
     );
@@ -179,9 +181,7 @@ class _OffersBody extends ConsumerWidget {
       },
     );
     if (confirmed == true) {
-      await ref
-          .read(offersInboxViewModelProvider(rideId).notifier)
-          .cancel();
+      await ref.read(offersInboxViewModelProvider(rideId).notifier).cancel();
     }
   }
 
@@ -294,14 +294,13 @@ class _OffersBody extends ConsumerWidget {
                     padding: const EdgeInsets.only(top: OraSpacing.lg),
                     child: Center(
                       child: OraButton(
-                        label: isCancelling
-                            ? 'Cancelling…'
-                            : 'Cancel request',
+                        label: isCancelling ? 'Cancelling…' : 'Cancel request',
                         variant: OraButtonVariant.danger,
                         expand: false,
                         isLoading: isCancelling,
-                        onPressed:
-                            canCancel ? () => _confirmCancel(context, ref) : null,
+                        onPressed: canCancel
+                            ? () => _confirmCancel(context, ref)
+                            : null,
                       ),
                     ),
                   ),
@@ -420,10 +419,7 @@ class _AssignedPane extends ConsumerWidget {
             ),
           ),
           const Spacer(),
-          OraButton(
-            label: 'Open active ride',
-            onPressed: onOpenActiveRide,
-          ),
+          OraButton(label: 'Open active ride', onPressed: onOpenActiveRide),
           const SizedBox(height: OraSpacing.sm),
           OraButton(
             label: 'Back to Home',
@@ -472,4 +468,3 @@ class _TerminalPane extends ConsumerWidget {
     );
   }
 }
-

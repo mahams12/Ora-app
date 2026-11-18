@@ -4,12 +4,12 @@ import {
   N3_FRESHNESS_MAX_AGE_MS,
   N3_MAX_FIX_AGE_MS,
   N3_MAX_ACCURACY_M,
-  N3_REDIS_GEO_COUNT,
+  N3_GEO_COUNT,
   driverOnlineKey,
   normalizeCitySlug,
   type DriverOnlineMarker,
-  type RedisGeoClient,
-} from '../redis/types';
+  type GeoStoreClient,
+} from '../geo/types';
 import { logSafe } from '../http/errors';
 
 const USERS = 'users';
@@ -98,7 +98,7 @@ export type N3RejectionCounts = Record<N3RejectionBucket, number>;
 export interface N3NearbyDiagnostics {
   geoHits: number;
   /** One batched marker read (MGET) per findNearby when geoHits > 0. */
-  redisGetCount: number;
+  geoGetCount: number;
   /** Logical user documents read (batch getAll document count). */
   firestoreUsersReads: number;
   /** Logical driver documents read (batch getAll document count). */
@@ -142,7 +142,7 @@ export function createEmptyN3RejectionCounts(): N3RejectionCounts {
 export function createEmptyN3NearbyDiagnostics(): N3NearbyDiagnostics {
   return {
     geoHits: 0,
-    redisGetCount: 0,
+    geoGetCount: 0,
     firestoreUsersReads: 0,
     firestoreDriversReads: 0,
     firestoreUsersBatchRpcs: 0,
@@ -351,7 +351,7 @@ export type N3PrefetchedAuthoritativeDocs = {
  * Batched invite-time revalidation snapshot (N4). Dispatch waves check
  * candidates in nearest-first order and stop after `need` selections —
  * loading this context for a chunk of candidates up front replaces up to
- * 4 serial Firestore/Redis round-trips PER CANDIDATE with a fixed set of
+ * 4 serial Firestore round-trips PER CANDIDATE with a fixed set of
  * parallel reads (1 marker MGET + busy chunks + 2 getAll batches).
  * Read volume is bounded by the chunk size; ordering and every eligibility
  * rule are identical to the per-driver path.
@@ -371,7 +371,7 @@ export interface N3InviteRevalidationContext {
 export class NearbyDriversService {
   constructor(
     private readonly db: Firestore,
-    private readonly redis: RedisGeoClient | null,
+    private readonly geoStore: GeoStoreClient | null,
     /**
      * LOCATION_ADAPTIVE_FRESHNESS — when true the geo query filters on the
      * per-driver freshUntilMs twin instead of a fixed 15s lastLocationTs
@@ -392,7 +392,7 @@ export class NearbyDriversService {
     const nowMs = input.nowMs ?? Date.now();
     const diag = createEmptyN3NearbyDiagnostics();
 
-    if (!this.redis) {
+    if (!this.geoStore) {
       throw new NearbyDomainError(
         'DEPENDENCY_ERROR',
         503,
@@ -402,12 +402,12 @@ export class NearbyDriversService {
 
     let geoHits;
     try {
-      geoHits = await this.redis.georadius({
+      geoHits = await this.geoStore.georadius({
         key: GEO_DRIVERS_KEY,
         longitude: parsed.lng,
         latitude: parsed.lat,
         radiusKm: parsed.radiusKm,
-        count: N3_REDIS_GEO_COUNT,
+        count: N3_GEO_COUNT,
         // Server-side freshness floor where the store supports it (Firestore
         // range filter — skips stale docs before they are billed as reads).
         // Adaptive mode filters on the per-driver freshUntilMs twin so
@@ -419,7 +419,7 @@ export class NearbyDriversService {
           : { minLastLocationTs: nowMs - N3_FRESHNESS_MAX_AGE_MS }),
       });
     } catch (err) {
-      logSafe('N3_REDIS_GEORADIUS_FAILED', {
+      logSafe('N3_GEO_GEORADIUS_FAILED', {
         requestId: input.requestId ?? null,
         geoKey: GEO_DRIVERS_KEY,
         errorType: err instanceof Error ? err.name : 'unknown',
@@ -436,7 +436,7 @@ export class NearbyDriversService {
 
     // Markers piggyback on geo hits when the store supports it (Firestore
     // merged doc — already paid for as a document read). Hits without
-    // markerValue still need a marker fetch (Redis GEORADIUS path).
+    // markerValue still need a marker fetch (geo-storeRADIUS path).
     const markerByMember = new Map<string, string | null>();
     const hitsNeedingMarkerFetch: typeof geoHits = [];
     for (const hit of geoHits) {
@@ -451,8 +451,8 @@ export class NearbyDriversService {
         driverOnlineKey(hit.member),
       );
       try {
-        const markerValues = await this.redis.mget(markerKeys);
-        diag.redisGetCount += 1;
+        const markerValues = await this.geoStore.mget(markerKeys);
+        diag.geoGetCount += 1;
         for (let i = 0; i < hitsNeedingMarkerFetch.length; i++) {
           markerByMember.set(
             hitsNeedingMarkerFetch[i].member,
@@ -460,7 +460,7 @@ export class NearbyDriversService {
           );
         }
       } catch (err) {
-        logSafe('N3_REDIS_MARKER_FAILED', {
+        logSafe('N3_GEO_MARKER_FAILED', {
           requestId: input.requestId ?? null,
           driverId: hitsNeedingMarkerFetch[0]?.member ?? null,
           errorType: err instanceof Error ? err.name : 'unknown',
@@ -556,7 +556,7 @@ export class NearbyDriversService {
     if (unique.length === 0) {
       return { markers, busyDriverIds: new Set(), prefetched: empty };
     }
-    if (!this.redis) {
+    if (!this.geoStore) {
       throw new NearbyDomainError(
         'DEPENDENCY_ERROR',
         503,
@@ -566,11 +566,11 @@ export class NearbyDriversService {
 
     let markerValues: (string | null)[];
     try {
-      markerValues = await this.redis.mget(
+      markerValues = await this.geoStore.mget(
         unique.map((id) => driverOnlineKey(id)),
       );
     } catch (err) {
-      logSafe('N3_REDIS_MARKER_FAILED', {
+      logSafe('N3_GEO_MARKER_FAILED', {
         requestId: opts?.requestId ?? null,
         driverId: unique[0] ?? null,
         errorType: err instanceof Error ? err.name : 'unknown',
@@ -597,7 +597,7 @@ export class NearbyDriversService {
   }
 
   /**
-   * N4 invite-time revalidation: Redis marker freshness/accuracy + Firestore
+   * N4 invite-time revalidation: geo-store marker freshness/accuracy + Firestore
    * authoritative eligibility. Does NOT check city/homeCity.
    * When `opts.revalidation` is supplied (from loadInviteRevalidationContext)
    * all reads come from that snapshot — identical checks, no per-driver I/O.
@@ -623,7 +623,7 @@ export class NearbyDriversService {
       });
     }
 
-    if (!this.redis) {
+    if (!this.geoStore) {
       throw new NearbyDomainError(
         'DEPENDENCY_ERROR',
         503,
@@ -633,9 +633,9 @@ export class NearbyDriversService {
 
     let markerRaw: string | null;
     try {
-      markerRaw = await this.redis.get(driverOnlineKey(driverId));
+      markerRaw = await this.geoStore.get(driverOnlineKey(driverId));
     } catch (err) {
-      logSafe('N3_REDIS_MARKER_FAILED', {
+      logSafe('N3_GEO_MARKER_FAILED', {
         requestId: opts?.requestId ?? null,
         driverId,
         errorType: err instanceof Error ? err.name : 'unknown',
@@ -780,7 +780,13 @@ export class NearbyDriversService {
       if (diag) diag.rejected.user_inactive += 1;
       return false;
     }
-    if (user.role !== 'driver' || user.driverStatus !== 'approved') {
+    const cargoApp = (
+      (user.vendorApplications ?? {}) as Record<string, unknown>
+    )['cargo'] as Record<string, unknown> | undefined;
+    const deliveryEligible =
+      (user.role === 'driver' && user.driverStatus === 'approved') ||
+      cargoApp?.['status'] === 'approved';
+    if (!deliveryEligible) {
       if (diag) diag.rejected.user_not_approved += 1;
       return false;
     }

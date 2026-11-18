@@ -3,7 +3,6 @@ library;
 
 export 'presentation/views/driver_assigned_ride_view.dart';
 export 'presentation/views/driver_assigned_rides_view.dart';
-export 'presentation/views/driver_direct_offer_view.dart';
 export 'presentation/views/driver_open_rides_view.dart';
 export 'presentation/views/driver_shell_view.dart';
 export 'presentation/view_models/driver_assigned_ride_view_model.dart';

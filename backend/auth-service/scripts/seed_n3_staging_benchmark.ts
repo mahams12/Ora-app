@@ -1,5 +1,5 @@
 /**
- * Seed / cleanup isolated N3 staging benchmark drivers (Firestore + Redis).
+ * Seed / cleanup isolated N3 staging benchmark drivers (Firestore geo store).
  * Prefix: n3bench_<BENCH_PREFIX>_* — does not touch real user UIDs.
  *
  * Usage:
@@ -11,13 +11,13 @@ import fs from 'node:fs';
 import { getFirestore } from 'firebase-admin/firestore';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createFirestoreGeoClient } from '../src/redis/firestore_geo_client';
+import { createFirestoreGeoClient } from '../src/geo/firestore_geo_client';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   type DriverOnlineMarker,
-} from '../src/redis/types';
+} from '../src/geo/types';
 
 const here = path.dirname(
   // Bundled CJS (Cloud Run Job) vs tsx (local).
@@ -70,15 +70,15 @@ async function seedFirestore(db: ReturnType<typeof getFirestore>, ids: string[])
   }
 }
 
-async function seedRedis(
-  redis: ReturnType<typeof createFirestoreGeoClient>,
+async function seedGeo(
+  geoStore: ReturnType<typeof createFirestoreGeoClient>,
   ids: string[],
 ) {
   const now = Date.now();
   for (let i = 0; i < ids.length; i++) {
     const id = ids[i]!;
     const lng = PICKUP.lng + 0.00005 * (i + 1);
-    await redis.geoadd(GEO_DRIVERS_KEY, lng, PICKUP.lat, id);
+    await geoStore.geoadd(GEO_DRIVERS_KEY, lng, PICKUP.lat, id);
     const marker: DriverOnlineMarker = {
       driverId: id,
       lastLocationTs: now - 500,
@@ -88,7 +88,7 @@ async function seedRedis(
       locationSeq: 1,
       acceptedAt: new Date().toISOString(),
     };
-    await redis.set(
+    await geoStore.set(
       driverOnlineKey(id),
       JSON.stringify(marker),
       DRIVER_ONLINE_TTL_SECONDS,
@@ -117,13 +117,13 @@ async function listBenchDriverIds(db: ReturnType<typeof getFirestore>): Promise<
   return snap.docs.map((d) => d.id);
 }
 
-async function cleanupRedis(
-  redis: ReturnType<typeof createFirestoreGeoClient>,
+async function cleanupGeo(
+  geoStore: ReturnType<typeof createFirestoreGeoClient>,
   ids: string[],
 ) {
   for (const id of ids) {
-    await redis.zrem(GEO_DRIVERS_KEY, id);
-    await redis.del(driverOnlineKey(id));
+    await geoStore.zrem(GEO_DRIVERS_KEY, id);
+    await geoStore.del(driverOnlineKey(id));
   }
 }
 
@@ -144,14 +144,14 @@ function initFirebase() {
 async function main() {
   initFirebase();
   const db = getFirestore();
-  const redis = createFirestoreGeoClient(db);
+  const geoStore = createFirestoreGeoClient(db);
 
   const ids = Array.from({ length: COUNT }, (_, i) => driverId(i));
 
   try {
     if (MODE === 'seed') {
       await seedFirestore(db, ids);
-      await seedRedis(redis, ids);
+      await seedGeo(geoStore, ids);
       console.log(
         JSON.stringify({
           ok: true,
@@ -174,7 +174,7 @@ async function main() {
       for (let i = 0; i < benchIds.length; i++) {
         const id = benchIds[i]!;
         const lng = PICKUP.lng + 0.00005 * (i + 1);
-        await redis.geoadd(GEO_DRIVERS_KEY, lng, PICKUP.lat, id);
+        await geoStore.geoadd(GEO_DRIVERS_KEY, lng, PICKUP.lat, id);
         const marker: DriverOnlineMarker = {
           driverId: id,
           lastLocationTs: now - 500,
@@ -184,7 +184,7 @@ async function main() {
           locationSeq: 1,
           acceptedAt: new Date().toISOString(),
         };
-        await redis.set(
+        await geoStore.set(
           driverOnlineKey(id),
           JSON.stringify(marker),
           DRIVER_ONLINE_TTL_SECONDS,
@@ -197,7 +197,7 @@ async function main() {
     }
     if (MODE === 'cleanup') {
       const benchIds = await listBenchDriverIds(db);
-      await cleanupRedis(redis, benchIds.length ? benchIds : ids);
+      await cleanupGeo(geoStore, benchIds.length ? benchIds : ids);
       await cleanupFirestore(db);
       console.log(
         JSON.stringify({
@@ -211,7 +211,7 @@ async function main() {
     }
     throw new Error('usage: seed [count] | cleanup');
   } finally {
-    await redis.quit?.();
+    await geoStore.quit?.();
   }
 }
 

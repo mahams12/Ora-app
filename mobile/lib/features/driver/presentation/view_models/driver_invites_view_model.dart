@@ -27,6 +27,7 @@ class DriverInvitesUiState {
   final DriverInvitesPhase phase;
   final List<DriverInvite> items;
   final Set<String> respondingWaveIds;
+
   /// Server-adjusted clock at last tick — rebuilds countdown labels.
   final int tickMs;
   final String? infoMessage;
@@ -66,8 +67,7 @@ const Duration driverInviteWindow = Duration(seconds: 20);
 /// Clock-skew safety: `serverNowMs` from the last invited-list response is
 /// compared to the device clock once per fetch; all remaining-time math uses
 /// the server-adjusted clock, never the raw device clock.
-class DriverInvitesViewModel
-    extends AutoDisposeNotifier<DriverInvitesUiState> {
+class DriverInvitesViewModel extends AutoDisposeNotifier<DriverInvitesUiState> {
   late final ListInvitedRidesUseCase _listInvited;
   late final AcceptInviteUseCase _accept;
   late final DeclineInviteUseCase _decline;
@@ -111,8 +111,7 @@ class DriverInvitesViewModel
       final page = await _listInvited();
       // Clamp skew correction — a wildly off server value would corrupt
       // countdown math; ±10 min is a generous sane bound.
-      final measured =
-          page.serverNowMs - _now().millisecondsSinceEpoch;
+      final measured = page.serverNowMs - _now().millisecondsSinceEpoch;
       if (page.serverNowMs > 0 && measured.abs() < 10 * 60 * 1000) {
         _serverOffsetMs = measured;
       }
@@ -236,10 +235,9 @@ class DriverInvitesViewModel
     if (code == 'INVITE_EXPIRED' || code == 'INVITE_ALREADY_RESPONDED') {
       _removeItem(invite.waveId);
       state = state.copyWith(
-        errorMessage:
-            code == 'INVITE_EXPIRED'
-                ? 'This offer expired.'
-                : 'This invitation was already answered.',
+        errorMessage: code == 'INVITE_EXPIRED'
+            ? 'This offer expired.'
+            : 'This invitation was already answered.',
         clearInfo: true,
       );
       unawaited(refresh());
@@ -263,10 +261,9 @@ class DriverInvitesViewModel
     }
 
     state = state.copyWith(
-      errorMessage:
-          accepted
-              ? 'Could not accept the invitation: ${failure.userMessage}'
-              : 'Could not decline the invitation: ${failure.userMessage}',
+      errorMessage: accepted
+          ? 'Could not accept the invitation: ${failure.userMessage}'
+          : 'Could not decline the invitation: ${failure.userMessage}',
       clearInfo: true,
     );
   }
@@ -306,14 +303,12 @@ class DriverInvitesViewModel
   }
 }
 
-final driverInvitesViewModelProvider = NotifierProvider.autoDispose<
-    DriverInvitesViewModel, DriverInvitesUiState>(
-  DriverInvitesViewModel.new,
-);
+final driverInvitesViewModelProvider =
+    NotifierProvider.autoDispose<DriverInvitesViewModel, DriverInvitesUiState>(
+      DriverInvitesViewModel.new,
+    );
 
 /// Last moment dispatch-invite activity was observed (FCM nudge or
 /// poll-discovered actionable invite). Consumed by the adaptive presence
 /// publisher to tighten its cadence while a driver may be under dispatch.
-final driverInviteActivityProvider = StateProvider<DateTime?>(
-  (ref) => null,
-);
+final driverInviteActivityProvider = StateProvider<DateTime?>((ref) => null);

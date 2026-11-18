@@ -17,7 +17,9 @@
 import type { Firestore } from 'firebase-admin/firestore';
 import type { AuthenticatedCaller } from '../types';
 import { logSafe } from '../http/errors';
-import { assertDriverEligible, loadActor } from './eligibility';
+import { assertWalletEligibleInsideTx } from '../wallet/wallet';
+import { WalletError } from '../wallet/types';
+import { assertDeliveryEligible, loadActor } from './eligibility';
 import { RideService } from './ride_service';
 import { RideDomainError, type RideDoc } from './types';
 import {
@@ -102,10 +104,21 @@ function isInviteExpired(wave: DispatchWaveDoc, nowMs: number): boolean {
   return nowMs >= expiry;
 }
 
+export interface InviteServiceHooks {
+  /**
+   * Fired after a decline commits — lets dispatch check whether the latest
+   * wave is fully resolved and pull the next wave forward without waiting
+   * out the cadence. Errors are swallowed by the caller; the deadline task
+   * and sweep remain the backstop.
+   */
+  onWaveResponded?: (rideId: string, correlationId: string) => Promise<void>;
+}
+
 export class InviteService {
   constructor(
     private readonly db: Firestore,
     private readonly rides: RideService,
+    private readonly hooks?: InviteServiceHooks,
   ) {}
 
   /**
@@ -118,7 +131,7 @@ export class InviteService {
   }): Promise<{ httpStatus: number; body: unknown }> {
     const nowMs = input.nowMs ?? Date.now();
     const actor = await loadActor(this.db, input.caller.uid);
-    assertDriverEligible(actor);
+    assertDeliveryEligible(actor);
 
     const waveSnap = await this.db
       .collection(DISPATCH_WAVES)
@@ -285,6 +298,16 @@ export class InviteService {
       const claimed = await this.db.runTransaction(async (tx) => {
         const snap = await tx.get(responseRef);
         if (snap.exists) return false;
+        // Shared-wallet eligibility — a negative balance blocks new accepts
+        // until the partner recharges (settlement itself is never blocked).
+        try {
+          await assertWalletEligibleInsideTx(this.db, tx, input.caller.uid);
+        } catch (e) {
+          if (e instanceof WalletError) {
+            throw new RideDomainError(e.code, e.httpStatus, e.message);
+          }
+          throw e;
+        }
         const claim: DriverInviteResponseDoc = {
           responseId: inviteResponseDocId(wave.waveId, input.caller.uid),
           rideId: input.rideId,
@@ -407,6 +430,22 @@ export class InviteService {
       rideId: input.rideId,
       waveId: wave.waveId,
     });
+
+    // Fast path: if this decline resolved the whole wave, dispatch pulls the
+    // next wave forward now instead of waiting for the cadence deadline.
+    if (this.hooks?.onWaveResponded) {
+      try {
+        await this.hooks.onWaveResponded(input.rideId, input.correlationId);
+      } catch (err) {
+        logSafe('INVITE_DECLINE_ACCELERATE_FAILED', {
+          operation: 'INVITE_DECLINE_ACCELERATE_FAILED',
+          requestId: input.correlationId,
+          rideId: input.rideId,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+
     return {
       httpStatus: 200,
       body: {
@@ -426,7 +465,7 @@ export class InviteService {
     waveId: string;
   }): Promise<DispatchWaveDoc> {
     const actor = await loadActor(this.db, input.caller.uid);
-    assertDriverEligible(actor);
+    assertDeliveryEligible(actor);
 
     const snap = await this.db
       .collection(DISPATCH_WAVES)

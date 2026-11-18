@@ -139,10 +139,7 @@ class DriverAssignedRideUiState {
           ? 'Mark en route'
           : null;
     }
-    return driverPrimaryActionLabel(
-      ride.state,
-      courier: ride.isDelivery,
-    );
+    return driverPrimaryActionLabel(ride.state, courier: ride.isDelivery);
   }
 
   DriverAssignedRideUiState copyWith({
@@ -163,12 +160,12 @@ class DriverAssignedRideUiState {
       ride: ride ?? this.ride,
       isRefreshing: isRefreshing ?? this.isRefreshing,
       isPolling: isPolling ?? this.isPolling,
-      activeMutation:
-          clearMutation ? null : (activeMutation ?? this.activeMutation),
+      activeMutation: clearMutation
+          ? null
+          : (activeMutation ?? this.activeMutation),
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       infoMessage: clearInfo ? null : (infoMessage ?? this.infoMessage),
-      connectivityDegraded:
-          connectivityDegraded ?? this.connectivityDegraded,
+      connectivityDegraded: connectivityDegraded ?? this.connectivityDegraded,
     );
   }
 }
@@ -393,17 +390,18 @@ class DriverAssignedRideViewModel
     final nextPhase = terminal
         ? DriverAssignedRidePhase.ended
         : (mutating
-            ? DriverAssignedRidePhase.mutating
-            : DriverAssignedRidePhase.active);
+              ? DriverAssignedRidePhase.mutating
+              : DriverAssignedRidePhase.active);
 
-    final flagsUnchanged = !state.isRefreshing &&
+    final flagsUnchanged =
+        !state.isRefreshing &&
         state.phase == nextPhase &&
         (mutating ? true : state.activeMutation == null) &&
         (softError
             ? true
             : (!state.connectivityDegraded &&
-                state.errorMessage == null &&
-                state.infoMessage == null));
+                  state.errorMessage == null &&
+                  state.infoMessage == null));
 
     if (rideUnchanged && flagsUnchanged && !terminal) {
       return;
@@ -497,212 +495,204 @@ class DriverAssignedRideViewModel
   }
 
   Future<void> markEnRoute() => _runMutation(
-        kind: DriverRideMutation.enRoute,
-        allowed: (ride) => driverCanEnRoute(ride.state),
-        opKey: () {
-          _enRouteOpKey ??= 'ride:en_route:$rideId:${const Uuid().v4()}';
-          return _enRouteOpKey!;
-        },
-        clearOpKey: () {
-          final old = _enRouteOpKey;
-          _enRouteOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _markEnRoute(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.enRoute,
+    allowed: (ride) => driverCanEnRoute(ride.state),
+    opKey: () {
+      _enRouteOpKey ??= 'ride:en_route:$rideId:${const Uuid().v4()}';
+      return _enRouteOpKey!;
+    },
+    clearOpKey: () {
+      final old = _enRouteOpKey;
+      _enRouteOpKey = null;
+      return old;
+    },
+    call: (ride, key) => _markEnRoute(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      operationKey: key,
+    ),
+  );
 
   Future<void> markArrived() => _runMutation(
-        kind: DriverRideMutation.arrive,
-        allowed: (ride) => driverCanArrive(ride.state),
-        opKey: () {
-          _arriveOpKey ??= 'ride:arrived:$rideId:${const Uuid().v4()}';
-          return _arriveOpKey!;
-        },
-        clearOpKey: () {
-          final old = _arriveOpKey;
-          _arriveOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _markArrived(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.arrive,
+    allowed: (ride) => driverCanArrive(ride.state),
+    opKey: () {
+      _arriveOpKey ??= 'ride:arrived:$rideId:${const Uuid().v4()}';
+      return _arriveOpKey!;
+    },
+    clearOpKey: () {
+      final old = _arriveOpKey;
+      _arriveOpKey = null;
+      return old;
+    },
+    call: (ride, key) => _markArrived(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      operationKey: key,
+    ),
+  );
 
-  Future<void> startRide({String? otp, String? pickupPhotoUrl}) =>
-      _runMutation(
-        kind: DriverRideMutation.start,
-        allowed: (ride) => driverCanStart(ride.state),
-        opKey: () {
-          _startOpKey ??= 'ride:start:$rideId:${const Uuid().v4()}';
-          return _startOpKey!;
-        },
-        clearOpKey: () {
-          final old = _startOpKey;
-          _startOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _startRide(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          otp: otp,
-          pickupPhotoUrl: pickupPhotoUrl,
-          operationKey: key,
-        ),
-      );
+  Future<void> startRide({String? otp, String? pickupPhotoUrl}) => _runMutation(
+    kind: DriverRideMutation.start,
+    allowed: (ride) => driverCanStart(ride.state),
+    opKey: () {
+      _startOpKey ??= 'ride:start:$rideId:${const Uuid().v4()}';
+      return _startOpKey!;
+    },
+    clearOpKey: () {
+      final old = _startOpKey;
+      _startOpKey = null;
+      return old;
+    },
+    call: (ride, key) => _startRide(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      otp: otp,
+      pickupPhotoUrl: pickupPhotoUrl,
+      operationKey: key,
+    ),
+  );
 
   Future<void> completeRide({String? otp}) => _runMutation(
-        kind: DriverRideMutation.complete,
-        allowed: (ride) => driverCanComplete(ride.state),
-        opKey: () {
-          _completeOpKey ??= 'ride:complete:$rideId:${const Uuid().v4()}';
-          return _completeOpKey!;
-        },
-        clearOpKey: () {
-          final old = _completeOpKey;
-          _completeOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _completeRide(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          otp: otp,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.complete,
+    allowed: (ride) => driverCanComplete(ride.state),
+    opKey: () {
+      _completeOpKey ??= 'ride:complete:$rideId:${const Uuid().v4()}';
+      return _completeOpKey!;
+    },
+    clearOpKey: () {
+      final old = _completeOpKey;
+      _completeOpKey = null;
+      return old;
+    },
+    call: (ride, key) => _completeRide(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      otp: otp,
+      operationKey: key,
+    ),
+  );
 
   Future<void> cancel({String? reason}) => _runMutation(
-        kind: DriverRideMutation.cancel,
-        allowed: (ride) =>
-            driverCanCancel(ride.state, courier: ride.isDelivery),
-        opKey: () {
-          _cancelOpKey ??= 'ride:cancel:$rideId:${const Uuid().v4()}';
-          return _cancelOpKey!;
-        },
-        clearOpKey: () {
-          final old = _cancelOpKey;
-          _cancelOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _cancelRide(
-          rideId: rideId,
-          reason: reason,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.cancel,
+    allowed: (ride) => driverCanCancel(ride.state, courier: ride.isDelivery),
+    opKey: () {
+      _cancelOpKey ??= 'ride:cancel:$rideId:${const Uuid().v4()}';
+      return _cancelOpKey!;
+    },
+    clearOpKey: () {
+      final old = _cancelOpKey;
+      _cancelOpKey = null;
+      return old;
+    },
+    call: (ride, key) =>
+        _cancelRide(rideId: rideId, reason: reason, operationKey: key),
+  );
 
   Future<void> closeRide() => _runMutation(
-        kind: DriverRideMutation.close,
-        allowed: (ride) =>
-            driverCanClose(ride.state, courier: ride.isDelivery),
-        opKey: () {
-          _closeOpKey ??= 'ride:close:$rideId:${const Uuid().v4()}';
-          return _closeOpKey!;
-        },
-        clearOpKey: () {
-          final old = _closeOpKey;
-          _closeOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _closeRide(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.close,
+    allowed: (ride) => driverCanClose(ride.state, courier: ride.isDelivery),
+    opKey: () {
+      _closeOpKey ??= 'ride:close:$rideId:${const Uuid().v4()}';
+      return _closeOpKey!;
+    },
+    clearOpKey: () {
+      final old = _closeOpKey;
+      _closeOpKey = null;
+      return old;
+    },
+    call: (ride, key) => _closeRide(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      operationKey: key,
+    ),
+  );
 
   // ── Ora Courier — exception + return mutations ──────────────────────────
 
   Future<void> failDelivery({required String reason}) => _runMutation(
-        kind: DriverRideMutation.failDelivery,
-        allowed: (ride) =>
-            driverCanFailDelivery(ride.state, courier: ride.isDelivery),
-        opKey: () {
-          _failDeliveryOpKey ??=
-              'ride:delivery_fail:$rideId:${const Uuid().v4()}';
-          return _failDeliveryOpKey!;
-        },
-        clearOpKey: () {
-          final old = _failDeliveryOpKey;
-          _failDeliveryOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _failDelivery(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          reason: reason,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.failDelivery,
+    allowed: (ride) =>
+        driverCanFailDelivery(ride.state, courier: ride.isDelivery),
+    opKey: () {
+      _failDeliveryOpKey ??= 'ride:delivery_fail:$rideId:${const Uuid().v4()}';
+      return _failDeliveryOpKey!;
+    },
+    clearOpKey: () {
+      final old = _failDeliveryOpKey;
+      _failDeliveryOpKey = null;
+      return old;
+    },
+    call: (ride, key) => _failDelivery(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      reason: reason,
+      operationKey: key,
+    ),
+  );
 
   Future<void> retryDelivery() => _runMutation(
-        kind: DriverRideMutation.retryDelivery,
-        allowed: (ride) =>
-            driverCanRetryDelivery(ride.state, courier: ride.isDelivery),
-        opKey: () {
-          _retryDeliveryOpKey ??=
-              'ride:delivery_retry:$rideId:${const Uuid().v4()}';
-          return _retryDeliveryOpKey!;
-        },
-        clearOpKey: () {
-          final old = _retryDeliveryOpKey;
-          _retryDeliveryOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _retryDelivery(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.retryDelivery,
+    allowed: (ride) =>
+        driverCanRetryDelivery(ride.state, courier: ride.isDelivery),
+    opKey: () {
+      _retryDeliveryOpKey ??=
+          'ride:delivery_retry:$rideId:${const Uuid().v4()}';
+      return _retryDeliveryOpKey!;
+    },
+    clearOpKey: () {
+      final old = _retryDeliveryOpKey;
+      _retryDeliveryOpKey = null;
+      return old;
+    },
+    call: (ride, key) => _retryDelivery(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      operationKey: key,
+    ),
+  );
 
   Future<void> startReturn() => _runMutation(
-        kind: DriverRideMutation.startReturn,
-        allowed: (ride) =>
-            driverCanStartReturn(ride.state, courier: ride.isDelivery),
-        opKey: () {
-          _startReturnOpKey ??=
-              'ride:return_start:$rideId:${const Uuid().v4()}';
-          return _startReturnOpKey!;
-        },
-        clearOpKey: () {
-          final old = _startReturnOpKey;
-          _startReturnOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _startReturn(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.startReturn,
+    allowed: (ride) =>
+        driverCanStartReturn(ride.state, courier: ride.isDelivery),
+    opKey: () {
+      _startReturnOpKey ??= 'ride:return_start:$rideId:${const Uuid().v4()}';
+      return _startReturnOpKey!;
+    },
+    clearOpKey: () {
+      final old = _startReturnOpKey;
+      _startReturnOpKey = null;
+      return old;
+    },
+    call: (ride, key) => _startReturn(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      operationKey: key,
+    ),
+  );
 
   Future<void> completeReturn({String? otp}) => _runMutation(
-        kind: DriverRideMutation.completeReturn,
-        allowed: (ride) =>
-            driverCanConfirmReturn(ride.state, courier: ride.isDelivery),
-        opKey: () {
-          _completeReturnOpKey ??=
-              'ride:return_complete:$rideId:${const Uuid().v4()}';
-          return _completeReturnOpKey!;
-        },
-        clearOpKey: () {
-          final old = _completeReturnOpKey;
-          _completeReturnOpKey = null;
-          return old;
-        },
-        call: (ride, key) => _completeReturn(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          otp: otp,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.completeReturn,
+    allowed: (ride) =>
+        driverCanConfirmReturn(ride.state, courier: ride.isDelivery),
+    opKey: () {
+      _completeReturnOpKey ??=
+          'ride:return_complete:$rideId:${const Uuid().v4()}';
+      return _completeReturnOpKey!;
+    },
+    clearOpKey: () {
+      final old = _completeReturnOpKey;
+      _completeReturnOpKey = null;
+      return old;
+    },
+    call: (ride, key) => _completeReturn(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      otp: otp,
+      operationKey: key,
+    ),
+  );
 
   // ── Ora Courier v2 — code-free stop progression ───────────────────────
 
@@ -710,9 +700,9 @@ class DriverAssignedRideViewModel
       ride.isCourierV2 && !isDriverJobTerminalState(ride.state);
 
   String _v2OpKey(String purpose) => _v2OpKeys.putIfAbsent(
-        purpose,
-        () => 'ride:$purpose:$rideId:${const Uuid().v4()}',
-      );
+    purpose,
+    () => 'ride:$purpose:$rideId:${const Uuid().v4()}',
+  );
 
   /// Ora Courier v2 — next per-stop driver action for the current stop.
   /// Returns null when no stop action applies right now.
@@ -722,77 +712,74 @@ class DriverAssignedRideViewModel
     return switch (stop.status) {
       'PENDING' => 'arrive',
       'ARRIVED' =>
-        stop.type == 'SHOP' && (stop.quote?.isEmpty ?? true) ? 'quote' : 'confirm',
+        stop.type == 'SHOP' && (stop.quote?.isEmpty ?? true)
+            ? 'quote'
+            : 'confirm',
       _ => null,
     };
   }
 
   /// Driver arrives at the current itinerary stop (any PICKUP/SHOP/DROPOFF).
   Future<void> arriveStop(int seq) => _runMutation(
-        kind: DriverRideMutation.stopArrive,
-        allowed: (ride) =>
-            _isV2Actionable(ride) && ride.currentStop?.seq == seq,
-        opKey: () => _v2OpKey('stop_arrive:$seq'),
-        clearOpKey: () {
-          final old = _v2OpKeys['stop_arrive:$seq'];
-          _v2OpKeys.remove('stop_arrive:$seq');
-          return old;
-        },
-        call: (ride, key) => _repo.arriveStop(
-          rideId: rideId,
-          seq: seq,
-          expectedVersion: ride.version,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.stopArrive,
+    allowed: (ride) => _isV2Actionable(ride) && ride.currentStop?.seq == seq,
+    opKey: () => _v2OpKey('stop_arrive:$seq'),
+    clearOpKey: () {
+      final old = _v2OpKeys['stop_arrive:$seq'];
+      _v2OpKeys.remove('stop_arrive:$seq');
+      return old;
+    },
+    call: (ride, key) => _repo.arriveStop(
+      rideId: rideId,
+      seq: seq,
+      expectedVersion: ride.version,
+      operationKey: key,
+    ),
+  );
 
   /// Driver completes the current stop — PICKUP "collected", SHOP "purchased"
   /// (requires `purchaseTotalMinor` ≤ approved quote), DROPOFF "delivered".
-  Future<void> confirmStop(int seq, {int? purchaseTotalMinor}) =>
-      _runMutation(
-        kind: DriverRideMutation.stopConfirm,
-        allowed: (ride) => _isV2Actionable(ride),
-        opKey: () => _v2OpKey('stop_confirm:$seq'),
-        clearOpKey: () {
-          final old = _v2OpKeys['stop_confirm:$seq'];
-          _v2OpKeys.remove('stop_confirm:$seq');
-          return old;
-        },
-        call: (ride, key) => _repo.confirmStop(
-          rideId: rideId,
-          seq: seq,
-          expectedVersion: ride.version,
-          purchaseTotalMinor: purchaseTotalMinor,
-          operationKey: key,
-        ),
-      );
+  Future<void> confirmStop(int seq, {int? purchaseTotalMinor}) => _runMutation(
+    kind: DriverRideMutation.stopConfirm,
+    allowed: (ride) => _isV2Actionable(ride),
+    opKey: () => _v2OpKey('stop_confirm:$seq'),
+    clearOpKey: () {
+      final old = _v2OpKeys['stop_confirm:$seq'];
+      _v2OpKeys.remove('stop_confirm:$seq');
+      return old;
+    },
+    call: (ride, key) => _repo.confirmStop(
+      rideId: rideId,
+      seq: seq,
+      expectedVersion: ride.version,
+      purchaseTotalMinor: purchaseTotalMinor,
+      operationKey: key,
+    ),
+  );
 
   /// Driver reports a failed stop — server enum reason; the itinerary may
   /// continue to remaining stops (partial fulfillment) or close out.
   Future<void> failStop(int seq, {required String reason}) => _runMutation(
-        kind: DriverRideMutation.stopFail,
-        allowed: (ride) => _isV2Actionable(ride),
-        opKey: () => _v2OpKey('stop_fail:$seq'),
-        clearOpKey: () {
-          final old = _v2OpKeys['stop_fail:$seq'];
-          _v2OpKeys.remove('stop_fail:$seq');
-          return old;
-        },
-        call: (ride, key) => _repo.failStop(
-          rideId: rideId,
-          seq: seq,
-          expectedVersion: ride.version,
-          reason: reason,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.stopFail,
+    allowed: (ride) => _isV2Actionable(ride),
+    opKey: () => _v2OpKey('stop_fail:$seq'),
+    clearOpKey: () {
+      final old = _v2OpKeys['stop_fail:$seq'];
+      _v2OpKeys.remove('stop_fail:$seq');
+      return old;
+    },
+    call: (ride, key) => _repo.failStop(
+      rideId: rideId,
+      seq: seq,
+      expectedVersion: ride.version,
+      reason: reason,
+      operationKey: key,
+    ),
+  );
 
   /// buy_deliver — driver submits an itemized quote on an arrived SHOP stop;
   /// the customer must approve before the purchase can be confirmed.
-  Future<void> submitStopQuote(
-    int seq,
-    List<Map<String, Object?>> items,
-  ) =>
+  Future<void> submitStopQuote(int seq, List<Map<String, Object?>> items) =>
       _runMutation(
         kind: DriverRideMutation.stopQuote,
         allowed: (ride) => _isV2Actionable(ride),
@@ -814,21 +801,21 @@ class DriverAssignedRideViewModel
   /// Ora Courier v2 — driver-reported cash collection (PAID/UNPAID/PARTIAL);
   /// never presented as platform-verified payment.
   Future<void> reportSettlement(String status) => _runMutation(
-        kind: DriverRideMutation.settle,
-        allowed: _isV2Actionable,
-        opKey: () => _v2OpKey('settlement'),
-        clearOpKey: () {
-          final old = _v2OpKeys['settlement'];
-          _v2OpKeys.remove('settlement');
-          return old;
-        },
-        call: (ride, key) => _repo.reportSettlement(
-          rideId: rideId,
-          expectedVersion: ride.version,
-          status: status,
-          operationKey: key,
-        ),
-      );
+    kind: DriverRideMutation.settle,
+    allowed: _isV2Actionable,
+    opKey: () => _v2OpKey('settlement'),
+    clearOpKey: () {
+      final old = _v2OpKeys['settlement'];
+      _v2OpKeys.remove('settlement');
+      return old;
+    },
+    call: (ride, key) => _repo.reportSettlement(
+      rideId: rideId,
+      expectedVersion: ride.version,
+      status: status,
+      operationKey: key,
+    ),
+  );
 
   Future<void> _runMutation({
     required DriverRideMutation kind,
@@ -873,8 +860,8 @@ class DriverAssignedRideViewModel
       if (_alive && gen == _mutationGen && state.activeMutation == kind) {
         state = state.copyWith(
           clearMutation: true,
-          phase: state.ride != null &&
-                  isDriverJobTerminalState(state.ride!.state)
+          phase:
+              state.ride != null && isDriverJobTerminalState(state.ride!.state)
               ? DriverAssignedRidePhase.ended
               : DriverAssignedRidePhase.active,
         );
@@ -894,7 +881,8 @@ class DriverAssignedRideViewModel
       orElse: () => null,
     );
 
-    final definitive = code == 'VERSION_CONFLICT' ||
+    final definitive =
+        code == 'VERSION_CONFLICT' ||
         code == 'STATE_CONFLICT' ||
         code == 'ALREADY_ASSIGNED' ||
         code == 'IDEMPOTENCY_KEY_REUSED';
@@ -948,5 +936,5 @@ class DriverAssignedRideViewModel
 
 final driverAssignedRideViewModelProvider = NotifierProvider.autoDispose
     .family<DriverAssignedRideViewModel, DriverAssignedRideUiState, String>(
-  DriverAssignedRideViewModel.new,
-);
+      DriverAssignedRideViewModel.new,
+    );

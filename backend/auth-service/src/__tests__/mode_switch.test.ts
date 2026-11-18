@@ -19,6 +19,9 @@ function appFor(db: Db, uid: string) {
     auth: authFor(uid),
     db: db as never,
     requireAppCheck: false,
+    // These tests exercise the auto-approve path explicitly; the production
+    // default is approval-required (DRIVER_AUTO_APPROVE unset).
+    driverAutoApprove: true,
     rateLimit: { windowMs: 60_000, max: 10_000 },
   });
 }

@@ -3,7 +3,7 @@
 # No service account, no Google Cloud calls, no billing. $0 incremental cost.
 #
 # Prereq: firebase emulators running from repo root:
-#   firebase emulators:start --project ora-app-d8112
+#   firebase emulators:start --project oraapp-a9be5
 #   (firestore :8181, auth :9099, database :9000 — see firebase.json)
 #
 # Phone access (USB): ./scripts/dev_adb_reverse.sh, then in the app use
@@ -16,13 +16,13 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
 export PORT="${PORT:-8080}"
-export FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-ora-app-d8112}"
+export FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-oraapp-a9be5}"
 export FIRESTORE_EMULATOR_HOST="${FIRESTORE_EMULATOR_HOST:-127.0.0.1:8181}"
 export FIREBASE_AUTH_EMULATOR_HOST="${FIREBASE_AUTH_EMULATOR_HOST:-127.0.0.1:9099}"
 export FIREBASE_DATABASE_EMULATOR_HOST="${FIREBASE_DATABASE_EMULATOR_HOST:-127.0.0.1:9000}"
 # Required so the RTDB adapter is constructed; the emulator host above is what
 # actually receives traffic. Value is ignored when the emulator env is set.
-export FIREBASE_DATABASE_URL="${FIREBASE_DATABASE_URL:-https://ora-app-d8112-default-rtdb.local-emulator.local}"
+export FIREBASE_DATABASE_URL="${FIREBASE_DATABASE_URL:-https://oraapp-a9be5-default-rtdb.local-emulator.local}"
 export REQUIRE_APP_CHECK="${REQUIRE_APP_CHECK:-false}"
 export ORA_ENV="${ORA_ENV:-development}"
 export ORA_INTERNAL_WORKER_TOKEN="${ORA_INTERNAL_WORKER_TOKEN:-local-dev-worker-token-xx}"
@@ -35,6 +35,14 @@ export ORA_ROUTING_PROVIDER="haversine"
 # rollback locally with GEO_BACKEND=firestore). Production stays firestore
 # unless GEO_BACKEND is explicitly set there.
 export GEO_BACKEND="${GEO_BACKEND:-rtdb}"
+# Cost-optimization flags — mirror the staging/test/prod deploys so local dev
+# exercises the same code path we ship. Override with =false to compare.
+export LOCATION_ADAPTIVE_FRESHNESS="${LOCATION_ADAPTIVE_FRESHNESS:-true}"
+export LOCATION_IDLE_MERGED_CURSOR="${LOCATION_IDLE_MERGED_CURSOR:-true}"
+# Local-emulator exception: skip admin review so dev/E2E driver onboarding is
+# instant. Production deploys leave DRIVER_AUTO_APPROVE unset (= off).
+export DRIVER_AUTO_APPROVE="${DRIVER_AUTO_APPROVE:-true}"
+export LOCATION_TRIP_GEO_MIN_INTERVAL_MS="${LOCATION_TRIP_GEO_MIN_INTERVAL_MS:-45000}"
 # Never source .env here: it may contain keys for paid Google services
 # (GOOGLE_MAPS_SERVER_KEY etc.). Paid routing stays disabled.
 unset GOOGLE_MAPS_SERVER_KEY GOOGLE_APPLICATION_CREDENTIALS || true

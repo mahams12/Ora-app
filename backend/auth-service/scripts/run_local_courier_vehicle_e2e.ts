@@ -13,9 +13,9 @@
 process.env.FIRESTORE_EMULATOR_HOST ??= '127.0.0.1:8181';
 process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9099';
 process.env.FIREBASE_DATABASE_EMULATOR_HOST ??= '127.0.0.1:9000';
-process.env.FIREBASE_PROJECT_ID ??= 'ora-app-d8112';
+process.env.FIREBASE_PROJECT_ID ??= 'oraapp-a9be5';
 process.env.FIREBASE_DATABASE_URL ??=
-  'https://ora-app-d8112-default-rtdb.local-emulator.local';
+  'https://oraapp-a9be5-default-rtdb.local-emulator.local';
 
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';

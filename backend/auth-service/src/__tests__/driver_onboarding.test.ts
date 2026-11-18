@@ -113,8 +113,8 @@ describe('driver onboarding', () => {
     expect(response.body.error.message).toContain('licenseExpiry');
   });
 
-  it('defaults auto-approval on and disables only for false or zero', () => {
-    expect(driverAutoApproveFromEnv({})).toBe(true);
+  it('defaults auto-approval off and enables only for explicit true or one', () => {
+    expect(driverAutoApproveFromEnv({})).toBe(false);
     expect(driverAutoApproveFromEnv({ DRIVER_AUTO_APPROVE: 'false' })).toBe(
       false,
     );
@@ -122,9 +122,13 @@ describe('driver onboarding', () => {
       false,
     );
     expect(driverAutoApproveFromEnv({ DRIVER_AUTO_APPROVE: '0' })).toBe(false);
+    expect(driverAutoApproveFromEnv({ DRIVER_AUTO_APPROVE: 'yes' })).toBe(
+      false,
+    );
     expect(driverAutoApproveFromEnv({ DRIVER_AUTO_APPROVE: 'true' })).toBe(
       true,
     );
+    expect(driverAutoApproveFromEnv({ DRIVER_AUTO_APPROVE: '1' })).toBe(true);
   });
 
   it('auto-approves a none-status account and stores normalized application data', async () => {

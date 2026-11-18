@@ -1,4 +1,4 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 
 /// Pure camera policy for MAP-1 — unit-testable without a map controller.
 class RideMapCameraPolicy {
@@ -66,7 +66,10 @@ class RideMapCameraPolicy {
       );
       return CameraUpdate.newLatLngBounds(
         LatLngBounds(southwest: southwest, northeast: northeast),
-        padding,
+        left: padding,
+        top: padding,
+        right: padding,
+        bottom: padding,
       );
     }
     if (pickup != null) {

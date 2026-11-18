@@ -25,7 +25,6 @@ dependencies:
   flutter_local_notifications: ^19.0.0
   flutter_secure_storage: ^10.3.1
   geolocator: ^14.0.2
-  google_maps_flutter: ^2.12.3
   maplibre_gl: ^0.27.1
   geocoding: ^5.0.0
   image_picker: ^1.2.2
@@ -63,6 +62,9 @@ flutter:
     - assets/marketplace/services/subs/
     - assets/branding/ride_card/
     - assets/branding/ride_card/icons/
+    - assets/driver_tiles/
+    - assets/logistics/
+    - assets/vendor/
     # Ride Request half-screen MapLibre preview (Ora dark style + markers).
     - assets/maps/preview/
     # Disposable MapLibre PoC only — safe to delete with the PoC feature.

@@ -40,6 +40,11 @@ class RideCardParticipantRow extends StatelessWidget {
     final avatarSize = compact ? 40.0 : 48.0;
     final hasName =
         p != null && p.displayName != null && p.displayName!.trim().isNotEmpty;
+    // Privacy-safe fallback — role label ("Rider"/"Driver") is never an
+    // invented identity.
+    final roleLabel = !hasName && p != null && p.roleLabel.trim().isNotEmpty
+        ? p.roleLabel.trim()
+        : null;
 
     return Row(
       children: [
@@ -60,6 +65,15 @@ class RideCardParticipantRow extends StatelessWidget {
                         p.displayName!.trim(),
                         style: OraTypography.bodyEmphasis(
                           OraColors.textPrimary,
+                        ).copyWith(fontSize: compact ? 14 : 15),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : roleLabel != null
+                    ? Text(
+                        roleLabel,
+                        style: OraTypography.bodyEmphasis(
+                          OraColors.textSecondary,
                         ).copyWith(fontSize: compact ? 14 : 15),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

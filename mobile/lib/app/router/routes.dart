@@ -20,12 +20,44 @@ class AppRoutes {
   static const rentalRegistration = '/register/rental';
   static const serviceVendorRegistration = '/register/services';
 
+  /// Registered service-vendor area (post & manage marketplace services).
+  static const vendorHome = '/vendor';
+  static const vendorPostService = '/vendor/post-service';
+  static const vendorBookingsService = '/vendor/bookings';
+
+  /// Shared partner wallet under the services-vendor area.
+  static const vendorWallet = '/vendor/wallet';
+  static const vendorWalletAddPoints = '/vendor/wallet/add-points';
+
+  /// Approved logistics-partner area — a driver-style shell that receives
+  /// realtime delivery offers through the shared rides pipeline.
+  static const logisticsVendorHome = '/logistics-vendor';
+
+  /// Logistics assigned-job detail. Use [logisticsDeliveryPath].
+  static const logisticsDelivery = '/logistics-vendor/deliveries/:rideId';
+
+  /// Shared vendor wallet under the logistics shell.
+  static const logisticsVendorWallet = '/logistics-vendor/wallet';
+  static const logisticsVendorWalletAddPoints =
+      '/logistics-vendor/wallet/add-points';
+
+  /// Registered rental-vendor area (post & manage properties that
+  /// surface on the passenger Rental pages).
+  static const rentalVendorHome = '/rental-vendor';
+  static const rentalVendorPost = '/rental-vendor/post-property';
+  static const vendorBookingsRental = '/rental-vendor/bookings';
+
+  /// Shared partner wallet under the rental-vendor area.
+  static const rentalVendorWallet = '/rental-vendor/wallet';
+  static const rentalVendorWalletAddPoints =
+      '/rental-vendor/wallet/add-points';
+
+  /// Customer marketplace bookings/requests history.
+  static const myBookings = '/bookings';
+
   /// Passenger's ride services hub.
   static const ridesHub = '/rides';
   static const logistics = '/logistics';
-  static const logisticsSearch = '/logistics/search';
-  static const logisticsCategory = '/logistics/:categoryId';
-  static const logisticsQuote = '/logistics/:categoryId/:typeId/quote';
   static const rental = '/rental';
   static const rentalCategory = '/rental/category/:categoryId';
   static const services = '/services';
@@ -71,6 +103,12 @@ class AppRoutes {
   /// Direct offer by known rideId (lab/direct — not marketplace).
   static const driverDirectOffer = '/driver/offer';
 
+  /// Driver vendor wallet — points balance, top-up and withdrawals.
+  static const driverWallet = '/driver/wallet';
+
+  /// Wallet top-up screen — amount, payment method, summary.
+  static const driverWalletAddPoints = '/driver/wallet/add-points';
+
   static String offersInboxPath(String rideId) =>
       '/rides/${Uri.encodeComponent(rideId)}/offers';
 
@@ -82,13 +120,6 @@ class AppRoutes {
     },
   ).toString();
 
-  static String logisticsCategoryPath(String categoryId) =>
-      '/logistics/${Uri.encodeComponent(categoryId)}';
-
-  static String logisticsQuotePath(String categoryId, String typeId) =>
-      '/logistics/${Uri.encodeComponent(categoryId)}/'
-      '${Uri.encodeComponent(typeId)}/quote';
-
   static String rentalCategoryPath(
     String categoryId, {
     String? subcategoryId,
@@ -99,9 +130,6 @@ class AppRoutes {
         'subcategory': subcategoryId,
     },
   ).toString();
-
-  static String logisticsSearchPath(String query) =>
-      Uri(path: logisticsSearch, queryParameters: {'q': query}).toString();
 
   static String servicesCategoryPath(String categoryId) =>
       '/services/${Uri.encodeComponent(categoryId)}';
@@ -124,4 +152,7 @@ class AppRoutes {
 
   static String driverRidePath(String rideId) =>
       '/driver/rides/${Uri.encodeComponent(rideId)}';
+
+  static String logisticsDeliveryPath(String rideId) =>
+      '/logistics-vendor/deliveries/${Uri.encodeComponent(rideId)}';
 }

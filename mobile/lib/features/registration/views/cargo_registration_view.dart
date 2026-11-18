@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../app/di/providers.dart';
 import '../../../app/router/routes.dart';
+import '../../../app/theme/ora_colors.dart';
 import '../../../app/theme/ora_spacing.dart';
+import '../../../app/theme/ora_typography.dart';
 import '../../../app/theme/widgets/widgets.dart';
 import '../../auth/presentation/view_models/session_user_profile.dart';
 import '../widgets/registration_scaffold.dart';
@@ -43,8 +46,8 @@ const _cargoColours = [
 ];
 
 /// Cargo / logistics partner registration — collects the business, vehicle
-/// and document details shown in the cargo registration design. Stored
-/// locally until the vendor onboarding API lands.
+/// and document details shown in the cargo registration design. Submits
+/// server-side via POST /v1/auth/vendor-application (status → pending).
 class CargoRegistrationView extends ConsumerStatefulWidget {
   const CargoRegistrationView({super.key});
 
@@ -70,6 +73,7 @@ class _CargoRegistrationViewState
   XFile? _cnicPhoto;
   XFile? _businessDocuments;
   bool _submitting = false;
+  String? _submitError;
 
   @override
   void initState() {
@@ -150,28 +154,61 @@ class _CargoRegistrationViewState
 
   Future<void> _submit() async {
     if (_submitting || !_validate()) return;
-    setState(() => _submitting = true);
-    await showOraBottomSheet<void>(
-      context: context,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const OraSectionHeader(
-            title: "Application received — we'll notify you after review",
-            description:
-                'Your cargo partner registration is saved. Our team will '
-                'contact you once it is reviewed.',
-          ),
-          const SizedBox(height: OraSpacing.lg),
-          OraButton(
-            label: 'Back to Home',
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    );
-    if (mounted) context.go(AppRoutes.home);
+    setState(() {
+      _submitting = true;
+      _submitError = null;
+    });
+    try {
+      await ref.read(submitVendorApplicationUseCaseProvider).call(
+        type: 'cargo',
+        details: {
+          'businessName': _businessNameController.text.trim(),
+          'contactNumber': _contactController.text.trim(),
+          'businessAddress': _addressController.text.trim(),
+          'businessType': _businessType ?? '',
+          'vehicleType': _vehicleType ?? '',
+          'loadCapacity': _loadCapacity ?? '',
+          'registrationNumber': _registrationNumberController.text.trim(),
+          'vehicleColour': _vehicleColour ?? '',
+        },
+      );
+      await ref
+          .read(authStateNotifierProvider.notifier)
+          .refreshCanonicalProfile();
+      if (!mounted) return;
+      setState(() => _submitting = false);
+      await showOraBottomSheet<void>(
+        context: context,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const OraSectionHeader(
+              title: "Application received — we'll notify you after review",
+              description:
+                  'Your cargo partner registration is saved. The logistics '
+                  'dashboard unlocks once an admin approves it.',
+            ),
+            const SizedBox(height: OraSpacing.lg),
+            OraButton(
+              label: 'Back to Home',
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+      if (mounted) context.go(AppRoutes.home);
+    } catch (error) {
+      if (!mounted) return;
+      setState(
+        () => _submitError = ref
+            .read(failureMapperProvider)
+            .fromException(error)
+            .userMessage,
+      );
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
   }
 
   Widget _field({
@@ -216,6 +253,14 @@ class _CargoRegistrationViewState
         children: [
           const SizedBox(height: OraSpacing.sm),
           const RegInfoBanner(),
+          if (_submitError != null) ...[
+            const SizedBox(height: OraSpacing.sm),
+            Text(
+              _submitError!,
+              key: const ValueKey('cargo-submit-error'),
+              style: OraTypography.body(OraColors.danger),
+            ),
+          ],
           const SizedBox(height: OraSpacing.md),
           OraButton(
             label: 'Submit Registration',

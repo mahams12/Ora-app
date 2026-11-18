@@ -146,10 +146,7 @@ class DriverTripLocationPublisher {
     _disarmHeartbeat();
     _pendingWhileInFlight = null;
     _latestAccepted = null;
-    _log('location_publish_stopped', {
-      'rideId': rideId,
-      'reason': reason,
-    });
+    _log('location_publish_stopped', {'rideId': rideId, 'reason': reason});
   }
 
   void dispose() {
@@ -186,15 +183,13 @@ class DriverTripLocationPublisher {
       return false;
     }
 
-    final intervalOk =
-        now.difference(lastAt) >= _minInterval;
+    final intervalOk = now.difference(lastAt) >= _minInterval;
     final moved = _distanceMeters(lastFix, fix) >= _minMovementMeters;
     if (intervalOk && moved) return true;
 
     if (reason == 'heartbeat') {
       final age = now.difference(fix.timestamp);
-      if (age <= _heartbeatFreshness &&
-          now.difference(lastAt) >= _heartbeat) {
+      if (age <= _heartbeatFreshness && now.difference(lastAt) >= _heartbeat) {
         return true;
       }
     }
@@ -373,7 +368,8 @@ class DriverTripLocationPublisher {
     final lat2 = b.latitude * math.pi / 180;
     final dLat = (b.latitude - a.latitude) * math.pi / 180;
     final dLon = (b.longitude - a.longitude) * math.pi / 180;
-    final h = math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final h =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(lat1) *
             math.cos(lat2) *
             math.sin(dLon / 2) *

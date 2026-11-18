@@ -87,3 +87,43 @@ List endpoints use cursor-based pagination:
 ```
 
 Query: `?cursor={nextCursor}&limit=10`
+
+## Marketplace (vendor listings + bookings) — local-verified, not yet deployed
+
+All endpoints require `Authorization: Bearer`. Mutating endpoints require `Idempotency-Key` (min 8 chars).
+
+### Vendor application
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `/v1/auth/vendor-application` | Body `{type: service\|rental\|cargo, details?}` → `vendorApplications[type].status = pending`. Idempotent re-apply allowed unless approved/suspended. |
+
+Admin approval: `users/{uid}.vendorApplications.{type}.status` server-side (no admin UI yet).
+
+### Vendor listings (approved-vendor role required per `type`)
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `/v1/vendor/listings` | Create listing (201). Body: `type, categoryId, subcategoryId, title, description, price, priceUnit, location, contactNumber, details?, photos?` (photos = JPEG data URLs ≤6) |
+| GET | `/v1/vendor/listings` | Own listings |
+| PATCH | `/v1/vendor/listings/:listingId` | Update fields; `{status: published\|paused}` toggles visibility. Owner only (404 cross-vendor) |
+| DELETE | `/v1/vendor/listings/:listingId` | Soft-delete. Owner only |
+
+### Customer discovery
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/v1/marketplace/listings?type=&categoryId=&subcategoryId=` | Published listings only |
+| GET | `/v1/marketplace/listings/:listingId` | Published listing detail |
+
+### Bookings
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `/v1/marketplace/bookings` | Create request (201). Body `{listingId, request: {contactName, contactPhone, details?}}`. Duplicate active booking → 409 |
+| GET | `/v1/marketplace/bookings?role=customer\|vendor&type=` | Own bookings only |
+| GET | `/v1/marketplace/bookings/:bookingId` | Parties only (404 otherwise) |
+| POST | `/v1/marketplace/bookings/:id/vendor-action` | `{action: quote\|accept\|reject\|cancel\|start\|complete, amount?, note?}` — listing owner only |
+| POST | `/v1/marketplace/bookings/:id/customer-action` | `{action: accept\|cancel}` — booking customer only |
+
+Status machine: `requested → quoted → confirmed → in_progress → completed`; `rejected`/`cancelled` terminal. Illegal transition → 409. Rental confirmed-date overlap → 409. Suspended vendor → 403.

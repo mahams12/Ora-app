@@ -78,9 +78,7 @@ class _DriverRegistrationViewState
     _fullNameController = TextEditingController(
       text: profile?.displayName ?? '',
     );
-    _mobileController = TextEditingController(
-      text: profile?.phoneNumber ?? '',
-    );
+    _mobileController = TextEditingController(text: profile?.phoneNumber ?? '');
   }
 
   @override
@@ -203,8 +201,7 @@ class _DriverRegistrationViewState
     for (final option in _vehicleOptions) {
       if (option.name == selected) {
         setState(() {
-          _vehicleCategory =
-              (option.action as RideCategoryAction).categoryId;
+          _vehicleCategory = (option.action as RideCategoryAction).categoryId;
           _errors.remove('vehicleCategory');
         });
         return;
@@ -521,18 +518,14 @@ class _DriverRegistrationViewState
           onPick: () => _pickPhoto((f) => _vehiclePhoto = f),
         ),
         const SizedBox(height: OraSpacing.lg),
-        const RegSection(
-          number: 3,
-          title: 'Vehicle Registration Documents',
-        ),
+        const RegSection(number: 3, title: 'Vehicle Registration Documents'),
         RegRow(
           children: [
             RegUploadTile(
               title: 'Registration Certificate',
               subtitle: 'Smart Card / Book',
               file: _registrationCertificate,
-              onPick: () =>
-                  _pickPhoto((f) => _registrationCertificate = f),
+              onPick: () => _pickPhoto((f) => _registrationCertificate = f),
             ),
             RegUploadTile(
               title: 'Driving Licence',
@@ -595,9 +588,7 @@ class _DriverRegistrationViewState
                   _confirmed
                       ? Icons.check_circle_rounded
                       : Icons.radio_button_unchecked,
-                  color: _confirmed
-                      ? OraColors.gold
-                      : OraColors.textMuted,
+                  color: _confirmed ? OraColors.gold : OraColors.textMuted,
                 ),
                 const SizedBox(width: OraSpacing.sm),
                 Expanded(
@@ -619,7 +610,6 @@ class _DriverRegistrationViewState
             ),
           ),
       ],
-
     );
   }
 }

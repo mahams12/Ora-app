@@ -9,17 +9,19 @@ import '../../../../app/router/routes.dart';
 import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/widgets/widgets.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/errors/app_failure.dart';
 import '../../../auth/presentation/view_models/session_user_profile.dart';
+import '../../recent/driver_recents.dart';
 import '../view_models/driver_availability_view_model.dart';
+import '../widgets/driver_nav_bar.dart';
+import '../widgets/driver_ui_kit.dart';
 import 'driver_assigned_rides_view.dart';
-import 'driver_direct_offer_view.dart';
 import 'driver_earnings_view.dart';
 import 'driver_home_view.dart';
 import 'driver_open_rides_view.dart';
+import 'driver_profile_view.dart';
 
-enum DriverShellPage { home, open, assigned, offer, earnings }
+enum DriverShellPage { home, open, assigned, earnings, profile }
 
 /// Driver shell — prototype drawer navigation (no bottom bar).
 class DriverShellView extends ConsumerStatefulWidget {
@@ -81,7 +83,8 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
     }
   }
 
-  void _openDrawer() => _scaffoldKey.currentState?.openDrawer();
+
+
 
   void _closeDrawer() {
     if (_scaffoldKey.currentState?.isDrawerOpen ?? false) {
@@ -92,6 +95,16 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
   void _selectPage(DriverShellPage page) {
     _closeDrawer();
     if (_page == page) return;
+    final recent = switch (page) {
+      DriverShellPage.open => DriverRecentDestination.requests,
+      DriverShellPage.assigned => DriverRecentDestination.bookings,
+      DriverShellPage.earnings => DriverRecentDestination.earnings,
+      DriverShellPage.profile => DriverRecentDestination.profile,
+      DriverShellPage.home => null,
+    };
+    if (recent != null) {
+      ref.read(driverRecentsProvider.notifier).record(recent);
+    }
     setState(() => _page = page);
   }
 
@@ -102,6 +115,11 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
 
   Future<void> _showUnavailable(String feature) {
     _closeDrawer();
+    if (feature == 'Wallet' || feature == 'Payouts') {
+      ref
+          .read(driverRecentsProvider.notifier)
+          .record(DriverRecentDestination.wallet);
+    }
     return showOraBottomSheet<void>(
       context: context,
       child: Column(
@@ -132,8 +150,9 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
     _closeDrawer();
     if (_signingOut) return;
     try {
-      final profile =
-          await ref.read(switchModeUseCaseProvider)(mode: 'passenger');
+      final profile = await ref.read(switchModeUseCaseProvider)(
+        mode: 'passenger',
+      );
       ref.read(sessionUserProfileProvider.notifier).setProfile(profile);
       // Refresh availability → presence publisher stops (isOnline=false).
       unawaited(ref.read(driverAvailabilityProvider.notifier).refresh());
@@ -157,8 +176,8 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
                   : 'Cannot switch to passenger mode',
               description: isActiveJob
                   ? 'You have an active trip or delivery. Finish it or '
-                      'return the parcel before switching to passenger mode — '
-                      'the job is kept in My trips.'
+                        'return the parcel before switching to passenger mode — '
+                        'the job is kept in My trips.'
                   : failure.userMessage,
             ),
             const SizedBox(height: OraSpacing.lg),
@@ -227,6 +246,25 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.transparent,
+      bottomNavigationBar: DriverNavBar(
+        selected: switch (_page) {
+          DriverShellPage.home => DriverNavDestination.home,
+          DriverShellPage.assigned => DriverNavDestination.trips,
+          DriverShellPage.earnings => DriverNavDestination.earnings,
+          DriverShellPage.profile => DriverNavDestination.profile,
+          DriverShellPage.open => null,
+        },
+        onSelect: (dest) => switch (dest) {
+          DriverNavDestination.home => _selectPage(DriverShellPage.home),
+          DriverNavDestination.trips => _selectPage(DriverShellPage.assigned),
+          DriverNavDestination.earnings => _selectPage(
+            DriverShellPage.earnings,
+          ),
+          DriverNavDestination.wallet =>
+            context.push(AppRoutes.driverWallet),
+          DriverNavDestination.profile => _selectPage(DriverShellPage.profile),
+        },
+      ),
       drawer: OraDrawerShell(
         avatarInitials: initials,
         avatarData: profile?.avatarData,
@@ -249,19 +287,11 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
             onTap: () => _selectPage(DriverShellPage.open),
           ),
           OraDrawerItem(
-            title: 'My trips',
+            title: 'My Rides',
             icon: Icons.route_rounded,
             iconBackground: OraColors.infoMuted,
             iconColor: OraColors.info,
             onTap: () => _selectPage(DriverShellPage.assigned),
-          ),
-          OraDrawerItem(
-            title: 'Direct offer',
-            icon: Icons.local_offer_outlined,
-            iconBackground: OraColors.primaryMuted,
-            iconColor: OraColors.goldSoft,
-            subtitle: 'Lab / known rideId',
-            onTap: () => _selectPage(DriverShellPage.offer),
           ),
           OraDrawerItem(
             title: 'Earnings',
@@ -271,11 +301,11 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
             onTap: () => _selectPage(DriverShellPage.earnings),
           ),
           OraDrawerItem(
-            title: 'Payouts',
+            title: 'Wallet',
             icon: Icons.account_balance_wallet_rounded,
             iconBackground: OraColors.primaryMuted,
             iconColor: OraColors.goldSoft,
-            onTap: () => _showUnavailable('Payouts'),
+            onTap: () => context.push(AppRoutes.driverWallet),
           ),
           OraDrawerItem(
             title: 'Vehicle',
@@ -333,11 +363,10 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
             displayName: displayName,
             avatarInitials: initials,
             avatarData: profile?.avatarData,
-            onOpenDrawer: _openDrawer,
+            onSwitchToPassenger: () => context.go(AppRoutes.home),
             onOpenProfile: _openProfile,
             onOpenRideRequests: () => _selectPage(DriverShellPage.open),
             onOpenAssignedTrips: () => _selectPage(DriverShellPage.assigned),
-            onOpenDirectOffer: () => _selectPage(DriverShellPage.offer),
             onOpenEarnings: () => _selectPage(DriverShellPage.earnings),
             onUnavailable: _showUnavailable,
             availabilityOnline: availability.isOnline,
@@ -348,28 +377,30 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
             ),
           ),
           _DriverSubpage(
-            title: 'Open rides',
-            onOpenDrawer: _openDrawer,
+            title: 'Ride Requests',
             child: DriverOpenRidesView(active: _page == DriverShellPage.open),
           ),
           _DriverSubpage(
-            title: 'My trips',
-            onOpenDrawer: _openDrawer,
+            title: 'My Rides',
             child: DriverAssignedRidesView(
               active: _page == DriverShellPage.assigned,
             ),
           ),
           _DriverSubpage(
-            title: 'Direct offer',
-            onOpenDrawer: _openDrawer,
-            child: const DriverDirectOfferView(),
-          ),
-          _DriverSubpage(
-            title: 'Earnings',
-            onOpenDrawer: _openDrawer,
+            title: 'My Earnings',
+            subtitle: 'Track your income, trips and performance',
+            artHeader: true,
+            onBell: () => _selectPage(DriverShellPage.open),
             child: DriverEarningsView(
               active: _page == DriverShellPage.earnings,
             ),
+          ),
+          DriverProfileView(
+            onEditProfile: _openProfile,
+            onOpenWallet: () => context.push(AppRoutes.driverWallet),
+            onUnavailable: _showUnavailable,
+            onSignOut: _signOut,
+            signingOut: _signingOut,
           ),
         ],
       ),
@@ -380,57 +411,32 @@ class _DriverShellViewState extends ConsumerState<DriverShellView>
 class _DriverSubpage extends StatelessWidget {
   const _DriverSubpage({
     required this.title,
-    required this.onOpenDrawer,
     required this.child,
+    this.subtitle,
+    this.artHeader = false,
+    this.onBell,
   });
 
   final String title;
-  final VoidCallback onOpenDrawer;
+  final String? subtitle;
+  final bool artHeader;
+  final VoidCallback? onBell;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SafeArea(
-          bottom: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              OraSpacing.xs,
-              OraSpacing.xs,
-              OraSpacing.md,
-              0,
-            ),
-            child: Row(
-              children: [
-                IconButton(
-                  tooltip: 'Menu',
-                  onPressed: onOpenDrawer,
-                  icon: const Icon(Icons.menu_rounded),
-                  color: OraColors.textPrimary,
-                ),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: OraColors.textPrimary,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'Sora',
-                    ),
-                  ),
-                ),
-                Text(
-                  AppConstants.appName,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: OraColors.primary,
-                    fontWeight: FontWeight.w800,
-                    fontFamily: 'Sora',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        if (artHeader)
+          DriverHeroArtHeader(
+            title: title,
+            subtitle: subtitle,
+            trailingIcon: Icons.notifications_outlined,
+            trailingTooltip: 'Ride requests',
+            onTrailing: onBell,
+          )
+        else
+          DriverOrangeTopBar(title: title),
         Expanded(child: child),
       ],
     );
