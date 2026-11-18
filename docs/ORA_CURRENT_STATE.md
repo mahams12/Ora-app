@@ -18,11 +18,11 @@ Read this first in any new Cursor/engineering session. Then follow links to phas
 | Concern | Actual |
 | ------- | ------ |
 | Product | **Ora** — P2P offered-fare ride-hailing (passenger + driver in one Flutter app) |
-| Backend | `backend/auth-service/` — Express modular monolith (auth + rides + drivers + location + Redis GEO) |
+| Backend | `backend/auth-service/` — Express modular monolith (auth + rides + drivers + location + geo) |
 | Mobile | `mobile/` — Flutter (Riverpod, go_router, Firebase Auth / App Check) |
 | Identity | Firebase Auth ID tokens verified by Admin SDK |
 | Durable SoT | **Firestore** (`firestore.rules`, `firestore.indexes.json`, emulator port **8181**) |
-| Redis | **Optional** via `REDIS_URL` — N2C GEO projection only (`ioredis`) |
+| Geo store | **Firestore-only** `geoDrivers` via `src/geo/` (`GEO_BACKEND=firestore`); **no Redis package, connection, or `REDIS_URL` anywhere in the codebase** (removed 2026-10-21; rename completed 2026-11-18). Live Redis resources still exist in the old billing-closed project — see `docs/audits/ORA_GCP_RESOURCE_DELETION_PROOF.md` |
 | RTDB | **Implemented** — `src/rtdb/` (`admin_trip_location_rtdb.ts`, `memory_trip_location_rtdb.ts`); `firebase_database` client SDK in `mobile/pubspec.yaml`; tripLocations projection + ACL physically verified (L2 reports) |
 | Outbox | Firestore `outboxEvents` + **FCM dispatch projector** (`src/delivery/dispatch_fcm_projector.ts`) — PENDING-first scan, leftover-budget CLAIMED reclaim (fix verified 2026-10-14) |
 
