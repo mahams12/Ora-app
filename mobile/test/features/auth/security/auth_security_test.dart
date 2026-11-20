@@ -18,7 +18,6 @@ void main() {
     'lib/features/onboarding/presentation/views/onboarding_view.dart',
     'lib/features/passenger/presentation/views/home_shell_view.dart',
     'lib/features/passenger/presentation/views/passenger_home_view.dart',
-    'lib/features/passenger/presentation/views/passenger_unavailable_view.dart',
     'lib/features/ride/presentation/views/ride_request_view.dart',
     'lib/features/ride/presentation/views/ride_request_created_view.dart',
     'lib/features/ride/presentation/views/offers_inbox_view.dart',

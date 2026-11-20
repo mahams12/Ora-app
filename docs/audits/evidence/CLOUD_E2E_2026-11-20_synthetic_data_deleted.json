@@ -1,0 +1,2837 @@
+{
+  "uids": [
+    "j0q6596xACgmTQO9BrCMKGiKdx13",
+    "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+    "XRyCVvpC1eRk99c4YjXYk9snQOh1",
+    "86omLdNW1GTjMcHipOi9jvfVSxv1"
+  ],
+  "rideIds": [
+    "9ae73596-773c-4a76-bd87-4aece8c590b6",
+    "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+    "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+    "ff072c94-71a7-4835-9ddb-b0815cfee854"
+  ],
+  "hits": [
+    {
+      "path": "driverDeviceTokens/FSY6UwDeyfTdb1qDOUdt8xvnJsb2_0e3601e3979916a0341e55ed59ddc75c3269ecd4",
+      "data": {
+        "tokenId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2_0e3601e3979916a0341e55ed59ddc75c3269ecd4",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "token": "e2e-synthetic-fcm-token-5991baee-aa05-4ae6-9a5b-e0b09a70596f-ab12",
+        "createdAt": "2026-11-17T11:12:00.014Z",
+        "updatedAt": "2026-11-17T11:12:00.014Z"
+      }
+    },
+    {
+      "path": "driverDeviceTokens/FSY6UwDeyfTdb1qDOUdt8xvnJsb2_0fa3783378d8fdad7af2b48bb66b373f4788e717",
+      "data": {
+        "tokenId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2_0fa3783378d8fdad7af2b48bb66b373f4788e717",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "token": "e2e-synthetic-fcm-token-95596455-db1f-4302-9904-fe58f954e834-ab12",
+        "createdAt": "2026-11-20T09:25:59.584Z",
+        "updatedAt": "2026-11-20T09:25:59.584Z"
+      }
+    },
+    {
+      "path": "driverDeviceTokens/FSY6UwDeyfTdb1qDOUdt8xvnJsb2_460a065ec6f847cd18279ecb6716d980ccf71572",
+      "data": {
+        "tokenId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2_460a065ec6f847cd18279ecb6716d980ccf71572",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "token": "e2e-synthetic-fcm-token-46894743-5c47-4478-bafe-30b6ec0fa950-ab12",
+        "createdAt": "2026-11-17T11:12:30.959Z",
+        "updatedAt": "2026-11-17T11:12:30.959Z"
+      }
+    },
+    {
+      "path": "driverDeviceTokens/FSY6UwDeyfTdb1qDOUdt8xvnJsb2_9581f03876cddb9bb7cf8d5e52134e9b5bb43323",
+      "data": {
+        "tokenId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2_9581f03876cddb9bb7cf8d5e52134e9b5bb43323",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "token": "e2e-synthetic-fcm-token-8ffc030c-328a-408c-8f2c-1541078f9ae9-ab12",
+        "createdAt": "2026-11-20T09:24:17.994Z",
+        "updatedAt": "2026-11-20T09:24:17.994Z"
+      }
+    },
+    {
+      "path": "driverDeviceTokens/FSY6UwDeyfTdb1qDOUdt8xvnJsb2_c76db59dc76f5b13532fc599a42e9319a8db6d9b",
+      "data": {
+        "tokenId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2_c76db59dc76f5b13532fc599a42e9319a8db6d9b",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "token": "e2e-synthetic-fcm-token-82e267b5-9ad9-4422-9a5a-3237144d00ba-ab12",
+        "createdAt": "2026-11-17T11:13:22.764Z",
+        "updatedAt": "2026-11-17T11:13:22.764Z"
+      }
+    },
+    {
+      "path": "driverDeviceTokens/FSY6UwDeyfTdb1qDOUdt8xvnJsb2_d6135c1a16eaa58fd9b09dd5de048501a1b23dd3",
+      "data": {
+        "tokenId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2_d6135c1a16eaa58fd9b09dd5de048501a1b23dd3",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "token": "e2e-synthetic-fcm-token-7b7cbc24-b03e-4aeb-8d9d-762c1f681126-ab12",
+        "createdAt": "2026-11-17T11:11:33.213Z",
+        "updatedAt": "2026-11-17T11:11:33.213Z"
+      }
+    },
+    {
+      "path": "driverInviteResponses/9ae73596-773c-4a76-bd87-4aece8c590b6_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "responseId": "9ae73596-773c-4a76-bd87-4aece8c590b6_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "waveId": "9ae73596-773c-4a76-bd87-4aece8c590b6_w1",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "response": "ACCEPTED",
+        "createdAt": "2026-11-17T11:13:34.782Z",
+        "offerId": "9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1"
+      }
+    },
+    {
+      "path": "driverInviteResponses/cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "responseId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "waveId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w1",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "response": "ACCEPTED",
+        "createdAt": "2026-11-17T11:12:42.953Z",
+        "offerId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1"
+      }
+    },
+    {
+      "path": "driverInviteResponses/ff072c94-71a7-4835-9ddb-b0815cfee854_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "responseId": "ff072c94-71a7-4835-9ddb-b0815cfee854_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "waveId": "ff072c94-71a7-4835-9ddb-b0815cfee854_w1",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "response": "ACCEPTED",
+        "createdAt": "2026-11-20T09:26:10.858Z",
+        "offerId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1"
+      }
+    },
+    {
+      "path": "drivers/86omLdNW1GTjMcHipOi9jvfVSxv1",
+      "data": {
+        "uid": "86omLdNW1GTjMcHipOi9jvfVSxv1",
+        "availabilityState": "offline",
+        "homeCity": "lahore",
+        "vehicle": {
+          "model": "E2E",
+          "plate": "TST-1",
+          "type": "car"
+        },
+        "updatedAt": "2026-11-20T09:25:54.289Z"
+      }
+    },
+    {
+      "path": "drivers/FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "uid": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "homeCity": "lahore",
+        "vehicle": {
+          "model": "E2E",
+          "plate": "TST-1",
+          "type": "car"
+        },
+        "availabilityState": "online",
+        "lastOnlineAt": "2026-11-20T09:25:57.493Z",
+        "updatedAt": "2026-11-20T09:25:57.493Z"
+      }
+    },
+    {
+      "path": "drivers/XRyCVvpC1eRk99c4YjXYk9snQOh1",
+      "data": {
+        "uid": "XRyCVvpC1eRk99c4YjXYk9snQOh1",
+        "homeCity": "lahore",
+        "vehicle": {
+          "model": "E2E",
+          "plate": "TST-1",
+          "type": "car"
+        },
+        "availabilityState": "online",
+        "lastOnlineAt": "2026-11-20T09:25:58.640Z",
+        "updatedAt": "2026-11-20T09:25:58.640Z"
+      }
+    },
+    {
+      "path": "geoDrivers/FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "accuracy": 10,
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "lsLastAcceptedSeq": 1,
+        "lsStreamState": "ACTIVE",
+        "lsPreviousStreamIds": [
+          "e2e-FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "e2e-FSY6UwDeyfTdb1qDOUdt8xvnJsb2-1794913951082",
+          "e2e-FSY6UwDeyfTdb1qDOUdt8xvnJsb2-1794914002874",
+          "e2e-FSY6UwDeyfTdb1qDOUdt8xvnJsb2-1795166658113"
+        ],
+        "lsExpiresAt": "2026-11-21T09:26:00.501Z",
+        "lsUpdatedAt": "2026-11-20T09:26:00.501Z",
+        "lsActiveStreamId": "e2e-FSY6UwDeyfTdb1qDOUdt8xvnJsb2-1795166759716",
+        "lng": 74.3448,
+        "markerValue": "{\"driverId\":\"FSY6UwDeyfTdb1qDOUdt8xvnJsb2\",\"lastLocationTs\":1795166773699,\"accuracy\":10,\"city\":\"lahore\",\"locationStreamId\":\"e2e-trip-ff072c94-71a7-4835-9ddb-b0815cfee854\",\"locationSeq\":1,\"acceptedAt\":\"2026-11-20T09:26:14.503Z\",\"freshUntilMs\":1795166848699,\"publishIntervalMs\":10000}",
+        "lastLocationTs": 1795166773699,
+        "markerExpiresAtMs": 1795166859631,
+        "freshUntilMs": 1795166848699,
+        "expiresAt": {
+          "_seconds": 1795166859,
+          "_nanoseconds": 631000000
+        },
+        "lat": 31.5102
+      }
+    },
+    {
+      "path": "geoDrivers/XRyCVvpC1eRk99c4YjXYk9snQOh1",
+      "data": {
+        "lng": 74.34,
+        "accuracy": 10,
+        "driverId": "XRyCVvpC1eRk99c4YjXYk9snQOh1",
+        "lsLastAcceptedSeq": 1,
+        "lat": 31.498,
+        "lsStreamState": "ACTIVE",
+        "lsPreviousStreamIds": [
+          "e2e-XRyCVvpC1eRk99c4YjXYk9snQOh1",
+          "e2e-XRyCVvpC1eRk99c4YjXYk9snQOh1-1794913951082",
+          "e2e-XRyCVvpC1eRk99c4YjXYk9snQOh1-1794914002874",
+          "e2e-XRyCVvpC1eRk99c4YjXYk9snQOh1-1795166658113"
+        ],
+        "markerValue": "{\"driverId\":\"XRyCVvpC1eRk99c4YjXYk9snQOh1\",\"lastLocationTs\":1795166760641,\"accuracy\":10,\"city\":\"lahore\",\"locationStreamId\":\"e2e-XRyCVvpC1eRk99c4YjXYk9snQOh1-1795166759716\",\"locationSeq\":1,\"acceptedAt\":\"2026-11-20T09:26:01.447Z\",\"freshUntilMs\":1795166835641,\"publishIntervalMs\":60000}",
+        "lsExpiresAt": "2026-11-21T09:26:01.447Z",
+        "lastLocationTs": 1795166760641,
+        "lsUpdatedAt": "2026-11-20T09:26:01.447Z",
+        "markerExpiresAtMs": 1795166846494,
+        "freshUntilMs": 1795166835641,
+        "expiresAt": {
+          "_seconds": 1795166846,
+          "_nanoseconds": 494000000
+        },
+        "lsActiveStreamId": "e2e-XRyCVvpC1eRk99c4YjXYk9snQOh1-1795166759716"
+      }
+    },
+    {
+      "path": "idempotencyRecords/168cc619-0ebc-4cab-8350-1bcdff0dca34",
+      "data": {
+        "idempotencyKey": "168cc619-0ebc-4cab-8350-1bcdff0dca34",
+        "requestHash": "c5056e65649b8bbf4472eee261da7c8c1e31c6caca5c2e7c665f93c68aa9ba92",
+        "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "operation": "RIDE_COMPLETE",
+        "resourceId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+              "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+              "assignedDriverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+              "state": "RIDE_COMPLETED",
+              "version": 7,
+              "requestVersion": 1,
+              "category": "zip",
+              "serviceType": "ride",
+              "city": "lahore",
+              "pickup": {
+                "lat": 31.5102,
+                "lng": 74.3448,
+                "address": "Liberty Market"
+              },
+              "destination": {
+                "lat": 31.5204,
+                "lng": 74.3587,
+                "address": "Gulberg"
+              },
+              "pricingSnapshotId": "ps_2dc6826c-2b94-461d-bcb0-673936a00294",
+              "recommendedFareMinor": 20000,
+              "passengerOfferMinor": 20000,
+              "agreedFareMinor": 20000,
+              "agreedOfferId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+              "agreedFareCurrency": "PKR",
+              "driverPayoutMinor": 20000,
+              "platformFeeMinor": 0,
+              "payoutCurrency": "PKR",
+              "feePolicyResolution": "LAUNCH_DEFAULT",
+              "paymentMethod": "CASH",
+              "passengerCount": 1,
+              "expiresAt": "2026-11-20T09:31:03.962Z",
+              "assignedAt": "2026-11-20T09:26:12.551Z",
+              "arrivedAt": "2026-11-20T09:26:38.486Z",
+              "startedAt": "2026-11-20T09:26:39.830Z",
+              "completedAt": "2026-11-20T09:26:41.188Z",
+              "closedAt": null,
+              "cancelledBy": null,
+              "cancellationReason": null,
+              "createdAt": "2026-11-20T09:26:03.962Z",
+              "updatedAt": "2026-11-20T09:26:41.188Z"
+            }
+          }
+        },
+        "createdAt": "2026-11-20T09:26:41.188Z",
+        "expiresAt": "2026-11-27T09:26:41.188Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/21452072-d800-458a-af71-5c71f6593e05",
+      "data": {
+        "idempotencyKey": "21452072-d800-458a-af71-5c71f6593e05",
+        "requestHash": "4965d187a726d32cbdd4103a25cef1765bd59593a6f534e6257768955200b24c",
+        "actorId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "operation": "RIDE_OFFER_SELECT",
+        "resourceId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+              "state": "DRIVER_ASSIGNED",
+              "version": 3,
+              "assignedDriverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+              "agreedFareMinor": 20000,
+              "agreedOfferId": "9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+              "currency": "PKR"
+            }
+          }
+        },
+        "createdAt": "2026-11-17T11:13:36.575Z",
+        "expiresAt": "2026-11-24T11:13:36.575Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/3d0ec01e-59a5-4b0c-b2ad-17c101ea558e",
+      "data": {
+        "idempotencyKey": "3d0ec01e-59a5-4b0c-b2ad-17c101ea558e",
+        "requestHash": "3b4213e66b8edca33c8165f7ac538efa7c739a25e0b5f5f3988e9c3b3a81dd1a",
+        "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "operation": "RIDE_ARRIVE",
+        "resourceId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+              "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+              "assignedDriverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+              "state": "DRIVER_ARRIVED",
+              "version": 5,
+              "requestVersion": 1,
+              "category": "zip",
+              "serviceType": "ride",
+              "city": "lahore",
+              "pickup": {
+                "lat": 31.5102,
+                "lng": 74.3448,
+                "address": "Liberty Market"
+              },
+              "destination": {
+                "lat": 31.5204,
+                "lng": 74.3587,
+                "address": "Gulberg"
+              },
+              "pricingSnapshotId": "ps_2dc6826c-2b94-461d-bcb0-673936a00294",
+              "recommendedFareMinor": 20000,
+              "passengerOfferMinor": 20000,
+              "agreedFareMinor": 20000,
+              "agreedOfferId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+              "agreedFareCurrency": "PKR",
+              "driverPayoutMinor": 20000,
+              "platformFeeMinor": 0,
+              "payoutCurrency": "PKR",
+              "feePolicyResolution": "LAUNCH_DEFAULT",
+              "paymentMethod": "CASH",
+              "passengerCount": 1,
+              "expiresAt": "2026-11-20T09:31:03.962Z",
+              "assignedAt": "2026-11-20T09:26:12.551Z",
+              "arrivedAt": "2026-11-20T09:26:38.486Z",
+              "startedAt": null,
+              "completedAt": null,
+              "closedAt": null,
+              "cancelledBy": null,
+              "cancellationReason": null,
+              "createdAt": "2026-11-20T09:26:03.962Z",
+              "updatedAt": "2026-11-20T09:26:38.486Z"
+            }
+          }
+        },
+        "createdAt": "2026-11-20T09:26:38.486Z",
+        "expiresAt": "2026-11-27T09:26:38.486Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/477bc77e-66c7-49fa-89ed-36dfbb0d2631",
+      "data": {
+        "idempotencyKey": "477bc77e-66c7-49fa-89ed-36dfbb0d2631",
+        "requestHash": "5a69a4d3cc25d1923209b033abcd26e92d11ee19e9b9d99a03d8e8a6e038d981",
+        "actorId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "operation": "RIDE_CREATE",
+        "resourceId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 201,
+          "body": {
+            "data": {
+              "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+              "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+              "assignedDriverId": null,
+              "state": "SEARCHING",
+              "version": 1,
+              "requestVersion": 1,
+              "category": "zip",
+              "serviceType": "ride",
+              "city": "lahore",
+              "pickup": {
+                "lat": 31.5102,
+                "lng": 74.3448,
+                "address": "Liberty Market"
+              },
+              "destination": {
+                "lat": 31.5204,
+                "lng": 74.3587,
+                "address": "Gulberg"
+              },
+              "pricingSnapshotId": "ps_7208b068-25ff-4bed-8dde-02db26149e88",
+              "recommendedFareMinor": 20000,
+              "passengerOfferMinor": 20000,
+              "agreedFareMinor": null,
+              "agreedOfferId": null,
+              "agreedFareCurrency": null,
+              "paymentMethod": "CASH",
+              "passengerCount": 1,
+              "expiresAt": "2026-11-17T11:18:27.335Z",
+              "assignedAt": null,
+              "arrivedAt": null,
+              "startedAt": null,
+              "completedAt": null,
+              "closedAt": null,
+              "cancelledBy": null,
+              "cancellationReason": null,
+              "createdAt": "2026-11-17T11:13:27.335Z",
+              "updatedAt": "2026-11-17T11:13:27.335Z"
+            }
+          }
+        },
+        "createdAt": "2026-11-17T11:13:27.335Z",
+        "expiresAt": "2026-11-24T11:13:27.335Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/68a74add-0593-497a-9baa-f5857f81a731",
+      "data": {
+        "idempotencyKey": "68a74add-0593-497a-9baa-f5857f81a731",
+        "requestHash": "497f018ca63934a775b3388e4ce75b93df9282ca32e2a058ca87d1feea6efec7",
+        "actorId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "operation": "RIDE_CREATE",
+        "resourceId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 201,
+          "body": {
+            "data": {
+              "rideId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+              "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+              "assignedDriverId": null,
+              "state": "SEARCHING",
+              "version": 1,
+              "requestVersion": 1,
+              "category": "zip",
+              "serviceType": "ride",
+              "city": "lahore",
+              "pickup": {
+                "lat": 31.5102,
+                "lng": 74.3448,
+                "address": "Liberty Market"
+              },
+              "destination": {
+                "lat": 31.5204,
+                "lng": 74.3587,
+                "address": "Gulberg"
+              },
+              "pricingSnapshotId": "ps_7095c83a-31d6-45df-84a3-f24e8a655164",
+              "recommendedFareMinor": 20000,
+              "passengerOfferMinor": 20000,
+              "agreedFareMinor": null,
+              "agreedOfferId": null,
+              "agreedFareCurrency": null,
+              "paymentMethod": "CASH",
+              "passengerCount": 1,
+              "expiresAt": "2026-11-20T09:29:22.426Z",
+              "assignedAt": null,
+              "arrivedAt": null,
+              "startedAt": null,
+              "completedAt": null,
+              "closedAt": null,
+              "cancelledBy": null,
+              "cancellationReason": null,
+              "createdAt": "2026-11-20T09:24:22.426Z",
+              "updatedAt": "2026-11-20T09:24:22.426Z"
+            }
+          }
+        },
+        "createdAt": "2026-11-20T09:24:22.426Z",
+        "expiresAt": "2026-11-27T09:24:22.426Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/77e2dbfd-5fb9-4666-b5ec-af1da9ee8044",
+      "data": {
+        "idempotencyKey": "77e2dbfd-5fb9-4666-b5ec-af1da9ee8044",
+        "requestHash": "f2936e713add874ed062fd4f49c2df1748236a462d364e5d94a462d9ffa38fc7",
+        "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "operation": "RIDE_EN_ROUTE",
+        "resourceId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+              "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+              "assignedDriverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+              "state": "DRIVER_EN_ROUTE",
+              "version": 4,
+              "requestVersion": 1,
+              "category": "zip",
+              "serviceType": "ride",
+              "city": "lahore",
+              "pickup": {
+                "lat": 31.5102,
+                "lng": 74.3448,
+                "address": "Liberty Market"
+              },
+              "destination": {
+                "lat": 31.5204,
+                "lng": 74.3587,
+                "address": "Gulberg"
+              },
+              "pricingSnapshotId": "ps_2dc6826c-2b94-461d-bcb0-673936a00294",
+              "recommendedFareMinor": 20000,
+              "passengerOfferMinor": 20000,
+              "agreedFareMinor": 20000,
+              "agreedOfferId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+              "agreedFareCurrency": "PKR",
+              "driverPayoutMinor": 20000,
+              "platformFeeMinor": 0,
+              "payoutCurrency": "PKR",
+              "feePolicyResolution": "LAUNCH_DEFAULT",
+              "paymentMethod": "CASH",
+              "passengerCount": 1,
+              "expiresAt": "2026-11-20T09:31:03.962Z",
+              "assignedAt": "2026-11-20T09:26:12.551Z",
+              "arrivedAt": null,
+              "startedAt": null,
+              "completedAt": null,
+              "closedAt": null,
+              "cancelledBy": null,
+              "cancellationReason": null,
+              "createdAt": "2026-11-20T09:26:03.962Z",
+              "updatedAt": "2026-11-20T09:26:37.144Z"
+            }
+          }
+        },
+        "createdAt": "2026-11-20T09:26:37.144Z",
+        "expiresAt": "2026-11-27T09:26:37.144Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/8aef76ef-dce5-4de8-b7b6-ef2259e97888",
+      "data": {
+        "idempotencyKey": "8aef76ef-dce5-4de8-b7b6-ef2259e97888",
+        "requestHash": "addee8026c15c6785f30868f2827d4106d3d18fe743c991f92809f921b7a677e",
+        "actorId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "operation": "RIDE_CREATE",
+        "resourceId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 201,
+          "body": {
+            "data": {
+              "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+              "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+              "assignedDriverId": null,
+              "state": "SEARCHING",
+              "version": 1,
+              "requestVersion": 1,
+              "category": "zip",
+              "serviceType": "ride",
+              "city": "lahore",
+              "pickup": {
+                "lat": 31.5102,
+                "lng": 74.3448,
+                "address": "Liberty Market"
+              },
+              "destination": {
+                "lat": 31.5204,
+                "lng": 74.3587,
+                "address": "Gulberg"
+              },
+              "pricingSnapshotId": "ps_f7e2ac33-e220-4af2-a3ca-aa681c99a70c",
+              "recommendedFareMinor": 20000,
+              "passengerOfferMinor": 20000,
+              "agreedFareMinor": null,
+              "agreedOfferId": null,
+              "agreedFareCurrency": null,
+              "paymentMethod": "CASH",
+              "passengerCount": 1,
+              "expiresAt": "2026-11-17T11:17:35.456Z",
+              "assignedAt": null,
+              "arrivedAt": null,
+              "startedAt": null,
+              "completedAt": null,
+              "closedAt": null,
+              "cancelledBy": null,
+              "cancellationReason": null,
+              "createdAt": "2026-11-17T11:12:35.456Z",
+              "updatedAt": "2026-11-17T11:12:35.456Z"
+            }
+          }
+        },
+        "createdAt": "2026-11-17T11:12:35.456Z",
+        "expiresAt": "2026-11-24T11:12:35.456Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/9690c88e-37e7-40fa-9ad6-93b7cdce50ce",
+      "data": {
+        "idempotencyKey": "9690c88e-37e7-40fa-9ad6-93b7cdce50ce",
+        "requestHash": "3473716f448ea6d88b8eaf4db9fb5f4e57e8f6523f8e17649bdb70156161b6a4",
+        "actorId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "operation": "RIDE_OFFER_SELECT",
+        "resourceId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+              "state": "DRIVER_ASSIGNED",
+              "version": 3,
+              "assignedDriverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+              "agreedFareMinor": 20000,
+              "agreedOfferId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+              "currency": "PKR"
+            }
+          }
+        },
+        "createdAt": "2026-11-20T09:26:12.551Z",
+        "expiresAt": "2026-11-27T09:26:12.551Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/a17766cb-9cda-4723-a23e-241b68afe7d7",
+      "data": {
+        "idempotencyKey": "a17766cb-9cda-4723-a23e-241b68afe7d7",
+        "requestHash": "38f86ba9c17d61c677ec18e618fe68fec933442e6779978dadad2c6af934dc20",
+        "actorId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "operation": "RIDE_CREATE",
+        "resourceId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 201,
+          "body": {
+            "data": {
+              "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+              "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+              "assignedDriverId": null,
+              "state": "SEARCHING",
+              "version": 1,
+              "requestVersion": 1,
+              "category": "zip",
+              "serviceType": "ride",
+              "city": "lahore",
+              "pickup": {
+                "lat": 31.5102,
+                "lng": 74.3448,
+                "address": "Liberty Market"
+              },
+              "destination": {
+                "lat": 31.5204,
+                "lng": 74.3587,
+                "address": "Gulberg"
+              },
+              "pricingSnapshotId": "ps_2dc6826c-2b94-461d-bcb0-673936a00294",
+              "recommendedFareMinor": 20000,
+              "passengerOfferMinor": 20000,
+              "agreedFareMinor": null,
+              "agreedOfferId": null,
+              "agreedFareCurrency": null,
+              "paymentMethod": "CASH",
+              "passengerCount": 1,
+              "expiresAt": "2026-11-20T09:31:03.962Z",
+              "assignedAt": null,
+              "arrivedAt": null,
+              "startedAt": null,
+              "completedAt": null,
+              "closedAt": null,
+              "cancelledBy": null,
+              "cancellationReason": null,
+              "createdAt": "2026-11-20T09:26:03.962Z",
+              "updatedAt": "2026-11-20T09:26:03.962Z"
+            }
+          }
+        },
+        "createdAt": "2026-11-20T09:26:03.962Z",
+        "expiresAt": "2026-11-27T09:26:03.962Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/f0b603c4-4a78-4a15-95cd-2e01de2c943b",
+      "data": {
+        "idempotencyKey": "f0b603c4-4a78-4a15-95cd-2e01de2c943b",
+        "requestHash": "9e23728ce7c19ccfd3105ccaaacf0e3a61809121ee02d2b36ccd1820c0a2fd2a",
+        "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "operation": "RIDE_START",
+        "resourceId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 200,
+          "body": {
+            "data": {
+              "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+              "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+              "assignedDriverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+              "state": "RIDE_STARTED",
+              "version": 6,
+              "requestVersion": 1,
+              "category": "zip",
+              "serviceType": "ride",
+              "city": "lahore",
+              "pickup": {
+                "lat": 31.5102,
+                "lng": 74.3448,
+                "address": "Liberty Market"
+              },
+              "destination": {
+                "lat": 31.5204,
+                "lng": 74.3587,
+                "address": "Gulberg"
+              },
+              "pricingSnapshotId": "ps_2dc6826c-2b94-461d-bcb0-673936a00294",
+              "recommendedFareMinor": 20000,
+              "passengerOfferMinor": 20000,
+              "agreedFareMinor": 20000,
+              "agreedOfferId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+              "agreedFareCurrency": "PKR",
+              "driverPayoutMinor": 20000,
+              "platformFeeMinor": 0,
+              "payoutCurrency": "PKR",
+              "feePolicyResolution": "LAUNCH_DEFAULT",
+              "paymentMethod": "CASH",
+              "passengerCount": 1,
+              "expiresAt": "2026-11-20T09:31:03.962Z",
+              "assignedAt": "2026-11-20T09:26:12.551Z",
+              "arrivedAt": "2026-11-20T09:26:38.486Z",
+              "startedAt": "2026-11-20T09:26:39.830Z",
+              "completedAt": null,
+              "closedAt": null,
+              "cancelledBy": null,
+              "cancellationReason": null,
+              "createdAt": "2026-11-20T09:26:03.962Z",
+              "updatedAt": "2026-11-20T09:26:39.830Z"
+            }
+          }
+        },
+        "createdAt": "2026-11-20T09:26:39.830Z",
+        "expiresAt": "2026-11-27T09:26:39.830Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/invite_accept_9ae73596-773c-4a76-bd87-4aece8c590b6_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "idempotencyKey": "invite_accept_9ae73596-773c-4a76-bd87-4aece8c590b6_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "requestHash": "716860359f99b8ce1d7be232922da7377ce3975ef8a4bfca45998d2c29d3c3fb",
+        "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "operation": "RIDE_OFFER_CREATE",
+        "resourceId": "9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 201,
+          "body": {
+            "data": {
+              "offerId": "9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+              "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+              "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+              "amountMinor": 20000,
+              "currency": "PKR",
+              "type": "PASSENGER_PRICE_ACCEPTED",
+              "status": "PENDING",
+              "requestVersion": 1,
+              "expiresAt": "2026-11-17T11:16:34.906Z",
+              "driverSnapshot": {
+                "displayName": null,
+                "role": "driver"
+              },
+              "createdAt": "2026-11-17T11:13:34.906Z",
+              "selectedAt": null,
+              "withdrawnAt": null,
+              "rideState": "OFFERS_AVAILABLE",
+              "rideVersion": 2
+            }
+          }
+        },
+        "createdAt": "2026-11-17T11:13:34.906Z",
+        "expiresAt": "2026-11-24T11:13:34.906Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/invite_accept_cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "idempotencyKey": "invite_accept_cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "requestHash": "1e1225f8cd6158c9dcaa61231db83958750cafd9f752cc4a0e05b72f7c2e4787",
+        "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "operation": "RIDE_OFFER_CREATE",
+        "resourceId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 201,
+          "body": {
+            "data": {
+              "offerId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+              "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+              "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+              "amountMinor": 20000,
+              "currency": "PKR",
+              "type": "PASSENGER_PRICE_ACCEPTED",
+              "status": "PENDING",
+              "requestVersion": 1,
+              "expiresAt": "2026-11-17T11:15:43.090Z",
+              "driverSnapshot": {
+                "displayName": null,
+                "role": "driver"
+              },
+              "createdAt": "2026-11-17T11:12:43.090Z",
+              "selectedAt": null,
+              "withdrawnAt": null,
+              "rideState": "OFFERS_AVAILABLE",
+              "rideVersion": 2
+            }
+          }
+        },
+        "createdAt": "2026-11-17T11:12:43.090Z",
+        "expiresAt": "2026-11-24T11:12:43.090Z"
+      }
+    },
+    {
+      "path": "idempotencyRecords/invite_accept_ff072c94-71a7-4835-9ddb-b0815cfee854_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "idempotencyKey": "invite_accept_ff072c94-71a7-4835-9ddb-b0815cfee854_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "requestHash": "e4c02447fa456e626abba24a458ccab2de8d5eb7ac767ca2833c43db1533b8a5",
+        "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "operation": "RIDE_OFFER_CREATE",
+        "resourceId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+        "status": "SUCCEEDED",
+        "responseSnapshot": {
+          "httpStatus": 201,
+          "body": {
+            "data": {
+              "offerId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+              "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+              "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+              "amountMinor": 20000,
+              "currency": "PKR",
+              "type": "PASSENGER_PRICE_ACCEPTED",
+              "status": "PENDING",
+              "requestVersion": 1,
+              "expiresAt": "2026-11-20T09:29:10.972Z",
+              "driverSnapshot": {
+                "displayName": null,
+                "role": "driver"
+              },
+              "createdAt": "2026-11-20T09:26:10.972Z",
+              "selectedAt": null,
+              "withdrawnAt": null,
+              "rideState": "OFFERS_AVAILABLE",
+              "rideVersion": 2
+            }
+          }
+        },
+        "createdAt": "2026-11-20T09:26:10.972Z",
+        "expiresAt": "2026-11-27T09:26:10.972Z"
+      }
+    },
+    {
+      "path": "locationStreams/9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "activeStreamId": "e2e-trip-9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "lastAcceptedSeq": 1,
+        "streamState": "ACTIVE",
+        "previousStreamIds": [],
+        "createdAt": "2026-11-17T11:13:38.638Z",
+        "updatedAt": "2026-11-17T11:13:38.638Z",
+        "expiresAt": "2026-11-24T11:13:38.638Z",
+        "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6"
+      }
+    },
+    {
+      "path": "locationStreams/ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "activeStreamId": "e2e-trip-ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "lastAcceptedSeq": 1,
+        "previousStreamIds": [],
+        "createdAt": "2026-11-20T09:26:14.503Z",
+        "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "streamState": "CLOSED",
+        "expiresAt": "2026-11-20T09:36:41.417Z",
+        "updatedAt": "2026-11-20T09:26:41.417Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/1f2d71f8-f203-4d5b-8cc0-de8439261196_fcm_ride_state",
+      "data": {
+        "deliveryId": "1f2d71f8-f203-4d5b-8cc0-de8439261196_fcm_ride_state",
+        "eventId": "1f2d71f8-f203-4d5b-8cc0-de8439261196",
+        "subscriber": "fcm_ride_state",
+        "status": "FAILED_RETRYABLE",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2": {
+            "status": "FAILED_RETRYABLE",
+            "lastError": "partial_or_transient_fcm_failure",
+            "updatedAt": "2026-11-20T09:27:50.010Z",
+            "tokenResults": {
+              "0e3601e3979916a0341e55ed59ddc75c3269ecd4": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:50.010Z"
+              },
+              "0fa3783378d8fdad7af2b48bb66b373f4788e717": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:50.010Z"
+              },
+              "460a065ec6f847cd18279ecb6716d980ccf71572": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:50.010Z"
+              },
+              "9581f03876cddb9bb7cf8d5e52134e9b5bb43323": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:50.010Z"
+              },
+              "c76db59dc76f5b13532fc599a42e9319a8db6d9b": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:50.010Z"
+              },
+              "d6135c1a16eaa58fd9b09dd5de048501a1b23dd3": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:50.010Z"
+              }
+            }
+          }
+        },
+        "lastError": "partial_or_transient_fcm_failure",
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:50.831Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/2f292b80-e380-4088-bd30-0f96cc9c6a61_fcm_ride_state",
+      "data": {
+        "deliveryId": "2f292b80-e380-4088-bd30-0f96cc9c6a61_fcm_ride_state",
+        "eventId": "2f292b80-e380-4088-bd30-0f96cc9c6a61",
+        "subscriber": "fcm_ride_state",
+        "status": "ACKED",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:51.016Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": null,
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:51.016Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/407687fd-a449-4ccf-93ce-04b641c00571_fcm_dispatch_invite",
+      "data": {
+        "deliveryId": "407687fd-a449-4ccf-93ce-04b641c00571_fcm_dispatch_invite",
+        "eventId": "407687fd-a449-4ccf-93ce-04b641c00571",
+        "subscriber": "fcm_dispatch_invite",
+        "status": "FAILED_RETRYABLE",
+        "attemptCount": 3,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2": {
+            "status": "FAILED_RETRYABLE",
+            "lastError": "partial_or_transient_fcm_failure",
+            "updatedAt": "2026-11-20T09:24:23.914Z",
+            "tokenResults": {
+              "0e3601e3979916a0341e55ed59ddc75c3269ecd4": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:24:23.914Z"
+              },
+              "460a065ec6f847cd18279ecb6716d980ccf71572": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:24:23.914Z"
+              },
+              "d6135c1a16eaa58fd9b09dd5de048501a1b23dd3": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:24:23.914Z"
+              },
+              "c76db59dc76f5b13532fc599a42e9319a8db6d9b": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:24:23.914Z"
+              },
+              "9581f03876cddb9bb7cf8d5e52134e9b5bb43323": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:24:23.914Z"
+              }
+            }
+          },
+          "XRyCVvpC1eRk99c4YjXYk9snQOh1": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-17T11:12:38.314Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": "partial_or_transient_fcm_failure",
+        "createdAt": "2026-11-17T11:12:36.780Z",
+        "updatedAt": "2026-11-20T09:24:24.651Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/5452c176-22b9-4a53-acd2-f18e51b88d23_fcm_ride_state",
+      "data": {
+        "deliveryId": "5452c176-22b9-4a53-acd2-f18e51b88d23_fcm_ride_state",
+        "eventId": "5452c176-22b9-4a53-acd2-f18e51b88d23",
+        "subscriber": "fcm_ride_state",
+        "status": "ACKED",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:51.167Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": null,
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:51.167Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/57378552-c82a-4b57-8abb-842f7981ffd8_fcm_ride_state",
+      "data": {
+        "deliveryId": "57378552-c82a-4b57-8abb-842f7981ffd8_fcm_ride_state",
+        "eventId": "57378552-c82a-4b57-8abb-842f7981ffd8",
+        "subscriber": "fcm_ride_state",
+        "status": "ACKED",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:51.314Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": null,
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:51.314Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/5996d395-a561-4f64-8087-27d892a27f1d_fcm_ride_state",
+      "data": {
+        "deliveryId": "5996d395-a561-4f64-8087-27d892a27f1d_fcm_ride_state",
+        "eventId": "5996d395-a561-4f64-8087-27d892a27f1d",
+        "subscriber": "fcm_ride_state",
+        "status": "ACKED",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:51.433Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": null,
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:51.433Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/62762781-da26-41da-b2d6-24614d14dabd_fcm_dispatch_invite",
+      "data": {
+        "deliveryId": "62762781-da26-41da-b2d6-24614d14dabd_fcm_dispatch_invite",
+        "eventId": "62762781-da26-41da-b2d6-24614d14dabd",
+        "subscriber": "fcm_dispatch_invite",
+        "status": "FAILED_RETRYABLE",
+        "attemptCount": 3,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2": {
+            "status": "FAILED_RETRYABLE",
+            "lastError": "partial_or_transient_fcm_failure",
+            "updatedAt": "2026-11-20T09:27:47.933Z",
+            "tokenResults": {
+              "0e3601e3979916a0341e55ed59ddc75c3269ecd4": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:47.933Z"
+              },
+              "460a065ec6f847cd18279ecb6716d980ccf71572": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:47.933Z"
+              },
+              "c76db59dc76f5b13532fc599a42e9319a8db6d9b": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:47.933Z"
+              },
+              "d6135c1a16eaa58fd9b09dd5de048501a1b23dd3": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:47.933Z"
+              },
+              "9581f03876cddb9bb7cf8d5e52134e9b5bb43323": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:47.933Z"
+              },
+              "0fa3783378d8fdad7af2b48bb66b373f4788e717": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:47.933Z"
+              }
+            }
+          },
+          "XRyCVvpC1eRk99c4YjXYk9snQOh1": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-17T11:13:30.146Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": "partial_or_transient_fcm_failure",
+        "createdAt": "2026-11-17T11:13:28.539Z",
+        "updatedAt": "2026-11-20T09:27:48.799Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/63b324a2-91f1-4ab9-b7fb-c74d6a641b97_fcm_ride_state",
+      "data": {
+        "deliveryId": "63b324a2-91f1-4ab9-b7fb-c74d6a641b97_fcm_ride_state",
+        "eventId": "63b324a2-91f1-4ab9-b7fb-c74d6a641b97",
+        "subscriber": "fcm_ride_state",
+        "status": "FAILED_RETRYABLE",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:51.570Z",
+            "tokenResults": {}
+          },
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2": {
+            "status": "FAILED_RETRYABLE",
+            "lastError": "partial_or_transient_fcm_failure",
+            "updatedAt": "2026-11-20T09:27:51.591Z",
+            "tokenResults": {
+              "0e3601e3979916a0341e55ed59ddc75c3269ecd4": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:51.591Z"
+              },
+              "0fa3783378d8fdad7af2b48bb66b373f4788e717": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:51.591Z"
+              },
+              "460a065ec6f847cd18279ecb6716d980ccf71572": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:51.591Z"
+              },
+              "9581f03876cddb9bb7cf8d5e52134e9b5bb43323": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:51.591Z"
+              },
+              "c76db59dc76f5b13532fc599a42e9319a8db6d9b": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:51.591Z"
+              },
+              "d6135c1a16eaa58fd9b09dd5de048501a1b23dd3": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:51.591Z"
+              }
+            }
+          }
+        },
+        "lastError": "partial_or_transient_fcm_failure",
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:52.463Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/7b1a2742-c1cd-4464-bb19-6d3eb1177be9_fcm_ride_state",
+      "data": {
+        "deliveryId": "7b1a2742-c1cd-4464-bb19-6d3eb1177be9_fcm_ride_state",
+        "eventId": "7b1a2742-c1cd-4464-bb19-6d3eb1177be9",
+        "subscriber": "fcm_ride_state",
+        "status": "FAILED_RETRYABLE",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2": {
+            "status": "FAILED_RETRYABLE",
+            "lastError": "partial_or_transient_fcm_failure",
+            "updatedAt": "2026-11-20T09:27:52.605Z",
+            "tokenResults": {
+              "0e3601e3979916a0341e55ed59ddc75c3269ecd4": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:52.605Z"
+              },
+              "0fa3783378d8fdad7af2b48bb66b373f4788e717": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:52.605Z"
+              },
+              "460a065ec6f847cd18279ecb6716d980ccf71572": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:52.605Z"
+              },
+              "9581f03876cddb9bb7cf8d5e52134e9b5bb43323": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:52.605Z"
+              },
+              "c76db59dc76f5b13532fc599a42e9319a8db6d9b": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:52.605Z"
+              },
+              "d6135c1a16eaa58fd9b09dd5de048501a1b23dd3": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:52.605Z"
+              }
+            }
+          }
+        },
+        "lastError": "partial_or_transient_fcm_failure",
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:53.409Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/a174d5b1-5e39-4107-83fc-21c1944d5690_fcm_ride_state",
+      "data": {
+        "deliveryId": "a174d5b1-5e39-4107-83fc-21c1944d5690_fcm_ride_state",
+        "eventId": "a174d5b1-5e39-4107-83fc-21c1944d5690",
+        "subscriber": "fcm_ride_state",
+        "status": "FAILED_RETRYABLE",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:53.595Z",
+            "tokenResults": {}
+          },
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2": {
+            "status": "FAILED_RETRYABLE",
+            "lastError": "partial_or_transient_fcm_failure",
+            "updatedAt": "2026-11-20T09:27:53.612Z",
+            "tokenResults": {
+              "0e3601e3979916a0341e55ed59ddc75c3269ecd4": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:53.612Z"
+              },
+              "0fa3783378d8fdad7af2b48bb66b373f4788e717": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:53.612Z"
+              },
+              "460a065ec6f847cd18279ecb6716d980ccf71572": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:53.612Z"
+              },
+              "9581f03876cddb9bb7cf8d5e52134e9b5bb43323": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:53.612Z"
+              },
+              "c76db59dc76f5b13532fc599a42e9319a8db6d9b": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:53.612Z"
+              },
+              "d6135c1a16eaa58fd9b09dd5de048501a1b23dd3": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:53.612Z"
+              }
+            }
+          }
+        },
+        "lastError": "partial_or_transient_fcm_failure",
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:54.442Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/a80b5b14-604f-4779-b235-96833ee96b2d_fcm_dispatch_invite",
+      "data": {
+        "deliveryId": "a80b5b14-604f-4779-b235-96833ee96b2d_fcm_dispatch_invite",
+        "eventId": "a80b5b14-604f-4779-b235-96833ee96b2d",
+        "subscriber": "fcm_dispatch_invite",
+        "status": "FAILED_RETRYABLE",
+        "attemptCount": 2,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2": {
+            "status": "FAILED_RETRYABLE",
+            "lastError": "partial_or_transient_fcm_failure",
+            "updatedAt": "2026-11-20T09:27:48.947Z",
+            "tokenResults": {
+              "0e3601e3979916a0341e55ed59ddc75c3269ecd4": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:48.947Z"
+              },
+              "0fa3783378d8fdad7af2b48bb66b373f4788e717": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:48.947Z"
+              },
+              "460a065ec6f847cd18279ecb6716d980ccf71572": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:48.947Z"
+              },
+              "9581f03876cddb9bb7cf8d5e52134e9b5bb43323": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:48.947Z"
+              },
+              "c76db59dc76f5b13532fc599a42e9319a8db6d9b": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:48.947Z"
+              },
+              "d6135c1a16eaa58fd9b09dd5de048501a1b23dd3": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:48.947Z"
+              }
+            }
+          },
+          "XRyCVvpC1eRk99c4YjXYk9snQOh1": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:26:06.544Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": "partial_or_transient_fcm_failure",
+        "createdAt": "2026-11-20T09:26:05.098Z",
+        "updatedAt": "2026-11-20T09:27:49.785Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/ad2181f8-b4aa-4401-8997-36439bd5e39f_fcm_ride_state",
+      "data": {
+        "deliveryId": "ad2181f8-b4aa-4401-8997-36439bd5e39f_fcm_ride_state",
+        "eventId": "ad2181f8-b4aa-4401-8997-36439bd5e39f",
+        "subscriber": "fcm_ride_state",
+        "status": "FAILED_RETRYABLE",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:54.560Z",
+            "tokenResults": {}
+          },
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2": {
+            "status": "FAILED_RETRYABLE",
+            "lastError": "partial_or_transient_fcm_failure",
+            "updatedAt": "2026-11-20T09:27:54.578Z",
+            "tokenResults": {
+              "0e3601e3979916a0341e55ed59ddc75c3269ecd4": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:54.578Z"
+              },
+              "0fa3783378d8fdad7af2b48bb66b373f4788e717": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:54.578Z"
+              },
+              "460a065ec6f847cd18279ecb6716d980ccf71572": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:54.578Z"
+              },
+              "9581f03876cddb9bb7cf8d5e52134e9b5bb43323": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:54.578Z"
+              },
+              "c76db59dc76f5b13532fc599a42e9319a8db6d9b": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:54.578Z"
+              },
+              "d6135c1a16eaa58fd9b09dd5de048501a1b23dd3": {
+                "status": "FAILED_RETRYABLE",
+                "lastError": "fcm_transient",
+                "updatedAt": "2026-11-20T09:27:54.578Z"
+              }
+            }
+          }
+        },
+        "lastError": "partial_or_transient_fcm_failure",
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:55.418Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/c9890aef-9b9f-4184-b2ff-4211ab9fda27_fcm_ride_state",
+      "data": {
+        "deliveryId": "c9890aef-9b9f-4184-b2ff-4211ab9fda27_fcm_ride_state",
+        "eventId": "c9890aef-9b9f-4184-b2ff-4211ab9fda27",
+        "subscriber": "fcm_ride_state",
+        "status": "ACKED",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:55.542Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": null,
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:55.542Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/ca5ff535-fbb3-4cda-89c2-9466ecb54a64_fcm_ride_state",
+      "data": {
+        "deliveryId": "ca5ff535-fbb3-4cda-89c2-9466ecb54a64_fcm_ride_state",
+        "eventId": "ca5ff535-fbb3-4cda-89c2-9466ecb54a64",
+        "subscriber": "fcm_ride_state",
+        "status": "ACKED",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:55.658Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": null,
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:55.658Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/caa3ec41-9e4a-4b57-917d-a9c8e2787f70_fcm_ride_state",
+      "data": {
+        "deliveryId": "caa3ec41-9e4a-4b57-917d-a9c8e2787f70_fcm_ride_state",
+        "eventId": "caa3ec41-9e4a-4b57-917d-a9c8e2787f70",
+        "subscriber": "fcm_ride_state",
+        "status": "ACKED",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:55.770Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": null,
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:55.770Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/cb7ff633-a255-4e8f-92e7-59be62ca800e_fcm_ride_state",
+      "data": {
+        "deliveryId": "cb7ff633-a255-4e8f-92e7-59be62ca800e_fcm_ride_state",
+        "eventId": "cb7ff633-a255-4e8f-92e7-59be62ca800e",
+        "subscriber": "fcm_ride_state",
+        "status": "ACKED",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "j0q6596xACgmTQO9BrCMKGiKdx13": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:27:55.893Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": null,
+        "createdAt": "2026-11-20T09:27:49.844Z",
+        "updatedAt": "2026-11-20T09:27:55.893Z"
+      }
+    },
+    {
+      "path": "outboxDeliveries/fdb1882c-beed-4dec-bf0d-340e9fcbf3b7_fcm_dispatch_invite",
+      "data": {
+        "deliveryId": "fdb1882c-beed-4dec-bf0d-340e9fcbf3b7_fcm_dispatch_invite",
+        "eventId": "fdb1882c-beed-4dec-bf0d-340e9fcbf3b7",
+        "subscriber": "fcm_dispatch_invite",
+        "status": "ACKED",
+        "attemptCount": 1,
+        "leaseOwner": null,
+        "leaseExpiresAt": null,
+        "driverResults": {
+          "XRyCVvpC1eRk99c4YjXYk9snQOh1": {
+            "status": "SKIPPED_NO_TOKEN",
+            "lastError": null,
+            "updatedAt": "2026-11-20T09:24:24.827Z",
+            "tokenResults": {}
+          }
+        },
+        "lastError": null,
+        "createdAt": "2026-11-20T09:24:23.770Z",
+        "updatedAt": "2026-11-20T09:24:24.827Z"
+      }
+    },
+    {
+      "path": "outboxEvents/1f2d71f8-f203-4d5b-8cc0-de8439261196",
+      "data": {
+        "eventId": "1f2d71f8-f203-4d5b-8cc0-de8439261196",
+        "eventType": "ride.offer.selected",
+        "aggregateType": "ride",
+        "aggregateId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "aggregateVersion": 3,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:13:36.575Z",
+        "correlationId": "bb720a07-7a59-4b1c-8b05-aeec02834464",
+        "causationId": "21452072-d800-458a-af71-5c71f6593e05",
+        "payload": {
+          "offerId": "9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+          "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "amountMinor": 20000
+        },
+        "attemptCount": 1,
+        "publishState": "PENDING",
+        "leaseExpiresAt": null,
+        "nextAttemptAt": "2026-11-20T09:28:49.999Z",
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:50.831Z"
+      }
+    },
+    {
+      "path": "outboxEvents/2f292b80-e380-4088-bd30-0f96cc9c6a61",
+      "data": {
+        "eventId": "2f292b80-e380-4088-bd30-0f96cc9c6a61",
+        "eventType": "ride.offer.received",
+        "aggregateType": "ride",
+        "aggregateId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "aggregateVersion": 2,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:13:34.906Z",
+        "correlationId": "ded253ac-76c0-4a4d-8cba-67932a4f0f8f",
+        "causationId": "invite_accept_9ae73596-773c-4a76-bd87-4aece8c590b6_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "payload": {
+          "offerId": "9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+          "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "amountMinor": 20000
+        },
+        "nextAttemptAt": "2026-11-17T11:13:34.906Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:51.016Z"
+      }
+    },
+    {
+      "path": "outboxEvents/407687fd-a449-4ccf-93ce-04b641c00571",
+      "data": {
+        "eventId": "407687fd-a449-4ccf-93ce-04b641c00571",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:12:36.209Z",
+        "correlationId": "d9ff60ad-6b2d-45a3-9e99-22c41b00907f",
+        "causationId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w1",
+        "payload": {
+          "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+          "waveNumber": 1,
+          "driverIds": [
+            "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+            "XRyCVvpC1eRk99c4YjXYk9snQOh1"
+          ],
+          "invitedCount": 2,
+          "radiusKm": 10,
+          "inviteExpiresAt": "2026-11-17T11:12:56.209Z"
+        },
+        "attemptCount": 3,
+        "publishState": "PENDING",
+        "leaseExpiresAt": null,
+        "nextAttemptAt": "2026-11-20T09:28:24.001Z",
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:24:24.651Z"
+      }
+    },
+    {
+      "path": "outboxEvents/5452c176-22b9-4a53-acd2-f18e51b88d23",
+      "data": {
+        "eventId": "5452c176-22b9-4a53-acd2-f18e51b88d23",
+        "eventType": "ride.started",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 6,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:39.830Z",
+        "correlationId": "d3797a9a-b3ef-4084-bfd1-66737b585002",
+        "causationId": "f0b603c4-4a78-4a15-95cd-2e01de2c943b",
+        "payload": {
+          "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+          "fromState": "DRIVER_ARRIVED",
+          "toState": "RIDE_STARTED",
+          "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2"
+        },
+        "nextAttemptAt": "2026-11-20T09:26:39.830Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:51.167Z"
+      }
+    },
+    {
+      "path": "outboxEvents/57378552-c82a-4b57-8abb-842f7981ffd8",
+      "data": {
+        "eventId": "57378552-c82a-4b57-8abb-842f7981ffd8",
+        "eventType": "ride.offer.expired",
+        "aggregateType": "ride",
+        "aggregateId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "aggregateVersion": 3,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:27:47.641Z",
+        "correlationId": "752e5340-c8da-4b95-9e5e-621e66f030f0",
+        "causationId": "expire:cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "payload": {
+          "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+          "offerId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+          "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "reason": "parent_ride_expired",
+          "expiresAt": "2026-11-17T11:15:43.090Z"
+        },
+        "nextAttemptAt": "2026-11-20T09:27:47.641Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:51.314Z"
+      }
+    },
+    {
+      "path": "outboxEvents/5996d395-a561-4f64-8087-27d892a27f1d",
+      "data": {
+        "eventId": "5996d395-a561-4f64-8087-27d892a27f1d",
+        "eventType": "ride.driver.arrived",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 5,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:38.486Z",
+        "correlationId": "d9e3418c-14be-4c25-92c1-fc54323c7000",
+        "causationId": "3d0ec01e-59a5-4b0c-b2ad-17c101ea558e",
+        "payload": {
+          "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+          "fromState": "DRIVER_EN_ROUTE",
+          "toState": "DRIVER_ARRIVED",
+          "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2"
+        },
+        "nextAttemptAt": "2026-11-20T09:26:38.486Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:51.433Z"
+      }
+    },
+    {
+      "path": "outboxEvents/62762781-da26-41da-b2d6-24614d14dabd",
+      "data": {
+        "eventId": "62762781-da26-41da-b2d6-24614d14dabd",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:13:28.026Z",
+        "correlationId": "2b522007-7ae3-4537-b65d-bf79316d5e3c",
+        "causationId": "9ae73596-773c-4a76-bd87-4aece8c590b6_w1",
+        "payload": {
+          "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+          "waveNumber": 1,
+          "driverIds": [
+            "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+            "XRyCVvpC1eRk99c4YjXYk9snQOh1"
+          ],
+          "invitedCount": 2,
+          "radiusKm": 10,
+          "inviteExpiresAt": "2026-11-17T11:13:48.026Z"
+        },
+        "attemptCount": 3,
+        "publishState": "PENDING",
+        "leaseExpiresAt": null,
+        "nextAttemptAt": "2026-11-20T09:31:47.832Z",
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:48.799Z"
+      }
+    },
+    {
+      "path": "outboxEvents/63b324a2-91f1-4ab9-b7fb-c74d6a641b97",
+      "data": {
+        "eventId": "63b324a2-91f1-4ab9-b7fb-c74d6a641b97",
+        "eventType": "ride.assigned",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 3,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:12.551Z",
+        "correlationId": "a4a738ab-ca31-4d9f-aa0b-46a9b663c147",
+        "causationId": "9690c88e-37e7-40fa-9ad6-93b7cdce50ce",
+        "payload": {
+          "offerId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+          "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "agreedFareMinor": 20000
+        },
+        "attemptCount": 1,
+        "publishState": "PENDING",
+        "leaseExpiresAt": null,
+        "nextAttemptAt": "2026-11-20T09:28:50.364Z",
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:52.463Z"
+      }
+    },
+    {
+      "path": "outboxEvents/7b1a2742-c1cd-4464-bb19-6d3eb1177be9",
+      "data": {
+        "eventId": "7b1a2742-c1cd-4464-bb19-6d3eb1177be9",
+        "eventType": "ride.offer.selected",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 3,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:12.551Z",
+        "correlationId": "a4a738ab-ca31-4d9f-aa0b-46a9b663c147",
+        "causationId": "9690c88e-37e7-40fa-9ad6-93b7cdce50ce",
+        "payload": {
+          "offerId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+          "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "amountMinor": 20000
+        },
+        "attemptCount": 1,
+        "publishState": "PENDING",
+        "leaseExpiresAt": null,
+        "nextAttemptAt": "2026-11-20T09:28:50.721Z",
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:53.409Z"
+      }
+    },
+    {
+      "path": "outboxEvents/a174d5b1-5e39-4107-83fc-21c1944d5690",
+      "data": {
+        "eventId": "a174d5b1-5e39-4107-83fc-21c1944d5690",
+        "eventType": "ride.completed",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 7,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:41.188Z",
+        "correlationId": "b5df58e4-341b-4047-8076-cb53d5832433",
+        "causationId": "168cc619-0ebc-4cab-8350-1bcdff0dca34",
+        "payload": {
+          "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+          "fromState": "RIDE_STARTED",
+          "toState": "RIDE_COMPLETED",
+          "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2"
+        },
+        "attemptCount": 1,
+        "publishState": "PENDING",
+        "leaseExpiresAt": null,
+        "nextAttemptAt": "2026-11-20T09:28:50.087Z",
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:54.442Z"
+      }
+    },
+    {
+      "path": "outboxEvents/a80b5b14-604f-4779-b235-96833ee96b2d",
+      "data": {
+        "eventId": "a80b5b14-604f-4779-b235-96833ee96b2d",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:04.484Z",
+        "correlationId": "66a04a1c-8e90-442c-a501-2acc4e54f5e0",
+        "causationId": "ff072c94-71a7-4835-9ddb-b0815cfee854_w1",
+        "payload": {
+          "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+          "waveNumber": 1,
+          "driverIds": [
+            "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+            "XRyCVvpC1eRk99c4YjXYk9snQOh1"
+          ],
+          "invitedCount": 2,
+          "radiusKm": 10,
+          "inviteExpiresAt": "2026-11-20T09:26:24.484Z"
+        },
+        "attemptCount": 2,
+        "publishState": "PENDING",
+        "leaseExpiresAt": null,
+        "nextAttemptAt": "2026-11-20T09:29:48.591Z",
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:49.785Z"
+      }
+    },
+    {
+      "path": "outboxEvents/ad2181f8-b4aa-4401-8997-36439bd5e39f",
+      "data": {
+        "eventId": "ad2181f8-b4aa-4401-8997-36439bd5e39f",
+        "eventType": "ride.assigned",
+        "aggregateType": "ride",
+        "aggregateId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "aggregateVersion": 3,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:13:36.575Z",
+        "correlationId": "bb720a07-7a59-4b1c-8b05-aeec02834464",
+        "causationId": "21452072-d800-458a-af71-5c71f6593e05",
+        "payload": {
+          "offerId": "9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+          "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "agreedFareMinor": 20000
+        },
+        "attemptCount": 1,
+        "publishState": "PENDING",
+        "leaseExpiresAt": null,
+        "nextAttemptAt": "2026-11-20T09:28:50.819Z",
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:55.418Z"
+      }
+    },
+    {
+      "path": "outboxEvents/c9890aef-9b9f-4184-b2ff-4211ab9fda27",
+      "data": {
+        "eventId": "c9890aef-9b9f-4184-b2ff-4211ab9fda27",
+        "eventType": "ride.driver.en_route",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 4,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:37.144Z",
+        "correlationId": "39fcec2d-532e-4cb3-9e13-6536945daf3a",
+        "causationId": "77e2dbfd-5fb9-4666-b5ec-af1da9ee8044",
+        "payload": {
+          "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+          "fromState": "DRIVER_ASSIGNED",
+          "toState": "DRIVER_EN_ROUTE",
+          "actorId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2"
+        },
+        "nextAttemptAt": "2026-11-20T09:26:37.144Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:55.542Z"
+      }
+    },
+    {
+      "path": "outboxEvents/caa3ec41-9e4a-4b57-917d-a9c8e2787f70",
+      "data": {
+        "eventId": "caa3ec41-9e4a-4b57-917d-a9c8e2787f70",
+        "eventType": "ride.offer.received",
+        "aggregateType": "ride",
+        "aggregateId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "aggregateVersion": 2,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:12:43.090Z",
+        "correlationId": "9b6edfd0-51cd-41aa-aaa3-3f3623626304",
+        "causationId": "invite_accept_cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "payload": {
+          "offerId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+          "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "amountMinor": 20000
+        },
+        "nextAttemptAt": "2026-11-17T11:12:43.090Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:55.770Z"
+      }
+    },
+    {
+      "path": "outboxEvents/cb7ff633-a255-4e8f-92e7-59be62ca800e",
+      "data": {
+        "eventId": "cb7ff633-a255-4e8f-92e7-59be62ca800e",
+        "eventType": "ride.offer.received",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 2,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:10.972Z",
+        "correlationId": "2a534cac-d282-4cf9-a8d5-ba5623511c80",
+        "causationId": "invite_accept_ff072c94-71a7-4835-9ddb-b0815cfee854_w1_FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "payload": {
+          "offerId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+          "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "amountMinor": 20000
+        },
+        "nextAttemptAt": "2026-11-20T09:26:10.972Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:55.893Z"
+      }
+    },
+    {
+      "path": "outboxEvents/fdb1882c-beed-4dec-bf0d-340e9fcbf3b7",
+      "data": {
+        "eventId": "fdb1882c-beed-4dec-bf0d-340e9fcbf3b7",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:24:23.249Z",
+        "correlationId": "e1eaea58-03c7-49d3-93c1-620aa8635d94",
+        "causationId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15_w1",
+        "payload": {
+          "rideId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+          "waveNumber": 1,
+          "driverIds": [
+            "XRyCVvpC1eRk99c4YjXYk9snQOh1"
+          ],
+          "invitedCount": 1,
+          "radiusKm": 10,
+          "inviteExpiresAt": "2026-11-20T09:24:43.249Z"
+        },
+        "nextAttemptAt": "2026-11-20T09:24:23.249Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:24:24.827Z"
+      }
+    },
+    {
+      "path": "rideDispatchWaves/9ae73596-773c-4a76-bd87-4aece8c590b6_w1",
+      "data": {
+        "waveId": "9ae73596-773c-4a76-bd87-4aece8c590b6_w1",
+        "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "waveNumber": 1,
+        "requestVersion": 1,
+        "driverIds": [
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "XRyCVvpC1eRk99c4YjXYk9snQOh1"
+        ],
+        "radiusKm": 10,
+        "status": "COMPLETED",
+        "correlationId": "2b522007-7ae3-4537-b65d-bf79316d5e3c",
+        "createdAt": "2026-11-17T11:13:28.026Z",
+        "completedAt": "2026-11-17T11:13:28.026Z",
+        "inviteExpiresAt": "2026-11-17T11:13:48.026Z"
+      }
+    },
+    {
+      "path": "rideDispatchWaves/cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w1",
+      "data": {
+        "waveId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w1",
+        "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "waveNumber": 1,
+        "requestVersion": 1,
+        "driverIds": [
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "XRyCVvpC1eRk99c4YjXYk9snQOh1"
+        ],
+        "radiusKm": 10,
+        "status": "COMPLETED",
+        "correlationId": "d9ff60ad-6b2d-45a3-9e99-22c41b00907f",
+        "createdAt": "2026-11-17T11:12:36.209Z",
+        "completedAt": "2026-11-17T11:12:36.209Z",
+        "inviteExpiresAt": "2026-11-17T11:12:56.209Z"
+      }
+    },
+    {
+      "path": "rideDispatchWaves/e6dc34ba-9b70-46a3-9194-e7fc186b9b15_w1",
+      "data": {
+        "waveId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15_w1",
+        "rideId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+        "waveNumber": 1,
+        "requestVersion": 1,
+        "driverIds": [
+          "XRyCVvpC1eRk99c4YjXYk9snQOh1"
+        ],
+        "radiusKm": 10,
+        "status": "COMPLETED",
+        "correlationId": "e1eaea58-03c7-49d3-93c1-620aa8635d94",
+        "createdAt": "2026-11-20T09:24:23.249Z",
+        "completedAt": "2026-11-20T09:24:23.249Z",
+        "inviteExpiresAt": "2026-11-20T09:24:43.249Z"
+      }
+    },
+    {
+      "path": "rideDispatchWaves/ff072c94-71a7-4835-9ddb-b0815cfee854_w1",
+      "data": {
+        "waveId": "ff072c94-71a7-4835-9ddb-b0815cfee854_w1",
+        "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "waveNumber": 1,
+        "requestVersion": 1,
+        "driverIds": [
+          "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+          "XRyCVvpC1eRk99c4YjXYk9snQOh1"
+        ],
+        "radiusKm": 10,
+        "status": "COMPLETED",
+        "correlationId": "66a04a1c-8e90-442c-a501-2acc4e54f5e0",
+        "createdAt": "2026-11-20T09:26:04.484Z",
+        "completedAt": "2026-11-20T09:26:04.484Z",
+        "inviteExpiresAt": "2026-11-20T09:26:24.484Z"
+      }
+    },
+    {
+      "path": "rideOffers/9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+      "data": {
+        "offerId": "9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+        "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "amountMinor": 20000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "requestVersion": 1,
+        "expiresAt": "2026-11-17T11:16:34.906Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-11-17T11:13:34.906Z",
+        "withdrawnAt": null,
+        "selectedAt": "2026-11-17T11:13:36.575Z",
+        "status": "SELECTED"
+      }
+    },
+    {
+      "path": "rideOffers/cf151ad2-aa9e-4238-9791-b1ac5e830f7f_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+      "data": {
+        "offerId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+        "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "amountMinor": 20000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "requestVersion": 1,
+        "expiresAt": "2026-11-17T11:15:43.090Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-11-17T11:12:43.090Z",
+        "selectedAt": null,
+        "withdrawnAt": null,
+        "status": "EXPIRED"
+      }
+    },
+    {
+      "path": "rideOffers/ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+      "data": {
+        "offerId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+        "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "driverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "amountMinor": 20000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "requestVersion": 1,
+        "expiresAt": "2026-11-20T09:29:10.972Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-11-20T09:26:10.972Z",
+        "withdrawnAt": null,
+        "selectedAt": "2026-11-20T09:26:12.551Z",
+        "status": "SELECTED"
+      }
+    },
+    {
+      "path": "rides/9ae73596-773c-4a76-bd87-4aece8c590b6",
+      "data": {
+        "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "requestVersion": 1,
+        "category": "zip",
+        "serviceType": "ride",
+        "city": "lahore",
+        "pickup": {
+          "lat": 31.5102,
+          "lng": 74.3448,
+          "address": "Liberty Market"
+        },
+        "destination": {
+          "lat": 31.5204,
+          "lng": 74.3587,
+          "address": "Gulberg"
+        },
+        "routePolyline": null,
+        "distanceKm": 1.738545299897535,
+        "estimatedDurationMin": 4.1725087197540836,
+        "pricingSnapshotId": "ps_7208b068-25ff-4bed-8dde-02db26149e88",
+        "recommendedFareMinor": 20000,
+        "passengerOfferMinor": 20000,
+        "paymentMethod": "CASH",
+        "paymentIntentId": null,
+        "passengerCount": 1,
+        "expiresAt": "2026-11-17T11:18:27.335Z",
+        "arrivedAt": null,
+        "startedAt": null,
+        "completedAt": null,
+        "cancelledBy": null,
+        "cancellationReason": null,
+        "cancellationFeeMinor": null,
+        "createdAt": "2026-11-17T11:13:27.335Z",
+        "dispatchWave": 2,
+        "agreedFareMinor": 20000,
+        "payoutCurrency": "PKR",
+        "platformFeeMinor": 0,
+        "driverPayoutMinor": 20000,
+        "agreedOfferId": "9ae73596-773c-4a76-bd87-4aece8c590b6_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+        "feePolicySnapshot": {
+          "policyId": "launch-2026-10-19",
+          "policyVersion": "launch-2026-10-19",
+          "platformFeeType": "NONE",
+          "currency": "PKR",
+          "capturedAt": "2026-11-17T11:13:36.575Z",
+          "resolution": "LAUNCH_DEFAULT"
+        },
+        "assignedAt": "2026-11-17T11:13:36.575Z",
+        "assignedDriverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "version": 3,
+        "agreedFareCurrency": "PKR",
+        "dispatchNextAt": null,
+        "dispatchStatus": "stopped",
+        "state": "COMPLETED",
+        "closeReason": "stale-synthetic-cleanup",
+        "closedAt": "2026-11-20T09:25:25.751Z",
+        "updatedAt": "2026-11-20T09:25:25.751Z"
+      }
+    },
+    {
+      "path": "rides/cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+      "data": {
+        "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "assignedDriverId": null,
+        "requestVersion": 1,
+        "category": "zip",
+        "serviceType": "ride",
+        "city": "lahore",
+        "pickup": {
+          "lat": 31.5102,
+          "lng": 74.3448,
+          "address": "Liberty Market"
+        },
+        "destination": {
+          "lat": 31.5204,
+          "lng": 74.3587,
+          "address": "Gulberg"
+        },
+        "routePolyline": null,
+        "distanceKm": 1.738545299897535,
+        "estimatedDurationMin": 4.1725087197540836,
+        "pricingSnapshotId": "ps_f7e2ac33-e220-4af2-a3ca-aa681c99a70c",
+        "recommendedFareMinor": 20000,
+        "passengerOfferMinor": 20000,
+        "agreedFareMinor": null,
+        "agreedOfferId": null,
+        "agreedFareCurrency": null,
+        "feePolicySnapshot": null,
+        "driverPayoutMinor": null,
+        "platformFeeMinor": null,
+        "payoutCurrency": null,
+        "paymentMethod": "CASH",
+        "paymentIntentId": null,
+        "passengerCount": 1,
+        "expiresAt": "2026-11-17T11:17:35.456Z",
+        "assignedAt": null,
+        "arrivedAt": null,
+        "startedAt": null,
+        "completedAt": null,
+        "closedAt": null,
+        "cancelledBy": null,
+        "cancellationReason": null,
+        "cancellationFeeMinor": null,
+        "createdAt": "2026-11-17T11:12:35.456Z",
+        "dispatchNextAt": null,
+        "dispatchWave": 3,
+        "dispatchStatus": "exhausted",
+        "state": "EXPIRED",
+        "version": 3,
+        "updatedAt": "2026-11-20T09:27:47.641Z"
+      }
+    },
+    {
+      "path": "rides/e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+      "data": {
+        "rideId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+        "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "assignedDriverId": null,
+        "version": 1,
+        "requestVersion": 1,
+        "category": "zip",
+        "serviceType": "ride",
+        "city": "lahore",
+        "pickup": {
+          "lat": 31.5102,
+          "lng": 74.3448,
+          "address": "Liberty Market"
+        },
+        "destination": {
+          "lat": 31.5204,
+          "lng": 74.3587,
+          "address": "Gulberg"
+        },
+        "routePolyline": null,
+        "distanceKm": 1.738545299897535,
+        "estimatedDurationMin": 4.1725087197540836,
+        "pricingSnapshotId": "ps_7095c83a-31d6-45df-84a3-f24e8a655164",
+        "recommendedFareMinor": 20000,
+        "passengerOfferMinor": 20000,
+        "agreedFareMinor": null,
+        "agreedOfferId": null,
+        "agreedFareCurrency": null,
+        "feePolicySnapshot": null,
+        "driverPayoutMinor": null,
+        "platformFeeMinor": null,
+        "payoutCurrency": null,
+        "paymentMethod": "CASH",
+        "paymentIntentId": null,
+        "passengerCount": 1,
+        "expiresAt": "2026-11-20T09:29:22.426Z",
+        "assignedAt": null,
+        "arrivedAt": null,
+        "startedAt": null,
+        "completedAt": null,
+        "cancelledBy": null,
+        "cancellationReason": null,
+        "cancellationFeeMinor": null,
+        "createdAt": "2026-11-20T09:24:22.426Z",
+        "dispatchNextAt": null,
+        "dispatchWave": 3,
+        "dispatchStatus": "exhausted",
+        "state": "COMPLETED",
+        "closeReason": "stale-synthetic-cleanup",
+        "closedAt": "2026-11-20T09:25:27.092Z",
+        "updatedAt": "2026-11-20T09:25:27.092Z"
+      }
+    },
+    {
+      "path": "rides/ff072c94-71a7-4835-9ddb-b0815cfee854",
+      "data": {
+        "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "passengerId": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "requestVersion": 1,
+        "category": "zip",
+        "serviceType": "ride",
+        "city": "lahore",
+        "pickup": {
+          "lat": 31.5102,
+          "lng": 74.3448,
+          "address": "Liberty Market"
+        },
+        "destination": {
+          "lat": 31.5204,
+          "lng": 74.3587,
+          "address": "Gulberg"
+        },
+        "routePolyline": null,
+        "distanceKm": 1.738545299897535,
+        "estimatedDurationMin": 4.1725087197540836,
+        "pricingSnapshotId": "ps_2dc6826c-2b94-461d-bcb0-673936a00294",
+        "recommendedFareMinor": 20000,
+        "passengerOfferMinor": 20000,
+        "paymentMethod": "CASH",
+        "paymentIntentId": null,
+        "passengerCount": 1,
+        "expiresAt": "2026-11-20T09:31:03.962Z",
+        "closedAt": null,
+        "cancelledBy": null,
+        "cancellationReason": null,
+        "cancellationFeeMinor": null,
+        "createdAt": "2026-11-20T09:26:03.962Z",
+        "dispatchWave": 2,
+        "agreedFareMinor": 20000,
+        "payoutCurrency": "PKR",
+        "platformFeeMinor": 0,
+        "driverPayoutMinor": 20000,
+        "agreedOfferId": "ff072c94-71a7-4835-9ddb-b0815cfee854_FSY6UwDeyfTdb1qDOUdt8xvnJsb2_v1",
+        "feePolicySnapshot": {
+          "policyId": "launch-2026-10-19",
+          "policyVersion": "launch-2026-10-19",
+          "platformFeeType": "NONE",
+          "currency": "PKR",
+          "capturedAt": "2026-11-20T09:26:12.551Z",
+          "resolution": "LAUNCH_DEFAULT"
+        },
+        "assignedAt": "2026-11-20T09:26:12.551Z",
+        "assignedDriverId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "agreedFareCurrency": "PKR",
+        "dispatchNextAt": null,
+        "dispatchStatus": "stopped",
+        "arrivedAt": "2026-11-20T09:26:38.486Z",
+        "startedAt": "2026-11-20T09:26:39.830Z",
+        "completedAt": "2026-11-20T09:26:41.188Z",
+        "commission": {
+          "points": 20,
+          "amountMinor": 2000,
+          "grossMinor": 20000,
+          "bps": 1000,
+          "ledgerEntryId": "commission-ride-ff072c94-71a7-4835-9ddb-b0815cfee854",
+          "chargedAt": "2026-11-20T09:26:41.188Z"
+        },
+        "state": "RIDE_COMPLETED",
+        "version": 7,
+        "updatedAt": "2026-11-20T09:26:41.188Z"
+      }
+    },
+    {
+      "path": "users/86omLdNW1GTjMcHipOi9jvfVSxv1",
+      "data": {
+        "profileComplete": true,
+        "uid": "86omLdNW1GTjMcHipOi9jvfVSxv1",
+        "phoneNumber": "+923005551003",
+        "role": "driver",
+        "displayName": "E2E Driver",
+        "banned": false,
+        "driverStatus": "approved",
+        "isActive": true,
+        "updatedAt": "2026-11-20T09:25:53.616Z"
+      }
+    },
+    {
+      "path": "users/FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "profileComplete": true,
+        "uid": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "phoneNumber": "+923005551001",
+        "role": "driver",
+        "displayName": "E2E Driver",
+        "banned": false,
+        "driverStatus": "approved",
+        "isActive": true,
+        "updatedAt": "2026-11-20T09:25:48.956Z"
+      }
+    },
+    {
+      "path": "users/XRyCVvpC1eRk99c4YjXYk9snQOh1",
+      "data": {
+        "profileComplete": true,
+        "uid": "XRyCVvpC1eRk99c4YjXYk9snQOh1",
+        "phoneNumber": "+923005551002",
+        "role": "driver",
+        "displayName": "E2E Driver",
+        "banned": false,
+        "driverStatus": "approved",
+        "isActive": true,
+        "updatedAt": "2026-11-20T09:25:52.166Z"
+      }
+    },
+    {
+      "path": "users/j0q6596xACgmTQO9BrCMKGiKdx13",
+      "data": {
+        "profileComplete": true,
+        "uid": "j0q6596xACgmTQO9BrCMKGiKdx13",
+        "phoneNumber": "+923005550001",
+        "role": "passenger",
+        "displayName": "E2E Passenger",
+        "banned": false,
+        "driverStatus": "none",
+        "isActive": true,
+        "updatedAt": "2026-11-20T09:25:45.656Z"
+      }
+    },
+    {
+      "path": "walletAccounts/FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+      "data": {
+        "userId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "balanceMinor": -2000,
+        "currency": "PKR",
+        "createdAt": "2026-11-20T09:26:41.188Z",
+        "updatedAt": "2026-11-20T09:26:41.188Z",
+        "version": 1
+      }
+    },
+    {
+      "path": "walletLedgerEntries/commission-ride-ff072c94-71a7-4835-9ddb-b0815cfee854",
+      "data": {
+        "entryId": "commission-ride-ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "accountId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "userId": "FSY6UwDeyfTdb1qDOUdt8xvnJsb2",
+        "type": "COMMISSION_DEBIT",
+        "pointsDelta": -20,
+        "amountMinor": -2000,
+        "sourceType": "ride",
+        "sourceId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "role": "driver",
+        "grossMinor": 20000,
+        "commissionBps": 1000,
+        "balanceAfterMinor": -2000,
+        "description": "Commission — ride ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "status": "POSTED",
+        "idempotencyKey": "commission-ride-ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "createdAt": "2026-11-20T09:26:41.188Z"
+      }
+    },
+    {
+      "path": "outboxEvents/38a5a3ab-88c2-4180-a03c-df6e1862c827",
+      "data": {
+        "eventId": "38a5a3ab-88c2-4180-a03c-df6e1862c827",
+        "eventType": "ride.created",
+        "aggregateType": "ride",
+        "aggregateId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:13:27.335Z",
+        "correlationId": "2b522007-7ae3-4537-b65d-bf79316d5e3c",
+        "causationId": "477bc77e-66c7-49fa-89ed-36dfbb0d2631",
+        "payload": {
+          "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+          "state": "SEARCHING"
+        },
+        "publishState": "PENDING",
+        "attemptCount": 0,
+        "nextAttemptAt": "2026-11-17T11:13:27.335Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/5b5aa94e-6fd5-466d-b2f5-0d301428218a",
+      "data": {
+        "eventId": "5b5aa94e-6fd5-466d-b2f5-0d301428218a",
+        "eventType": "ride.created",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:03.962Z",
+        "correlationId": "66a04a1c-8e90-442c-a501-2acc4e54f5e0",
+        "causationId": "a17766cb-9cda-4723-a23e-241b68afe7d7",
+        "payload": {
+          "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+          "state": "SEARCHING"
+        },
+        "publishState": "PENDING",
+        "attemptCount": 0,
+        "nextAttemptAt": "2026-11-20T09:26:03.962Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/5d4d4ca2-5d5b-4806-8151-ad6195023cda",
+      "data": {
+        "eventId": "5d4d4ca2-5d5b-4806-8151-ad6195023cda",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:26:09.567Z",
+        "correlationId": "bfb2382c-e365-435a-9448-f5d3cfe6e5ff",
+        "causationId": "ff072c94-71a7-4835-9ddb-b0815cfee854_w2",
+        "payload": {
+          "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+          "waveNumber": 2,
+          "driverIds": [],
+          "invitedCount": 0,
+          "radiusKm": 15,
+          "inviteExpiresAt": "2026-11-20T09:26:29.567Z"
+        },
+        "nextAttemptAt": "2026-11-20T09:26:09.567Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:26:10.145Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/61a3b6b6-6b8b-440b-a782-5d2eeaf39788",
+      "data": {
+        "eventId": "61a3b6b6-6b8b-440b-a782-5d2eeaf39788",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "aggregateVersion": 2,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:12:46.378Z",
+        "correlationId": "e92101ef-95bc-4cb5-b13b-bd17875a05ce",
+        "causationId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w3",
+        "payload": {
+          "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+          "waveNumber": 3,
+          "driverIds": [],
+          "invitedCount": 0,
+          "radiusKm": 25,
+          "inviteExpiresAt": "2026-11-17T11:13:06.378Z"
+        },
+        "nextAttemptAt": "2026-11-17T11:12:46.378Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-17T11:12:46.689Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/6a4e450c-3fc2-43f7-8e8b-609283494a4a",
+      "data": {
+        "eventId": "6a4e450c-3fc2-43f7-8e8b-609283494a4a",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:24:33.420Z",
+        "correlationId": "b4151ea0-bbed-4a0c-975f-f88ef56a1e9d",
+        "causationId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15_w3",
+        "payload": {
+          "rideId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+          "waveNumber": 3,
+          "driverIds": [],
+          "invitedCount": 0,
+          "radiusKm": 25,
+          "inviteExpiresAt": "2026-11-20T09:24:53.420Z"
+        },
+        "nextAttemptAt": "2026-11-20T09:24:33.420Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:24:33.733Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/70fae7f6-0139-4ef6-bda3-9189faac3946",
+      "data": {
+        "eventId": "70fae7f6-0139-4ef6-bda3-9189faac3946",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:24:28.333Z",
+        "correlationId": "b3ed8f2a-b7a2-49b3-9a97-36705541389b",
+        "causationId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15_w2",
+        "payload": {
+          "rideId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+          "waveNumber": 2,
+          "driverIds": [],
+          "invitedCount": 0,
+          "radiusKm": 15,
+          "inviteExpiresAt": "2026-11-20T09:24:48.333Z"
+        },
+        "nextAttemptAt": "2026-11-20T09:24:28.333Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:24:28.849Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/ca5ff535-fbb3-4cda-89c2-9466ecb54a64",
+      "data": {
+        "eventId": "ca5ff535-fbb3-4cda-89c2-9466ecb54a64",
+        "eventType": "ride.expired",
+        "aggregateType": "ride",
+        "aggregateId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "aggregateVersion": 3,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:27:47.641Z",
+        "correlationId": "752e5340-c8da-4b95-9e5e-621e66f030f0",
+        "causationId": "expire:cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "payload": {
+          "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+          "fromState": "OFFERS_AVAILABLE",
+          "toState": "EXPIRED",
+          "reason": "search_ttl_elapsed",
+          "expiresAt": "2026-11-17T11:17:35.456Z"
+        },
+        "nextAttemptAt": "2026-11-20T09:27:47.641Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-20T09:27:55.658Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/dc52ed2d-418a-4829-acc7-a180181c0333",
+      "data": {
+        "eventId": "dc52ed2d-418a-4829-acc7-a180181c0333",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:13:33.105Z",
+        "correlationId": "c9c104d6-dd7d-4b3e-9618-4ec1d8ff3737",
+        "causationId": "9ae73596-773c-4a76-bd87-4aece8c590b6_w2",
+        "payload": {
+          "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+          "waveNumber": 2,
+          "driverIds": [],
+          "invitedCount": 0,
+          "radiusKm": 15,
+          "inviteExpiresAt": "2026-11-17T11:13:53.105Z"
+        },
+        "nextAttemptAt": "2026-11-17T11:13:33.105Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-17T11:13:33.641Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/ea0f8a5d-1cec-45ce-904f-14dec008614a",
+      "data": {
+        "eventId": "ea0f8a5d-1cec-45ce-904f-14dec008614a",
+        "eventType": "ride.created",
+        "aggregateType": "ride",
+        "aggregateId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:12:35.456Z",
+        "correlationId": "d9ff60ad-6b2d-45a3-9e99-22c41b00907f",
+        "causationId": "8aef76ef-dce5-4de8-b7b6-ef2259e97888",
+        "payload": {
+          "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+          "state": "SEARCHING"
+        },
+        "publishState": "PENDING",
+        "attemptCount": 0,
+        "nextAttemptAt": "2026-11-17T11:12:35.456Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/f8a54b23-5cd3-474c-86b7-cc0d85f671ac",
+      "data": {
+        "eventId": "f8a54b23-5cd3-474c-86b7-cc0d85f671ac",
+        "eventType": "ride.created",
+        "aggregateType": "ride",
+        "aggregateId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-20T09:24:22.426Z",
+        "correlationId": "e1eaea58-03c7-49d3-93c1-620aa8635d94",
+        "causationId": "68a74add-0593-497a-9baa-f5857f81a731",
+        "payload": {
+          "rideId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+          "state": "SEARCHING"
+        },
+        "publishState": "PENDING",
+        "attemptCount": 0,
+        "nextAttemptAt": "2026-11-20T09:24:22.426Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "outboxEvents/fd19f995-5880-4da6-9b30-1b38cff568e0",
+      "data": {
+        "eventId": "fd19f995-5880-4da6-9b30-1b38cff568e0",
+        "eventType": "ride.dispatch.wave_completed",
+        "aggregateType": "ride",
+        "aggregateId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "aggregateVersion": 1,
+        "schemaVersion": 1,
+        "occurredAt": "2026-11-17T11:12:41.295Z",
+        "correlationId": "86f32fb7-3595-4db8-a7d5-a1c1ad45f2fc",
+        "causationId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w2",
+        "payload": {
+          "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+          "waveNumber": 2,
+          "driverIds": [],
+          "invitedCount": 0,
+          "radiusKm": 15,
+          "inviteExpiresAt": "2026-11-17T11:13:01.295Z"
+        },
+        "nextAttemptAt": "2026-11-17T11:12:41.295Z",
+        "attemptCount": 1,
+        "publishState": "DELIVERED",
+        "leaseExpiresAt": null,
+        "leaseOwner": null,
+        "updatedAt": "2026-11-17T11:12:41.989Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "rideDispatchWaves/9ae73596-773c-4a76-bd87-4aece8c590b6_w2",
+      "data": {
+        "waveId": "9ae73596-773c-4a76-bd87-4aece8c590b6_w2",
+        "rideId": "9ae73596-773c-4a76-bd87-4aece8c590b6",
+        "waveNumber": 2,
+        "requestVersion": 1,
+        "driverIds": [],
+        "radiusKm": 15,
+        "status": "COMPLETED",
+        "correlationId": "c9c104d6-dd7d-4b3e-9618-4ec1d8ff3737",
+        "createdAt": "2026-11-17T11:13:33.105Z",
+        "completedAt": "2026-11-17T11:13:33.105Z",
+        "inviteExpiresAt": "2026-11-17T11:13:53.105Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "rideDispatchWaves/cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w2",
+      "data": {
+        "waveId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w2",
+        "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "waveNumber": 2,
+        "requestVersion": 1,
+        "driverIds": [],
+        "radiusKm": 15,
+        "status": "COMPLETED",
+        "correlationId": "86f32fb7-3595-4db8-a7d5-a1c1ad45f2fc",
+        "createdAt": "2026-11-17T11:12:41.295Z",
+        "completedAt": "2026-11-17T11:12:41.295Z",
+        "inviteExpiresAt": "2026-11-17T11:13:01.295Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "rideDispatchWaves/cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w3",
+      "data": {
+        "waveId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f_w3",
+        "rideId": "cf151ad2-aa9e-4238-9791-b1ac5e830f7f",
+        "waveNumber": 3,
+        "requestVersion": 1,
+        "driverIds": [],
+        "radiusKm": 25,
+        "status": "COMPLETED",
+        "correlationId": "e92101ef-95bc-4cb5-b13b-bd17875a05ce",
+        "createdAt": "2026-11-17T11:12:46.378Z",
+        "completedAt": "2026-11-17T11:12:46.378Z",
+        "inviteExpiresAt": "2026-11-17T11:13:06.378Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "rideDispatchWaves/e6dc34ba-9b70-46a3-9194-e7fc186b9b15_w2",
+      "data": {
+        "waveId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15_w2",
+        "rideId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+        "waveNumber": 2,
+        "requestVersion": 1,
+        "driverIds": [],
+        "radiusKm": 15,
+        "status": "COMPLETED",
+        "correlationId": "b3ed8f2a-b7a2-49b3-9a97-36705541389b",
+        "createdAt": "2026-11-20T09:24:28.333Z",
+        "completedAt": "2026-11-20T09:24:28.333Z",
+        "inviteExpiresAt": "2026-11-20T09:24:48.333Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "rideDispatchWaves/e6dc34ba-9b70-46a3-9194-e7fc186b9b15_w3",
+      "data": {
+        "waveId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15_w3",
+        "rideId": "e6dc34ba-9b70-46a3-9194-e7fc186b9b15",
+        "waveNumber": 3,
+        "requestVersion": 1,
+        "driverIds": [],
+        "radiusKm": 25,
+        "status": "COMPLETED",
+        "correlationId": "b4151ea0-bbed-4a0c-975f-f88ef56a1e9d",
+        "createdAt": "2026-11-20T09:24:33.420Z",
+        "completedAt": "2026-11-20T09:24:33.420Z",
+        "inviteExpiresAt": "2026-11-20T09:24:53.420Z"
+      },
+      "linkedViaRide": true
+    },
+    {
+      "path": "rideDispatchWaves/ff072c94-71a7-4835-9ddb-b0815cfee854_w2",
+      "data": {
+        "waveId": "ff072c94-71a7-4835-9ddb-b0815cfee854_w2",
+        "rideId": "ff072c94-71a7-4835-9ddb-b0815cfee854",
+        "waveNumber": 2,
+        "requestVersion": 1,
+        "driverIds": [],
+        "radiusKm": 15,
+        "status": "COMPLETED",
+        "correlationId": "bfb2382c-e365-435a-9448-f5d3cfe6e5ff",
+        "createdAt": "2026-11-20T09:26:09.567Z",
+        "completedAt": "2026-11-20T09:26:09.567Z",
+        "inviteExpiresAt": "2026-11-20T09:26:29.567Z"
+      },
+      "linkedViaRide": true
+    }
+  ]
+}

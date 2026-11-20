@@ -103,7 +103,8 @@ backend/auth-service/scripts/test_env_{up,down,deadman}.sh    # temp E2E env lif
 - Old launchd agent `com.ora.auth-service.dev` was crash-looping on a stale repo path — plist repointed to `Ora-app-orange`, PATH fixed in `launchd_entry.sh`, agent **unloaded** (re-enable manually if a long-lived non-emulator backend is wanted; needs `secrets/service-account.json`).
 - Backend suite occasionally throws transport-level socket hang-ups under heavy parallel CPU (documented mechanism — rerun; `maxForks:4` bounds it). Don't run `flutter test` concurrently with `vitest run`.
 - Test UIDs with fixed emails accumulate wallet commission across runs — E2E scripts self top-up.
-- Real-device FCM and App Check attestation: **NOT VERIFIED** this pass (staging-verified earlier; final cloud E2E pending CLOUD GO).
+- Cloud E2E (CLOUD-E2E-2026-11-20) **PASSED** on real Cloud Run/Auth/Firestore/RTDB incl. wave-1 dispatch, lifecycle, RTDB projection, wallet commission — see state-log entry 44. Remaining gaps needing a second authorized run (CLOUD GO #2 plan below): real Tasks wave-2/3 deadline wakeups + retry path, real-device FCM, App Check attestation, marketplace legs on cloud, >2-driver concurrency.
+- Rules/index deployment is repeatable without the `firebase` CLI via `backend/auth-service/scripts/deploy_firebase_infra.sh` (gcloud-session REST; verified live 2026-11-20). To use the firebase CLI directly, run `firebase login` as `vezeon.live@gmail.com` — the CLI is currently logged into an account without project access.
 
 ## 8. Recommended next development sequence
 
