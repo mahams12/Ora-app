@@ -851,6 +851,53 @@ Device-side findings / limitations:
 
 ---
 
+46. **Flutter frontend dead-code cleanup + transition-ghost fix (2026-11-21):**
+   Import-graph audit of all 315 `lib/*.dart` files against every
+   lib/test/integration_test reference. **Bug fix:** transparent scaffolds
+   (global `backgroundGradient` painted behind the router) let the outgoing
+   page ghost through the incoming one during route transitions — new
+   `pageTransitionsTheme` in `ora_theme.dart` wraps every page in the same
+   gradient via `_OraPageTransitions` (delegates to FadeUpwards on
+   Android/desktop, Cupertino on iOS/macOS) so routes are opaque during
+   transitions; identical steady-state visuals, zero behavior change.
+   **Deleted (proven zero-referenced):**
+   - 12 dead barrels: `app/router/router.dart`, `core/errors/errors.dart`,
+     `core/logging/logging.dart`, `core/network/network.dart`,
+     `core/storage/storage.dart`, feature index files
+     `driver/driver.dart`, `logistics_vendor/logistics_vendor.dart`,
+     `maps/maps.dart`, `payments/payments.dart` (empty), `ride/ride.dart`,
+     `safety/safety.dart` (empty), `vendor/vendor.dart`.
+   - 4 superseded widgets: `driver_home_map.dart` (322L old map),
+     `ride_card_route_preview.dart`, `ride_location_placeholder.dart`
+     (self-marked "Deprecated"), `saved_places_section.dart`.
+   - `passenger_unavailable_view.dart` (replaced by
+     `UnavailableFeatureSheet`; removed from 2 architecture-test file
+     lists), `ride_map_camera_policy.dart` (exact duplicate of live
+     `MapPreviewCameraPolicy`; its test group removed from
+     `ride_map_preview_test.dart`).
+   - Placeholder scaffolding: `core/location/location_service.dart`,
+     `core/maps/maps_service.dart`, `core/utils/view_state.dart` +
+     `.freezed.dart` (generic VM union never adopted).
+   - Route const `driverDirectOffer` (view removed earlier; 3 guard-test
+     refs repointed to `driverWallet`).
+   - 8 assets: `driver_tiles/{wallet_art,add_points_art,bookings_3d,
+     my_rides_3d}.png` (superseded by `assets/vendor/*_top.png`),
+     `branding/ride_card/icons/{avatar_flat,plate_frame,plate_sample}.png`,
+     `vendor/vendor_hero.png`.
+   - 4 pubspec deps with zero codegen usage: `json_annotation`,
+     `riverpod_annotation`, `json_serializable`, `riverpod_generator`.
+   **Kept (verified live or planned):** `theme.dart` barrel (19 test
+   imports), 67 `services/subs/*.webp` catalogue images (marketplace
+   expansion), MapLibre PoC + its assets (drawer-linked dev tool),
+   `.freezed.dart` parts of live files, fonts (pubspec-declared),
+   `driverDirectOfferViewModel` (live editable-offer logic behind the
+   open-request sheet).
+   **Verification:** `dart analyze lib/ test/ integration_test/` clean;
+   `flutter test` **870/870 pass**; `flutter drive` on Android emulator —
+   all integration tests pass, 32 screenshots regenerated, full
+   driver/logistics/vendor/rental/passenger navigation regression green.
+   Frontend is clean and ready for final cloud E2E.
+
 ## How to update this file
 
 When a phase closes:
