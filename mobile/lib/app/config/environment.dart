@@ -7,16 +7,16 @@ enum AppEnvironment {
   bool get isDevelopment => this == AppEnvironment.development;
 
   String get apiBaseUrl => switch (this) {
-    AppEnvironment.development => 'https://api-dev.ora.app/v1',
-    AppEnvironment.staging => 'https://api-staging.ora.app/v1',
-    AppEnvironment.production => 'https://api.ora.app/v1',
-  };
+        AppEnvironment.development => 'https://api-dev.ora.app/v1',
+        AppEnvironment.staging => 'https://api-staging.ora.app/v1',
+        AppEnvironment.production => 'https://api.ora.app/v1',
+      };
 
   String get displayName => switch (this) {
-    AppEnvironment.development => 'Development',
-    AppEnvironment.staging => 'Staging',
-    AppEnvironment.production => 'Production',
-  };
+        AppEnvironment.development => 'Development',
+        AppEnvironment.staging => 'Staging',
+        AppEnvironment.production => 'Production',
+      };
 }
 
 AppEnvironment environmentFromString(String value) {

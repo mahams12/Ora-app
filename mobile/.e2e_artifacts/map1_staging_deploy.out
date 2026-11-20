@@ -1,0 +1,30 @@
+== gcloud project: ora-app-d8112 region: us-central1 service: ora-auth-service-staging ==
+WARNING: Property [project] is overridden by environment setting [CLOUDSDK_CORE_PROJECT=ora-app-d8112]
+Updated property [core/project].
+== enabling APIs (requires project Owner once) ==
+Operation "operations/acat.p2-498169438285-3d7d588f-7f07-4047-90a5-5a2557a5cd73" finished successfully.
+== upsert Secret Manager (Maps + worker token; no values printed) ==
+WARNING: Property [project] is overridden by environment setting [CLOUDSDK_CORE_PROJECT=ora-app-d8112]
+Updated property [core/project].
+Created version [4] of the secret [ora-staging-google-maps-server-key].
+OK added secret version name=ora-staging-google-maps-server-key
+Updated IAM policy for secret [ora-staging-google-maps-server-key].
+Created version [4] of the secret [ora-staging-internal-worker-token].
+OK added secret version name=ora-staging-internal-worker-token
+Updated IAM policy for secret [ora-staging-internal-worker-token].
+OK server secrets wired (names only): ora-staging-google-maps-server-key ora-staging-internal-worker-token
+== deploy Cloud Run from source (Dockerfile) ==
+Building using Dockerfile and deploying container to Cloud Run service [ora-auth-service-staging] in project [ora-app-d8112] region [us-central1]
+Building and deploying...
+Validating configuration...................done
+Uploading sources.........................................done
+Building Container..................................................................................................................................................................................................................................................................................................................................................................................................done
+Setting IAM Policy.........................................done
+Creating Revision..............................................................................................................................................................................................................done
+Routing traffic.....done
+Done.
+Service [ora-auth-service-staging] revision [ora-auth-service-staging-00026-4tz] has been deployed and is serving 100 percent of traffic.
+Service URL: https://ora-auth-service-staging-498169438285.us-central1.run.app
+STAGING_API_BASE_URL=https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1
+HEALTHZ=https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/healthz/
+{"ok":true,"service":"ora-auth-service"}

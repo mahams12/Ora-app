@@ -24,10 +24,10 @@ class FallbackPlaceSearch implements PlaceSearchPort {
     required DeviceGeocoderPort deviceGeocoder,
     PlaceSearchPort? secondary,
     Duration timeout = const Duration(seconds: 10),
-  }) : _primary = primary,
-       _secondary = secondary,
-       _device = deviceGeocoder,
-       _timeout = timeout;
+  })  : _primary = primary,
+        _secondary = secondary,
+        _device = deviceGeocoder,
+        _timeout = timeout;
 
   final PlaceSearchPort _primary;
   final PlaceSearchPort? _secondary;
@@ -35,12 +35,14 @@ class FallbackPlaceSearch implements PlaceSearchPort {
   final Duration _timeout;
 
   static Never _timedOut() => throw const PlaceSearchException(
-    PlaceSearchFailureKind.network,
-    'Location lookup timed out.',
-  );
+        PlaceSearchFailureKind.network,
+        'Location lookup timed out.',
+      );
 
   /// Run [call] against primary then secondary, each bounded by [_timeout].
-  Future<T> _chain<T>(Future<T> Function(PlaceSearchPort port) call) async {
+  Future<T> _chain<T>(
+    Future<T> Function(PlaceSearchPort port) call,
+  ) async {
     Object? primaryError;
     try {
       return await call(_primary).timeout(_timeout, onTimeout: _timedOut);
@@ -74,15 +76,17 @@ class FallbackPlaceSearch implements PlaceSearchPort {
   Future<List<PlaceSuggestion>> autocomplete({
     required String query,
     required String sessionToken,
-  }) => _chain((p) => p.autocomplete(query: query, sessionToken: sessionToken));
+  }) =>
+      _chain((p) => p.autocomplete(query: query, sessionToken: sessionToken));
 
   @override
   Future<ResolvedPassengerLocation> resolvePlace({
     required String placeId,
     required String sessionToken,
-  }) => _chain(
-    (p) => p.resolvePlace(placeId: placeId, sessionToken: sessionToken),
-  );
+  }) =>
+      _chain(
+        (p) => p.resolvePlace(placeId: placeId, sessionToken: sessionToken),
+      );
 
   @override
   Future<ResolvedPassengerLocation> reverseGeocode({

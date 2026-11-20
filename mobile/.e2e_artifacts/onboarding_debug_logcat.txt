@@ -1,0 +1,76 @@
+--------- beginning of main
+09-22 13:05:16.555 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb:export ANDROID_LOG_TAGS=''; exec logcat '-v' 'time''
+09-22 13:05:16.591 D/BubblesManager( 1950): onEntryUpdated : shouldBubbleUp=false ,key=-1|com.android.systemui|2131428972|charging_state|10063
+09-22 13:05:16.605 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 0, real height = 333
+09-22 13:05:16.605 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 63, real height = 333
+09-22 13:05:16.605 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 13:05:16.605 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 13:05:16.617 E/OpenGLRenderer( 1950): Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+09-22 13:05:16.617 W/OpenGLRenderer( 1950): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+09-22 13:05:16.635 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 0, real height = 333
+09-22 13:05:16.636 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 63, real height = 333
+09-22 13:05:16.636 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 13:05:16.636 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 13:05:16.662 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 0, real height = 333
+09-22 13:05:16.662 I/FaceWidgetPositionAlgorithm( 1950): getClockContainerHeight() supplier = 270, bottom margin = 63, real height = 333
+09-22 13:05:16.662 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 13:05:16.662 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 13:05:16.676 D/connsyslogger( 1163): Open FIFO for close
+09-22 13:05:16.966 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 13:05:16.968 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 13:05:16.968 D/NetworkController( 1950): SignalStrength from intent slotId=0
+--------- beginning of system
+09-22 13:05:17.309 D/io_stats(  590): !@ 179,0 r 2138062 31359594 w 1029545 13279160 d 0 0 f 0 0 iot 864948 0 th 0 0 0 pt 0 inp 0 4 6895.071
+09-22 13:05:17.644 I/WifiHAL ( 1861): Get link layer stats
+09-22 13:05:17.644 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 13:05:17.645 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 13:05:17.645 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 13:05:17.645 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 13:05:17.646 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 13:05:17.657 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1967, isSameBssidAndFreq true
+09-22 13:05:17.658 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 13:05:17.659 D/NetworkController.WifiSignalController( 1950): notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-22 13:05:17.698 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=2.36 dur=1271.19 max=1017.09 min=49.99
+09-22 13:05:17.700 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:2.360134,dur:1271.11,max:1017.98,min:49.31  
+09-22 13:05:18.326 E/audit   (  828): type=1400 audit(1790064318.322:1969): avc:  denied  { write } for  pid=3105 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12885 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-22 13:05:18.326 E/audit   (  828): type=1300 audit(1790064318.322:1969): arch=c00000b7 syscall=203 success=no exit=-13 a0=128 a1=b400007634c55c40 a2=1e a3=ffffffff954de431 items=0 ppid=846 pid=3105 auid=4294967295 uid=10226 gid=10226 euid=10226 suid=10226 fsuid=10226 egid=10226 sgid=10226 fsgid=10226 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+09-22 13:05:18.326 E/audit   (  828): type=1327 audit(1790064318.322:1969): proctitle="com.google.android.gms"
+09-22 13:05:19.152 D/ccci_mdinit(  908): (1):monitor_time_update_thread round:232 ########
+09-22 13:05:19.375 D/ActivityTaskManager( 1451): SafeActivityOptions created, mOriginalCallingPid=1451, mOriginalCallingUid=1000, options=ActivityOptions(136063271), mPackageName=null, mAnimationType=-1, mStartX=0, mStartY=0, mWidth=0, mHeight=0, caller=com.android.server.am.PendingIntentRecord.sendInner:486 com.android.server.am.ActivityManagerService.sendIntentSender:6624 com.android.server.am.ActivityManagerService.sendIntentSender:6613 android.app.PendingIntent.sendAndReturnResult:1029 android.app.PendingIntent.send:1000 com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked:6377 com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked:5218 
+09-22 13:05:19.376 D/ActivityManager( 1451): Received BROADCAST intent 0x791f21f Key{broadcastIntent pkg=com.sec.android.app.launcher intent=act=com.samsung.action.EVERY_MINUTE_CLOCK_UPDATE flags=0x4000000 u=0} requestCode=0 sent=0 from uid 1000
+09-22 13:05:19.380 I/LiveIconUpdateEventHandler( 2341): onReceive: Intent { act=com.samsung.action.EVERY_MINUTE_CLOCK_UPDATE flg=0x10 }
+09-22 13:05:19.381 I/LiveIconUpdateEventHandler( 2341): onReceive: com.samsung.action.EVERY_MINUTE_CLOCK_UPDATE
+09-22 13:05:19.381 I/LiveIconUpdateEventHandler( 2341): LiveIcon DateChanged
+09-22 13:05:19.381 I/LiveIconUpdateEventHandler( 2341): updateLiveIcon type:0
+09-22 13:05:19.381 I/LiveIconViewUpdater( 2341): onUpdateLiveIcon - id : 77, itemType : 0
+09-22 13:05:19.383 I/LiveIconUpdateEventHandler( 2341): cancelMinuteChangeAlarm
+09-22 13:05:19.386 I/LiveIconUpdateEventHandler( 2341): setMinuteChangeAlarm Tue Sep 22 13:06:00 GMT+05:00 2026
+09-22 13:05:19.388 I/LauncherActivityInfo( 2341): Trying to load live icon for com.sec.android.app.clockpackage
+09-22 13:05:19.401 E/audit   (  828): type=1400 audit(1790064319.394:1970): avc:  denied  { write } for  pid=3578 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12885 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-22 13:05:19.401 E/audit   (  828): type=1300 audit(1790064319.394:1970): arch=c00000b7 syscall=203 success=no exit=-13 a0=67 a1=b4000075601febc0 a2=1e a3=ffffffff954de431 items=0 ppid=846 pid=3578 auid=4294967295 uid=9510226 gid=9510226 euid=9510226 suid=9510226 fsuid=9510226 egid=9510226 sgid=9510226 fsgid=9510226 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+09-22 13:05:19.402 E/audit   (  828): type=1327 audit(1790064319.394:1970): proctitle="com.google.android.gms"
+09-22 13:05:19.402 I/LiveIconUtil( 2341): getLiveIcon was called in ClockPackage
+09-22 13:05:19.405 I/LiveIconUtil( 2341): getLiveIcon res = com.sec.android.app.clockpackage
+09-22 13:05:19.411 I/LiveIconUtil( 2341): stdIconSize : 126 , targetIconSize : 152
+09-22 13:05:19.411 I/LiveIconUtil( 2341): mIconDpi : 640 , mTargetIconDpi : 420
+09-22 13:05:19.430 I/AppIconSolution( 2341): load= live icon for com.sec.android.app.clockpackage, from overlay = true
+09-22 13:05:19.431 I/LauncherActivityInfo( 2341): packageName: com.sec.android.app.clockpackage, useThemeIcon: false, height: 144, width: 144, density: 640
+09-22 13:05:19.526 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 13:05:19.528 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 13:05:19.529 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 13:05:20.660 I/WifiHAL ( 1861): Get link layer stats
+09-22 13:05:20.661 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 13:05:20.661 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 13:05:20.661 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 13:05:20.661 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 13:05:20.662 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 13:05:20.671 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1968, isSameBssidAndFreq true
+09-22 13:05:20.673 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 13:05:20.674 D/NetworkController.WifiSignalController( 1950): notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-22 13:05:20.718 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.33 dur=3020.69 max=3020.69 min=3020.69
+09-22 13:05:20.721 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:0.331002,dur:3021.13,max:3021.13,min:3021.13  
+09-22 13:05:20.805 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 13:05:20.807 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 13:05:20.807 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 13:05:21.172 D/SecPowerUI.Notification( 1950): showChargingNotice oldChargingType : 11 / currentChargingType : 11, oldChargingTime : 6249000 / mChargingTime : 6249000
+09-22 13:05:21.172 D/SecPowerUI.Notification( 1950): There is no change about charging status, so return!

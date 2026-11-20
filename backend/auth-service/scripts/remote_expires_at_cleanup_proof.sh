@@ -3,7 +3,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
-PROJECT=oraapp-a9be5
+PROJECT=ora-app-d8112
 REGION=us-central1
 SERVICE=ora-auth-service-staging
 BASE_URL="https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app"

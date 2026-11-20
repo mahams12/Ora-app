@@ -1,0 +1,19 @@
+WARN: ORA_GOOGLE_MAPS_ANDROID_API_KEY unset — map tiles may fail until configured
+MapLibre PoC MapTiler key: present (value not logged)
+Running Gradle task 'assembleDebug'...                          
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Running Gradle task 'assembleDebug'...                             70.6s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk
+APK=/Users/jazimsaeed/Ora-app/mobile/build/app/outputs/flutter-apk/app-debug.apk
+ORA_API_BASE_URL=https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1

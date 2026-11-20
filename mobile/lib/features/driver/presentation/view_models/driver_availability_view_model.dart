@@ -9,19 +9,9 @@ import '../location/driver_location_session.dart';
 import 'driver_invites_view_model.dart';
 
 /// Compile-time adaptive presence flag (cost-optimization Phase A).
-/// Build with --dart-define=ORA_ADAPTIVE_PRESENCE=true.
-/// Fail-safe: non-development builds default to adaptive ON so a forgotten
-/// dart-define can never silently ship the expensive fixed-10s path. Dev
-/// builds default OFF (legacy cadence) but the local-device APK script sets
-/// the flag explicitly; ORA_ADAPTIVE_PRESENCE=false still forces legacy.
-const String _kPresenceEnv = String.fromEnvironment(
-  'ORA_ENV',
-  defaultValue: 'development',
-);
-const bool kAdaptivePresence = bool.fromEnvironment(
-  'ORA_ADAPTIVE_PRESENCE',
-  defaultValue: _kPresenceEnv != 'development',
-);
+/// Build with --dart-define=ORA_ADAPTIVE_PRESENCE=true. Default false keeps
+/// the legacy fixed-10s publisher bit-identical.
+const bool kAdaptivePresence = bool.fromEnvironment('ORA_ADAPTIVE_PRESENCE');
 
 class DriverAvailabilityUiState {
   const DriverAvailabilityUiState({
@@ -64,7 +54,8 @@ class DriverAvailabilityUiState {
 /// real go-online/go-offline mutation and adopts the returned snapshot; the
 /// GET restores persisted state on app start (drivers are otherwise offline
 /// by default — never assume online).
-class DriverAvailabilityController extends Notifier<DriverAvailabilityUiState> {
+class DriverAvailabilityController
+    extends Notifier<DriverAvailabilityUiState> {
   late final DriverAvailabilityRemoteDataSource _remote;
   late final FailureMapper _failures;
 
@@ -115,8 +106,8 @@ class DriverAvailabilityController extends Notifier<DriverAvailabilityUiState> {
 
 final driverAvailabilityProvider =
     NotifierProvider<DriverAvailabilityController, DriverAvailabilityUiState>(
-      DriverAvailabilityController.new,
-    );
+  DriverAvailabilityController.new,
+);
 
 /// Shell-scoped idle presence owner (N2C). Starts a [DriverPresencePublisher]
 /// while the driver is online, signed in, and foregrounded — the publisher
@@ -142,20 +133,23 @@ class DriverPresenceController extends Notifier<bool> {
       },
     );
     ref.onDispose(_publisher.dispose);
-    ref.listen<bool>(driverAvailabilityProvider.select((s) => s.isOnline), (
-      prev,
-      next,
-    ) {
-      _publisher.onAvailability(online: next);
-      if (!next) {
-        ref.read(driverPresenceLatestFixProvider.notifier).state = null;
-      }
-    });
+    ref.listen<bool>(
+      driverAvailabilityProvider.select((s) => s.isOnline),
+      (prev, next) {
+        _publisher.onAvailability(online: next);
+        if (!next) {
+          ref.read(driverPresenceLatestFixProvider.notifier).state = null;
+        }
+      },
+    );
     // Pending-invite boost — fires on the FCM nudge AND on poll-discovered
     // actionable invites, whichever arrives (never required for freshness).
-    ref.listen<DateTime?>(driverInviteActivityProvider, (prev, next) {
-      if (next != null) _publisher.onInviteActivity();
-    });
+    ref.listen<DateTime?>(
+      driverInviteActivityProvider,
+      (prev, next) {
+        if (next != null) _publisher.onInviteActivity();
+      },
+    );
     // Pause idle publishes while the trip publisher streams the same marker.
     ref.listen<bool>(
       driverTripLocationActiveProvider,
@@ -178,13 +172,13 @@ class DriverPresenceController extends Notifier<bool> {
   }
 }
 
-final driverPresenceProvider = NotifierProvider<DriverPresenceController, bool>(
+final driverPresenceProvider =
+    NotifierProvider<DriverPresenceController, bool>(
   DriverPresenceController.new,
 );
 
 /// Latest idle-presence GPS fix while the driver is online. Display-only —
 /// the driver home map consumes it so it never opens a second GPS watch.
 /// Cleared on offline/sign-out.
-final driverPresenceLatestFixProvider = StateProvider<DriverLocationFix?>(
-  (ref) => null,
-);
+final driverPresenceLatestFixProvider =
+    StateProvider<DriverLocationFix?>((ref) => null);

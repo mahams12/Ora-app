@@ -6,7 +6,12 @@ import '../../domain/entities/ride.dart';
 import '../../domain/use_cases/ride_use_cases.dart';
 import '../history/ride_history_display.dart';
 
-enum RideHistoryPhase { initialLoading, ready, empty, fatalError }
+enum RideHistoryPhase {
+  initialLoading,
+  ready,
+  empty,
+  fatalError,
+}
 
 class RideHistoryUiState {
   const RideHistoryUiState({
@@ -34,10 +39,7 @@ class RideHistoryUiState {
   bool get hasMore => nextCursor != null && nextCursor!.isNotEmpty;
 
   bool get canLoadMore =>
-      hasMore &&
-      !isLoadingMore &&
-      !isRefreshing &&
-      phase != RideHistoryPhase.initialLoading;
+      hasMore && !isLoadingMore && !isRefreshing && phase != RideHistoryPhase.initialLoading;
 
   RideHistoryUiState copyWith({
     RideHistoryPhase? phase,
@@ -59,7 +61,8 @@ class RideHistoryUiState {
       rides: rides ?? this.rides,
       nextCursor: clearNextCursor ? null : (nextCursor ?? this.nextCursor),
       status: status ?? this.status,
-      serviceType: clearServiceType ? null : (serviceType ?? this.serviceType),
+      serviceType:
+          clearServiceType ? null : (serviceType ?? this.serviceType),
       isRefreshing: isRefreshing ?? this.isRefreshing,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
@@ -125,7 +128,10 @@ class RideHistoryViewModel extends AutoDisposeNotifier<RideHistoryUiState> {
 
     _loadMoreInFlight = true;
     final seq = ++_requestSeq;
-    state = state.copyWith(isLoadingMore: true, clearPaginationError: true);
+    state = state.copyWith(
+      isLoadingMore: true,
+      clearPaginationError: true,
+    );
     try {
       await _fetchPage(
         seq: seq,
@@ -151,11 +157,13 @@ class RideHistoryViewModel extends AutoDisposeNotifier<RideHistoryUiState> {
 
   Future<void> setServiceType(String? serviceType) async {
     final normalized = serviceType?.toLowerCase();
-    if (normalized != null && !rideHistoryServiceTypes.contains(normalized)) {
+    if (normalized != null &&
+        !rideHistoryServiceTypes.contains(normalized)) {
       return;
     }
     final current = state.serviceType;
-    if (normalized == current && state.phase != RideHistoryPhase.fatalError) {
+    if (normalized == current &&
+        state.phase != RideHistoryPhase.fatalError) {
       return;
     }
     state = normalized == null
@@ -190,7 +198,9 @@ class RideHistoryViewModel extends AutoDisposeNotifier<RideHistoryUiState> {
       final hasNext = next != null && next.isNotEmpty;
 
       state = state.copyWith(
-        phase: merged.isEmpty ? RideHistoryPhase.empty : RideHistoryPhase.ready,
+        phase: merged.isEmpty
+            ? RideHistoryPhase.empty
+            : RideHistoryPhase.ready,
         rides: merged,
         nextCursor: hasNext ? next : null,
         clearNextCursor: !hasNext,
@@ -242,5 +252,5 @@ class RideHistoryViewModel extends AutoDisposeNotifier<RideHistoryUiState> {
 
 final rideHistoryViewModelProvider =
     NotifierProvider.autoDispose<RideHistoryViewModel, RideHistoryUiState>(
-      RideHistoryViewModel.new,
-    );
+  RideHistoryViewModel.new,
+);

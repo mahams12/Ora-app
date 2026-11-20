@@ -1,7 +1,13 @@
 import '../entities/ride.dart';
 
 /// How a passenger location was obtained (UX / telemetry only).
-enum PassengerLocationSource { gps, place, mapPin, savedPlace, recent }
+enum PassengerLocationSource {
+  gps,
+  place,
+  mapPin,
+  savedPlace,
+  recent,
+}
 
 /// Passenger-confirmed (or proposed) location — Phase 4A.
 ///
@@ -37,8 +43,11 @@ class ResolvedPassengerLocation {
   bool get hasValidCoordinates =>
       lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
 
-  LatLngPoint toLatLngPoint() =>
-      LatLngPoint(lat: lat, lng: lng, address: address);
+  LatLngPoint toLatLngPoint() => LatLngPoint(
+        lat: lat,
+        lng: lng,
+        address: address,
+      );
 
   /// Human-readable label for UI. Never exposes raw coordinates.
   String get displayLabel {

@@ -19,9 +19,6 @@ export type PlatformFeeType = 'NONE' | 'PERCENT_BPS' | 'FLAT_MINOR';
 export type FeePolicyResolution =
   | 'APPLIED' // a feePolicies doc resolved and was applied
   | 'LAUNCH_DEFAULT' // no policy doc — launch rule (fee NONE) applied
-  | 'SUPERSEDED_BY_COMMISSION' // a non-zero policy resolved, but the shared
-  // wallet commission for this role is active (>0 bps) — the platform fee is
-  // forced to 0 so a driver can never be charged by BOTH mechanisms
   | 'UNAVAILABLE'; // invalid/missing fare or currency — fields null
 
 export interface FeePolicyDoc {
@@ -114,18 +111,8 @@ export function derivePayoutSnapshot(input: {
   currency: string | null;
   policy: FeePolicyDoc | null;
   capturedAt: string;
-  /**
-   * Shared-wallet commission bps for the role being paid. When > 0 the
-   * wallet commission is the platform's ONLY revenue mechanism — a resolved
-   * non-zero fee policy is overridden (SUPERSEDED_BY_COMMISSION) so the two
-   * systems can never charge the same transaction. Omit/0 = legacy behavior.
-   */
-  walletCommissionBps?: number;
 }): DerivedPayout {
   const { fareMinor, currency, policy, capturedAt } = input;
-  const commissionActive =
-    typeof input.walletCommissionBps === 'number' &&
-    input.walletCommissionBps > 0;
 
   // Fare/currency must be valid before any payout value is recorded.
   if (!isNonNegInt(fareMinor) || !isValidCurrency(currency)) {
@@ -157,25 +144,6 @@ export function derivePayoutSnapshot(input: {
   const fee = computePlatformFeeMinor(fareMinor, policy);
   if (!Number.isFinite(fee)) {
     return unavailable(currency, capturedAt);
-  }
-
-  // Mutual exclusion: a non-zero fee policy can never double-charge a
-  // driver who already pays the shared-wallet commission. The snapshot keeps
-  // the policy identity so the conflict is auditable.
-  if (commissionActive && fee > 0) {
-    return {
-      driverPayoutMinor: fareMinor,
-      platformFeeMinor: 0,
-      payoutCurrency: currency,
-      feePolicySnapshot: {
-        policyId: policy.policyId,
-        policyVersion: policy.version,
-        platformFeeType: 'NONE',
-        currency,
-        capturedAt,
-        resolution: 'SUPERSEDED_BY_COMMISSION',
-      },
-    };
   }
 
   return {

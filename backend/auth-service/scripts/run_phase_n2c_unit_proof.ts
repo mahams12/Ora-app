@@ -1,19 +1,19 @@
 /**
- * Standalone N2C unit proof (MemoryDb + MemoryGeoStore) — coordinate-primary.
+ * Standalone N2C unit proof (MemoryDb + MemoryRedis) — coordinate-primary.
  * Usage: npm run test:phase-n2c-unit-proof
  */
 import request from 'supertest';
 import { createApp, type CreateAppOptions } from '../src/app';
 import { DriverEligibilityCache } from '../src/location/location_update_service';
 import { memoryDb } from '../src/__tests__/helpers/memory_db';
-import { createMemoryGeoStore } from '../src/geo/memory_geo_store';
-import { GeoProjectionService } from '../src/geo/geo_projection';
+import { createMemoryRedis } from '../src/redis/memory_redis';
+import { RedisGeoProjectionService } from '../src/redis/geo_projection';
 import {
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   geoDriversCityKey,
-  type GeoStoreClient,
-} from '../src/geo/types';
+  type RedisGeoClient,
+} from '../src/redis/types';
 
 let passed = 0;
 let failed = 0;
@@ -65,11 +65,11 @@ function authFor(uid: string) {
 function appFor(
   db: ReturnType<typeof memoryDb>,
   uid: string,
-  geoStore: GeoStoreClient | null,
+  redis: RedisGeoClient | null,
   extra: Partial<CreateAppOptions> = {},
 ) {
   const geo =
-    geoStore != null ? new GeoProjectionService(geoStore) : null;
+    redis != null ? new RedisGeoProjectionService(redis) : null;
   return createApp({
     auth: authFor(uid),
     db: db as never,
@@ -98,27 +98,27 @@ function body(overrides: Record<string, unknown> = {}) {
 async function main(): Promise<void> {
   await test('1. accepted online idle → GEOADD geo:drivers', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'Lahore');
-    const res = await request(appFor(db, 'd1', geoStore))
+    const res = await request(appFor(db, 'd1', redis))
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body());
     assert(res.status === 200, `got ${res.status}`);
-    const pos = await geoStore.geopos(GEO_DRIVERS_KEY, 'd1');
+    const pos = await redis.geopos(GEO_DRIVERS_KEY, 'd1');
     assert(pos != null, 'geo member');
     assert(Math.abs(Number(pos[0]) - 74.35) < 1e-6, 'lng');
     assert(Math.abs(Number(pos[1]) - 31.52) < 1e-6, 'lat');
     // Dual-write legacy city key
     assert(
-      (await geoStore.geopos(geoDriversCityKey('lahore'), 'd1')) != null,
+      (await redis.geopos(geoDriversCityKey('lahore'), 'd1')) != null,
       'legacy dual-write',
     );
   });
 
   await test('2. accepted online trip → GEO projection', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'Lahore');
     db.seed('rides', 'ride-1', {
       rideId: 'ride-1',
@@ -126,39 +126,39 @@ async function main(): Promise<void> {
       assignedDriverId: 'd1',
       passengerId: 'p1',
     });
-    const res = await request(appFor(db, 'd1', geoStore))
+    const res = await request(appFor(db, 'd1', redis))
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body({ rideId: 'ride-1', locationSeq: 1 }));
     assert(res.status === 200 && res.body.data.mode === 'trip', 'trip');
-    assert((await geoStore.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'geo on trip');
+    assert((await redis.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'geo on trip');
   });
 
   await test('3. missing homeCity still projects to geo:drivers', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', null);
-    const res = await request(appFor(db, 'd1', geoStore))
+    const res = await request(appFor(db, 'd1', redis))
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body());
     assert(res.status === 200, 'accepted');
-    assert((await geoStore.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'primary geo');
-    assert(geoStore._geoMembers(geoDriversCityKey('lahore')).size === 0, 'no legacy');
-    const marker = await geoStore.get(driverOnlineKey('d1'));
+    assert((await redis.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'primary geo');
+    assert(redis._geoMembers(geoDriversCityKey('lahore')).size === 0, 'no legacy');
+    const marker = await redis.get(driverOnlineKey('d1'));
     assert(marker != null, 'online marker still set');
     assert(JSON.parse(marker).city === null, 'city null');
   });
 
   await test('4. driver online marker updated', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'lahore');
-    await request(appFor(db, 'd1', geoStore))
+    await request(appFor(db, 'd1', redis))
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body({ locationSeq: 3 }));
-    const raw = await geoStore.get(driverOnlineKey('d1'));
+    const raw = await redis.get(driverOnlineKey('d1'));
     assert(raw != null, 'marker');
     const m = JSON.parse(raw);
     assert(m.driverId === 'd1', 'id');
@@ -168,9 +168,9 @@ async function main(): Promise<void> {
 
   await test('5. newer location replaces GEO position on primary', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'lahore');
-    const app = appFor(db, 'd1', geoStore);
+    const app = appFor(db, 'd1', redis);
     await request(app)
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
@@ -179,16 +179,16 @@ async function main(): Promise<void> {
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body({ locationSeq: 2, lat: 31.6, lng: 74.4 }));
-    const pos = await geoStore.geopos(GEO_DRIVERS_KEY, 'd1');
+    const pos = await redis.geopos(GEO_DRIVERS_KEY, 'd1');
     assert(pos != null, 'pos');
     assert(Math.abs(Number(pos[1]) - 31.6) < 1e-6, 'new lat');
   });
 
   await test('6. stale/invalid N2A never reaches N2C', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'lahore');
-    const res = await request(appFor(db, 'd1', geoStore))
+    const res = await request(appFor(db, 'd1', redis))
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(
@@ -197,32 +197,32 @@ async function main(): Promise<void> {
         }),
       );
     assert(res.status === 422, 'stale');
-    assert((await geoStore.geopos(GEO_DRIVERS_KEY, 'd1')) == null, 'no geo');
+    assert((await redis.geopos(GEO_DRIVERS_KEY, 'd1')) == null, 'no geo');
   });
 
-  await test('7. geo-store failure does not reject accepted location', async () => {
+  await test('7. Redis failure does not reject accepted location', async () => {
     const db = memoryDb();
-    const failing: GeoStoreClient = {
+    const failing: RedisGeoClient = {
       async geoadd() {
-        throw new Error('GEO_DOWN');
+        throw new Error('REDIS_DOWN');
       },
       async zrem() {
-        throw new Error('GEO_DOWN');
+        throw new Error('REDIS_DOWN');
       },
       async geopos() {
         return null;
       },
       async get() {
-        throw new Error('GEO_DOWN');
+        throw new Error('REDIS_DOWN');
       },
       async mget() {
-        throw new Error('GEO_DOWN');
+        throw new Error('REDIS_DOWN');
       },
       async set() {
-        throw new Error('GEO_DOWN');
+        throw new Error('REDIS_DOWN');
       },
       async del() {
-        throw new Error('GEO_DOWN');
+        throw new Error('REDIS_DOWN');
       },
       async georadius() {
         return [];
@@ -242,25 +242,25 @@ async function main(): Promise<void> {
 
   await test('8. offline removes primary + legacy GEO + marker', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'lahore');
-    const app = appFor(db, 'd1', geoStore);
+    const app = appFor(db, 'd1', redis);
     await request(app)
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body());
-    assert((await geoStore.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'before');
+    assert((await redis.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'before');
     const off1 = await request(app)
       .post('/v1/drivers/go-offline')
       .set('Authorization', 'Bearer t')
       .send({});
     assert(off1.status === 200, 'offline');
-    assert((await geoStore.geopos(GEO_DRIVERS_KEY, 'd1')) == null, 'primary removed');
+    assert((await redis.geopos(GEO_DRIVERS_KEY, 'd1')) == null, 'primary removed');
     assert(
-      (await geoStore.geopos(geoDriversCityKey('lahore'), 'd1')) == null,
+      (await redis.geopos(geoDriversCityKey('lahore'), 'd1')) == null,
       'legacy removed',
     );
-    assert((await geoStore.get(driverOnlineKey('d1'))) == null, 'marker gone');
+    assert((await redis.get(driverOnlineKey('d1'))) == null, 'marker gone');
     const off2 = await request(app)
       .post('/v1/drivers/go-offline')
       .set('Authorization', 'Bearer t')
@@ -270,19 +270,19 @@ async function main(): Promise<void> {
 
   await test('9. homeCity change keeps primary; moves legacy shard only', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'lahore');
     // Zero-TTL eligibility cache: the out-of-band homeCity write below must
     // be visible to the second update (production changes invalidate via
     // availability transitions or the 15s TTL).
-    const app = appFor(db, 'd1', geoStore, {
+    const app = appFor(db, 'd1', redis, {
       eligibilityCache: new DriverEligibilityCache(0),
     });
     await request(app)
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body({ locationSeq: 1 }));
-    assert((await geoStore.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'primary');
+    assert((await redis.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'primary');
     db.seed('drivers', 'd1', {
       ...db.getDoc('drivers', 'd1')!,
       homeCity: 'islamabad',
@@ -291,35 +291,35 @@ async function main(): Promise<void> {
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body({ locationSeq: 2, lat: 33.7, lng: 73.0 }));
-    assert((await geoStore.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'still primary');
+    assert((await redis.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'still primary');
     assert(
-      (await geoStore.geopos(geoDriversCityKey('lahore'), 'd1')) == null,
+      (await redis.geopos(geoDriversCityKey('lahore'), 'd1')) == null,
       'old legacy gone',
     );
     assert(
-      (await geoStore.geopos(geoDriversCityKey('islamabad'), 'd1')) != null,
+      (await redis.geopos(geoDriversCityKey('islamabad'), 'd1')) != null,
       'new legacy',
     );
   });
 
-  await test('10. body driverId cannot affect geo-store identity', async () => {
+  await test('10. body driverId cannot affect Redis identity', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'lahore');
     seedApprovedOnline(db, 'd2', 'lahore');
-    await request(appFor(db, 'd1', geoStore))
+    await request(appFor(db, 'd1', redis))
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body({ driverId: 'd2' }));
-    assert((await geoStore.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'd1');
-    assert((await geoStore.geopos(GEO_DRIVERS_KEY, 'd2')) == null, 'd2');
+    assert((await redis.geopos(GEO_DRIVERS_KEY, 'd1')) != null, 'd1');
+    assert((await redis.geopos(GEO_DRIVERS_KEY, 'd2')) == null, 'd2');
   });
 
   await test('11. no Firestore GPS coordinates written', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', 'lahore');
-    await request(appFor(db, 'd1', geoStore))
+    await request(appFor(db, 'd1', redis))
       .post('/v1/location/update')
       .set('Authorization', 'Bearer t')
       .send(body({ lat: 31.11, lng: 74.22 }));

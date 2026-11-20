@@ -115,12 +115,6 @@ service cloud.firestore {
     match /walletLedgerEntries/{id} {
       allow read, write: if false;
     }
-    match /walletTopups/{id} {
-      allow read, write: if false;
-    }
-    match /walletConfig/{id} {
-      allow read, write: if false;
-    }
     match /driverPayouts/{id} {
       allow read, write: if false;
     }

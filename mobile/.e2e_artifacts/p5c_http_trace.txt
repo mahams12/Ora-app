@@ -1,0 +1,58 @@
+09-23 14:23:04.937 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=1.99 dur=1006.47 max=503.30 min=503.17
+09-23 14:23:04.942 I/BufferQueueProducer(  904): [FramebufferSurface](this:0xb400007443c3cb60,id:-1,api:1,p:904,c:904) queueBuffer: fps=1.98 dur=1008.56 max=505.52 min=503.04
+09-23 14:23:04.943 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:1.982218,dur:1008.97,max:505.91,min:503.06  
+09-23 14:23:07.435 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=1.99 dur=1006.01 max=503.11 min=502.90
+09-23 14:23:07.439 I/BufferQueueProducer(  904): [FramebufferSurface](this:0xb400007443c3cb60,id:-1,api:1,p:904,c:904) queueBuffer: fps=2.56 dur=1173.32 max=503.33 min=166.88
+09-23 14:23:07.439 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:2.556913,dur:1173.29,max:503.50,min:166.79  
+09-23 14:23:08.441 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=1.99 dur=1005.81 max=503.15 min=502.66
+09-23 14:23:09.347 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-23 14:23:09.348 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-23 14:23:09.935 I/BufferQueueProducer(  904): [FramebufferSurface](this:0xb400007443c3cb60,id:-1,api:1,p:904,c:904) queueBuffer: fps=2.68 dur=1490.26 max=503.04 min=48.79
+09-23 14:23:09.936 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:2.684352,dur:1490.12,max:503.19,min:48.66  
+09-23 14:23:12.401 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:2.055537,dur:1459.47,max:504.68,min:469.32  
+09-23 14:23:12.431 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=2.01 dur=1492.19 max=503.30 min=486.19
+09-23 14:23:16.401 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.401 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.401 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.403 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.403 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.403 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.403 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.403 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.403 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.403 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.403 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.422 W/DevicePolicyManager( 1451): Unknown user type: UserInfo{95:DUAL_APP:20001010}
+09-23 14:23:16.940 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=1.99 dur=1005.72 max=503.11 min=502.60
+09-23 14:23:18.432 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=2.01 dur=1492.58 max=503.44 min=485.99
+09-23 14:23:19.442 I/BufferQueueProducer(  904): [FramebufferSurface](this:0xb400007443c3cb60,id:-1,api:1,p:904,c:904) queueBuffer: fps=1.99 dur=1004.11 max=503.13 min=500.98
+09-23 14:23:19.442 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:1.993233,dur:1003.39,max:503.37,min:500.02  
+09-23 14:23:21.401 I/FusedLocation( 6195): (REDACTED) location delivery to %s blocked - too fast
+09-23 14:23:21.940 I/BufferQueueProducer(  904): [FramebufferSurface](this:0xb400007443c3cb60,id:-1,api:1,p:904,c:904) queueBuffer: fps=4.96 dur=1007.28 max=503.78 min=16.92
+09-23 14:23:22.503 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: false
+09-23 14:23:22.503 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_ALL_APPS_STANDBY: true
+09-23 14:23:22.503 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-23 14:23:22.503 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-23 14:23:22.503 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_BACKGROUND_CHECK: true
+09-23 14:23:22.503 I/PersonalSafety( 6195): (REDACTED) [Settings] power saver mode changed to %s
+09-23 14:23:24.422 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 7279, isSameBssidAndFreq true
+09-23 14:23:24.433 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=2.01 dur=1491.50 max=503.00 min=485.58
+09-23 14:23:25.440 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=2.98 dur=1006.68 max=503.32 min=117.54
+09-23 14:23:26.932 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=3.35 dur=1492.26 max=503.26 min=68.05
+09-23 14:23:27.937 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=1.99 dur=1005.36 max=503.14 min=502.22
+09-23 14:23:27.940 I/BufferQueueProducer(  904): [FramebufferSurface](this:0xb400007443c3cb60,id:-1,api:1,p:904,c:904) queueBuffer: fps=2.99 dur=1002.53 max=503.44 min=49.26
+09-23 14:23:27.941 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:2.993075,dur:1002.31,max:503.78,min:48.77  
+09-23 14:23:29.429 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=2.01 dur=1492.18 max=503.52 min=485.72
+09-23 14:23:30.435 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=1.99 dur=1005.91 max=503.02 min=502.89
+09-23 14:23:30.438 I/BufferQueueProducer(  904): [FramebufferSurface](this:0xb400007443c3cb60,id:-1,api:1,p:904,c:904) queueBuffer: fps=1.99 dur=1005.81 max=503.12 min=502.69
+09-23 14:23:30.438 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:1.988413,dur:1005.83,max:503.24,min:502.58  
+09-23 14:23:31.441 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#3613](this:0xb4000074208e5838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=1.99 dur=1005.85 max=503.04 min=502.81

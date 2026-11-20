@@ -1,0 +1,350 @@
+--------- beginning of main
+09-28 11:15:21.925 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) Searcher created successfully for com.samsung.android.messaging.message
+09-28 11:15:21.931 I/SCS@AiSearch user 0( 3379): (IndexCursor) Index Status: ready
+09-28 11:15:21.931 I/SCS@AiSearch user 0( 3379): (SearchProvider) [binder:3379_3] leaving from query():  
+09-28 11:15:21.931 I/SCS@AiSearch user 0( 3379): (SearchProvider) Elapsed time: 866ms. Found 0 items
+09-28 11:15:21.932 I/SCS@AiSearch user 0( 3379): (QuerySaLog) [QUERY] callingPackage=[com.samsung.android.messaging], uriCode=[200], queryString=[null], resultCount=[0], queryType=[search], resultType=[normal query], timeTaken=[866]
+09-28 11:15:21.945 I/ORC/SCSMessageEngine( 5766): loadAndCompare done 22 0
+09-28 11:15:21.946 I/ORC/SCSMessageEngine( 5766): compareItems 22 0
+09-28 11:15:21.946 I/ORC/SCSMessageEngine( 5766): compareItems done 22 0 0
+09-28 11:15:21.946 I/ORC/SCSMessageEngine( 5766): insert 22
+09-28 11:15:21.968 I/SCS@AiSearch user 0( 3379): (SearchProvider) bulkInsert by content://com.samsung.android.scs.ai.search/v2/com.samsung.android.messaging.message from com.samsung.android.messaging size: 22
+09-28 11:15:21.972 I/SCS@AiSearch user 0( 3379): (PublicProviderHelper) [INSERT] convertIndexes: com.samsung.android.messaging.message size: 22
+09-28 11:15:21.973 I/SCS@AiSearch user 0( 3379): (IndexManager) [binder:3379_3] entering in addIndex():  
+09-28 11:15:21.973 I/SCS@AiSearch user 0( 3379): (IndexManager) [INSERT] index=[com.samsung.android.messaging.message], size=22
+09-28 11:15:21.974 I/SCS@AiSearch user 0( 3379): (IndexManager) getIndexWriter(): indexName com.samsung.android.messaging.message
+09-28 11:15:21.986 I/Finsky:background( 2815): [424] RF::PP-Verify: starting to verify for com.google.android.apps.tachyon[iid:103] [isid:lRX_wf9nSNWbVVxN8Bv9cw] [tid: 1000000155].
+09-28 11:15:21.986 I/Finsky:background( 2815): [426] RF::PP-Verify: starting to verify for com.google.android.apps.tachyon[iid:103] [isid:lRX_wf9nSNWbVVxN8Bv9cw] [tid: 1000000155].
+09-28 11:15:22.011 I/SCS@AiSearch user 0( 3379): (NeuralPhoneticsPredictor) isNeuralPhonetics :false inputLanguage: english
+09-28 11:15:22.093 E/android.hardware.health@2.1-service-samsung(  861): Could not open /sys/class/power_supply/battery/lrp
+--------- beginning of system
+09-28 11:15:22.094 D/BatteryService(23252): Sending ACTION_BATTERY_CHANGED: level:48, status:2, health:2, ac:false, usb:true, wireless:false, pogo:false, misc:0x10000, charge_type:2, charger_type:0, voltage:3801, temperature:354, online:5, current_avg:-142, ps:false, hvc:false, capacity:280000, current_event:0x8004, current_now:-272, mcc:0, mcv:0, cc:2415000, present:true, scale:100, technology:Li-ion
+09-28 11:15:22.095 D/MotionRecognitionService(23252): [SAR]  onReceive : ACTION_BATTERY_CHANGED, Plugged: 2
+09-28 11:15:22.096 E/PocketModeEvent(23252): PocketModeSetting is off 
+09-28 11:15:22.096 D/PhoneWindowManagerExt(23252): ACTION_BATTERY_CHANGED - Level=48, status=2
+09-28 11:15:22.096 D/AdaptiveBrightnessLongtermModelBuilder(23252): Received android.intent.action.BATTERY_CHANGED
+09-28 11:15:22.096 D/SemWifiApBroadcastReceiver(23252): Received : android.intent.action.BATTERY_CHANGED
+09-28 11:15:22.097 I/DeviceBatteryInfoService(23252): action: android.intent.action.BATTERY_CHANGED
+09-28 11:15:22.097 I/DeviceBatteryInfoService(23252): phone battery level: 48
+09-28 11:15:22.097 I/DeviceBatteryInfoService(23252): phone battery status: 2
+09-28 11:15:22.097 D/SemBigDataInfoController(23660): Intent: android.intent.action.BATTERY_CHANGED
+09-28 11:15:22.097 D/SemBigDataInfoController(23660): Intent: android.intent.action.BATTERY_CHANGED
+09-28 11:15:22.098 D/KeyguardUpdateMonitor(23678): received broadcast android.intent.action.BATTERY_CHANGED
+09-28 11:15:22.098 I/PowerUI (23678): mBootCompleted = true |  mFullyConnected = true
+09-28 11:15:22.098 I/PowerUI (23678): BATTERY_HEALTH_CHECK extraHealth=2 mBatteryMiscEvent=65536
+09-28 11:15:22.099 W/PowerUI (23678): Plug reason
+09-28 11:15:22.099 W/PowerUI (23678): Skip charging animation - by plug status
+09-28 11:15:22.099 D/PowerUI (23678): priorPlugType = 2 mPlugType = 2 priorBatteryStatus = 2 mBatteryStatus = 2
+09-28 11:15:22.099 W/PowerUI (23678): Plug reason
+09-28 11:15:22.099 W/PowerUI (23678): Skip charging sound - by plug status
+09-28 11:15:22.099 I/PowerUI (23678): oldMisalign : false, curMisalign : false
+09-28 11:15:22.099 D/SecPowerUI.Notification(23678): dismissing low battery warning: level=48
+09-28 11:15:22.099 D/SecPowerUI.Notification(23678): updateNotification mWarning=false mPlaySound=false
+09-28 11:15:22.099 D/SecPowerUI.Notification(23678): SecBatteryStatsSnapshot{batteryLevel=48, currentBatteryMode=1, chargingTime=27902000, chargingType=8, batteryHealth=2, automaticTestMode=false, isHiccupState=false}
+09-28 11:15:22.103 D/SecPowerUI.Notification(23678): 1. restoreScreenTimeOut - saved_value : :
+09-28 11:15:22.103 E/SecPowerUI.Notification(23678): no saved value, so we do nothing !!
+09-28 11:15:22.109 D/SecPowerUI.Notification(23678): showChargingNotice oldChargingType : 8 / currentChargingType : 8, oldChargingTime : 27902000 / mChargingTime : 27902000
+09-28 11:15:22.109 D/SecPowerUI.Notification(23678): There is no change about charging status, so return!
+09-28 11:15:22.109 D/PowerUI (23678): Battery swelling mode - priorBatterySwellingMode = 0 mBatterySwellingMode = 0 mBatteryStatus = 2
+09-28 11:15:22.109 I/PowerUI (23678): mBatteryMiscEvent = 65536
+09-28 11:15:22.110 D/SamsungBatteryMeterDrawable(23678): onBatteryLevelChanged isSomethingChanged: false
+09-28 11:15:22.110 D/SamsungBatteryMeterDrawable(23678): onBatteryLevelChanged isSomethingChanged: false
+09-28 11:15:22.111 D/SamsungBatteryMeterDrawable(23678): onBatteryLevelChanged isSomethingChanged: false
+09-28 11:15:22.111 D/SamsungBatteryMeterDrawable(23678): onBatteryLevelChanged isSomethingChanged: false
+09-28 11:15:22.112 D/KeyguardUpdateMonitor(23678): handleBatteryUpdate
+09-28 11:15:22.115 I/[SCPMV2][SystemMonitorReceiver]( 5842): onReceive: android.intent.action.BATTERY_CHANGED
+09-28 11:15:22.117 I/AODBatteryManager(23678): updateBatteryData: ACTION_BATTERY_CHANGED
+09-28 11:15:22.121 I/AODBatteryManager(23678): saveBatteryData : AOD BatteryData [mBatteryLevel=48, mBatteryStatus=CHARGING, mBatteryPlugType=USB, mBatteryPlugged=true, mRemainingChargeTime=27902000, mBatteryChargingType=1, mBatteryChargerType=NORMAL, mBatteryOnline=NOT_DEFINED, mBatterySwellingMode=NONE, mBatteryProtectMode=false]
+09-28 11:15:22.215 I/adbd    ( 5751): adbd service requested 'shell,v2,TERM=dumb:export ANDROID_LOG_TAGS=''; exec logcat '-v' 'time''
+09-28 11:15:22.444 D/MobileStatusTracker(0/1)(23678): onSignalStrengthsChanged level=4, vendorLevel=4
+09-28 11:15:22.447 D/MobileSignalController(0/1)(23678): notifyListener: enabled=true, connected=true, dataConnected=false, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-28 11:15:22.447 D/NetworkController(23678): SignalStrength from intent slotId=0
+09-28 11:15:22.594 I/SCS@AiSearch user 0( 3379): (IndexManager) [INSERT] Done
+09-28 11:15:22.594 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) [binder:3379_3] entering in refreshSearcherManager():  refreshSearcherManager for com.samsung.android.messaging.message
+09-28 11:15:22.594 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) remove: indexName: com.samsung.android.messaging.message
+09-28 11:15:22.601 I/SCS@AiSearch user 0( 3379): (IndexManager) getIndexWriter(): indexName com.samsung.android.messaging.message
+09-28 11:15:22.615 D/io_stats(  590): !@ 179,0 r 9367636 107971346 w 6326128 57604756 d 0 0 f 0 0 iot 5250916 0 th 0 0 0 pt 0 inp 0 140 73244.854
+09-28 11:15:22.615 D/io_stats(  590): !@ DiskUsage: /data 93.65 % used (102969 MB/ 109942 MB)
+09-28 11:15:22.615 D/io_stats(  590): !@ MemInfo(KB): total 5791276 free 252832 avail 2556220 actv(f) 1048076 inactv(f) 1239328 dirty 50800 wb 1668 anonpg 1703916 slab 309152
+09-28 11:15:22.661 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) Searcher created successfully for com.samsung.android.messaging.message
+09-28 11:15:22.661 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) [binder:3379_3] leaving from refreshSearcherManager():  
+09-28 11:15:22.662 I/SCS@AiSearch user 0( 3379): (IndexManager) addIndex(): done
+09-28 11:15:22.662 I/SCS@AiSearch user 0( 3379): (IndexManager) [pool-15-thread-1] entering in commitIndexWriter():  
+09-28 11:15:22.662 I/ORC/SCSMessageEngine( 5766): chunks count = 22, uri = content://com.samsung.android.scs.ai.search/v2/com.samsung.android.messaging.message Inserted 22 of 22 documents
+09-28 11:15:22.662 I/ORC/SCSMessageEngine( 5766): updateScs done 
+09-28 11:15:22.662 I/ORC/SCSMessageEngine( 5766): syncDataByIds done 
+09-28 11:15:22.662 I/ORC/SCSEngineManager( 5766): syncMessageByIds message done
+09-28 11:15:22.663 I/ORC/SCSConversationEngine( 5766): compareDataByIds start 2
+09-28 11:15:22.663 I/ORC/SCSConversationEngine( 5766): selection : conversations.bin_status!=1
+09-28 11:15:22.663 I/ORC/SCSConversationEngine( 5766): query localdb conversations.bin_status!=1 AND _id IN (166,885)
+09-28 11:15:22.667 I/PROV/QueryUriConversations( 5766): [CONVERSATION]done query conversations, containsRecipientList : false, category : null, Elapsed time : 2.343769 ms
+09-28 11:15:22.667 I/PROV/MsgContentProviderQuery( 5766): query, uriMatch : 1001, Elapsed time : 2.452847 ms
+09-28 11:15:22.667 W/libprocessgroup(23252): Failed to open /dev/blkio//cgroup.procs: No such file or directory
+09-28 11:15:22.669 I/ORC/SCSConversationEngine( 5766): query sublist 0 2
+09-28 11:15:22.669 I/ORC/SCSConversationEngine( 5766): queryScsByIds 2
+09-28 11:15:22.669 I/ORC/SCSConversationEngine( 5766): queryByJson {query:{texts:[166,885],match:{fields:[_id]}}}
+09-28 11:15:22.671 I/SCS@AiSearch user 0( 3379): (SearchProvider) uri : 200
+09-28 11:15:22.685 I/SCS@AiSearch user 0( 3379): (m) Schema Name : com.samsung.android.messaging.conversation Major Version : 7, Minor Version : 0
+09-28 11:15:22.929 I/SDHMS:D (24824): SIOP:: AP:470 BAT:354 USB:0 CHG:423 PA:409 BLK:0 SUBBAT:0 SKIN:400 SKINF:400 SKINB:399 LRP:402 LRP2:400 LRF:401 LRB:402 LRF2:400 LRB2:399 AP2:400 CHG2:392 WIFI2:388 SPK2:344 
+09-28 11:15:23.289 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) Searcher created successfully for com.samsung.android.messaging.conversation
+09-28 11:15:23.334 I/SCS@AiSearch user 0( 3379): (IndexCursor) Index Status: ready
+09-28 11:15:23.334 I/SCS@AiSearch user 0( 3379): (SearchProvider) [binder:3379_3] leaving from query():  
+09-28 11:15:23.334 I/SCS@AiSearch user 0( 3379): (SearchProvider) Elapsed time: 664ms. Found 2 items
+09-28 11:15:23.334 I/SCS@AiSearch user 0( 3379): (QuerySaLog) [QUERY] callingPackage=[com.samsung.android.messaging], uriCode=[200], queryString=[null], resultCount=[2], queryType=[search], resultType=[normal query], timeTaken=[664]
+09-28 11:15:23.338 I/SCS@AiSearch user 0( 3379): (IndexCursor) [binder:3379_3] entering in fillWindow():  new position: 0 result count: 2
+09-28 11:15:23.340 I/SCS@AiSearch user 0( 3379): (IndexCursor) [binder:3379_3] leaving from fillWindow():  
+09-28 11:15:23.342 I/ORC/SCSConversationEngine( 5766): loadAndCompare done 2 2
+09-28 11:15:23.342 I/ORC/SCSConversationEngine( 5766): compareItems 2 2
+09-28 11:15:23.342 I/ORC/SCSConversationEngine( 5766): compareItems done 0 0 2
+09-28 11:15:23.342 I/ORC/SCSConversationEngine( 5766): compareDataByIds done 
+09-28 11:15:23.342 I/ORC/SCSEngineManager( 5766): syncMessageByIds conversation compare
+09-28 11:15:23.342 I/ORC/SCSConversationEngine( 5766): update 2
+09-28 11:15:23.346 I/SCS@AiSearch user 0( 3379): (SearchProvider) update by content://com.samsung.android.scs.ai.search/v2/com.samsung.android.messaging.conversation from com.samsung.android.messaging
+09-28 11:15:23.347 I/SCS@AiSearch user 0( 3379): (PublicProviderHelper) [UPDATE]  called with: uri = [content://com.samsung.android.scs.ai.search/v2/com.samsung.android.messaging.conversation], selection = [42], selectionArgs = [4], callingPackage = [com.samsung.android.messaging]
+09-28 11:15:23.383 I/SCS@AiSearch user 0( 3379): (PublicProviderHelper) Updated documents size: 1
+09-28 11:15:23.383 I/SCS@AiSearch user 0( 3379): (IndexManager) [binder:3379_3] entering in updateIndex():  
+09-28 11:15:23.383 I/SCS@AiSearch user 0( 3379): (IndexManager) [UPDATE] index=com.samsung.android.messaging.conversation, size=1, documents=[885]
+09-28 11:15:23.383 I/SCS@AiSearch user 0( 3379): (IndexManager) [binder:3379_3] entering in updateDocumentList():  index: com.samsung.android.messaging.conversation, updateList.size:1
+09-28 11:15:23.383 I/SCS@AiSearch user 0( 3379): (IndexManager) getIndexWriter(): indexName com.samsung.android.messaging.conversation
+09-28 11:15:23.569 I/SCS@AiSearch user 0( 3379): (IndexManager) [UPDATE] Done indexName: com.samsung.android.messaging.conversation updateList.size():1
+09-28 11:15:23.570 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) [binder:3379_3] entering in refreshSearcherManager():  refreshSearcherManager for com.samsung.android.messaging.conversation
+09-28 11:15:23.570 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) remove: indexName: com.samsung.android.messaging.conversation
+09-28 11:15:23.575 I/SCS@AiSearch user 0( 3379): (IndexManager) getIndexWriter(): indexName com.samsung.android.messaging.conversation
+09-28 11:15:23.618 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) Searcher created successfully for com.samsung.android.messaging.conversation
+09-28 11:15:23.618 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) [binder:3379_3] leaving from refreshSearcherManager():  
+09-28 11:15:23.619 I/SCS@AiSearch user 0( 3379): (IndexManager) [binder:3379_3] leaving from updateIndex, result = true():  
+09-28 11:15:23.619 I/SCS@AiSearch user 0( 3379): (IndexManager) [pool-16-thread-1] entering in commitIndexWriter():  
+09-28 11:15:23.622 I/SCS@AiSearch user 0( 3379): (SearchProvider) update by content://com.samsung.android.scs.ai.search/v2/com.samsung.android.messaging.conversation from com.samsung.android.messaging
+09-28 11:15:23.622 I/SCS@AiSearch user 0( 3379): (PublicProviderHelper) [UPDATE]  called with: uri = [content://com.samsung.android.scs.ai.search/v2/com.samsung.android.messaging.conversation], selection = [42], selectionArgs = [4], callingPackage = [com.samsung.android.messaging]
+09-28 11:15:23.631 I/SCS@AiSearch user 0( 3379): (PublicProviderHelper) Updated documents size: 1
+09-28 11:15:23.631 I/SCS@AiSearch user 0( 3379): (IndexManager) [binder:3379_3] entering in updateIndex():  
+09-28 11:15:23.631 I/SCS@AiSearch user 0( 3379): (IndexManager) [UPDATE] index=com.samsung.android.messaging.conversation, size=1, documents=[166]
+09-28 11:15:23.632 I/SCS@AiSearch user 0( 3379): (IndexManager) [binder:3379_3] entering in updateDocumentList():  index: com.samsung.android.messaging.conversation, updateList.size:1
+09-28 11:15:23.632 I/SCS@AiSearch user 0( 3379): (IndexManager) getIndexWriter(): indexName com.samsung.android.messaging.conversation
+09-28 11:15:23.635 I/SCS@AiSearch user 0( 3379): (IndexManager) [UPDATE] Done indexName: com.samsung.android.messaging.conversation updateList.size():1
+09-28 11:15:23.653 I/SCS@AiSearch user 0( 3379): (IndexSearcherManager) [binder:3379_3] entering in refreshSearcherManager():  refreshSearcherManager for com.samsung.android.messaging.conversation
+09-28 11:15:23.718 D/MobileStatusTracker(0/1)(23678): onSignalStrengthsChanged level=4, vendorLevel=4
+09-28 11:15:23.720 D/MobileSignalController(0/1)(23678): notifyListener: enabled=true, connected=true, dataConnected=false, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-28 11:15:23.721 D/NetworkController(23678): SignalStrength from intent slotId=0
+09-28 11:15:23.731 I/WifiHAL (23637): Get link layer stats
+09-28 11:15:23.732 I/WifiHAL (23637): GetLinkStatsCommand::create
+09-28 11:15:23.732 D/android.hardware.wifi@1.0-service-lazy(23637): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+=== E2E_LOGCAT_START 2026-09-28T11:52:39+05:00 ===
+=== E2E_LOGCAT_RESTART 2026-09-28T11:57:30+05:00 ===
+--------- beginning of system
+09-28 11:53:04.064 I/ActivityManager(23252): Force stopping com.ora.ora appid=10284 user=0: from pid 12673
+09-28 11:53:04.070 I/ActivityManager(23252): Killing 8075:com.ora.ora/u0a284 (adj 0): stop com.ora.ora due to from pid 12673
+09-28 11:53:04.104 I/ActivityManager(23252): Changes in 10139 5 to 2, 8 to 15
+09-28 11:53:04.104 I/ActivityManager(23252): updateOomAdj start time is before than pendingPid added, don't delete it
+09-28 11:53:04.112 I/ActivityManager(23252): Force stopping com.ora.ora appid=10284 user=95: from pid 12673
+09-28 11:53:04.122 I/ActivityManager(23252): updateOomAdj start time is before than pendingPid added, don't delete it
+09-28 11:53:04.510 W/ActivityManager(23252): setHasOverlayUi called on unknown pid: 8075
+09-28 11:53:04.965 I/ActivityManager(23252): Start proc 12707:com.ora.ora/u0a284 for next-top-activity {com.ora.ora/com.ora.ora.MainActivity}
+09-28 11:53:05.071 I/ActivityManager(23252): DSS OFF for com.ora.ora
+09-28 11:53:05.099 I/ActivityManager(23252): Changes in 10284 19 to 2, 0 to 15
+09-28 11:53:05.100 I/ActivityManager(23252): updateOomAdj start time is before than pendingPid added, don't delete it
+--------- beginning of main
+09-28 11:53:05.584 I/flutter (12707): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+09-28 11:53:05.770 I/flutter (12707): The Dart VM service is listening on http://127.0.0.1:35563/35hJjsnVTtE=/
+09-28 11:53:06.166 I/ActivityManager(23252): PendingStartActivityUids startActivity to updateOomAdj delay:1084ms, uid:10284
+09-28 11:53:06.872 I/flutter (12707): ORA API BASE URL = http://127.0.0.1:8081/v1
+09-28 11:53:08.972 I/ActivityManager(23252): Changes in 10139 2 to 5, 15 to 8
+09-28 11:53:09.254 I/ActivityManager(23252): com.samsung.android.dqagent is exempt from freezer
+09-28 11:53:09.270 I/ActivityManager(23252): Start proc 12801:com.samsung.android.dqagent/1000 for broadcast {com.samsung.android.dqagent/com.samsung.android.dqagent.receiver.DQADataReceiver}
+09-28 11:53:09.323 I/ActivityManager(23252): DSS OFF for com.samsung.android.dqagent
+09-28 11:53:09.540 I/ActivityManager(23252): Killing 10799:com.samsung.android.app.telephonyui/1001 (adj 999): empty #31
+09-28 11:53:42.130 I/ActivityManager(23252): Changes in 10151 7 to 5, 0 to 15
+09-28 11:54:15.825 E/ActivityManager(23252): Sending non-protected broadcast OfflineDeviceTraceTask:QigMdO9e1p+D5ncv:1395 from system uid 1000 pkg com.samsung.android.fmm
+09-28 11:54:15.825 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16109)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentInPackage(ActivityManagerService.java:17145)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(ActivityManagerService.java:19891)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:642)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6624)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6613)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1029)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at android.app.PendingIntent.send(PendingIntent.java:1000)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(AlarmManagerService.java:6377)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:5218)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:5573)
+09-28 11:54:20.847 E/ActivityManager(23252): Sending non-protected broadcast OfflineDeviceTraceTask:QigMdO9e1p+D5ncv:1395 from system uid 1000 pkg com.samsung.android.fmm
+09-28 11:54:20.847 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16109)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentInPackage(ActivityManagerService.java:17145)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(ActivityManagerService.java:19891)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:642)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6624)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6613)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1029)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at android.app.PendingIntent.send(PendingIntent.java:1000)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(AlarmManagerService.java:6377)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:5218)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:5573)
+09-28 11:54:25.865 E/ActivityManager(23252): Sending non-protected broadcast OfflineDeviceTraceTask:QigMdO9e1p+D5ncv:1395 from system uid 1000 pkg com.samsung.android.fmm
+09-28 11:54:25.865 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16109)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentInPackage(ActivityManagerService.java:17145)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(ActivityManagerService.java:19891)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:642)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6624)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6613)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1029)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at android.app.PendingIntent.send(PendingIntent.java:1000)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(AlarmManagerService.java:6377)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:5218)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:5573)
+09-28 11:54:30.877 E/ActivityManager(23252): Sending non-protected broadcast OfflineDeviceTraceTask:QigMdO9e1p+D5ncv:1395 from system uid 1000 pkg com.samsung.android.fmm
+09-28 11:54:30.877 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16109)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentInPackage(ActivityManagerService.java:17145)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(ActivityManagerService.java:19891)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:642)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6624)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6613)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1029)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at android.app.PendingIntent.send(PendingIntent.java:1000)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(AlarmManagerService.java:6377)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:5218)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:5573)
+09-28 11:55:28.818 I/ActivityManager(23252): Changes in 10151 5 to 7, 15 to 0
+09-28 11:58:07.764 E/ActivityManager(23252): Sending non-protected broadcast com.samsung.android.intent.action.ACCESSORY_AUTHENTICATION_STOPPED from system 23252:system/1000 pkg android
+09-28 11:58:07.764 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16105)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16124)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(ActivityManagerService.java:17101)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.app.ContextImpl.sendBroadcast(ContextImpl.java:1256)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.samsung.accessory.manager.authentication.cover.CoverAuthenticator$3.run(CoverAuthenticator.java:261)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.Handler.handleCallback(Handler.java:942)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.Looper.loopOnce(Looper.java:226)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.Looper.loop(Looper.java:313)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.HandlerThread.run(HandlerThread.java:67)
+09-28 11:58:25.495 I/ActivityManager(23252): com.samsung.android.scs is exempt from freezer by list
+09-28 11:58:25.518 I/ActivityManager(23252): Start proc 14043:com.samsung.android.scs/u0a111 for service {com.samsung.android.scs/androidx.work.impl.background.systemjob.SystemJobService}
+09-28 11:58:25.587 I/ActivityManager(23252): DSS OFF for com.samsung.android.scs
+09-28 11:58:26.879 I/ActivityManager(23252): com.sec.android.app.clockpackage is exempt from freezer by list
+09-28 11:58:26.898 I/ActivityManager(23252): Start proc 14080:com.sec.android.app.clockpackage/u0a184 for broadcast {com.sec.android.app.clockpackage/com.sec.android.app.clockpackage.alarmwidget.ClockAlarmWidgetProvider}
+09-28 11:58:26.966 I/ActivityManager(23252): DSS OFF for com.sec.android.app.clockpackage
+09-28 11:58:27.269 I/ActivityManager(23252): Killing 7534:com.facebook.appmanager/u0a192 (adj 999): empty #31
+09-28 11:58:27.386 I/ActivityManager(23252): Start proc 14106:com.samsung.android.calendar/u0a161 for content provider {com.samsung.android.calendar/com.samsung.android.app.calendar.model.settings.provider.PreferenceProvider}
+09-28 11:58:27.454 I/ActivityManager(23252): DSS OFF for com.samsung.android.calendar
+09-28 11:58:27.786 I/ActivityManager(23252): Start proc 14123:com.samsung.android.app.reminder/u0a204 for content provider {com.samsung.android.app.reminder/com.samsung.android.app.reminder.data.provider.ReminderProvider}
+09-28 11:58:27.849 I/ActivityManager(23252): DSS OFF for com.samsung.android.app.reminder
+09-28 11:58:27.892 I/ActivityManager(23252): Killing 5584:com.sec.android.provider.badge/u95a68 (adj 999): empty #31
+09-28 11:58:27.893 I/ActivityManager(23252): Killing 5558:com.sec.android.provider.badge/u0a68 (adj 999): empty #32
+09-28 11:58:27.921 I/ActivityManager(23252): Killing 10278:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a227i31 (adj 999): empty #31
+09-28 11:58:27.956 W/ActivityManager(23252): Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+--------- beginning of system
+09-28 11:53:04.064 I/ActivityManager(23252): Force stopping com.ora.ora appid=10284 user=0: from pid 12673
+09-28 11:53:04.070 I/ActivityManager(23252): Killing 8075:com.ora.ora/u0a284 (adj 0): stop com.ora.ora due to from pid 12673
+09-28 11:53:04.104 I/ActivityManager(23252): Changes in 10139 5 to 2, 8 to 15
+09-28 11:53:04.104 I/ActivityManager(23252): updateOomAdj start time is before than pendingPid added, don't delete it
+09-28 11:53:04.112 I/ActivityManager(23252): Force stopping com.ora.ora appid=10284 user=95: from pid 12673
+09-28 11:53:04.122 I/ActivityManager(23252): updateOomAdj start time is before than pendingPid added, don't delete it
+09-28 11:53:04.510 W/ActivityManager(23252): setHasOverlayUi called on unknown pid: 8075
+09-28 11:53:04.965 I/ActivityManager(23252): Start proc 12707:com.ora.ora/u0a284 for next-top-activity {com.ora.ora/com.ora.ora.MainActivity}
+09-28 11:53:05.071 I/ActivityManager(23252): DSS OFF for com.ora.ora
+09-28 11:53:05.099 I/ActivityManager(23252): Changes in 10284 19 to 2, 0 to 15
+09-28 11:53:05.100 I/ActivityManager(23252): updateOomAdj start time is before than pendingPid added, don't delete it
+--------- beginning of main
+09-28 11:53:05.584 I/flutter (12707): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+09-28 11:53:05.770 I/flutter (12707): The Dart VM service is listening on http://127.0.0.1:35563/35hJjsnVTtE=/
+09-28 11:53:06.166 I/ActivityManager(23252): PendingStartActivityUids startActivity to updateOomAdj delay:1084ms, uid:10284
+09-28 11:53:06.872 I/flutter (12707): ORA API BASE URL = http://127.0.0.1:8081/v1
+09-28 11:53:08.972 I/ActivityManager(23252): Changes in 10139 2 to 5, 15 to 8
+09-28 11:53:09.254 I/ActivityManager(23252): com.samsung.android.dqagent is exempt from freezer
+09-28 11:53:09.270 I/ActivityManager(23252): Start proc 12801:com.samsung.android.dqagent/1000 for broadcast {com.samsung.android.dqagent/com.samsung.android.dqagent.receiver.DQADataReceiver}
+09-28 11:53:09.323 I/ActivityManager(23252): DSS OFF for com.samsung.android.dqagent
+09-28 11:53:09.540 I/ActivityManager(23252): Killing 10799:com.samsung.android.app.telephonyui/1001 (adj 999): empty #31
+09-28 11:53:42.130 I/ActivityManager(23252): Changes in 10151 7 to 5, 0 to 15
+09-28 11:54:15.825 E/ActivityManager(23252): Sending non-protected broadcast OfflineDeviceTraceTask:QigMdO9e1p+D5ncv:1395 from system uid 1000 pkg com.samsung.android.fmm
+09-28 11:54:15.825 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16109)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentInPackage(ActivityManagerService.java:17145)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(ActivityManagerService.java:19891)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:642)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6624)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6613)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1029)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at android.app.PendingIntent.send(PendingIntent.java:1000)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(AlarmManagerService.java:6377)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:5218)
+09-28 11:54:15.825 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:5573)
+09-28 11:54:20.847 E/ActivityManager(23252): Sending non-protected broadcast OfflineDeviceTraceTask:QigMdO9e1p+D5ncv:1395 from system uid 1000 pkg com.samsung.android.fmm
+09-28 11:54:20.847 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16109)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentInPackage(ActivityManagerService.java:17145)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(ActivityManagerService.java:19891)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:642)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6624)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6613)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1029)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at android.app.PendingIntent.send(PendingIntent.java:1000)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(AlarmManagerService.java:6377)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:5218)
+09-28 11:54:20.847 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:5573)
+09-28 11:54:25.865 E/ActivityManager(23252): Sending non-protected broadcast OfflineDeviceTraceTask:QigMdO9e1p+D5ncv:1395 from system uid 1000 pkg com.samsung.android.fmm
+09-28 11:54:25.865 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16109)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentInPackage(ActivityManagerService.java:17145)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(ActivityManagerService.java:19891)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:642)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6624)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6613)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1029)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at android.app.PendingIntent.send(PendingIntent.java:1000)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(AlarmManagerService.java:6377)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:5218)
+09-28 11:54:25.865 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:5573)
+09-28 11:54:30.877 E/ActivityManager(23252): Sending non-protected broadcast OfflineDeviceTraceTask:QigMdO9e1p+D5ncv:1395 from system uid 1000 pkg com.samsung.android.fmm
+09-28 11:54:30.877 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16109)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentInPackage(ActivityManagerService.java:17145)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService$LocalService.broadcastIntentInPackage(ActivityManagerService.java:19891)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.PendingIntentRecord.sendInner(PendingIntentRecord.java:642)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6624)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.sendIntentSender(ActivityManagerService.java:6613)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at android.app.PendingIntent.sendAndReturnResult(PendingIntent.java:1029)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at android.app.PendingIntent.send(PendingIntent.java:1000)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$DeliveryTracker.deliverLocked(AlarmManagerService.java:6377)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService.deliverAlarmsLocked(AlarmManagerService.java:5218)
+09-28 11:54:30.877 E/ActivityManager(23252): 	at com.android.server.alarm.AlarmManagerService$AlarmThread.run(AlarmManagerService.java:5573)
+09-28 11:55:28.818 I/ActivityManager(23252): Changes in 10151 5 to 7, 15 to 0
+09-28 11:58:07.764 E/ActivityManager(23252): Sending non-protected broadcast com.samsung.android.intent.action.ACCESSORY_AUTHENTICATION_STOPPED from system 23252:system/1000 pkg android
+09-28 11:58:07.764 E/ActivityManager(23252): java.lang.Throwable
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.checkBroadcastFromSystem(ActivityManagerService.java:16105)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16922)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentLocked(ActivityManagerService.java:16124)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.android.server.am.ActivityManagerService.broadcastIntentWithFeature(ActivityManagerService.java:17101)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.app.ContextImpl.sendBroadcast(ContextImpl.java:1256)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at com.samsung.accessory.manager.authentication.cover.CoverAuthenticator$3.run(CoverAuthenticator.java:261)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.Handler.handleCallback(Handler.java:942)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.Looper.loopOnce(Looper.java:226)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.Looper.loop(Looper.java:313)
+09-28 11:58:07.764 E/ActivityManager(23252): 	at android.os.HandlerThread.run(HandlerThread.java:67)
+09-28 11:58:25.495 I/ActivityManager(23252): com.samsung.android.scs is exempt from freezer by list
+09-28 11:58:25.518 I/ActivityManager(23252): Start proc 14043:com.samsung.android.scs/u0a111 for service {com.samsung.android.scs/androidx.work.impl.background.systemjob.SystemJobService}
+09-28 11:58:25.587 I/ActivityManager(23252): DSS OFF for com.samsung.android.scs
+09-28 11:58:26.879 I/ActivityManager(23252): com.sec.android.app.clockpackage is exempt from freezer by list
+09-28 11:58:26.898 I/ActivityManager(23252): Start proc 14080:com.sec.android.app.clockpackage/u0a184 for broadcast {com.sec.android.app.clockpackage/com.sec.android.app.clockpackage.alarmwidget.ClockAlarmWidgetProvider}
+09-28 11:58:26.966 I/ActivityManager(23252): DSS OFF for com.sec.android.app.clockpackage
+09-28 11:58:27.269 I/ActivityManager(23252): Killing 7534:com.facebook.appmanager/u0a192 (adj 999): empty #31
+09-28 11:58:27.386 I/ActivityManager(23252): Start proc 14106:com.samsung.android.calendar/u0a161 for content provider {com.samsung.android.calendar/com.samsung.android.app.calendar.model.settings.provider.PreferenceProvider}
+09-28 11:58:27.454 I/ActivityManager(23252): DSS OFF for com.samsung.android.calendar
+09-28 11:58:27.786 I/ActivityManager(23252): Start proc 14123:com.samsung.android.app.reminder/u0a204 for content provider {com.samsung.android.app.reminder/com.samsung.android.app.reminder.data.provider.ReminderProvider}
+09-28 11:58:27.849 I/ActivityManager(23252): DSS OFF for com.samsung.android.app.reminder
+09-28 11:58:27.892 I/ActivityManager(23252): Killing 5584:com.sec.android.provider.badge/u95a68 (adj 999): empty #31
+09-28 11:58:27.893 I/ActivityManager(23252): Killing 5558:com.sec.android.provider.badge/u0a68 (adj 999): empty #32
+09-28 11:58:27.921 I/ActivityManager(23252): Killing 10278:com.google.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0a227i31 (adj 999): empty #31
+09-28 11:58:27.956 W/ActivityManager(23252): Scheduling restart of crashed service com.google.android.googlequicksearchbox/org.chromium.content.app.SandboxedProcessService0:0 in 1000ms for connection
+09-28 11:58:53.777 I/ActivityManager(23252): updateOomAdj start time is before than pendingPid added, don't delete it

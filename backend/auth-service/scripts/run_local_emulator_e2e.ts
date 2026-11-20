@@ -3,7 +3,7 @@
  * against the emulator-backed auth-service. No cloud calls, no billing.
  *
  * Prereqs:
- *   1. firebase emulators:start --project oraapp-a9be5 --only auth,firestore,database
+ *   1. firebase emulators:start --project ora-app-d8112 --only auth,firestore,database
  *   2. ./scripts/dev_emulator_backend.sh   (auth-service on :8080)
  *   3. ./scripts/dev_local_ticks.sh        (local scheduler replacement)
  *
@@ -19,9 +19,9 @@ if (process.env.ORA_CLOUD !== '1') {
   process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9099';
   process.env.FIREBASE_DATABASE_EMULATOR_HOST ??= '127.0.0.1:9000';
 }
-process.env.FIREBASE_PROJECT_ID ??= 'oraapp-a9be5';
+process.env.FIREBASE_PROJECT_ID ??= 'ora-app-d8112';
 process.env.FIREBASE_DATABASE_URL ??=
-  'https://oraapp-a9be5-default-rtdb.local-emulator.local';
+  'https://ora-app-d8112-default-rtdb.local-emulator.local';
 
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -169,16 +169,6 @@ async function main() {
     isActive: true,
     banned: false,
   });
-
-  // Wallet top-ups — fixed-email test accounts keep UIDs across runs, so
-  // prior-run commissions may have left negative balances; the partner
-  // wallet gate (correctly) blocks accepts when balance < 0.
-  for (const uid of [driver.uid, driver2.uid, outsider.uid]) {
-    await db.collection('walletAccounts').doc(uid).set(
-      { userId: uid, balanceMinor: 100_000, currency: 'PKR' },
-      { merge: true },
-    );
-  }
 
   await db
     .collection('pricingRules')
@@ -511,8 +501,6 @@ async function main() {
 
   // ── Ora Courier — Send Parcel leg ──────────────────────────────────────
   console.log('== courier: estimate → create with parcel → dispatch ==');
-  // Wallet gate (correct): completed rides above debited the 10% partner
-  // commission; the setup top-up keeps the driver eligible to accept.
   // The 21s expiry wait above leaves the driver geo marker beyond the 15s
   // freshness window — refresh presence before creating the courier booking
   // so the first dispatch wave sees a live driver.
@@ -713,27 +701,12 @@ async function main() {
   const onboard = await api('/v1/drivers/onboarding', {
     method: 'POST',
     token: passenger2.idToken,
-    body: {
-      fullName: 'E2E Switch Driver',
-      cnicNumber: '35202-1234567-1',
-      homeCity: 'lahore',
-      licenseNumber: 'LHR-998877',
-      licenseExpiry: '2099-12-31',
-      vehicleCategory: 'zip',
-      vehicleMake: 'Toyota',
-      vehicleModel: 'Corolla',
-      vehicleYear: 2024,
-      vehicleColor: 'White',
-      plateNumber: 'LEA-1',
-    },
+    body: { vehicleType: 'car', vehicleModel: 'Corolla', plateNumber: 'LEA-1', homeCity: 'lahore' },
     idempotencyKey: `onboard_${passenger2.uid}_${Date.now()}`,
   });
-  // Local stack sets DRIVER_AUTO_APPROVE=true (dev exception) → status may be
-  // 'approved'; the production-mode 'pending' gate is asserted when it applies.
-  const onboardStatus = onboard.json?.data?.driverStatus;
   check(
-    'driver onboarding accepted (pending or approved)',
-    onboard.status === 200 && ['pending', 'approved'].includes(onboardStatus),
+    'driver onboarding → pending',
+    onboard.status === 200 && onboard.json?.data?.driverStatus === 'pending',
     JSON.stringify(onboard.json),
   );
 
@@ -743,14 +716,12 @@ async function main() {
     body: { mode: 'driver' },
     idempotencyKey: `mode_switch_${Date.now()}_b`,
   });
-  if (onboardStatus === 'pending') {
-    check(
-      'switch→driver blocked while pending',
-      pendingSwitch.status === 409 &&
-        pendingSwitch.json?.error?.code === 'DRIVER_APPROVAL_PENDING',
-      JSON.stringify(pendingSwitch.json),
-    );
-  }
+  check(
+    'switch→driver blocked while pending',
+    pendingSwitch.status === 409 &&
+      pendingSwitch.json?.error?.code === 'DRIVER_APPROVAL_PENDING',
+    JSON.stringify(pendingSwitch.json),
+  );
 
   // Ops approval — write users doc directly (same as driver seeding above).
   await db.collection('users').doc(passenger2.uid).update({

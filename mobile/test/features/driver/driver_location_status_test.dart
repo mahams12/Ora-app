@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:ora/app/di/providers.dart';
 import 'package:ora/core/errors/app_failure.dart';
@@ -86,19 +85,8 @@ void main() {
             const _NoopLocationRemote(),
           ),
         ],
-        // Detail view calls context.canPop/push/go — needs a real GoRouter.
-        child: MaterialApp.router(
-          routerConfig: GoRouter(
-            initialLocation: '/driver/rides/ride-1',
-            routes: [
-              GoRoute(
-                path: '/driver/rides/:rideId',
-                builder: (context, state) => DriverAssignedRideView(
-                  rideId: state.pathParameters['rideId']!,
-                ),
-              ),
-            ],
-          ),
+        child: const MaterialApp(
+          home: DriverAssignedRideView(rideId: 'ride-1'),
         ),
       ),
     );

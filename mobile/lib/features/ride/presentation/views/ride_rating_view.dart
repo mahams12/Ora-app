@@ -37,9 +37,9 @@ class _RideRatingViewState extends ConsumerState<RideRatingView> {
     final padding = Responsive.horizontalPadding(context);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: OraColors.background,
         title: Text(
           'Rate your ride',
           style: OraTypography.title(OraColors.textPrimary),
@@ -59,37 +59,37 @@ class _RideRatingViewState extends ConsumerState<RideRatingView> {
       body: SafeArea(
         child: switch (state.phase) {
           RideRatingPhase.loading => const Center(
-            child: OraLoadingIndicator(message: 'Loading rating…'),
-          ),
+              child: OraLoadingIndicator(message: 'Loading rating…'),
+            ),
           RideRatingPhase.fatalError => OraErrorState(
-            title: 'Rating unavailable',
-            message: state.errorMessage ?? 'Something went wrong.',
-            onRetry: vm.retry,
-          ),
+              title: 'Rating unavailable',
+              message: state.errorMessage ?? 'Something went wrong.',
+              onRetry: vm.retry,
+            ),
           RideRatingPhase.ineligible => _MessagePane(
-            padding: padding,
-            title: 'Cannot rate this ride',
-            message:
-                state.errorMessage ??
-                'Only completed or closed rides can be rated.',
-            onHome: () => context.go(AppRoutes.home),
-          ),
+              padding: padding,
+              title: 'Cannot rate this ride',
+              message: state.errorMessage ??
+                  'Only completed or closed rides can be rated.',
+              onHome: () => context.go(AppRoutes.home),
+            ),
           RideRatingPhase.readyToRate ||
           RideRatingPhase.submitting ||
           RideRatingPhase.success ||
-          RideRatingPhase.alreadyRated => _RatingBody(
-            state: state,
-            padding: padding,
-            onSelect: vm.selectStars,
-            onSubmit: vm.submit,
-            onDone: () {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                context.go(AppRoutes.home);
-              }
-            },
-          ),
+          RideRatingPhase.alreadyRated =>
+            _RatingBody(
+              state: state,
+              padding: padding,
+              onSelect: vm.selectStars,
+              onSubmit: vm.submit,
+              onDone: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go(AppRoutes.home);
+                }
+              },
+            ),
         },
       ),
     );
@@ -135,8 +135,8 @@ class _RatingBody extends StatelessWidget {
                   success
                       ? 'Thanks for rating'
                       : already
-                      ? 'You already rated this ride'
-                      : 'Rate your ride',
+                          ? 'You already rated this ride'
+                          : 'Rate your ride',
                   textAlign: TextAlign.center,
                   style: OraTypography.headline(OraColors.textPrimary),
                 ),
@@ -145,9 +145,9 @@ class _RatingBody extends StatelessWidget {
                   success
                       ? 'Your rating has been submitted.'
                       : already
-                      ? 'Ratings cannot be edited or deleted.'
-                      : 'Tap a star, then submit. Ora only stores stars — '
-                            'no comments or tips in this build.',
+                          ? 'Ratings cannot be edited or deleted.'
+                          : 'Tap a star, then submit. Ora only stores stars — '
+                              'no comments or tips in this build.',
                   textAlign: TextAlign.center,
                   style: OraTypography.body(OraColors.textSecondary),
                 ),
@@ -177,7 +177,12 @@ class _RatingBody extends StatelessWidget {
               isLoading: submitting,
               onPressed: state.canSubmit && !submitting ? onSubmit : null,
             ),
-          if (readOnly) ...[OraButton(label: 'Done', onPressed: onDone)],
+          if (readOnly) ...[
+            OraButton(
+              label: 'Done',
+              onPressed: onDone,
+            ),
+          ],
         ],
       ),
     );
@@ -205,11 +210,7 @@ class _MessagePane extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Spacer(),
-          OraEmptyState(
-            title: title,
-            message: message,
-            icon: Icons.star_outline,
-          ),
+          OraEmptyState(title: title, message: message, icon: Icons.star_outline),
           const Spacer(),
           OraButton(
             label: 'Back to Home',

@@ -1,12 +1,8 @@
 import type { Firestore } from 'firebase-admin/firestore';
 import type { AuthenticatedCaller } from '../types';
-import {
-  isDeliveryEligible,
-  loadActor,
-  type EligibleActor,
-} from '../rides/eligibility';
+import { loadActor, type EligibleActor } from '../rides/eligibility';
 import { RideDomainError } from '../rides/types';
-import type { GeoProjectionService } from '../geo/geo_projection';
+import type { RedisGeoProjectionService } from '../redis/geo_projection';
 import {
   DriverDomainError,
   type AvailabilityState,
@@ -17,7 +13,7 @@ const DRIVERS = 'drivers';
 
 /**
  * N1 — durable driver availability.
- * N2C — on go-offline, best-effort geo-store removal (non-authoritative).
+ * N2C — on go-offline, best-effort Redis GEO removal (non-authoritative).
  *
  * Authority:
  * - Firestore `drivers/{driverId}.availabilityState` (schema: offline | online)
@@ -26,7 +22,7 @@ const DRIVERS = 'drivers';
 export class DriverAvailabilityService {
   constructor(
     private readonly db: Firestore,
-    private readonly geoProjection: GeoProjectionService | null = null,
+    private readonly geoProjection: RedisGeoProjectionService | null = null,
     /**
      * Same-process hook fired after each durable availability transition —
      * used to invalidate the location-update eligibility cache so toggles
@@ -96,11 +92,11 @@ export class DriverAvailabilityService {
       }
       throw err;
     }
-    if (!isDeliveryEligible(actor)) {
+    if (actor.role !== 'driver' || actor.driverStatus !== 'approved') {
       throw new DriverDomainError(
         'DRIVER_NOT_APPROVED',
         403,
-        'Driver or logistics partner must be approved to change availability.',
+        'Driver must be approved to change availability.',
       );
     }
     return actor;

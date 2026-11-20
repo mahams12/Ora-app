@@ -157,7 +157,7 @@ function parseApplication(body: unknown): DriverOnboardingApplication {
 export class DriverOnboardingService {
   constructor(
     private readonly db: Firestore,
-    private readonly autoApprove = false,
+    private readonly autoApprove = true,
   ) {}
 
   async submit(input: SubmitDriverOnboardingInput): Promise<{

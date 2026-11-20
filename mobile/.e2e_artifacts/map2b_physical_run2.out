@@ -1,0 +1,367 @@
+=== ASSIGN fresh ride ===
+{
+  "ok": true,
+  "rideId": "d55c5cb8-d647-436c-b075-930bacc51392",
+  "state": "DRIVER_ASSIGNED",
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "d55c5cb8-d647-436c-b075-930bacc51392",
+    "createOffer": {
+      "status": 201,
+      "body": {
+        "offerId": "d55c5cb8-d647-436c-b075-930bacc51392_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "d55c5cb8-d647-436c-b075-930bacc51392",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "amountMinor": 114000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "status": "PENDING",
+        "requestVersion": 1,
+        "expiresAt": "2026-10-08T08:01:02.351Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-10-08T07:58:02.351Z",
+        "selectedAt": null,
+        "withdrawnAt": null,
+        "rideState": "OFFERS_AVAILABLE",
+        "rideVersion": 2
+      }
+    },
+    "selectOffer": {
+      "status": 200,
+      "body": {
+        "rideId": "d55c5cb8-d647-436c-b075-930bacc51392",
+        "state": "DRIVER_ASSIGNED",
+        "version": 3,
+        "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "agreedFareMinor": 114000,
+        "agreedOfferId": "d55c5cb8-d647-436c-b075-930bacc51392_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "currency": "PKR"
+      }
+    }
+  }
+}
+ride d55c5cb8-d647-436c-b075-930bacc51392
+=== TEST1 initial frame (no RTDB fix yet) ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=51ms (0ms mobile, 0ms wifi, 51ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5283 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11597 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (11597 bytes in 0.006s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (8443 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (8450 bytes in 0.004s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.0 MB/s (6000 bytes in 0.006s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5998 bytes in 0.004s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6003 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (5282 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (11596 bytes in 0.004s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.8 MB/s (11596 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (11596 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (8442 bytes in 0.003s)
+  TAP 'My rides'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (9901 bytes in 0.004s)
+  TAP 'Driver assigned\nDRIVER_ASSIGNED\nLiberty Market Lahore → Gulberg Lahore'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (10588 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (10588 bytes in 0.005s)
+/sdcard/map2a_t1_initial.png: 1 file pulled, 0 skipped. 17.8 MB/s (462323 bytes in 0.025s)
+  t1 {'activeRide': True, 'googleMap': True, 'pickup': True, 'destination': True, 'waiting': True, 'locationUpdating': False, 'driverMarker': False, 'recenter': True, 'status': 'DRIVER_ASSIGNED', 'cancel': True}
+=== TEST2 driver L2 first publish ===
+  login as driver (03012345677)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=57ms (0ms mobile, 0ms wifi, 57ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5283 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11597 bytes in 0.003s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (8443 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (8450 bytes in 0.007s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5998 bytes in 0.004s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6003 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (5282 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (11596 bytes in 0.004s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11596 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (8447 bytes in 0.004s)
+  TAP 'Switch to driver mode\nEarn with the same account'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (10490 bytes in 0.005s)
+TAP exact My trips  My trips
+=== trips fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-08 12:58 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-08 12:53 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-08 12:45 | Agreed fare Rs 1140
+TAP  Assigned — head to pickup  Assigned — head to pickup|DRIVER_ASSIGNED|Liberty Market Lahore → Gulberg Lahor
+=== ride_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== map2b_drv_ready_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+status Location is ready
+  driver ready Location is ready
+/sdcard/map2a_t2_drv.png: 1 file pulled, 0 skipped. 15.9 MB/s (226650 bytes in 0.014s)
+=== TEST2 passenger after first fix ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=42ms (0ms mobile, 0ms wifi, 42ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (5283 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.2 MB/s (11597 bytes in 0.003s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (8448 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.1 MB/s (8455 bytes in 0.007s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (5998 bytes in 0.003s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6003 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (5282 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.5 MB/s (11596 bytes in 0.003s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (11596 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11596 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (8442 bytes in 0.005s)
+  TAP 'My rides'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (9901 bytes in 0.005s)
+  TAP 'Driver assigned\nDRIVER_ASSIGNED\nLiberty Market Lahore → Gulberg Lahore'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (10588 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (10588 bytes in 0.004s)
+/sdcard/map2a_t2_pax_after_fix.png: 1 file pulled, 0 skipped. 20.0 MB/s (450501 bytes in 0.021s)
+  t2 {'activeRide': True, 'googleMap': True, 'pickup': True, 'destination': True, 'waiting': True, 'locationUpdating': False, 'driverMarker': False, 'recenter': True, 'status': 'DRIVER_ASSIGNED', 'cancel': True}
+=== TEST3 multi-publish while passenger foreground (HTTP = L2 contract) ===
+
+Exception occurred while executing 'providers':
+java.lang.IllegalArgumentException: gps provider is not a test provider
+	at com.android.server.location.provider.LocationProviderManager.setMockProviderLocation(LocationProviderManager.java:1727)
+	at com.android.server.location.LocationManagerService.setTestProviderLocation(LocationManagerService.java:1858)
+	at com.android.server.location.LocationShellCommand.handleSetTestProviderLocation(LocationShellCommand.java:359)
+	at com.android.server.location.LocationShellCommand.parseProvidersCommand(LocationShellCommand.java:104)
+	at com.android.server.location.LocationShellCommand.onCommand(LocationShellCommand.java:82)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at com.android.server.location.LocationManagerService.handleShellCommand(LocationManagerService.java:1882)
+	at android.os.Binder.onShellCommand(Binder.java:1138)
+	at android.os.Binder.shellCommand(Binder.java:1085)
+	at android.os.Binder.onTransact(Binder.java:903)
+	at android.location.ILocationManager$Stub.onTransact(ILocationManager.java:1264)
+	at android.os.Binder.execTransactInternal(Binder.java:1321)
+	at android.os.Binder.execTransact(Binder.java:1280)
+  publish 2 200 True
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (10867 bytes in 0.003s)
+/sdcard/map2a_t3_tick_1.png: 1 file pulled, 0 skipped. 17.5 MB/s (469064 bytes in 0.026s)
+
+Exception occurred while executing 'providers':
+java.lang.IllegalArgumentException: gps provider is not a test provider
+	at com.android.server.location.provider.LocationProviderManager.setMockProviderLocation(LocationProviderManager.java:1727)
+	at com.android.server.location.LocationManagerService.setTestProviderLocation(LocationManagerService.java:1858)
+	at com.android.server.location.LocationShellCommand.handleSetTestProviderLocation(LocationShellCommand.java:359)
+	at com.android.server.location.LocationShellCommand.parseProvidersCommand(LocationShellCommand.java:104)
+	at com.android.server.location.LocationShellCommand.onCommand(LocationShellCommand.java:82)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at com.android.server.location.LocationManagerService.handleShellCommand(LocationManagerService.java:1882)
+	at android.os.Binder.onShellCommand(Binder.java:1138)
+	at android.os.Binder.shellCommand(Binder.java:1085)
+	at android.os.Binder.onTransact(Binder.java:903)
+	at android.location.ILocationManager$Stub.onTransact(ILocationManager.java:1264)
+	at android.os.Binder.execTransactInternal(Binder.java:1321)
+	at android.os.Binder.execTransact(Binder.java:1280)
+  publish 3 200 True
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (10867 bytes in 0.003s)
+/sdcard/map2a_t3_tick_2.png: 1 file pulled, 0 skipped. 19.5 MB/s (469481 bytes in 0.023s)
+
+Exception occurred while executing 'providers':
+java.lang.IllegalArgumentException: gps provider is not a test provider
+	at com.android.server.location.provider.LocationProviderManager.setMockProviderLocation(LocationProviderManager.java:1727)
+	at com.android.server.location.LocationManagerService.setTestProviderLocation(LocationManagerService.java:1858)
+	at com.android.server.location.LocationShellCommand.handleSetTestProviderLocation(LocationShellCommand.java:359)
+	at com.android.server.location.LocationShellCommand.parseProvidersCommand(LocationShellCommand.java:104)
+	at com.android.server.location.LocationShellCommand.onCommand(LocationShellCommand.java:82)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at com.android.server.location.LocationManagerService.handleShellCommand(LocationManagerService.java:1882)
+	at android.os.Binder.onShellCommand(Binder.java:1138)
+	at android.os.Binder.shellCommand(Binder.java:1085)
+	at android.os.Binder.onTransact(Binder.java:903)
+	at android.location.ILocationManager$Stub.onTransact(ILocationManager.java:1264)
+	at android.os.Binder.execTransactInternal(Binder.java:1321)
+	at android.os.Binder.execTransact(Binder.java:1280)
+  publish 4 200 True
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (10867 bytes in 0.005s)
+/sdcard/map2a_t3_tick_3.png: 1 file pulled, 0 skipped. 18.9 MB/s (468288 bytes in 0.024s)
+=== TEST4–6 state transitions via HTTP (passenger stays) ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (10888 bytes in 0.004s)
+/sdcard/map2a_t_en_route.png: 1 file pulled, 0 skipped. 16.3 MB/s (446579 bytes in 0.026s)
+   en_route 200 DRIVER_EN_ROUTE DRIVER_EN_ROUTE
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (11201 bytes in 0.004s)
+/sdcard/map2a_t_arrived.png: 1 file pulled, 0 skipped. 19.2 MB/s (456084 bytes in 0.023s)
+   arrived 200 DRIVER_ARRIVED DRIVER_ARRIVED
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (11202 bytes in 0.004s)
+/sdcard/map2a_t_start.png: 1 file pulled, 0 skipped. 14.3 MB/s (426604 bytes in 0.028s)
+   start 200 RIDE_STARTED DRIVER_ARRIVED
+=== TEST7 terminal cancel ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (10593 bytes in 0.004s)
+  TAP 'Cancel ride\nCancel ride'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.9 MB/s (5029 bytes in 0.005s)
+  TAP 'Cancel ride\nCancel ride'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (10124 bytes in 0.006s)
+/sdcard/map2a_t7_cancel.png: 1 file pulled, 0 skipped. 18.1 MB/s (417689 bytes in 0.022s)
+=== TEST8 MAP-1 smoke ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=51ms (0ms mobile, 0ms wifi, 51ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5283 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (11597 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11597 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (8443 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (8450 bytes in 0.003s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.0 MB/s (6000 bytes in 0.006s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (6000 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (5998 bytes in 0.003s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6003 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (5282 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.5 MB/s (11596 bytes in 0.003s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (11596 bytes in 0.004s)
+  TAP 'Where are you headed?\nSet pickup & destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (9544 bytes in 0.004s)
+  TAP 'Use current location'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (12190 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (11770 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (9879 bytes in 0.004s)
+  MISS ('Liberty Market',)
+  MISS ('Liberty',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (9879 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9879 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9879 bytes in 0.004s)
+/sdcard/map2a_map1_smoke_review.png: 1 file pulled, 0 skipped. 15.7 MB/s (364507 bytes in 0.022s)
+DONE {"verdict": "MAP-2B PHYSICAL PROOF BLOCKED", "failed": ["driverMarkerAfterFirstFix", "firstFixIntentionalReframe"], "rideId": "d55c5cb8-d647-436c-b075-930bacc51392"}

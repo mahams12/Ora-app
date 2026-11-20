@@ -1,0 +1,10 @@
+OK
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+Traceback (most recent call last):
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/driver_offer_gate.py", line 350, in <module>
+    main()
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/driver_offer_gate.py", line 298, in main
+    rid = create_passenger_ride()
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/driver_offer_gate.py", line 205, in create_passenger_ride
+    raise RuntimeError("pricing not loaded on passenger review")
+RuntimeError: pricing not loaded on passenger review

@@ -101,25 +101,4 @@ class AuthRemoteDataSource {
     final data = response.data;
     return data is Map<String, dynamic> ? data : const {};
   }
-
-  /// POST /v1/auth/vendor-application — partner application (cargo /
-  /// rental host / service provider). Idempotent server-side: replaying
-  /// while pending or approved returns the profile unchanged. Returns the
-  /// updated profile so the session can re-gate immediately.
-  Future<UserProfileModel> submitVendorApplication({
-    required String type,
-    Map<String, dynamic>? details,
-    required RequestContext context,
-  }) async {
-    final response = await _apiClient.post<Map<String, dynamic>>(
-      '/auth/vendor-application',
-      data: {
-        'type': type,
-        if (details != null && details.isNotEmpty) 'details': details,
-      },
-      context: context,
-      idempotent: true,
-    );
-    return UserProfileModel.fromJson(response.data!);
-  }
 }

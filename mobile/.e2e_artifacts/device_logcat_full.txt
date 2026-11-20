@@ -1,0 +1,1356 @@
+--------- beginning of main
+09-22 12:08:56.893 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb:export ANDROID_LOG_TAGS=''; exec logcat '-v' 'time''
+09-22 12:08:56.901 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb,raw:monkey -p com.ora.ora -c android.intent.category.LAUNCHER 1'
+09-22 12:08:57.116 D/AndroidRuntime( 7909): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-22 12:08:57.127 I/AndroidRuntime( 7909): Using default boot image
+09-22 12:08:57.128 I/AndroidRuntime( 7909): Leaving lock profiling enabled
+09-22 12:08:57.128 D/SecNativeFeatureCppIf( 7909): encoded
+09-22 12:08:57.128 D/SecNativeFeatureCppIf( 7909): decoding and unzip finish
+09-22 12:08:57.128 D/SecNativeFeatureCppIf( 7909): use unCompDataBuff. encoded
+09-22 12:08:57.129 D/SecNativeFeatureCppIf( 7909): Free unCompDataBuff
+09-22 12:08:57.129 D/AndroidRuntime( 7909): addProductProperty: pBrand1 is not null
+09-22 12:08:57.129 D/AndroidRuntime( 7909): addProductProperty: not brand or 7
+09-22 12:08:57.131 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:08:57.131 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:08:57.131 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:08:57.132 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:08:57.132 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:08:57.133 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:08:57.136 I/app_process( 7909): Using generational CollectorTypeCC GC.
+09-22 12:08:57.142 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1149, isSameBssidAndFreq true
+09-22 12:08:57.143 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+--------- beginning of system
+09-22 12:08:57.151 I/SDHMS:LOAD( 3951): type: LoadsFreqs, value: 0:0:88:873720:1443000:850000:623299:1800000:500000:332:349:0
+09-22 12:08:57.267 D/nativeloader( 7909): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+09-22 12:08:57.303 D/nativeloader( 7909): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-22 12:08:57.304 D/app_process( 7909): Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+09-22 12:08:57.304 D/app_process( 7909): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+09-22 12:08:57.307 D/nativeloader( 7909): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-22 12:08:57.309 D/nativeloader( 7909): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-22 12:08:57.311 I/app_process( 7909): Priority-to-niceness mapping: 19, 16, 13, 10, 0, -2, -4, -5, -6, -8
+09-22 12:08:57.351 E/SemDvfsManager_JNI( 7909): SemDvfsManager: registerfunction enter
+09-22 12:08:57.351 E/SemAffinityControl( 7909): SemAffinityControl: registerfunction enter
+09-22 12:08:57.374 D/nativeloader( 7909): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+09-22 12:08:57.375 D/AndroidRuntime( 7909): Calling main entry com.android.commands.monkey.Monkey
+09-22 12:08:57.376 W/Monkey  ( 7909): args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+09-22 12:08:57.377 W/Monkey  ( 7909):  arg: "-p"
+09-22 12:08:57.377 W/Monkey  ( 7909):  arg: "com.ora.ora"
+09-22 12:08:57.377 W/Monkey  ( 7909):  arg: "-c"
+09-22 12:08:57.377 W/Monkey  ( 7909):  arg: "android.intent.category.LAUNCHER"
+09-22 12:08:57.378 W/Monkey  ( 7909):  arg: "1"
+09-22 12:08:57.378 W/Monkey  ( 7909): data="com.ora.ora"
+09-22 12:08:57.378 W/Monkey  ( 7909): data="android.intent.category.LAUNCHER"
+09-22 12:08:57.411 D/CompatibilityChangeReporter( 1451): Compat change id reported: 161145287; UID 2000; state: DISABLED
+09-22 12:08:57.411 W/BroadcastQueue( 1451): Skipping deliver [background] BroadcastRecord{1a5e61d u-1 android.net.conn.CONNECTIVITY_CHANGE} to ReceiverList{72e0092 7909 (unknown name)/2000/u-1 remote:fc88c7}: process gone or crashing
+09-22 12:08:57.438 D/ActivityTaskManager( 1451): startActivityAsUser: callingPid=7909, callingUid=2000, caller=com.android.server.wm.ActivityTaskManagerService.startActivityAsUser:1816 com.android.server.am.ActivityManagerService.startActivityAsUserWithFeature:3747 android.app.IActivityManager$Stub.onTransact:4231 com.android.server.am.ActivityManagerService.onTransact:3135 android.os.Binder.execTransactInternal:1316 android.os.Binder.execTransact:1280 <bottom of call stack> 
+09-22 12:08:57.439 I/ChimeraSystemEventListener( 1451): appLaunchIntent package name is: com.ora.ora
+09-22 12:08:57.439 D/CompatibilityChangeReporter( 1451): Compat change id reported: 161252188; UID 10251; state: DISABLED
+09-22 12:08:57.440 I/Pageboost( 1451): onAppLaunch : com.ora.ora
+09-22 12:08:57.440 I/ActivityTaskManager( 1451): START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.ora.ora/.MainActivity} from uid 2000
+09-22 12:08:57.441 D/CompatibilityChangeReporter( 1451): Compat change id reported: 194480991; UID 10251; state: ENABLED
+09-22 12:08:57.442 D/ActivityTaskManager( 1451): TaskLaunchParamsModifier:task=null activity=ActivityRecord{2762660 u0 com.ora.ora/.MainActivity} display-id=0 display-windowing-mode=1 suggested-display-area=DefaultTaskDisplayArea@252197715
+09-22 12:08:57.442 D/ActivityTaskManager( 1451): TaskLaunchParamsModifier:task=Task{d84322b #541 type=standard I=com.ora.ora/.MainActivity U=0 visible=true visibleRequested=true mode=fullscreen translucent=false sz=1} activity=ActivityRecord{2762660 u0 com.ora.ora/.MainActivity} t-1} display-from-task=0 display-id=0 display-windowing-mode=1 suggested-display-area=DefaultTaskDisplayArea@252197715 non-freeform-display display-area=DefaultTaskDisplayArea@252197715 maximized-bounds
+09-22 12:08:57.444 I/SemDvfsHyPerManager( 1451): acquire hyper - AMS_ACT_START/1451@17, type = -999
+09-22 12:08:57.444 D/ActivityManagerPerformance( 1451): AMP_acquire() ACT_START
+09-22 12:08:57.445 I/HYPER-HAL(  870): [RequestManager.cpp]acquire(): Acquired ID : 1078263  [1451 / 17]    HINT : AMS_ACT_START    list : 
+09-22 12:08:57.446 I/mtkpower_client(  870): perf_lock_acq, hdl:0, dur:0, num:2, tid:918
+09-22 12:08:57.447 I/mtkpower_client(  870): ret_hdl:183
+09-22 12:08:57.447 I/mtkpower_client(  870): perf_lock_acq, hdl:0, dur:0, num:2, tid:918
+09-22 12:08:57.448 I/libPowerHal(  873): [perfLockAcq] idx:0 hdl:183 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:183
+09-22 12:08:57.448 I/libPowerHal(  873): vendor.samsung.: cpu_ctrl set cpu freq: 1800000 -1 -1 -1
+09-22 12:08:57.449 I/mtkpower_client(  870): ret_hdl:184
+09-22 12:08:57.449 I/libPowerHal(  873): [perfLockAcq] idx:1 hdl:184 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:184
+09-22 12:08:57.450 I/libPowerHal(  873): [PE] (less) /proc/mcdi/state set +prefix:enable 0;
+09-22 12:08:57.450 I/mtkpower_client(  870): perf_lock_acq, hdl:0, dur:0, num:2, tid:918
+09-22 12:08:57.450 I/mtkpower_client(  870): ret_hdl:185
+09-22 12:08:57.451 I/libPowerHal(  873): [perfLockAcq] idx:2 hdl:185 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:185
+09-22 12:08:57.451 I/libPowerHal(  873): [PE] vendor.samsung. update cmd:1000000, param:0
+09-22 12:08:57.451 I/libPowerHal(  873): [PE] vendor.samsung. update cmd:1000000 param:0
+09-22 12:08:57.454 D/CompatibilityChangeReporter( 1451): Compat change id reported: 194833441; UID 10251; state: ENABLED
+09-22 12:08:57.455 I/Pageboost( 1451): stop alp
+09-22 12:08:57.455 E/pageboostd( 2911): Received HALT command code 2
+09-22 12:08:57.456 I/Monkey  ( 7909): Events injected: 1
+09-22 12:08:57.457 D/SettingsProvider( 1451): isChangeAllowed() : name = accelerometer_rotation
+09-22 12:08:57.457 D/SettingsProvider( 1451): isChangeAllowed() : name = user_rotation
+09-22 12:08:57.458 V/WindowManager( 1451): rotationForOrientation(orient=SCREEN_ORIENTATION_UNSPECIFIED (-1), last=ROTATION_0 (0)); user=ROTATION_0 (0) USER_ROTATION_LOCKED
+09-22 12:08:57.458 D/WindowManager( 1451): rotationForOrientation, orientationSource=ActivityRecord{9726a5 u0 com.ora.ora/.MainActivity} t541}
+09-22 12:08:57.458 V/WindowManager( 1451): Computed rotation=ROTATION_0 (0) for display id=0 based on lastOrientation=SCREEN_ORIENTATION_UNSPECIFIED (-1) and oldRotation=ROTATION_0 (0), caller=com.android.server.wm.DisplayContent.updateRotationUnchecked:2410 com.android.server.wm.WindowManagerService.updateRotationUnchecked:4778 com.android.server.wm.WindowManagerService.freezeDisplayRotation:4678 com.android.server.wm.WindowManagerService.freezeRotation:4637 android.view.IWindowManager$Stub.onTransact:2530 com.android.server.wm.WindowManagerService.onTransact:1608 
+09-22 12:08:57.459 I/ViewRootImpl@7e4f637[MainActivity]( 1018): stopped(false) old = false
+09-22 12:08:57.463 D/SettingsProvider( 1451): isChangeAllowed() : name = accelerometer_rotation
+09-22 12:08:57.463 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:08:57.464 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:08:57.464 D/SettingsProvider( 1451): isChangeAllowed() : name = user_rotation
+09-22 12:08:57.464 V/WindowManager( 1451): rotationForOrientation(orient=SCREEN_ORIENTATION_UNSPECIFIED (-1), last=ROTATION_0 (0)); user=ROTATION_0 (0) USER_ROTATION_LOCKED
+09-22 12:08:57.465 D/WindowManager( 1451): rotationForOrientation, orientationSource=ActivityRecord{9726a5 u0 com.ora.ora/.MainActivity} t541}
+09-22 12:08:57.465 V/WindowManager( 1451): Computed rotation=ROTATION_0 (0) for display id=0 based on lastOrientation=SCREEN_ORIENTATION_UNSPECIFIED (-1) and oldRotation=ROTATION_0 (0), caller=com.android.server.wm.DisplayContent.updateRotationUnchecked:2410 com.android.server.wm.WindowManagerService.updateRotationUnchecked:4778 com.android.server.wm.WindowManagerService.thawDisplayRotation:4719 com.android.server.wm.WindowManagerService.thawRotation:4683 android.view.IWindowManager$Stub.onTransact:2536 com.android.server.wm.WindowManagerService.onTransact:1608 
+09-22 12:08:57.467 I/RecentsOrientedState( 2341): current RecentsOrientedState: [this=RecentsOrientedState@93218305 mOrientationHandler=PortraitPagedViewHandler@108784806 mDisplayRotation=0 mTouchRotation=0 mRecentsActivityRotation=0 mRecentsRotation=0 isRecentsActivityRotationAllowed=false mSystemRotation=true mStateId=37248 mFlags=299]
+09-22 12:08:57.468 V/WindowManager( 1451): rotationForOrientation(orient=SCREEN_ORIENTATION_UNSPECIFIED (-1), last=ROTATION_0 (0)); user=ROTATION_0 (0) 
+09-22 12:08:57.468 D/WindowManager( 1451): rotationForOrientation, orientationSource=ActivityRecord{9726a5 u0 com.ora.ora/.MainActivity} t541}
+09-22 12:08:57.469 I/DecorView( 1018): notifyKeepScreenOnChanged: keepScreenOn=false
+09-22 12:08:57.469 V/WindowManager( 1451): Computed rotation=ROTATION_0 (0) for display id=0 based on lastOrientation=SCREEN_ORIENTATION_UNSPECIFIED (-1) and oldRotation=ROTATION_0 (0), caller=com.android.server.wm.DisplayContent.updateRotationUnchecked:2410 com.android.server.wm.WindowManagerService.updateRotationUnchecked:4778 com.android.server.wm.WindowManagerService.updateRotation:4759 com.android.server.wm.DisplayRotation$SettingsObserver.onChange:1929 android.database.ContentObserver.onChange:154 android.database.ContentObserver.onChange:170 
+09-22 12:08:57.472 V/Navbar.Store( 1950): handleEvent(0) OnRotationLockedChanged(rotationLocked=false) [Module] NavBarStoreImpl
+09-22 12:08:57.473 D/TspStateManager( 1451): updateCustomValue customSetting=
+09-22 12:08:57.479 D/TspStateManager( 1451): updateCustomValue customSetting=
+09-22 12:08:57.481 D/TspStateManager( 1451): updateCustomValue customSetting=
+09-22 12:08:57.485 I/MSHandlerLifeCycle( 1018): removeMultiSplitHandler: no exist. decor=DecorView@4dae6a[MainActivity]
+09-22 12:08:57.485 I/Monkey  ( 7909): ## Network stats: elapsed time=32ms (0ms mobile, 0ms wifi, 32ms not connected)
+09-22 12:08:57.486 I/app_process( 7909): System.exit called, status: 0
+09-22 12:08:57.487 I/AndroidRuntime( 7909): VM exiting with result code 0.
+09-22 12:08:57.488 I/ViewRootImpl@7e4f637[MainActivity]( 1018): performTraversals params={(0,0)(fillxfill) sim={adjust=resize forwardNavigation} ty=BASE_APPLICATION fmt=TRANSLUCENT wanim=0x1030001
+09-22 12:08:57.488 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   fl=81810100
+09-22 12:08:57.488 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   pfl=16020040
+09-22 12:08:57.488 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   vsysui=500
+09-22 12:08:57.488 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   bhv=DEFAULT
+09-22 12:08:57.488 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   fitSides= naviIconColor=0}
+09-22 12:08:57.489 I/ViewRootImpl@7e4f637[MainActivity]( 1018): performTraversals mFirst=false windowShouldResize=false viewVisibilityChanged=false mForceNextWindowRelayout=false params={(0,0)(fillxfill) sim={adjust=resize forwardNavigation} ty=BASE_APPLICATION fmt=TRANSLUCENT wanim=0x1030001
+09-22 12:08:57.489 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   fl=81810100
+09-22 12:08:57.489 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   pfl=16020040
+09-22 12:08:57.489 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   vsysui=500
+09-22 12:08:57.489 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   bhv=DEFAULT
+09-22 12:08:57.489 I/ViewRootImpl@7e4f637[MainActivity]( 1018):   fitSides= naviIconColor=0}
+09-22 12:08:57.490 V/WindowManager( 1451): Relayout Window{6a68065 u0 com.ora.ora/com.ora.ora.MainActivity}: viewVisibility=0 req=1080x2400 d0
+09-22 12:08:57.493 D/SettingsHelper( 1950): onChange() COMPLETED elapsed= 5
+09-22 12:08:57.493 V/WindowManager( 1451): Relayout hash=6a68065, pid=1018, syncId=-1: mAttrs={(0,0)(fillxfill) sim={adjust=resize forwardNavigation} ty=BASE_APPLICATION fmt=TRANSLUCENT wanim=0x1030001
+09-22 12:08:57.493 V/WindowManager( 1451):   fl=81810100
+09-22 12:08:57.493 V/WindowManager( 1451):   pfl=16020040
+09-22 12:08:57.493 V/WindowManager( 1451):   vsysui=500
+09-22 12:08:57.493 V/WindowManager( 1451):   bhv=DEFAULT
+09-22 12:08:57.493 V/WindowManager( 1451):   fitSides= naviIconColor=0}
+09-22 12:08:57.494 V/SettingsHelper( 1950): *** broadcastChange for content://settings/system/accelerometer_rotation
+09-22 12:08:57.495 I/ViewRootImpl@7e4f637[MainActivity]( 1018): updateBlastSurfaceIfNeeded mBlastBufferQueue=0xb400007553347800 isSameSurfaceControl=true
+09-22 12:08:57.496 I/BLASTBufferQueue( 1018): update, w= 1080 h= 2400 mName = ViewRootImpl@7e4f637[MainActivity] mNativeObject= 0xb400007553347800 sc.mNativeObject= 0xb4000074b90e01c0 format= -3 caller= android.view.ViewRootImpl.updateBlastSurfaceIfNeeded:2898 android.view.ViewRootImpl.relayoutWindow:9847 android.view.ViewRootImpl.performTraversals:3884 android.view.ViewRootImpl.doTraversal:3116 android.view.ViewRootImpl$TraversalRunnable.run:10885 android.view.Choreographer$CallbackRecord.run:1301 
+09-22 12:08:57.496 I/ViewRootImpl@7e4f637[MainActivity]( 1018): Relayout returned: old=(0,0,1080,2400) new=(0,0,1080,2400) req=(1080,2400)0 dur=6 res=0x0 s={true 0xb4000074cf6bf000} ch=false seqId=0
+09-22 12:08:57.497 I/ViewRootImpl@7e4f637[MainActivity]( 1018): updateBoundsLayer: t = android.view.SurfaceControl$Transaction@cb60f4 sc = Surface(name=Bounds for - com.ora.ora/com.ora.ora.MainActivity@0)/@0xedad01d frame = 60
+09-22 12:08:57.497 I/ViewRootImpl@7e4f637[MainActivity]( 1018): mWNT: t=0xb400007634ba0300 mBlastBufferQueue=0xb400007553347800 fn= 60 caller= android.view.ViewRootImpl.prepareSurfaces:2985 android.view.ViewRootImpl.performTraversals:4233 android.view.ViewRootImpl.doTraversal:3116 
+09-22 12:08:57.498 D/Tile.RotationLockTile( 1950):  OnChangedCallback : 
+09-22 12:08:57.500 D/Tile.RotationLockTile( 1950):  handleUpdateState: true orientation = true
+09-22 12:08:57.501 V/Navbar.Store( 1950): handleEvent(0) OnRotationLockedChanged(rotationLocked=false) [Module] NavBarStoreImpl
+09-22 12:08:57.511 I/BufferQueueProducer(  904): [com.ora.ora/com.ora.ora.MainActivity$_1018#318](this:0xb40000741831e838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.05 dur=20680.63 max=20680.63 min=20680.63
+09-22 12:08:57.512 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:08:57.512 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:08:57.513 V/QsExpandAnimator( 1950): setQsExpansionPosition 0.0
+09-22 12:08:57.516 V/QsExpandAnimator( 1950): updateAnimators
+09-22 12:08:57.516 V/QsExpandAnimator( 1950): clearAnimationState 
+09-22 12:08:57.516 V/QsExpandAnimator( 1950): updateViews
+09-22 12:08:57.518 V/QsExpandAnimator( 1950): updateTileAnimator
+09-22 12:08:57.519 V/QsExpandAnimator( 1950): updateHeaderAnimator
+09-22 12:08:57.519 V/QsExpandAnimator( 1950): updateBarAnimator
+09-22 12:08:57.519 V/QsExpandAnimator( 1950): setQsExpansionPosition 0.0
+09-22 12:08:57.519 V/QsExpandAnimator( 1950): onAnimationAtStart
+09-22 12:08:57.609 D/IpClient/wlan0( 1929): addressUpdated: 2400:adc5:485:900:f8ef:ebff:fe93:127b/64 on ifindex 40 flags 0x00000100 scope 0
+09-22 12:08:57.610 D/IpClient/wlan0( 1929): addressUpdated: 2400:adc5:485:900:8c14:2267:4bf0:2008/64 on ifindex 40 flags 0x00000001 scope 0
+09-22 12:08:57.610 W/AlarmManager( 1929): Unrecognized alarm listener com.android.networkstack.android.net.ip.IpClientLinkObserver$Dhcp6PdPreferredPrefixAlarmListener@4937db5
+09-22 12:08:57.745 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=58.85 dur=1002.55 max=33.72 min=15.95
+09-22 12:08:57.757 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:08:57.758 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:08:57.758 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:08:57.846 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:58.913677,dur:1001.47,max:34.08,min:15.31  
+09-22 12:08:57.882 D/io_stats(  590): !@ 179,0 r 1922606 29009714 w 892016 11382904 d 0 0 f 0 0 iot 759036 0 th 0 0 0 pt 0 inp 0 0 3515.644
+09-22 12:08:58.117 D/SecPowerUI.Notification( 1950): showChargingNotice oldChargingType : 11 / currentChargingType : 11, oldChargingTime : 7315000 / mChargingTime : 7315000
+09-22 12:08:58.117 D/SecPowerUI.Notification( 1950): There is no change about charging status, so return!
+09-22 12:08:58.748 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.82 dur=1003.08 max=16.77 min=16.65
+09-22 12:08:58.849 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.819767,dur:1003.01,max:16.84,min:16.63  
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.ACCESS_NETWORK_STATE in package: com.google.android.gm at: Binary XML file line #342
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.FOREGROUND_SERVICE in package: com.google.android.gm at: Binary XML file line #345
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.FOREGROUND_SERVICE_DATA_SYNC in package: com.google.android.gm at: Binary XML file line #346
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.INTERNET in package: com.google.android.gm at: Binary XML file line #348
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.RECEIVE_BOOT_COMPLETED in package: com.google.android.gm at: Binary XML file line #349
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.VIBRATE in package: com.google.android.gm at: Binary XML file line #350
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.WAKE_LOCK in package: com.google.android.gm at: Binary XML file line #351
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.WRITE_EXTERNAL_STORAGE in package: com.google.android.gm at: Binary XML file line #353
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.POST_NOTIFICATIONS in package: com.google.android.gm at: Binary XML file line #354
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: com.google.android.c2dm.permission.RECEIVE in package: com.google.android.gm at: Binary XML file line #356
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.GET_PACKAGE_SIZE in package: com.google.android.gm at: Binary XML file line #357
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: com.google.android.providers.gsf.permission.READ_GSERVICES in package: com.google.android.gm at: Binary XML file line #358
+09-22 12:08:59.006 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: com.google.android.providers.gsf.permission.READ_GSERVICES in package: com.google.android.gm at: Binary XML file line #363
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.GET_PACKAGE_SIZE in package: com.google.android.gm at: Binary XML file line #364
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.ACCESS_NETWORK_STATE in package: com.google.android.gm at: Binary XML file line #366
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.CAMERA in package: com.google.android.gm at: Binary XML file line #378
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.FOREGROUND_SERVICE in package: com.google.android.gm at: Binary XML file line #393
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.INTERNET in package: com.google.android.gm at: Binary XML file line #394
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.RECORD_AUDIO in package: com.google.android.gm at: Binary XML file line #396
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.WAKE_LOCK in package: com.google.android.gm at: Binary XML file line #397
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.POST_NOTIFICATIONS in package: com.google.android.gm at: Binary XML file line #406
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.FOREGROUND_SERVICE_DATA_SYNC in package: com.google.android.gm at: Binary XML file line #412
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: com.google.android.gm.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION in package: com.google.android.gm at: Binary XML file line #418
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.VIBRATE in package: com.google.android.gm at: Binary XML file line #419
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: android.permission.READ_CONTACTS in package: com.google.android.gm at: Binary XML file line #420
+09-22 12:08:59.007 W/PackageParsing( 1451): Ignoring duplicate uses-permissions/uses-permissions-sdk-m: com.google.android.hangouts.START_HANGOUT in package: com.google.android.gm at: Binary XML file line #421
+09-22 12:08:59.010 W/PackageParsing( 1451): No actions in intent-filter at /data/app/vmdl1681960439.tmp/base.apk Binary XML file line #1024
+09-22 12:08:59.011 W/PackageParsing( 1451): No actions in intent-filter at /data/app/vmdl1681960439.tmp/base.apk Binary XML file line #1074
+09-22 12:08:59.026 W/PackageParsing( 1451): Unknown element under <manifest>: uses-sdk at /data/app/vmdl1681960439.tmp/base.apk Binary XML file line #0
+09-22 12:08:59.027 W/PackageParsing( 1451): Unknown element under <manifest>: uses-sdk at /data/app/vmdl1681960439.tmp/base.apk Binary XML file line #0
+09-22 12:08:59.027 W/PackageParsing( 1451): Unknown element under <manifest>: uses-sdk at /data/app/vmdl1681960439.tmp/base.apk Binary XML file line #0
+09-22 12:08:59.029 W/PackageManager( 1451): verifying app can be installed or not
+09-22 12:08:59.029 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled
+09-22 12:08:59.029 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled :  Checking PKG WL - false
+09-22 12:08:59.029 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled :  Checking PKG BL - true
+09-22 12:08:59.029 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled :  Checking PERM BL - true
+09-22 12:08:59.029 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled :  Checking SIG BL - true
+09-22 12:08:59.029 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled :  Checking PKG WL - false
+09-22 12:08:59.029 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled :  Checking PKG BL - true
+09-22 12:08:59.030 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled :  Checking PERM BL - true
+09-22 12:08:59.030 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled :  Checking SIG BL - true
+09-22 12:08:59.030 D/ApplicationPolicy( 1451): isApplicationInstallationEnabled :  enabled true
+09-22 12:08:59.031 D/RestrictionPolicy( 1451): isNewAdminInstallationEnabledInternal : false
+09-22 12:08:59.039 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:08:59.040 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:08:59.041 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:08:59.046 I/ActivityManager( 1451): Force stopping com.google.android.gm appid=10236 user=-1: installPackageLI
+09-22 12:08:59.047 I/ActivityManager( 1451): Killing 7420:com.google.android.gm/u0a236 (adj 985): stop com.google.android.gm due to installPackageLI
+09-22 12:08:59.049 I/PackageManager( 1451): Update system package com.google.android.gm code path from /data/app/~~-J3zevbRtZGcthH-zb_qow==/com.google.android.gm-Lpf6T2Q_xx0psT6YksQg_A== to /data/app/~~3EfjKeJP5uCD5lLcKDgI5Q==/com.google.android.gm-wR74iN9gLvG85sxQQSXuEA==; Retain data and using new
+09-22 12:08:59.050 D/ActivityManager( 1451): proc ProcessRecord{5446bd8 7420:com.google.android.gm/u0a236} already removed. so we skip next process.
+09-22 12:08:59.051 I/AppsFilter( 1451): interaction: PackageSetting{4b58c02 com.android.adbkeyboard/10285} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.051 I/AppsFilter( 1451): interaction: PackageSetting{f8f836f com.example.ai_based_content_recommendation_system/10401} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.051 I/AppsFilter( 1451): interaction: PackageSetting{2b91b86 com.ora.ora/10251} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.051 I/AppsFilter( 1451): interaction: PackageSetting{100f87c com.company.planet/10437} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.051 I/AppsFilter( 1451): interaction: PackageSetting{507c505 com.st.safeapp/10299} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.052 I/AppsFilter( 1451): interaction: PackageSetting{934995a com.pak.armyapp/10298} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.052 I/AppsFilter( 1451): interaction: PackageSetting{4b58c02 com.android.adbkeyboard/10285} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.052 I/AppsFilter( 1451): interaction: PackageSetting{f8f836f com.example.ai_based_content_recommendation_system/10401} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.052 I/AppsFilter( 1451): interaction: PackageSetting{2b91b86 com.ora.ora/10251} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.052 I/AppsFilter( 1451): interaction: PackageSetting{100f87c com.company.planet/10437} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.052 I/AppsFilter( 1451): interaction: PackageSetting{507c505 com.st.safeapp/10299} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.052 I/AppsFilter( 1451): interaction: PackageSetting{934995a com.pak.armyapp/10298} -> PackageSetting{494af64 com.google.android.gm/10236} BLOCKED
+09-22 12:08:59.060 I/libprocessgroup( 1451): Successfully killed process cgroup uid 10236 pid 7420 in 11ms
+09-22 12:08:59.112 D/ConnectivityService( 1451): releasing NetworkRequest [ REQUEST id=600, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10236 RequestorUid: 10236 RequestorPkg: com.google.android.gm UnderlyingNetworks: Null] ] (release request)
+09-22 12:08:59.112 V/ActivityManager( 1451): Got obituary of 7420:com.google.android.gm
+09-22 12:08:59.112 D/ConnectivityService( 1451):  Removing from current network [100 WIFI], leaving 140 requests.
+09-22 12:08:59.112 I/adbd    (24013): Remote process closed the socket (on MSG_PEEK)
+09-22 12:08:59.113 D/ConnectivityService( 1451): releasing NetworkRequest [ REQUEST id=597, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10236 RequestorUid: 10236 RequestorPkg: com.google.android.gm UnderlyingNetworks: Null] ] (release request)
+09-22 12:08:59.113 D/ConnectivityService( 1451):  Removing from current network [100 WIFI], leaving 138 requests.
+09-22 12:08:59.113 I/Zygote  (  846): Process 7420 exited due to signal 9 (Killed)
+09-22 12:08:59.177 D/ApplicationPolicy( 1451): getApplicationStateEnabled : pkg = com.google.android.gm userId : 0
+09-22 12:08:59.179 I/PackageManager( 1451): Permission ownership changed. Updating all permissions.
+09-22 12:08:59.485 I/SemDvfsHyPerManager( 1451): acquire hyper - AMS_RESUME_TAIL/1451@19, type = -999
+09-22 12:08:59.485 I/SemDvfsHyPerManager( 1451): acquire hyper - AMS_ACT_LAZY/1451@20, type = -999
+09-22 12:08:59.485 D/ActivityManagerPerformance( 1451): AMP_acquire() TAIL
+09-22 12:08:59.485 I/HYPER-HAL(  870): [RequestManager.cpp]acquire(): Acquired ID : 1081204  [1451 / 19]    HINT : AMS_RESUME_TAIL    list : 
+09-22 12:08:59.485 D/ActivityManagerPerformance( 1451): AMP_release() ACT_START
+09-22 12:08:59.486 I/mtkpower_client(  870): perf_lock_rel, hdl:184, tid:918
+09-22 12:08:59.486 I/mtkpower_client(  870): perf_lock_acq, hdl:0, dur:0, num:2, tid:918
+09-22 12:08:59.487 I/libPowerHal(  873): [perfLockRel] hdl:184, idx:1
+09-22 12:08:59.487 I/libPowerHal(  873): [PD] vendor.samsung. update cmd:1c3c000, param:1
+09-22 12:08:59.487 I/libPowerHal(  873): [PD] (less) /proc/mcdi/state set +prefix:enable 1;
+09-22 12:08:59.488 I/system_server( 1451): Background young concurrent copying GC freed 22MB AllocSpace bytes, 30(600KB) LOS objects, 17% free, 113MB/137MB, paused 481us,497us total 224.915ms
+09-22 12:08:59.488 I/mtkpower_client(  870): ret_hdl:186
+09-22 12:08:59.488 I/mtkpower_client(  870): perf_lock_rel, hdl:185, tid:918
+09-22 12:08:59.488 I/libPowerHal(  873): [perfLockAcq] idx:3 hdl:186 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:186
+09-22 12:08:59.489 I/libPowerHal(  873): [PE] (less) /proc/mcdi/state set +prefix:enable 0;
+09-22 12:08:59.489 I/mtkpower_client(  870): perf_lock_acq, hdl:0, dur:0, num:2, tid:918
+09-22 12:08:59.489 I/libPowerHal(  873): [perfLockRel] hdl:185, idx:2
+09-22 12:08:59.490 I/libPowerHal(  873): [PD] vendor.samsung. update cmd:1000000, param:-1
+09-22 12:08:59.490 I/libPowerHal(  873): [PD] vendor.samsung. update cmd:1000000 param:-1
+09-22 12:08:59.491 I/mtkpower_client(  870): ret_hdl:187
+09-22 12:08:59.491 I/libPowerHal(  873): [perfLockAcq] idx:1 hdl:187 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:187
+09-22 12:08:59.491 I/mtkpower_client(  870): perf_lock_rel, hdl:183, tid:918
+09-22 12:08:59.491 I/libPowerHal(  873): [PE] vendor.samsung. update cmd:1000000, param:0
+09-22 12:08:59.492 I/libPowerHal(  873): [PE] vendor.samsung. update cmd:1000000 param:0
+09-22 12:08:59.492 I/mtkpower_client(  870): perf_lock_rel, hdl:186, tid:918
+09-22 12:08:59.492 I/libPowerHal(  873): [perfLockRel] hdl:183, idx:0
+09-22 12:08:59.493 I/libPowerHal(  873): vendor.samsung.: cpu_ctrl set cpu freq: -1 -1 -1 -1
+09-22 12:08:59.494 I/mtkpower_client(  870): perf_lock_acq, hdl:0, dur:0, num:2, tid:918
+09-22 12:08:59.494 I/libPowerHal(  873): [perfLockRel] hdl:186, idx:3
+09-22 12:08:59.494 I/libPowerHal(  873): [PD] vendor.samsung. update cmd:1c3c000, param:1
+09-22 12:08:59.494 I/libPowerHal(  873): [PD] (less) /proc/mcdi/state set +prefix:enable 1;
+09-22 12:08:59.495 I/mtkpower_client(  870): ret_hdl:188
+09-22 12:08:59.495 I/libPowerHal(  873): [perfLockAcq] idx:0 hdl:188 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:188
+09-22 12:08:59.495 I/mtkpower_client(  870): perf_lock_rel, hdl:187, tid:918
+09-22 12:08:59.495 I/libPowerHal(  873): [PE] (less) /proc/mcdi/state set +prefix:enable 0;
+09-22 12:08:59.496 I/mtkpower_client(  870): perf_lock_acq, hdl:0, dur:0, num:2, tid:918
+09-22 12:08:59.496 I/libPowerHal(  873): [perfLockRel] hdl:187, idx:1
+09-22 12:08:59.496 I/libPowerHal(  873): [PD] vendor.samsung. update cmd:1000000, param:-1
+09-22 12:08:59.497 I/libPowerHal(  873): [PD] vendor.samsung. update cmd:1000000 param:-1
+09-22 12:08:59.497 I/mtkpower_client(  870): ret_hdl:189
+09-22 12:08:59.497 I/libPowerHal(  873): [perfLockAcq] idx:2 hdl:189 hint:-1 pid:870 duration:0 lock_user:vendor.samsung. => ret_hdl:189
+09-22 12:08:59.497 I/libPowerHal(  873): [PE] vendor.samsung. update cmd:1000000, param:1
+09-22 12:08:59.497 I/HYPER-HAL(  870): [RequestManager.cpp]releaseLocked(): Released ID : 1078263
+09-22 12:08:59.497 I/libPowerHal(  873): [PE] vendor.samsung. update cmd:1000000 param:1
+09-22 12:08:59.558 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb,raw:input tap 540 1681'
+09-22 12:08:59.617 D/PackageSettings( 1451): ++ writeStateForUserSyncLPr(0)
+09-22 12:08:59.751 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=58.81 dur=1003.20 max=33.62 min=16.08
+09-22 12:08:59.778 W/PackageSettings( 1451): -- writeStateForUserSyncLPr(0)
+09-22 12:08:59.778 D/PackageSettings( 1451): ++ writeStateForUserSyncLPr(95)
+09-22 12:08:59.791 I/mtkpower_client(  870): perf_lock_rel, hdl:188, tid:7925
+09-22 12:08:59.792 I/mtkpower_client(  870): perf_lock_rel, hdl:189, tid:7925
+09-22 12:08:59.792 I/libPowerHal(  873): [perfLockRel] hdl:188, idx:0
+09-22 12:08:59.792 I/libPowerHal(  873): [PD] vendor.samsung. update cmd:1c3c000, param:1
+09-22 12:08:59.793 I/libPowerHal(  873): [PD] (less) /proc/mcdi/state set +prefix:enable 1;
+09-22 12:08:59.794 I/libPowerHal(  873): [perfLockRel] hdl:189, idx:2
+09-22 12:08:59.794 I/libPowerHal(  873): [PD] vendor.samsung. update cmd:1000000, param:-1
+09-22 12:08:59.794 I/HYPER-HAL(  870): [RequestManager.cpp]releaseLocked(): Released ID : 1081204
+09-22 12:08:59.794 I/libPowerHal(  873): [PD] vendor.samsung. update cmd:1000000 param:-1
+09-22 12:08:59.853 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:58.769569,dur:1003.92,max:32.21,min:15.73  
+09-22 12:08:59.882 D/io_stats(  590): !@ 179,0 r 1922615 29009766 w 892215 11385948 d 0 0 f 0 0 iot 759144 0 th 0 0 0 pt 0 inp 0 4 3517.645
+09-22 12:08:59.935 W/PackageSettings( 1451): -- writeStateForUserSyncLPr(95)
+09-22 12:09:00.027 E/msys    ( 5614): E[N WCIHTTPImplNetworkSession]WCIHTTPTaskImplCreateRegular(556)=>[I] http/task/regular/create/start
+09-22 12:09:00.027 E/msys    ( 5614): E[N WCIHTTPImplNetworkSession]WCIHTTPTaskImplCreateRegular(591)=>[I] http/task/regular/create/execute
+09-22 12:09:00.028 E/msys    ( 5614): E[N WCIHTTPImplNetworkSession]WCIHTTPTaskImplCreateRegular(614)=>[I] http/task/regular/create/success
+09-22 12:09:00.080 I/system_server( 1451): Background young concurrent copying GC freed 23MB AllocSpace bytes, 1(20KB) LOS objects, 17% free, 112MB/136MB, paused 1.198ms,549us total 261.323ms
+09-22 12:09:00.146 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:09:00.146 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:09:00.146 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:09:00.146 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:09:00.146 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:09:00.147 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:09:00.154 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1150, isSameBssidAndFreq true
+09-22 12:09:00.156 D/NetworkController.WifiSignalController( 1950): notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-22 12:09:00.186 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.59 dur=6837.49 max=6035.10 min=83.59
+09-22 12:09:00.206 W/PackageSettings( 1451): Skipping PackageSetting{4442d89 com.sec.android.emergencymode.service.en/10357} due to missing metadata
+09-22 12:09:00.211 W/PackageSettings( 1451): Skipping PackageSetting{7dd518e com.samsung.android.privacydashboard.en/10362} due to missing metadata
+09-22 12:09:00.211 W/PackageSettings( 1451): Skipping PackageSetting{9e92daf com.sec.android.app.myfiles.en/10368} due to missing metadata
+09-22 12:09:00.224 W/PackageSettings( 1451): Skipping PackageSetting{88df5bc com.samsung.android.aware.service.en/10360} due to missing metadata
+09-22 12:09:00.228 W/PackageSettings( 1451): Skipping PackageSetting{b91945 com.android.settings.en/10366} due to missing metadata
+09-22 12:09:00.279 W/system_server( 1451): Long monitor contention with owner PackageManager (1545) at void com.android.server.pm.InstallPackageHelper.assertPackageIsValid(com.android.server.pm.parsing.pkg.AndroidPackage, int, int)(InstallPackageHelper.java:5670) waiters=0 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer() for 1.231s
+09-22 12:09:00.307 W/system_server( 1451): Long monitor contention with owner binder:1451_10 (4026) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer()(PackageManagerService.java:1366) waiters=0 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer() for 1.259s
+09-22 12:09:00.308 W/system_server( 1451): Long monitor contention with owner binder:1451_10 (4026) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer()(PackageManagerService.java:1366) waiters=1 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer() for 1.255s
+09-22 12:09:00.308 W/system_server( 1451): Long monitor contention with owner binder:1451_10 (4026) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer()(PackageManagerService.java:1366) waiters=2 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer() for 1.127s
+09-22 12:09:00.308 W/system_server( 1451): Long monitor contention with owner binder:1451_10 (4026) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer()(PackageManagerService.java:1366) waiters=3 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer() for 734ms
+09-22 12:09:00.309 W/system_server( 1451): Long monitor contention with owner binder:1451_10 (4026) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer()(PackageManagerService.java:1366) waiters=4 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer() for 706ms
+09-22 12:09:00.310 D/InputDispatcher( 1451): Inject motion (7932/2000): action=0x0, time=3517364000000, f=0x0, d=0 dsdx=1.000000 dtdx=0.000000
+09-22 12:09:00.310 W/system_server( 1451): Long monitor contention with owner binder:1451_10 (4026) at com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer()(PackageManagerService.java:1366) waiters=5 in com.android.server.pm.Computer com.android.server.pm.PackageManagerService.snapshotComputer() for 229ms
+09-22 12:09:00.310 I/InputDispatcher( 1451): Delivering touch to (1950): action: 0x4, f=0x0, d=0, '462faf4', t=1 
+09-22 12:09:00.310 W/Looper  ( 1451): Slow dispatch took 1260ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=null m=32
+09-22 12:09:00.311 W/Looper  ( 1451): Slow delivery took 1259ms android.ui h=com.android.server.am.ActivityManagerService$UiHandler c=null m=31
+09-22 12:09:00.311 I/InputDispatcher( 1451): Delivering touch to (1018): action: 0x0, f=0x0, d=0, '6a68065', t=1 
+09-22 12:09:00.311 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.311 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.311 D/PowerManagerService( 1451): [api] userActivityFromNative :  (event: 2 flags: 0 displayId: 0) eventTime = 3517364
+09-22 12:09:00.312 I/GestureDetector( 1451): obtain mCurrentDownEvent. id: -356794815 caller: com.android.server.wm.SystemGesturesPointerEventListener.onPointerEvent:203 com.android.server.wm.PointerEventDispatcher.onInputEvent:53 android.view.InputEventReceiver.dispatchInputEvent:285 
+09-22 12:09:00.312 D/PowerManagerService( 1451): UserActivityStateListenerState: 1
+09-22 12:09:00.312 I/GestureDetector( 1451): obtain mCurrentDownEvent. id: -356794815 caller: com.android.server.wm.SystemPerformancePointerEventListener.onPointerEvent:89 com.android.server.wm.PointerEventDispatcher.onInputEvent:53 android.view.InputEventReceiver.dispatchInputEvent:285 
+09-22 12:09:00.313 I/GestureDetector( 1451): handleMessage LONG_PRESS
+09-22 12:09:00.313 D/KeyguardUpdateMonitor( 1950): received broadcast android.intent.action.TIME_TICK
+09-22 12:09:00.314 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.314 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.314 W/Looper  ( 1451): Slow dispatch took 1133ms android.fg h=android.os.Handler c=<recycled PooledLambda@232b2a7> m=0
+09-22 12:09:00.314 I/ViewRootImpl@7e4f637[MainActivity]( 1018): ViewPostIme pointer 0
+09-22 12:09:00.314 W/Looper  ( 1451): Slow delivery took 1134ms android.fg h=android.os.Handler c=<recycled PooledLambda@62f2354> m=0
+09-22 12:09:00.316 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:09:00.318 D/InputDispatcher( 1451): Inject motion (7932/2000): action=0x1, time=3517364000000, f=0x0, d=0 dsdx=1.000000 dtdx=0.000000
+09-22 12:09:00.318 I/InputDispatcher( 1451): Delivering touch to (1018): action: 0x1, f=0x0, d=0, '6a68065', t=1 
+09-22 12:09:00.319 D/QSClockBellTower( 1950): onReceive(android.intent.action.TIME_TICK) mTimeZoneString:null
+09-22 12:09:00.320 I/GestureDetector( 1451): obtain mCurrentMotionEventRaw. action: 1 id: -1007255735
+09-22 12:09:00.320 I/GestureDetector( 1451): obtain mCurrentMotionEventRaw. action: 1 id: -1007255735
+09-22 12:09:00.322 W/Looper  ( 1451): Slow dispatch took 241ms main h=com.android.server.alarm.AlarmManagerService$AlarmHandler c=com.android.server.alarm.AlarmManagerService$3$$ExternalSyntheticLambda0@5cdd2fd m=0
+09-22 12:09:00.323 I/EyeComfortSolutionService( 1451): action  :  android.intent.action.TIME_TICK
+09-22 12:09:00.331 I/ViewRootImpl@7e4f637[MainActivity]( 1018): ViewPostIme pointer 1
+09-22 12:09:00.334 D/installd( 1072): Found valid user 95
+09-22 12:09:00.338 D/AASA_ASKSManager_RESTRICTED( 1451): There is no restricted rule.
+09-22 12:09:00.338 W/PackageInformation( 1451): PackageInfo in info_list
+09-22 12:09:00.338 D/SPEG    ( 1451): Feature is disabled for existing app
+09-22 12:09:00.354 D/KeyguardUpdateMonitor( 1950): handleTimeUpdate
+09-22 12:09:00.355 D/FaceWidgetPagesController( 1950): onTimeChanged()
+09-22 12:09:00.356 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.357 D/QSClockBellTower( 1950): He is ready to ring the bell. (((QSClockBellSound - TimeText:12:09, TimeContentDescription:12:09 pm, DateText:Tue, 22 September, ShortDateText:Tue, 22 Sept, Demo:false, QuickStar-Second(false|12:34:56))))
+09-22 12:09:00.357 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.357 D/QSClockIndicatorView( 1950): Home Indicator status_bar_clock 12:09 notifyTimeChanged(QSClockBellSound - TimeText:12:09, TimeContentDescription:12:09 pm, DateText:Tue, 22 September, ShortDateText:Tue, 22 Sept, Demo:false, QuickStar-Second(false|12:34:56)) ClockVisibleByPolicy:true, ClockVisibleByUser:true, visible?true, parent:android.widget.LinearLayout{61eae25 V.E...... ......ID 0,0-97,80 #7f0b04f0 app:id/left_clock_container}
+09-22 12:09:00.357 D/QSClockBellTower( 1950): Everyone heard the bell. run(currentTime:1790060940355,   getTime():Tue Sep 22 12:09:00 GMT+05:00 2026,   getTimeZone():libcore.util.ZoneInfo[mDstSavings=0,mUseDst=false,mDelegate=[id="Asia/Karachi",mRawOffset=18000000,mEarliestRawOffset=16092000,transitions=11]])
+09-22 12:09:00.360 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.360 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.360 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.360 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.360 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.360 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.360 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.360 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.361 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.361 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.sec.location.nsflp2
+09-22 12:09:00.362 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.sec.location.nsflp2
+09-22 12:09:00.362 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.362 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.363 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.363 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.364 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.366 D/PhoneWindowManagerExt( 1451): f.b. a=false id=4 he=false ksno=false uid=10251 callingPackage=com.ora.ora reason=null Caller=com.android.server.policy.PhoneWindowManager.performHapticFeedback:6534 com.android.server.wm.Session.performHapticFeedback:322 android.view.IWindowSession$Stub.onTransact:909 com.android.server.wm.Session.onTransact:188 android.os.Binder.execTransactInternal:1316 
+09-22 12:09:00.366 D/PhoneWindowManagerExt( 1451): haptic disabled by policy
+09-22 12:09:00.367 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.367 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.367 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.367 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.367 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.367 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.368 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.368 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.368 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.368 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.368 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.368 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.368 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.368 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.368 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.369 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.369 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.369 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.369 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.369 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.369 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.369 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.369 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.app.routines
+09-22 12:09:00.371 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.371 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.371 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.373 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.373 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.373 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.373 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.373 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.374 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:09:00.374 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:09:00.375 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.systemui
+09-22 12:09:00.375 V/QsExpandAnimator( 1950): setQsExpansionPosition 0.0
+09-22 12:09:00.376 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.app.routines
+09-22 12:09:00.376 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.systemui
+09-22 12:09:00.380 V/QsExpandAnimator( 1950): updateAnimators
+09-22 12:09:00.380 V/QsExpandAnimator( 1950): clearAnimationState 
+09-22 12:09:00.381 V/QsExpandAnimator( 1950): updateViews
+09-22 12:09:00.383 V/QsExpandAnimator( 1950): updateTileAnimator
+09-22 12:09:00.383 V/QsExpandAnimator( 1950): updateHeaderAnimator
+09-22 12:09:00.384 V/QsExpandAnimator( 1950): updateBarAnimator
+09-22 12:09:00.384 V/QsExpandAnimator( 1950): setQsExpansionPosition 0.0
+09-22 12:09:00.384 V/QsExpandAnimator( 1950): onAnimationAtStart
+09-22 12:09:00.391 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.393 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.393 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.393 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.407 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.407 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.407 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.407 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.409 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.409 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.409 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.409 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.410 I/ewrk    ( 3853): (REDACTED) HDM. appOpsListener %s %s
+09-22 12:09:00.410 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.google.android.googlequicksearchbox
+09-22 12:09:00.411 I/ewra    ( 3853): (REDACTED) HDM. #onConfigUpdate. requester: %s
+09-22 12:09:00.411 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.411 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.411 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.412 I/ewra    ( 3853): HDM. #onConfigUpdate inside sequencer
+09-22 12:09:00.412 I/ewrk    ( 3853): (REDACTED) HDM. appOpsListener %s %s
+09-22 12:09:00.412 I/ewra    ( 3853): (REDACTED) HDM. getAllConfigAndTakeAction called because of %s
+09-22 12:09:00.412 I/ewra    ( 3853): (REDACTED) HDM. #onConfigUpdate. requester: %s
+09-22 12:09:00.413 I/ewsf    ( 3853): (REDACTED) Operational mode passed in HotwordConfig is %s
+09-22 12:09:00.413 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.413 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.413 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.413 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.416 I/ewvj    (29382): (REDACTED) HDM.HotwordService: GLVM model used: %b, hotwordDebugToastDecision: %s, tag: %s
+09-22 12:09:00.416 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.416 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.417 I/ewra    ( 3853): HDM. getHotwordConfigResponse returned.
+09-22 12:09:00.418 I/ewsf    ( 3853): (REDACTED) Operational mode passed in HotwordConfig is %s
+09-22 12:09:00.418 I/ewur    ( 3853): #getHotwordInfo called.
+09-22 12:09:00.418 I/ewuo    ( 3853): Account not changed, ignore update.
+09-22 12:09:00.418 I/ewur    ( 3853): Not fetching hotword info from SRM
+09-22 12:09:00.418 I/ewra    ( 3853): HDM. getHotwordInfo and getHotwordSettingState returned.
+09-22 12:09:00.420 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'X Google'/en_GB
+09-22 12:09:00.420 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'X Google'/en_US
+09-22 12:09:00.420 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'X Google'/ar_EG
+09-22 12:09:00.420 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'X Google'/en_US
+09-22 12:09:00.420 W/ewty    ( 3853): (REDACTED) #getDspEnrollmentFallbackLocale cannot find a fallback locale for %s.
+09-22 12:09:00.420 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'Ok Google'/en_US
+09-22 12:09:00.420 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'Ok Google'/ar_EG
+09-22 12:09:00.421 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'Ok Google'/en_US
+09-22 12:09:00.421 W/ewty    ( 3853): (REDACTED) #getDspEnrollmentFallbackLocale cannot find a fallback locale for %s.
+09-22 12:09:00.421 I/ewue    ( 3853): (REDACTED) #getDspAvailableResult locale : %s, dsp locale : %s, keyphrase : %s, DSP keyphrase : %s, isKeyphraseAndLocaleSupported : %b, canUseDownloadDspModel : %b. forceUniversalDspHotwordModel : %b
+09-22 12:09:00.421 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'Y Google'/en_GB
+09-22 12:09:00.425 I/SoundTriggerService( 1451): getModuleProperties()
+09-22 12:09:00.426 I/ewue    ( 3853): (REDACTED) isDspHotwordSupportedByPlatform = %s, isDspHotwordModelAvailable = %s
+09-22 12:09:00.426 I/ewra    ( 3853): (REDACTED) HDM. getAllConfigAndTakeAction dspAvailable: %b, disableDspInTest: %b
+09-22 12:09:00.427 I/ewpb    ( 3853): (REDACTED) HDM. hotword enrollment state is enrolled:  %s, speakerId model exist: %s.
+09-22 12:09:00.427 I/ewpb    ( 3853): (REDACTED) HDM. Hotword enrollment state : %s.
+09-22 12:09:00.427 I/ewpb    ( 3853): (REDACTED) HDM. Hotword enrollment state : %s.
+09-22 12:09:00.428 I/PackageDexOptimizer( 1451): Running dexopt (dexoptNeeded=1) on: /data/app/~~3EfjKeJP5uCD5lLcKDgI5Q==/com.google.android.gm-wR74iN9gLvG85sxQQSXuEA==/base.apk pkg=com.google.android.gm isa=arm64 dexoptFlags=boot_complete,profile_guided,public,enable_hidden_api_checks targetFilter=speed-profile oatDir=/data/app/~~3EfjKeJP5uCD5lLcKDgI5Q==/com.google.android.gm-wR74iN9gLvG85sxQQSXuEA==/oat classLoaderContext=PCL[]{PCL[/system/framework/org.apache.http.legacy.jar]} async=false
+09-22 12:09:00.429 W/ewra    ( 3853): HDM. No hotword model!
+09-22 12:09:00.429 I/ewra    ( 3853): HDM. No hotword model! Hotword Detection is not running! We don't need to stop it.
+09-22 12:09:00.429 I/ewra    ( 3853): (REDACTED) HDM. Get the next action %s for requester %s.
+09-22 12:09:00.430 I/ewra    ( 3853): (REDACTED) HDM. Hotword detection is running : %b, no further operation required.
+09-22 12:09:00.430 I/ewra    ( 3853): HDM. #logRequestHandlingNonErrorEndEvent. Reset requestIdOfFirstError, firstStartErrorCausesRetry and numOfRetriesDoneForHotwordDetectorStartErrors!
+09-22 12:09:00.430 I/ewra    ( 3853): HDM. #onConfigUpdate inside sequencer
+09-22 12:09:00.430 I/ewra    ( 3853): (REDACTED) HDM. getAllConfigAndTakeAction called because of %s
+09-22 12:09:00.431 I/ewsf    ( 3853): (REDACTED) Operational mode passed in HotwordConfig is %s
+09-22 12:09:00.432 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.432 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.432 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.433 V/installd( 1072): DexInv: --- BEGIN '/data/app/~~3EfjKeJP5uCD5lLcKDgI5Q==/com.google.android.gm-wR74iN9gLvG85sxQQSXuEA==/base.apk' ---
+09-22 12:09:00.433 V/installd( 1072): Running /apex/com.android.art/bin/dex2oat32 in=base.apk out=/data/app/~~3EfjKeJP5uCD5lLcKDgI5Q==/com.google.android.gm-wR74iN9gLvG85sxQQSXuEA==/oat/arm64/base.odex
+09-22 12:09:00.434 I/ewvj    (29382): (REDACTED) HDM.HotwordService: GLVM model used: %b, hotwordDebugToastDecision: %s, tag: %s
+09-22 12:09:00.435 I/ewra    ( 3853): HDM. getHotwordConfigResponse returned.
+09-22 12:09:00.435 I/ewsf    ( 3853): (REDACTED) Operational mode passed in HotwordConfig is %s
+09-22 12:09:00.436 I/ewur    ( 3853): #getHotwordInfo called.
+09-22 12:09:00.436 I/ewur    ( 3853): Not fetching hotword info from SRM
+09-22 12:09:00.436 I/ewuo    ( 3853): Account not changed, ignore update.
+09-22 12:09:00.436 I/ewra    ( 3853): HDM. getHotwordInfo and getHotwordSettingState returned.
+09-22 12:09:00.437 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'X Google'/en_GB
+09-22 12:09:00.438 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'X Google'/en_US
+09-22 12:09:00.438 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'X Google'/ar_EG
+09-22 12:09:00.438 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'X Google'/en_US
+09-22 12:09:00.438 W/ewty    ( 3853): (REDACTED) #getDspEnrollmentFallbackLocale cannot find a fallback locale for %s.
+09-22 12:09:00.438 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'Ok Google'/en_US
+09-22 12:09:00.438 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'Ok Google'/ar_EG
+09-22 12:09:00.438 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'Ok Google'/en_US
+09-22 12:09:00.438 W/ewty    ( 3853): (REDACTED) #getDspEnrollmentFallbackLocale cannot find a fallback locale for %s.
+09-22 12:09:00.438 I/ewue    ( 3853): (REDACTED) #getDspAvailableResult locale : %s, dsp locale : %s, keyphrase : %s, DSP keyphrase : %s, isKeyphraseAndLocaleSupported : %b, canUseDownloadDspModel : %b. forceUniversalDspHotwordModel : %b
+09-22 12:09:00.439 W/KeyphraseEnrollmentInfo( 3853): No enrollment application supports the given keyphrase/locale: 'Y Google'/en_GB
+09-22 12:09:00.439 I/SoundTriggerService( 1451): getModuleProperties()
+09-22 12:09:00.440 W/libprocessgroup( 7937): SetAttribute: unknown attribute: GpisSfCpuset
+09-22 12:09:00.440 W/libprocessgroup( 7937): SetAttribute: unknown attribute: GpisSfCpuset
+09-22 12:09:00.440 I/ewue    ( 3853): (REDACTED) isDspHotwordSupportedByPlatform = %s, isDspHotwordModelAvailable = %s
+09-22 12:09:00.440 I/ewra    ( 3853): (REDACTED) HDM. getAllConfigAndTakeAction dspAvailable: %b, disableDspInTest: %b
+09-22 12:09:00.440 I/ewpb    ( 3853): (REDACTED) HDM. hotword enrollment state is enrolled:  %s, speakerId model exist: %s.
+09-22 12:09:00.441 I/ewpb    ( 3853): (REDACTED) HDM. Hotword enrollment state : %s.
+09-22 12:09:00.441 I/ewpb    ( 3853): (REDACTED) HDM. Hotword enrollment state : %s.
+09-22 12:09:00.445 W/libprocessgroup( 7937): Failed to open /dev/blkio/background/tasks: No such file or directory
+09-22 12:09:00.445 V/libprocessgroup( 7937): Applying profile action SetCgroup failed
+09-22 12:09:00.445 W/libprocessgroup( 7937): Failed to find JoinOlaf task profile: No such file or directory
+09-22 12:09:00.450 W/ewra    ( 3853): HDM. No hotword model!
+09-22 12:09:00.450 I/ewra    ( 3853): HDM. No hotword model! Hotword Detection is not running! We don't need to stop it.
+09-22 12:09:00.450 I/ewra    ( 3853): (REDACTED) HDM. Get the next action %s for requester %s.
+09-22 12:09:00.451 I/ewra    ( 3853): (REDACTED) HDM. Hotword detection is running : %b, no further operation required.
+09-22 12:09:00.451 I/ewra    ( 3853): HDM. #logRequestHandlingNonErrorEndEvent. Reset requestIdOfFirstError, firstStartErrorCausesRetry and numOfRetriesDoneForHotwordDetectorStartErrors!
+09-22 12:09:00.453 W/System  ( 1018): Ignoring header X-Firebase-Locale because its value was null.
+09-22 12:09:00.461 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.461 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.461 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.461 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.479 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.479 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.479 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.479 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.480 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.480 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.480 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.480 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.481 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.482 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.companiondevicemanager
+09-22 12:09:00.492 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.493 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.493 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.493 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.494 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.495 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.495 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.495 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.495 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.495 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.495 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.495 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.495 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.495 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.496 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.rubin.app
+09-22 12:09:00.496 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.rubin.app
+09-22 12:09:00.504 W/dex2oat32( 7937): Obsolete flag --compact-dex-level ignored
+09-22 12:09:00.504 W/dex2oat32( 7937): Mismatch between instruction set variant of device (ISA: Arm64 Feature string: a53,crc,-lse,-fp16,-dotprod,-sve) and features returned by the hardware (ISA: Arm64 Feature string: a53,-crc,-lse,-fp16,-dotprod,-sve)
+09-22 12:09:00.505 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.506 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.506 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.506 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.508 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.508 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.514 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.514 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.514 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.514 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.515 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.515 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.516 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.516 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.532 I/dex2oat32( 7937): /apex/com.android.art/bin/dex2oat32 --input-vdex-fd=-1 --output-vdex-fd=10 --dm-fd=14 --profile-file-fd=12 --classpath-dir=/data/app/~~3EfjKeJP5uCD5lLcKDgI5Q==/com.google.android.gm-wR74iN9gLvG85sxQQSXuEA== --class-loader-context=PCL[]{PCL[/system/framework/org.apache.http.legacy.jar]} --compact-dex-level=none --compiler-filter=speed-profile --compilation-reason=install-dm --max-image-block-size=524288 --resolve-startup-const-strings=true --generate-mini-debug-info --cpu-set=0,1,2,3 -j4
+09-22 12:09:00.545 W/LocalRequestInterceptor( 1018): Error getting App Check token; using placeholder token instead. Error: com.google.firebase.FirebaseException: No AppCheckProvider installed.
+09-22 12:09:00.547 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.547 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.547 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.547 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.547 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.548 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.sec.android.daemonapp
+09-22 12:09:00.560 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.560 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.566 D/NetdEventListenerService( 1451): DNS Requested by : 100, 10251
+09-22 12:09:00.569 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.569 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.577 I/dex2oat32( 7937): Using generational CollectorTypeCC GC.
+09-22 12:09:00.594 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.594 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.612 I/GestureDetector( 1451): handleMessage TAP
+09-22 12:09:00.613 D/PackageSettings( 1451): ++ writeStateForUserSyncLPr(95)
+09-22 12:09:00.613 W/PackageSettings( 1451): -- writeStateForUserSyncLPr(95)
+09-22 12:09:00.644 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.644 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.717 I/dex2oat32( 7937): Large app, accepted running with swap.
+09-22 12:09:00.754 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=58.81 dur=1003.26 max=33.46 min=13.78
+09-22 12:09:00.765 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.765 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.765 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.766 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.785 W/dex2oat32( 7937): Profile contained unexpected descriptors. Last one: Ludf;
+09-22 12:09:00.796 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.796 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.796 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.796 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.800 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.800 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.800 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.800 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.801 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.801 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.802 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.messaging
+09-22 12:09:00.803 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.803 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.803 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.803 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.833 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.833 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.834 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.834 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.835 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.835 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.836 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.837 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.google.android.as
+09-22 12:09:00.855 W/Looper  ( 1451): Slow dispatch took 113ms pm.handler2 h=android.os.Handler c=com.android.server.pm.Settings$RuntimePermissionPersistence$$ExternalSyntheticLambda0@83d374a m=0
+09-22 12:09:00.856 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:58.830311,dur:1002.88,max:33.46,min:11.41  
+09-22 12:09:00.880 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.880 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:00.880 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.880 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.882 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.882 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.google.android.setupwizard
+09-22 12:09:00.883 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:00.884 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.008 I/system_server( 1451): Background young concurrent copying GC freed 20MB AllocSpace bytes, 3(60KB) LOS objects, 15% free, 115MB/136MB, paused 898us,854us total 251.362ms
+09-22 12:09:01.009 W/System  ( 1451): A resource failed to call close. 
+09-22 12:09:01.019 W/Looper  ( 1451): Slow dispatch took 135ms android.fg h=android.os.Handler c=<recycled PooledLambda@62546bb> m=0
+09-22 12:09:01.049 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.049 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.050 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.050 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.051 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.051 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.051 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.051 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.051 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.051 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.051 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.051 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.051 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.052 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.052 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.mdx.kit
+09-22 12:09:01.052 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.mdx.kit
+09-22 12:09:01.070 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.070 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.070 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.070 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.084 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.084 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.095 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.095 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.098 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.098 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.099 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.099 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.113 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.113 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.113 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.113 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.113 D/PackageSettings( 1451): ++ writeStateForUserSyncLPr(0)
+09-22 12:09:01.113 W/PackageSettings( 1451): -- writeStateForUserSyncLPr(0)
+09-22 12:09:01.124 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.124 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.124 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.125 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.162 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.162 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.162 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.162 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.173 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.173 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.175 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.175 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.175 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.175 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.179 E/AppOps  ( 1451): User 95, OP 0 is restricted by 1000
+09-22 12:09:01.179 E/AppOps  ( 1451): User 95, OP 0 is restricted by 1000
+09-22 12:09:01.179 E/AppOps  ( 1451): User 95, OP 1 is restricted by 1000
+09-22 12:09:01.179 E/AppOps  ( 1451): User 95, OP 1 is restricted by 1000
+09-22 12:09:01.201 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.201 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.202 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.202 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.212 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.212 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.212 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.213 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.213 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.213 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.213 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.213 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.213 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.213 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.213 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.213 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.214 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.214 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.214 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.214 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.214 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.214 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.214 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.app.routines
+09-22 12:09:01.214 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.systemui
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.215 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.app.routines
+09-22 12:09:01.216 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.216 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.systemui
+09-22 12:09:01.217 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.app.routines
+09-22 12:09:01.217 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.systemui
+09-22 12:09:01.220 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.220 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.224 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.224 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.224 D/connsyslogger( 1163): Open FIFO for close
+09-22 12:09:01.226 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.226 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.228 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.228 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.231 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.231 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.278 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.278 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.294 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.294 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.302 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.302 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.302 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.302 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.358 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.358 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.358 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.358 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.371 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.371 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.371 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.371 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.385 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.385 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.385 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.385 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.386 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.386 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.387 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.388 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.388 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.388 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.388 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.389 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.mcfserver
+09-22 12:09:01.412 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.412 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.412 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.412 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.416 E/AppOps  ( 1451): User 95, OP 0 is restricted by 1000
+09-22 12:09:01.417 E/AppOps  ( 1451): User 95, OP 0 is restricted by 1000
+09-22 12:09:01.417 E/AppOps  ( 1451): User 95, OP 1 is restricted by 1000
+09-22 12:09:01.417 E/AppOps  ( 1451): User 95, OP 1 is restricted by 1000
+09-22 12:09:01.421 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.421 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.421 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.422 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.422 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.422 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.422 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.422 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.422 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.422 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.shell
+09-22 12:09:01.423 I/SurfaceFlinger(  904): SFWD update time=3519185448822
+09-22 12:09:01.423 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.shell
+09-22 12:09:01.424 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.435 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.435 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.435 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.435 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.447 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.447 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.447 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.447 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.448 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.448 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.google.android.gms.location.history
+09-22 12:09:01.448 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.448 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.496 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.497 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.497 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.497 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.498 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.499 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.499 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.499 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.500 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.500 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.501 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.501 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.501 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.502 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.502 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.503 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.503 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.504 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.504 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.504 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.504 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.506 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.506 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.506 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.508 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.508 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.509 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.509 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.509 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.510 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.510 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.510 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.511 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.511 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.511 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.511 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.512 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.512 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.512 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.512 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.512 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.521 W/location.nsflp2( 2883): Reducing the number of considered missed Gc histogram windows from 343 to 100
+09-22 12:09:01.522 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.522 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.app.routines
+09-22 12:09:01.522 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.522 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.522 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.522 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.systemui
+09-22 12:09:01.523 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.app.routines
+09-22 12:09:01.524 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.systemui
+09-22 12:09:01.524 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.524 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.524 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.526 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.app.routines
+09-22 12:09:01.527 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.android.systemui
+09-22 12:09:01.531 I/SemWifiServiceDetector( 1451): Traff. tracking started
+09-22 12:09:01.540 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.540 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.540 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.540 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.542 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.542 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.545 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.545 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.545 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.545 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.559 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.560 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.560 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.560 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.574 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.574 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.575 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.575 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.575 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.575 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.576 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.577 I/RequestManager_FLP( 2883): onOpChanged, op=0 / packageName=com.samsung.android.mcfds
+09-22 12:09:01.578 E/AppOps  ( 1451): User 0, OP 1 is restricted by 1000
+09-22 12:09:01.578 E/AppOps  ( 1451): User 0, OP 0 is restricted by 1000
+09-22 12:09:01.599 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:01.601 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:01.601 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:01.616 D/FirebaseAuth( 1018): Notifying id token listeners about user ( AQLQjCfBw3W17kfgzziM6po1Nh33 ).
+09-22 12:09:01.757 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=58.82 dur=1003.10 max=33.34 min=16.42
+09-22 12:09:01.859 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:58.804245,dur:1003.33,max:32.73,min:15.00  
+09-22 12:09:01.883 D/io_stats(  590): !@ 179,0 r 1922677 29010266 w 892682 11397824 d 0 0 f 0 0 iot 759492 0 th 0 0 0 pt 0 inp 0 0 3519.645
+09-22 12:09:02.033 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.03176851]
+09-22 12:09:02.033 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.18411843]
+09-22 12:09:02.033 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.89673203]
+09-22 12:09:02.033 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.440077 msecs
+09-22 12:09:02.034 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.753846 msecs
+09-22 12:09:02.034 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.452 msecs
+09-22 12:09:02.535 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.04637436]
+09-22 12:09:02.536 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.14426689]
+09-22 12:09:02.536 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.9093892]
+09-22 12:09:02.536 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.443462 msecs
+09-22 12:09:02.537 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.658462 msecs
+09-22 12:09:02.537 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.449539 msecs
+09-22 12:09:02.579 I/Pageboost( 1451): memUsage collected : 253573 20629 36748 for com.ora.ora 1018
+09-22 12:09:02.761 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.80 dur=1003.30 max=16.97 min=16.55
+09-22 12:09:02.862 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.813271,dur:1003.12,max:16.93,min:16.52  
+09-22 12:09:02.880 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:02.883 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:02.883 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:03.038 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.044585884]
+09-22 12:09:03.038 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.13376907]
+09-22 12:09:03.038 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.8969209]
+09-22 12:09:03.038 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.476384 msecs
+09-22 12:09:03.039 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.602769 msecs
+09-22 12:09:03.039 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.443692 msecs
+09-22 12:09:03.094 E/audit   (  828): type=1400 audit(1790060943.090:1358): avc:  denied  { write } for  pid=3497 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12885 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-22 12:09:03.094 E/audit   (  828): type=1300 audit(1790060943.090:1358): arch=c00000b7 syscall=203 success=no exit=-13 a0=5e a1=b4000074d899cea0 a2=1e a3=ffffffff954de431 items=0 ppid=846 pid=3497 auid=4294967295 uid=9510226 gid=9510226 euid=9510226 suid=9510226 fsuid=9510226 egid=9510226 sgid=9510226 fsgid=9510226 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+09-22 12:09:03.094 E/audit   (  828): type=1327 audit(1790060943.090:1358): proctitle="com.google.android.gms.persistent"
+09-22 12:09:03.130 E/android.hardware.health@2.1-service-samsung(  861): Could not open /sys/class/power_supply/battery/lrp
+09-22 12:09:03.132 D/BatteryService( 1451): Sending ACTION_BATTERY_CHANGED: level:22, status:2, health:2, ac:true, usb:false, wireless:false, pogo:false, misc:0x10000, charge_type:1, charger_type:0, voltage:3854, temperature:378, online:19, current_avg:681, ps:false, hvc:false, capacity:280000, current_event:0x8000, current_now:644, mcc:0, mcv:0, cc:1115000, present:true, scale:100, technology:Li-ion
+09-22 12:09:03.133 E/PocketModeEvent( 1451): PocketModeSetting is off 
+09-22 12:09:03.133 D/PhoneWindowManagerExt( 1451): ACTION_BATTERY_CHANGED - Level=22, status=2
+09-22 12:09:03.134 D/MotionRecognitionService( 1451): [SAR]  onReceive : ACTION_BATTERY_CHANGED, Plugged: 1
+09-22 12:09:03.134 D/AdaptiveBrightnessLongtermModelBuilder( 1451): Received android.intent.action.BATTERY_CHANGED
+09-22 12:09:03.134 D/SemWifiApBroadcastReceiver( 1451): Received : android.intent.action.BATTERY_CHANGED
+09-22 12:09:03.135 I/DeviceBatteryInfoService( 1451): action: android.intent.action.BATTERY_CHANGED
+09-22 12:09:03.135 I/DeviceBatteryInfoService( 1451): phone battery level: 22
+09-22 12:09:03.135 I/DeviceBatteryInfoService( 1451): phone battery status: 2
+09-22 12:09:03.136 D/SemBigDataInfoController( 1894): Intent: android.intent.action.BATTERY_CHANGED
+09-22 12:09:03.136 D/SemBigDataInfoController( 1894): Intent: android.intent.action.BATTERY_CHANGED
+09-22 12:09:03.136 W/Looper  ( 1451): Drained
+09-22 12:09:03.136 D/KeyguardUpdateMonitor( 1950): received broadcast android.intent.action.BATTERY_CHANGED
+09-22 12:09:03.136 I/PowerUI ( 1950): mBootCompleted = true |  mFullyConnected = true
+09-22 12:09:03.136 I/PowerUI ( 1950): BATTERY_HEALTH_CHECK extraHealth=2 mBatteryMiscEvent=65536
+09-22 12:09:03.137 W/PowerUI ( 1950): Plug reason
+09-22 12:09:03.137 W/PowerUI ( 1950): Skip charging animation - by plug status
+09-22 12:09:03.137 D/PowerUI ( 1950): priorPlugType = 1 mPlugType = 1 priorBatteryStatus = 2 mBatteryStatus = 2
+09-22 12:09:03.137 W/PowerUI ( 1950): Plug reason
+09-22 12:09:03.137 W/PowerUI ( 1950): Skip charging sound - by plug status
+09-22 12:09:03.137 D/SecPowerUI.Notification( 1950): dismissing low battery warning: level=22
+09-22 12:09:03.137 I/PowerUI ( 1950): oldMisalign : false, curMisalign : false
+09-22 12:09:03.137 D/SecPowerUI.Notification( 1950): updateNotification mWarning=false mPlaySound=false
+09-22 12:09:03.137 D/SecPowerUI.Notification( 1950): SecBatteryStatsSnapshot{batteryLevel=22, currentBatteryMode=1, chargingTime=7315000, chargingType=11, batteryHealth=2, automaticTestMode=false, isHiccupState=false}
+09-22 12:09:03.137 D/SecPowerUI.Notification( 1950): 1. restoreScreenTimeOut - saved_value : :
+09-22 12:09:03.137 E/SecPowerUI.Notification( 1950): no saved value, so we do nothing !!
+09-22 12:09:03.138 D/SecPowerUI.Notification( 1950): showChargingNotice oldChargingType : 11 / currentChargingType : 11, oldChargingTime : 7315000 / mChargingTime : 7315000
+09-22 12:09:03.139 D/SecPowerUI.Notification( 1950): There is no change about charging status, so return!
+09-22 12:09:03.139 D/PowerUI ( 1950): Battery swelling mode - priorBatterySwellingMode = 0 mBatterySwellingMode = 0 mBatteryStatus = 2
+09-22 12:09:03.139 I/PowerUI ( 1950): mBatteryMiscEvent = 65536
+09-22 12:09:03.140 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:09:03.141 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:09:03.141 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:09:03.141 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:09:03.142 D/KeyguardUpdateMonitor( 1950): handleBatteryUpdate
+09-22 12:09:03.143 I/AODBatteryManager( 1950): updateBatteryData: ACTION_BATTERY_CHANGED
+09-22 12:09:03.144 I/AODBatteryManager( 1950): saveBatteryData : AOD BatteryData [mBatteryLevel=22, mBatteryStatus=CHARGING, mBatteryPlugType=AC, mBatteryPlugged=true, mRemainingChargeTime=7315000, mBatteryChargingType=1, mBatteryChargerType=NORMAL, mBatteryOnline=NOT_DEFINED, mBatterySwellingMode=NONE, mBatteryProtectMode=false]
+09-22 12:09:03.156 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:09:03.156 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:09:03.156 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:09:03.156 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:09:03.156 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:09:03.157 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:09:03.165 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1151, isSameBssidAndFreq true
+09-22 12:09:03.167 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:09:03.168 D/NetworkController.WifiSignalController( 1950): notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-22 12:09:03.195 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.66 dur=3009.08 max=2791.84 min=217.24
+09-22 12:09:03.313 D/PowerManagerService( 1451): UserActivityStateListenerState: 0
+09-22 12:09:03.503 I/wpa_supplicant( 1879): Heartbeat 347
+09-22 12:09:03.540 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.035592325]
+09-22 12:09:03.541 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.10804281]
+09-22 12:09:03.541 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.8698234]
+09-22 12:09:03.541 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.403769 msecs
+09-22 12:09:03.541 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.700308 msecs
+09-22 12:09:03.542 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.477846 msecs
+09-22 12:09:03.652 I/SDHMS:D ( 3951): SIOP:: AP:449 BAT:378 USB:0 CHG:433 PA:399 BLK:0 SUBBAT:0 SKIN:406 SKINF:406 SKINB:402 LRP:406 LRP2:406 LRF:406 LRB:404 LRF2:406 LRB2:402 AP2:406 CHG2:401 WIFI2:395 SPK2:361 
+09-22 12:09:03.763 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.83 dur=1002.90 max=17.04 min=16.45
+09-22 12:09:03.785 I/m.android.phone( 1894): Background young concurrent copying GC freed 5429KB AllocSpace bytes, 33(1128KB) LOS objects, 54% free, 6150KB/13MB, paused 401us,114us total 113.937ms
+09-22 12:09:03.865 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.823002,dur:1002.96,max:17.21,min:16.02  
+09-22 12:09:04.043 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.05364248]
+09-22 12:09:04.043 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.12454664]
+09-22 12:09:04.043 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.8614919]
+09-22 12:09:04.043 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.388308 msecs
+09-22 12:09:04.044 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.623615 msecs
+09-22 12:09:04.045 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.429538 msecs
+09-22 12:09:04.159 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:04.160 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:04.160 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:04.767 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.81 dur=1003.21 max=16.91 min=16.56
+09-22 12:09:04.869 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.782448,dur:1003.64,max:17.14,min:16.42  
+09-22 12:09:05.014 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.036056735]
+09-22 12:09:05.015 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.11136217]
+09-22 12:09:05.015 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.9166004]
+09-22 12:09:05.015 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.425231 msecs
+09-22 12:09:05.016 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.638462 msecs
+09-22 12:09:05.016 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.477923 msecs
+09-22 12:09:05.304 D/NetdEventListenerService( 1451): DNS Requested by : 100, 10278, 4, true
+09-22 12:09:05.309 E/msys    ( 5614): E[N mns:TigonMNS]_LogError(356)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+09-22 12:09:05.317 D/NetdEventListenerService( 1451): DNS Requested by : 100, 10278, 4, true
+09-22 12:09:05.318 E/msys    ( 5614): E[N mns:TigonMNS]_LogError(356)=>Failed to resolve using system DNS resolver, getaddrinfo(): No address associated with hostname
+09-22 12:09:05.442 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:05.444 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:05.444 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:05.516 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.04415229]
+09-22 12:09:05.516 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.10864212]
+09-22 12:09:05.516 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.915227]
+09-22 12:09:05.516 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.457846 msecs
+09-22 12:09:05.517 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.643154 msecs
+09-22 12:09:05.518 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.482847 msecs
+09-22 12:09:05.770 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.80 dur=1003.36 max=16.99 min=16.32
+09-22 12:09:05.789 D/IpClient/wlan0( 1929): interfaceLinkStateChanged: ifindex 40 up
+09-22 12:09:05.871 D/UsbStatsMonitor( 1451): 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+09-22 12:09:05.872 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.827343,dur:1002.89,max:17.27,min:16.11  
+09-22 12:09:05.884 D/io_stats(  590): !@ 179,0 r 1922689 29010370 w 892682 11397824 d 0 0 f 0 0 iot 759496 0 th 0 0 0 pt 0 inp 0 0 3523.646
+09-22 12:09:06.019 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.04415229]
+09-22 12:09:06.019 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.10864212]
+09-22 12:09:06.019 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.915227]
+09-22 12:09:06.019 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.455385 msecs
+09-22 12:09:06.020 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.698769 msecs
+09-22 12:09:06.021 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.526692 msecs
+09-22 12:09:06.167 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:09:06.167 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:09:06.167 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:09:06.167 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:09:06.167 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:09:06.168 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:09:06.177 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1152, isSameBssidAndFreq true
+09-22 12:09:06.178 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:09:06.225 D/connsyslogger( 1163): Open FIFO for close
+09-22 12:09:06.522 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.04415229]
+09-22 12:09:06.522 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.10864212]
+09-22 12:09:06.523 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.915227]
+09-22 12:09:06.523 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.430461 msecs
+09-22 12:09:06.523 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.666769 msecs
+09-22 12:09:06.524 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.478846 msecs
+09-22 12:09:06.719 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:06.721 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:06.721 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:06.773 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.81 dur=1003.10 max=16.98 min=16.39
+09-22 12:09:06.875 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.786171,dur:1003.58,max:17.19,min:16.19  
+09-22 12:09:07.027 D/SemNscXgbMsL1( 1451): Probability - Cloud gaming: [0.04415229]
+09-22 12:09:07.028 D/SemNscXgbMsL1( 1451): Probability - Real time: [0.10864212]
+09-22 12:09:07.028 D/SemNscXgbMsL1( 1451): Probability - Non real time: [0.915227]
+09-22 12:09:07.028 D/SemNscXgbMsL1( 1451): 1 sample inference time: 0.430384 msecs
+09-22 12:09:07.029 D/SemNscXgbL2Rt( 1451): L2 RT 1 sample inference time: 0.643385 msecs
+09-22 12:09:07.029 D/SemNscXgbL2Nrt( 1451): L2 NRT 1 sample inference time: 0.472923 msecs
+09-22 12:09:07.222 E/dex2oat32( 7937): hiddenapi: Accessing hidden method Landroid/view/accessibility/AccessibilityNodeInfo;->setExtraRenderingInfo(Landroid/view/accessibility/AccessibilityNodeInfo$ExtraRenderingInfo;)V (runtime_flags=0, domain=platform, api=blocked) from base.apk!classes9.dex (domain=app, TargetSdkVersion=37) using linking: denied
+09-22 12:09:07.332 I/SDHMS:LOAD( 3951): type: LoadsFreqs, value: 0:0:82:1102600:1443000:850000:1724479:1800000:999000:369:586:0
+09-22 12:09:07.517 I/SemWifiServiceDetector( 1451): Traff. tracking stopped
+09-22 12:09:07.776 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.81 dur=1003.21 max=17.10 min=16.41
+09-22 12:09:07.878 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.812862,dur:1003.13,max:17.01,min:16.39  
+09-22 12:09:07.885 D/io_stats(  590): !@ 179,0 r 1922726 29010614 w 892751 11404544 d 0 0 f 0 0 iot 759640 0 th 0 0 0 pt 0 inp 0 0 3525.647
+09-22 12:09:08.001 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:08.003 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:08.004 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:08.140 D/SecPowerUI.Notification( 1950): showChargingNotice oldChargingType : 11 / currentChargingType : 11, oldChargingTime : 7315000 / mChargingTime : 7315000
+09-22 12:09:08.140 D/SecPowerUI.Notification( 1950): There is no change about charging status, so return!
+09-22 12:09:08.346 E/audit   (  828): type=1400 audit(1790060948.342:1359): avc:  denied  { write } for  pid=2224 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12885 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-22 12:09:08.347 E/audit   (  828): type=1300 audit(1790060948.342:1359): arch=c00000b7 syscall=203 success=no exit=-13 a0=aa a1=b4000074d566c740 a2=1e a3=ffffffff954de431 items=0 ppid=846 pid=2224 auid=4294967295 uid=10226 gid=10226 euid=10226 suid=10226 fsuid=10226 egid=10226 sgid=10226 fsgid=10226 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+09-22 12:09:08.347 E/audit   (  828): type=1327 audit(1790060948.342:1359): proctitle="com.google.android.gms.persistent"
+09-22 12:09:08.406 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb,raw:uiautomator dump /sdcard/ui2.xml'
+09-22 12:09:08.641 D/AndroidRuntime( 7959): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+09-22 12:09:08.653 I/AndroidRuntime( 7959): Using default boot image
+09-22 12:09:08.653 I/AndroidRuntime( 7959): Leaving lock profiling enabled
+09-22 12:09:08.654 D/SecNativeFeatureCppIf( 7959): encoded
+09-22 12:09:08.654 D/SecNativeFeatureCppIf( 7959): decoding and unzip finish
+09-22 12:09:08.654 D/SecNativeFeatureCppIf( 7959): use unCompDataBuff. encoded
+09-22 12:09:08.654 D/SecNativeFeatureCppIf( 7959): Free unCompDataBuff
+09-22 12:09:08.654 D/AndroidRuntime( 7959): addProductProperty: pBrand1 is not null
+09-22 12:09:08.654 D/AndroidRuntime( 7959): addProductProperty: not brand or 7
+09-22 12:09:08.661 I/app_process( 7959): Using generational CollectorTypeCC GC.
+09-22 12:09:08.779 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.81 dur=1003.16 max=17.37 min=16.11
+09-22 12:09:08.797 D/nativeloader( 7959): InitDefaultPublicLibraries for_preload=1: libandroid.so:libaaudio.so:libamidi.so:libbinder_ndk.so:libc.so:libcamera2ndk.so:libdl.so:libEGL.so:libGLESv1_CM.so:libGLESv2.so:libGLESv3.so:libicu.so:libicui18n.so:libicuuc.so:libjnigraphics.so:liblog.so:libmediandk.so:libm.so:libnativehelper.so:libnativewindow.so:libOpenMAXAL.so:libOpenSLES.so:libRS.so:libstdc++.so:libsync.so:libvulkan.so:libwebviewchromium_plat_support.so:libz.so
+09-22 12:09:08.834 D/nativeloader( 7959): Load libicu_jni.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-22 12:09:08.835 D/app_process( 7959): Time zone APEX ICU file found: /apex/com.android.tzdata/etc/icu/icu_tzdata.dat
+09-22 12:09:08.835 D/app_process( 7959): I18n APEX ICU file found: /apex/com.android.i18n/etc/icu/icudt70l.dat
+09-22 12:09:08.837 D/nativeloader( 7959): Load libjavacore.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-22 12:09:08.840 D/nativeloader( 7959): Load libopenjdk.so using APEX ns com_android_art for caller /apex/com.android.art/javalib/core-oj.jar: ok
+09-22 12:09:08.843 I/app_process( 7959): Priority-to-niceness mapping: 19, 16, 13, 10, 0, -2, -4, -5, -6, -8
+09-22 12:09:08.881 E/SemDvfsManager_JNI( 7959): SemDvfsManager: registerfunction enter
+09-22 12:09:08.881 E/SemAffinityControl( 7959): SemAffinityControl: registerfunction enter
+09-22 12:09:08.881 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.830177,dur:1002.84,max:17.98,min:15.75  
+09-22 12:09:08.912 D/nativeloader( 7959): Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+09-22 12:09:08.913 D/AndroidRuntime( 7959): Calling main entry com.android.commands.uiautomator.Launcher
+09-22 12:09:08.926 I/SurfaceFlinger(  904): id=338 createSurf flag=80004, WindowToken{dcfff20 type=2032 android.os.Binder@cd9ae23}#338
+09-22 12:09:08.927 D/SettingsProvider( 1451): isChangeAllowed() : name = accessibility_enabled
+09-22 12:09:08.928 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:09:08.928 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:09:08.928 D/WindowMagnificationMgr( 1451): requestConnection :false mConnectionState : 3
+09-22 12:09:08.928 W/WindowMagnificationMgr( 1451): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-22 12:09:08.934 D/SettingsProvider( 1451): isChangeAllowed() : name = accessibility_enabled
+09-22 12:09:08.935 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:09:08.935 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:09:08.935 D/WindowMagnificationMgr( 1451): requestConnection :false mConnectionState : 3
+09-22 12:09:08.935 W/WindowMagnificationMgr( 1451): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-22 12:09:08.936 W/dex2oat32( 7937): Compilation of void oru.ac(com.android.mail.providers.Account, oli, owo, owq, nih, oop, oln, cbsh, boolean, cbsh, cbsh, abmm, cbsh, cbsh) took 100.896ms
+09-22 12:09:08.952 W/WindowManager( 1451): Cannot find window which accessibility connection is added to
+09-22 12:09:08.953 I/AccessibilityManagerService( 1451): semIsAccessibilityServiceEnabled()
+09-22 12:09:08.954 I/AccessibilityManagerService( 1451): semIsAccessibilityServiceEnabled()
+09-22 12:09:08.954 I/SafetyCenterAccessibilityListener( 6678): accessibility event occurred, safety center feature not enabled.
+09-22 12:09:08.955 I/SafetyCenterAccessibilityListener(31061): accessibility event occurred, safety center feature not enabled.
+09-22 12:09:08.956 D/AS.AudioService( 1451): Accessibility volume enabled = false
+09-22 12:09:08.956 D/BatterySaverPolicy( 1451): accessibility changed to true, updating policy.
+09-22 12:09:08.960 D/BatterySaverController( 1451): send ACTION_POWER_SAVE_MODE_CHANGED
+09-22 12:09:08.961 I/mtkpower@impl(  873): [setMode] type:1, enabled:1
+09-22 12:09:08.961 E/mtkpower@impl(  873): [setMode] unknown type
+09-22 12:09:08.963 D/BatterySaverController( 1451): send ACTION_POWER_SAVE_MODE_CHANGED_INTERNAL
+09-22 12:09:08.966 I/AiAiCaptions( 3812): onReceive(): Battery saver mode turned on.
+09-22 12:09:08.968 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: BATTERY_STATS: true
+09-22 12:09:08.968 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: ANIMATION: false
+09-22 12:09:08.972 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: VIBRATION: false
+09-22 12:09:08.972 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: false
+09-22 12:09:08.972 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_ALL_APPS_STANDBY: true
+09-22 12:09:08.972 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-22 12:09:08.972 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-22 12:09:08.972 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_BACKGROUND_CHECK: true
+09-22 12:09:08.972 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: NETWORK_FIREWALL: true
+09-22 12:09:08.972 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: DATA_SAVER: false
+09-22 12:09:08.974 I/SelfLocationFetcher( 3497): Device is opted-out of last known location reporting. [CONTEXT service_id=284 ]
+09-22 12:09:08.974 I/TouchInteractionService( 2341): onActiveNavBarRegionChanges, region : SkRegion((0,2274,388,2400)(389,2274,690,2400)(691,2274,961,2400))
+09-22 12:09:08.974 V/Navbar.Store( 1950): ----handleEvent(0) OnUpdateRemoteViewContainer(leftContainer=android.widget.LinearLayout{40b00f0 I.E...... ......I. 0,0-118,126 #7f0b04f6 app:id/left_remoteview}, rightContainer=android.widget.LinearLayout{c98b669 I.E...... ......I. 962,0-1080,126 #7f0b07aa app:id/right_remoteview}, contextualButtonVisible=false, darkIntensity=0.0) [Module] SamsungNavigationBarView
+09-22 12:09:08.975 V/Navbar.Store( 1950): ------[Band]REMOTE_VIEW_PACK_SET_REMOTEVIEW_CONTAINER
+09-22 12:09:08.975 V/Navbar.Store( 1950): --------apply(0) UpdateRemoteViewContainer
+09-22 12:09:08.975 V/Navbar.Store( 1950): --------apply(0) UpdateRemoteViewDarkIntensity
+09-22 12:09:08.975 V/Navbar.Store( 1950): handleEvent(0) OnNavBarUpdateA11YService(clickable=false, longClickable=false) [Module] NavigationBar
+09-22 12:09:08.975 V/Navbar.Store( 1950): --[Band]SETUPWIZARD_PACK_UPDATE_A11Y_SERVICE
+09-22 12:09:08.975 W/PowerUI ( 1950): unknown intent: Intent { act=android.os.action.POWER_SAVE_MODE_CHANGED flg=0x40000010 }
+09-22 12:09:08.977 I/AODTileStateController( 1950): onReceive: BR = [android.os.action.POWER_SAVE_MODE_CHANGED]
+09-22 12:09:08.977 I/AODTileStateController( 1950): requestListeningState: 
+09-22 12:09:08.978 W/PersonalSafety( 2224): Auto detection is null. Ignoring power-saver updates. [CONTEXT service_id=310 ]
+09-22 12:09:08.978 I/PersonalSafety( 2224): (REDACTED) [Settings] power saver mode changed to %s
+09-22 12:09:08.978 I/SelfLocationFetcher( 2224): Starting self-location fetching naive strategy. [CONTEXT service_id=284 ]
+09-22 12:09:08.979 D/StatusBarManagerService( 1451): isSecCustomTile : componentName =ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-22 12:09:08.980 I/BufferQueueProducer(  904): [com.ora.ora/com.ora.ora.MainActivity$_1018#318](this:0xb40000741831e838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.09 dur=11469.30 max=11469.30 min=11469.30
+09-22 12:09:08.983 I/TouchInteractionService( 2341): onActiveNavBarRegionChanges, region : SkRegion((0,2274,388,2400)(389,2274,690,2400)(691,2274,961,2400))
+09-22 12:09:08.985 D/TileServices( 1950): Couldn't find tile for ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-22 12:09:09.197 I/system_server( 1451): Background young concurrent copying GC freed 21MB AllocSpace bytes, 7(140KB) LOS objects, 17% free, 113MB/136MB, paused 2.304ms,633us total 268.652ms
+09-22 12:09:09.198 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:09:09.198 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:09:09.199 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:09:09.199 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:09:09.199 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:09:09.199 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:09:09.206 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1153, isSameBssidAndFreq true
+09-22 12:09:09.207 D/NetworkController.WifiSignalController( 1950): notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-22 12:09:09.207 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:09:09.231 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.17 dur=6035.77 max=6035.77 min=6035.77
+09-22 12:09:09.281 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:09.284 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:09.284 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:09.782 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=58.83 dur=1002.88 max=33.68 min=16.45
+09-22 12:09:09.885 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:58.805759,dur:1003.30,max:33.50,min:15.72  
+09-22 12:09:09.885 D/io_stats(  590): !@ 179,0 r 1922736 29010710 w 892757 11404596 d 0 0 f 0 0 iot 759644 0 th 0 0 0 pt 0 inp 0 0 3527.647
+09-22 12:09:09.987 D/SemCscFeature( 7959): Encoded
+09-22 12:09:10.017 W/MediaProvider( 3838): isAppCloneUserPair for user 0: false
+09-22 12:09:10.047 I/MtpStorageManager( 5623): Got inotify added event for : dWkyLnhtbA==
+09-22 12:09:10.051 D/SyncManager( 1451): userId - 0 auto - true
+09-22 12:09:10.053 W/AccessibilityNodeInfoDumper( 7959): Fetch time: 60ms
+09-22 12:09:10.054 I/MtpStorageManager( 5623): Got inotify CLOSE_WRITE event for : dWkyLnhtbA==
+09-22 12:09:10.055 D/MtpStorageManager( 5623): sendObjectInfoChanged: id=136,size=5307
+09-22 12:09:10.057 D/SettingsProvider( 1451): isChangeAllowed() : name = accessibility_enabled
+09-22 12:09:10.058 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:09:10.059 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:09:10.059 D/WindowMagnificationMgr( 1451): requestConnection :false mConnectionState : 3
+09-22 12:09:10.059 W/WindowMagnificationMgr( 1451): requestConnection duplicated request: connect=false, mConnectionState=DISCONNECTED
+09-22 12:09:10.060 D/SettingsProvider( 1451): isChangeAllowed() : name = accelerometer_rotation
+09-22 12:09:10.061 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:09:10.061 I/GenerationRegistry( 1451): mBackingStore.isClosed() : false
+09-22 12:09:10.061 D/SettingsProvider( 1451): isChangeAllowed() : name = user_rotation
+09-22 12:09:10.065 D/BatterySaverPolicy( 1451): accessibility changed to false, updating policy.
+09-22 12:09:10.066 W/Looper  ( 1451): Drained
+09-22 12:09:10.067 I/RecentsOrientedState( 2341): current RecentsOrientedState: [this=RecentsOrientedState@93218305 mOrientationHandler=PortraitPagedViewHandler@108784806 mDisplayRotation=0 mTouchRotation=0 mRecentsActivityRotation=0 mRecentsRotation=0 isRecentsActivityRotationAllowed=false mSystemRotation=true mStateId=38272 mFlags=299]
+09-22 12:09:10.067 D/BatterySaverController( 1451): send ACTION_POWER_SAVE_MODE_CHANGED
+09-22 12:09:10.067 I/mtkpower@impl(  873): [setMode] type:1, enabled:1
+09-22 12:09:10.067 E/mtkpower@impl(  873): [setMode] unknown type
+09-22 12:09:10.068 V/WindowManager( 1451): rotationForOrientation(orient=SCREEN_ORIENTATION_UNSPECIFIED (-1), last=ROTATION_0 (0)); user=ROTATION_0 (0) 
+09-22 12:09:10.068 D/BatterySaverController( 1451): send ACTION_POWER_SAVE_MODE_CHANGED_INTERNAL
+09-22 12:09:10.068 D/WindowManager( 1451): rotationForOrientation, orientationSource=ActivityRecord{9726a5 u0 com.ora.ora/.MainActivity} t541}
+09-22 12:09:10.069 V/WindowManager( 1451): Computed rotation=ROTATION_0 (0) for display id=0 based on lastOrientation=SCREEN_ORIENTATION_UNSPECIFIED (-1) and oldRotation=ROTATION_0 (0), caller=com.android.server.wm.DisplayContent.updateRotationUnchecked:2410 com.android.server.wm.WindowManagerService.updateRotationUnchecked:4778 com.android.server.wm.WindowManagerService.thawDisplayRotation:4719 com.android.server.wm.WindowManagerService.thawRotation:4683 android.view.IWindowManager$Stub.onTransact:2536 com.android.server.wm.WindowManagerService.onTransact:1608 
+09-22 12:09:10.071 I/AiAiCaptions( 3812): onReceive(): Battery saver mode turned on.
+09-22 12:09:10.072 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: BATTERY_STATS: true
+09-22 12:09:10.072 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: ANIMATION: false
+09-22 12:09:10.074 D/AndroidRuntime( 7959): Shutting down VM
+09-22 12:09:10.076 I/SelfLocationFetcher( 3497): Device is opted-out of last known location reporting. [CONTEXT service_id=284 ]
+09-22 12:09:10.077 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: VIBRATION: true
+09-22 12:09:10.077 W/PersonalSafety( 2224): Auto detection is null. Ignoring power-saver updates. [CONTEXT service_id=310 ]
+09-22 12:09:10.077 D/VibratorManagerService( 1451): Updating device state...
+09-22 12:09:10.077 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: false
+09-22 12:09:10.077 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_ALL_APPS_STANDBY: true
+09-22 12:09:10.077 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-22 12:09:10.077 I/PersonalSafety( 2224): (REDACTED) [Settings] power saver mode changed to %s
+09-22 12:09:10.077 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: UNKNOWN: true
+09-22 12:09:10.077 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: FORCE_BACKGROUND_CHECK: true
+09-22 12:09:10.078 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: NETWORK_FIREWALL: true
+09-22 12:09:10.078 D/BatterySaverController( 1451): onLowPowerModeChanged: ServiceType: DATA_SAVER: false
+09-22 12:09:10.079 I/SelfLocationFetcher( 2224): Starting self-location fetching naive strategy. [CONTEXT service_id=284 ]
+09-22 12:09:10.082 W/WindowManager( 1451): Cannot find window which accessibility connection is added to
+09-22 12:09:10.083 I/Layer   (  904): id=338 removeFromCurrentState WindowToken{dcfff20 type=2032 android.os.Binder@cd9ae23}#338 (102)
+09-22 12:09:10.084 I/SurfaceFlinger(  904): id=338 Removed WindowToken{dcfff20 type=2032 android.os.Binder@cd9ae23}#338 (102)
+09-22 12:09:10.084 I/Layer   (  904): id=338 Destroyed WindowToken{dcfff20 type=2032 android.os.Binder@cd9ae23}#338
+09-22 12:09:10.091 V/Navbar.Store( 1950): handleEvent(0) OnRotationLockedChanged(rotationLocked=false) [Module] NavBarStoreImpl
+09-22 12:09:10.095 D/SettingsHelper( 1950): onChange() COMPLETED elapsed= 1
+09-22 12:09:10.095 V/SettingsHelper( 1950): *** broadcastChange for content://settings/system/accelerometer_rotation
+09-22 12:09:10.095 D/Tile.RotationLockTile( 1950):  OnChangedCallback : 
+09-22 12:09:10.097 D/Tile.RotationLockTile( 1950):  handleUpdateState: true orientation = true
+09-22 12:09:10.098 V/Navbar.Store( 1950): handleEvent(0) OnRotationLockedChanged(rotationLocked=false) [Module] NavBarStoreImpl
+09-22 12:09:10.100 I/BufferQueueProducer(  904): [com.ora.ora/com.ora.ora.MainActivity$_1018#318](this:0xb40000741831e838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.89 dur=1119.92 max=1119.92 min=1119.92
+09-22 12:09:10.100 I/AODTileStateController( 1950): onReceive: BR = [android.os.action.POWER_SAVE_MODE_CHANGED]
+09-22 12:09:10.100 I/AODTileStateController( 1950): requestListeningState: 
+09-22 12:09:10.100 D/StatusBarManagerService( 1451): isSecCustomTile : componentName =ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-22 12:09:10.101 W/PowerUI ( 1950): unknown intent: Intent { act=android.os.action.POWER_SAVE_MODE_CHANGED flg=0x40000010 }
+09-22 12:09:10.102 D/TileServices( 1950): Couldn't find tile for ComponentInfo{com.samsung.android.app.aodservice/com.samsung.android.app.aodservice.settings.AODTileService}
+09-22 12:09:10.110 W/dex2oat32( 7937): Compilation of void uub.R(uur) took 110.627ms
+09-22 12:09:10.117 W/libprocessgroup( 1451): Failed to open /dev/blkio//cgroup.procs: No such file or directory
+09-22 12:09:10.126 I/NetworkScheduler.Stats( 2224): (REDACTED) Task %s/%s started execution. cause:%s exec_start_elapsed_seconds: %s
+09-22 12:09:10.130 I/NetworkScheduler.Stats( 2224): (REDACTED) Task %s/%s finished executing. cause:%s result: %s elapsed_millis: %s uptime_millis: %s exec_start_elapsed_seconds: %s
+09-22 12:09:10.711 D/WifiConnectivityMonitor.DnsThread( 1451):  [|204] []
+09-22 12:09:10.712 D/WifiConnectivityMonitor.NetworkStatsAnalyzer( 1451): DNS resultType : 0, responseTime : 204
+09-22 12:09:10.713 D/OpenNetworkQos[4.00]( 1451): updateBssidLatestDnsResultType - result: 0
+09-22 12:09:10.713 D/OpenNetworkQos[4.00]( 1451): updateBssidNoInternet: mBssidNoInternet = false
+09-22 12:09:10.713 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosNoInternetStatus: false
+09-22 12:09:10.713 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosScores: 26 30 30 
+09-22 12:09:10.713 D/SettingsProvider( 1451): isChangeAllowed() : name = wifi_wcm_qos_sharing_score_summary
+09-22 12:09:10.713 I/WifiProfileShare( 1451): network QoS data was changed (internet), updateQoSData networkType: true, qosData: false
+09-22 12:09:10.714 V/WifiProfileShare.Caster( 1451): update wips network, size: 0
+09-22 12:09:10.714 D/WifiProfileShare( 1451): nearby scanning settings run
+09-22 12:09:10.714 D/WifiProfileShare( 1451): network score provider settings enabled
+09-22 12:09:10.714 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosScores: 26 30 30 
+09-22 12:09:10.714 D/OpenNetworkQos[4.00]( 1451): getOpenNetworkQosNoInternetStatus: false
+09-22 12:09:10.714 I/WifiProfileShare.Caster( 1451): current network type: 0, score: [26, 30, 30]
+09-22 12:09:10.715 V/WifiProfileShare.Cache( 1451): update network score 22:87:ec:**:**:08
+09-22 12:09:10.715 D/WifiProfileShare.ScanMatcher( 1451): getMcfDataList size:1
+09-22 12:09:10.715 I/WifiProfileShare.Caster( 1451): qos data was updated , before:type:QOS, pBssid:6a:c4:2a, qosData:7c after:type:QOS, pBssid:6a:c4:2a, qosData:7c
+09-22 12:09:10.716 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-22 12:09:10.716 D/WifiProfileShare.McfCast( 1451): -ME--- mIsNetworkEnabled :true
+09-22 12:09:10.716 D/WifiProfileShare.McfCast( 1451): updateQoSData ignored, same contents
+09-22 12:09:10.716 D/WifiProfileShare.MCF( 1451): success update QosData !
+09-22 12:09:10.717 I/[MCFSDK_android_1.2.4010]_4_b( 1451): isNetworkEnabled - type : 1 ret : true
+09-22 12:09:10.717 D/WifiProfileShare.McfCast( 1451): -ME--- mIsNetworkEnabled :true
+09-22 12:09:10.717 D/WifiProfileShare.McfCast( 1451): -ME--- updatePasswordDate pwdData size:1
+09-22 12:09:10.786 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.79 dur=1003.45 max=17.11 min=16.36
+09-22 12:09:10.888 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.810314,dur:1003.17,max:18.52,min:15.51  
+09-22 12:09:10.938 W/RefBase ( 7959): RefBase: Explicit destruction, weak count = 0 (in 0x7f7c3d7988). Use sp<> to manage this object.
+09-22 12:09:10.949 D/RefBase ( 7959): #00 pc 0000000000101358  /apex/com.android.runtime/lib64/bionic/libc.so (__cxa_finalize+280)
+09-22 12:09:10.949 D/RefBase ( 7959): #01 pc 00000000000f3078  /apex/com.android.runtime/lib64/bionic/libc.so (exit+24)
+09-22 12:09:10.949 D/RefBase ( 7959): #02 pc 0000000000085e14  /apex/com.android.runtime/lib64/bionic/libc.so (__libc_init+100)
+09-22 12:09:10.995 I/adbd    (24013): adbd service requested 'shell,v2,TERM=dumb,raw:cat /sdcard/ui2.xml'
+09-22 12:09:11.225 D/connsyslogger( 1163): Open FIFO for close
+09-22 12:09:11.788 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.85 dur=1002.57 max=16.92 min=16.44
+09-22 12:09:11.840 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:11.843 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:11.843 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:11.886 D/io_stats(  590): !@ 179,0 r 1922857 29011730 w 892995 11427008 d 0 0 f 0 0 iot 760164 0 th 0 0 0 pt 0 inp 0 0 3529.648
+09-22 12:09:11.890 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.852600,dur:1002.46,max:17.18,min:16.28  
+09-22 12:09:12.069 E/Watchdog( 1451): !@Sync: 118 heap: 114 / 136 FD: 1023 [2026-09-22 12:09:12.069]
+09-22 12:09:12.208 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:09:12.208 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:09:12.208 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:09:12.208 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:09:12.208 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:09:12.209 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:09:12.217 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1154, isSameBssidAndFreq true
+09-22 12:09:12.219 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:09:12.219 D/NetworkController.WifiSignalController( 1950): notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-22 12:09:12.240 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.33 dur=3009.06 max=3009.06 min=3009.06
+09-22 12:09:12.792 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.80 dur=1003.35 max=17.04 min=16.46
+09-22 12:09:12.894 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.793514,dur:1003.45,max:17.20,min:16.42  
+09-22 12:09:13.121 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:13.122 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:13.125 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:13.177 E/android.hardware.health@2.1-service-samsung(  861): Could not open /sys/class/power_supply/battery/lrp
+09-22 12:09:13.179 D/BatteryService( 1451): Sending ACTION_BATTERY_CHANGED: level:22, status:2, health:2, ac:true, usb:false, wireless:false, pogo:false, misc:0x10000, charge_type:1, charger_type:0, voltage:3847, temperature:378, online:19, current_avg:522, ps:false, hvc:false, capacity:280000, current_event:0x8000, current_now:487, mcc:0, mcv:0, cc:1115000, present:true, scale:100, technology:Li-ion
+09-22 12:09:13.182 D/MotionRecognitionService( 1451): [SAR]  onReceive : ACTION_BATTERY_CHANGED, Plugged: 1
+09-22 12:09:13.183 I/DeviceBatteryInfoService( 1451): action: android.intent.action.BATTERY_CHANGED
+09-22 12:09:13.183 I/DeviceBatteryInfoService( 1451): phone battery level: 22
+09-22 12:09:13.183 I/DeviceBatteryInfoService( 1451): phone battery status: 2
+09-22 12:09:13.184 D/SemBigDataInfoController( 1894): Intent: android.intent.action.BATTERY_CHANGED
+09-22 12:09:13.184 D/SemBigDataInfoController( 1894): Intent: android.intent.action.BATTERY_CHANGED
+09-22 12:09:13.185 E/PocketModeEvent( 1451): PocketModeSetting is off 
+09-22 12:09:13.185 D/PhoneWindowManagerExt( 1451): ACTION_BATTERY_CHANGED - Level=22, status=2
+09-22 12:09:13.186 D/AdaptiveBrightnessLongtermModelBuilder( 1451): Received android.intent.action.BATTERY_CHANGED
+09-22 12:09:13.186 D/SemWifiApBroadcastReceiver( 1451): Received : android.intent.action.BATTERY_CHANGED
+09-22 12:09:13.187 D/KeyguardUpdateMonitor( 1950): received broadcast android.intent.action.BATTERY_CHANGED
+09-22 12:09:13.187 I/PowerUI ( 1950): mBootCompleted = true |  mFullyConnected = true
+09-22 12:09:13.187 I/PowerUI ( 1950): BATTERY_HEALTH_CHECK extraHealth=2 mBatteryMiscEvent=65536
+09-22 12:09:13.187 W/PowerUI ( 1950): Plug reason
+09-22 12:09:13.187 W/PowerUI ( 1950): Skip charging animation - by plug status
+09-22 12:09:13.187 D/PowerUI ( 1950): priorPlugType = 1 mPlugType = 1 priorBatteryStatus = 2 mBatteryStatus = 2
+09-22 12:09:13.187 W/PowerUI ( 1950): Plug reason
+09-22 12:09:13.187 W/PowerUI ( 1950): Skip charging sound - by plug status
+09-22 12:09:13.187 I/PowerUI ( 1950): oldMisalign : false, curMisalign : false
+09-22 12:09:13.187 D/SecPowerUI.Notification( 1950): dismissing low battery warning: level=22
+09-22 12:09:13.187 D/SecPowerUI.Notification( 1950): updateNotification mWarning=false mPlaySound=false
+09-22 12:09:13.187 D/SecPowerUI.Notification( 1950): SecBatteryStatsSnapshot{batteryLevel=22, currentBatteryMode=1, chargingTime=7315000, chargingType=11, batteryHealth=2, automaticTestMode=false, isHiccupState=false}
+09-22 12:09:13.188 D/SecPowerUI.Notification( 1950): showChargingNotice oldChargingType : 11 / currentChargingType : 11, oldChargingTime : 7315000 / mChargingTime : 7308000
+09-22 12:09:13.188 D/SecPowerUI.Notification( 1950): showChargingNotification()
+09-22 12:09:13.188 D/SecPowerUI.Notification( 1950): SecBatteryStatsSnapshot{batteryLevel=22, currentBatteryMode=1, chargingTime=7308000, chargingType=11, batteryHealth=2, automaticTestMode=false, isHiccupState=false}
+09-22 12:09:13.188 D/SecPowerUI.Notification( 1950): 1. restoreScreenTimeOut - saved_value : :
+09-22 12:09:13.188 E/SecPowerUI.Notification( 1950): no saved value, so we do nothing !!
+09-22 12:09:13.194 D/ApplicationPolicy( 1451): isStatusBarNotificationAllowedAsUser: packageName = com.android.systemui,userId = 0
+09-22 12:09:13.194 D/ApplicationPolicy( 1451): isStatusBarNotificationAllowedAsUser: packageName = com.android.systemui,userId = -1
+09-22 12:09:13.194 D/ApplicationPolicy( 1451): isStatusBarNotificationAllowedAsUser: converting userId from USER_ALLto 0
+09-22 12:09:13.196 D/PowerUI ( 1950): Battery swelling mode - priorBatterySwellingMode = 0 mBatterySwellingMode = 0 mBatteryStatus = 2
+09-22 12:09:13.196 I/PowerUI ( 1950): mBatteryMiscEvent = 65536
+09-22 12:09:13.197 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:09:13.198 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:09:13.198 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:09:13.198 D/SamsungBatteryMeterDrawable( 1950): onBatteryLevelChanged isSomethingChanged: false
+09-22 12:09:13.198 D/KeyguardUpdateMonitor( 1950): handleBatteryUpdate
+09-22 12:09:13.202 D/KeyguardSecIndicationController( 1950): addIndicationTimeout() returned - unlocking
+09-22 12:09:13.202 D/KeyguardSecIndicationController( 1950): addIndication() returned - unlocking
+09-22 12:09:13.203 D/KeyguardSecIndicationPolicy( 1950):  remove Item pos = DEFAULT, type =           OWNER_INFO
+09-22 12:09:13.203 D/KeyguardSecIndicationController( 1950): addBatteryAndOwnerInfoIndication() battery status = BatteryStatus{status=2,level=22,plugged=1,health=2,maxChargingWattage=-1,remaining=7308000ultraFastCharger=0}
+09-22 12:09:13.203 I/AODBatteryManager( 1950): updateBatteryData: ACTION_BATTERY_CHANGED
+09-22 12:09:13.204 I/AODBatteryManager( 1950): saveBatteryData : AOD BatteryData [mBatteryLevel=22, mBatteryStatus=CHARGING, mBatteryPlugType=AC, mBatteryPlugged=true, mRemainingChargeTime=7308000, mBatteryChargingType=1, mBatteryChargerType=NORMAL, mBatteryOnline=NOT_DEFINED, mBatterySwellingMode=NONE, mBatteryProtectMode=false]
+09-22 12:09:13.204 I/ChargingInfoManager( 1950): updateChargingInfo: newState = AOD ChargingInfo [mState=BATTERY_AND_REMAIN_TIME, mIsCharging=true, mIsFullyCharged=false, mIsBatteryProtectMode=false], oldState = AOD ChargingInfo [mState=BATTERY_AND_REMAIN_TIME, mIsCharging=true, mIsFullyCharged=false, mIsBatteryProtectMode=false]
+09-22 12:09:13.402 I/Telecom:SamsungTelecomServiceImpl( 1451): isInManagedCall - callingPackage : android
+09-22 12:09:13.410 D/SmartAlertController( 1451): SmartAlert - Found Missed Event
+09-22 12:09:13.410 I/Launcher.NotificationListener( 2341): onNotificationPosted : com.android.systemui number : 0
+09-22 12:09:13.410 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:09:13.411 D/InterruptionStateProvider( 1950): Group alert behavior is suppressed but we want to alert bubble
+09-22 12:09:13.412 D/SmartAlertController( 1451): SmartAlert - already registered or Setting disabled
+09-22 12:09:13.444 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=0.83 dur=1203.65 max=1203.65 min=1203.65
+09-22 12:09:13.510 I/wpa_supplicant( 1879): Heartbeat 348
+09-22 12:09:13.612 D/BubblesManager( 1950): onEntryUpdated : shouldBubbleUp=false ,key=-1|com.android.systemui|2131428972|charging_state|10063
+09-22 12:09:13.638 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:09:13.639 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:09:13.654 I/SDHMS:D ( 3951): SIOP:: AP:485 BAT:378 USB:0 CHG:436 PA:405 BLK:0 SUBBAT:0 SKIN:409 SKINF:409 SKINB:405 LRP:410 LRP2:409 LRF:410 LRB:407 LRF2:409 LRB2:405 AP2:409 CHG2:402 WIFI2:396 SPK2:360 
+09-22 12:09:13.659 E/OpenGLRenderer( 1950): Device claims wide gamut support, cannot find matching config, error = EGL_SUCCESS
+09-22 12:09:13.659 W/OpenGLRenderer( 1950): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+09-22 12:09:13.680 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:09:13.681 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:09:13.721 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() height = 0 container Visibility = 8, isValid = false, mIsDozing = false, fraction = 1.0, source = 0, target = 0
+09-22 12:09:13.721 I/FaceWidgetPositionAlgorithm( 1950): getMediaContainerHeight() supplier = 0
+09-22 12:09:13.795 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.83 dur=1002.89 max=17.05 min=16.46
+09-22 12:09:13.897 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.820629,dur:1003.00,max:17.20,min:16.09  
+09-22 12:09:14.798 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.79 dur=1003.44 max=17.02 min=16.49
+09-22 12:09:14.900 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.803150,dur:1003.29,max:17.01,min:16.44  
+09-22 12:09:15.050 I/ContactsProvider_EventLog( 3050): cp_s: [CONTACT con(778) dat(11092) acc({phone(1)=46, google(166)=161, google(107)=599, com.whatsapp(8)=598, com.google.android.apps.tachyon(110)=52}) trash_acc([.google:731])  trash(731) calls([logtype:100 cnt:2000, logtype:300 cnt:500]) Iso(PK) uId(0) ]
+09-22 12:09:15.050 I/ContactsProvider_EventLog( 3050): cp_s: [ agr({[8]=5, [8 ,166 ,166]=1, [107 ,8 ,8]=14, [107 ,8 ,110]=43, [8 ,166]=86, [107 ,166]=3, [107 ,110]=1, [1 ,8 ,166]=2, [1 ,8 ,110]=3, [107]=126, [1 ,107]=2, [107 ,8 ,166]=1, [8 ,107 ,110]=2, [1]=18, [8 ,107 ,8 ,166]=2, [8 ,107]=34, [166 ,166]=1, [8 ,107 ,166]=12, [1 ,8]=15, [8 ,107 ,166 ,110]=1, [8 ,107 ,8]=2, [107 ,8 ,8 ,110]=1, [1 ,8 ,107]=3, [1 ,166]=3, [107 ,8]=348, [107 ,8 ,107]=2, [110 ,166]=1, [166]=45, [8 ,8 ,166]=1}) ]
+09-22 12:09:15.050 I/ContactsProvider_EventLog( 3050): cp_s: [ cnt({dialer(6973)=4, contacts(6564)=4, acore(3050)=1}) ]
+09-22 12:09:15.050 I/ContactsProvider_EventLog( 3050): cp_s: [PROFILE ] [SAPROFILE con(1) dat(4) acc({phone(1)=1}) ]
+09-22 12:09:15.050 I/ContactsProvider_EventLog( 3050): cp_s: [STATE R(F) ]
+09-22 12:09:15.220 I/WifiHAL ( 1861): Get link layer stats
+09-22 12:09:15.220 I/WifiHAL ( 1861): GetLinkStatsCommand::create
+09-22 12:09:15.220 D/android.hardware.wifi@1.0-service-lazy( 1861): WifiRequest::create vendor command to iface 40, vendor_id=0x1a11, subcmd=0x1200, res=0
+09-22 12:09:15.220 I/android.hardware.wifi@1.0-service-lazy( 1861): WifiCommand::requestResponse err=-95
+09-22 12:09:15.220 I/WifiHAL ( 1861): wifi_get_link_stats: result=-3
+09-22 12:09:15.221 E/WifiVendorHal( 1451): $r8$lambda$s6w0pmKyq6-tDdqCEDbOV_xqgVE(l.1179) failed {.code = ERROR_NOT_SUPPORTED, .description = }
+09-22 12:09:15.230 D/SemWifiUsabilityStatsMonitor( 1451): onWifiUsabilityStats - seqNum 1155, isSameBssidAndFreq true
+09-22 12:09:15.231 I/SemWifiLinkQualityMonitor( 1451): Link Qos query: inf. ms / 0 Mbps
+09-22 12:09:15.232 D/NetworkController.WifiSignalController( 1950): notifyListener: visible=true, connected=true, inetCondition=1, isDefault=true, wifiTestReported=true, receivedInetCondition=-1, hideDuringMobileSwitching=false
+09-22 12:09:15.266 I/BufferQueueProducer(  904): [StatusBar$_1950#83](this:0xb40000741890f838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=1.65 dur=1822.35 max=1521.35 min=83.75
+09-22 12:09:15.339 W/dex2oat32( 7937): Compilation of java.lang.Object bjfk.a(java.util.Map) took 127.434ms
+09-22 12:09:15.524 D/IpClient/wlan0( 1929): interfaceLinkStateChanged: ifindex 40 up
+09-22 12:09:15.680 D/MobileStatusTracker(0/1)( 1950): onSignalStrengthsChanged level=4, vendorLevel=4
+09-22 12:09:15.682 D/MobileSignalController(0/1)( 1950): notifyListener: enabled=true, connected=true, dataConnected=true, networkType=LTE (4G), emergencyOnly=false, roaming=false, isDefault=false, dataActivity=, level=4, ca=false, mmWave=false, disabledDataIcon=false, simCard=ETC
+09-22 12:09:15.682 D/NetworkController( 1950): SignalStrength from intent slotId=0
+09-22 12:09:15.794 E/audit   (  828): type=1400 audit(1790060955.790:1360): avc:  denied  { write } for  pid=3105 comm="ThreadPoolForeg" name="traced_producer" dev="tmpfs" ino=12885 scontext=u:r:gmscore_app:s0:c512,c768 tcontext=u:object_r:traced_producer_socket:s0 tclass=sock_file permissive=0 SEPF_SM-A325F_12_0001 audit_filtered
+09-22 12:09:15.794 E/audit   (  828): type=1300 audit(1790060955.790:1360): arch=c00000b7 syscall=203 success=no exit=-13 a0=78 a1=b40000754ea9e640 a2=1e a3=ffffffff954de431 items=0 ppid=846 pid=3105 auid=4294967295 uid=10226 gid=10226 euid=10226 suid=10226 fsuid=10226 egid=10226 sgid=10226 fsgid=10226 tty=(none) ses=4294967295 comm="ThreadPoolForeg" exe="/system/bin/app_process64" subj=u:r:gmscore_app:s0:c512,c768 key=(null)
+09-22 12:09:15.794 E/audit   (  828): type=1327 audit(1790060955.790:1360): proctitle="com.google.android.gms"
+09-22 12:09:15.801 I/BufferQueueProducer(  904): [SurfaceView[com.ora.ora/com.ora.ora.MainActivity]@0(BLAST)#323](this:0xb400007418321838,id:-1,api:0,p:-1,c:904) queueBuffer: fps=59.84 dur=1002.69 max=17.04 min=16.41
+09-22 12:09:15.887 D/io_stats(  590): !@ 179,0 r 1922859 29011762 w 892997 11427016 d 0 0 f 0 0 iot 760168 0 th 0 0 0 pt 0 inp 0 0 3533.649
+09-22 12:09:15.894 W/dex2oat32( 7937): Compilation of blpy blxm.E(bocu) took 316.068ms
+09-22 12:09:15.903 I/hwcomposer(  860): [HWCDisplay] [Display_0 (type:1)] fps:59.827343,dur:1002.89,max:17.30,min:16.16  

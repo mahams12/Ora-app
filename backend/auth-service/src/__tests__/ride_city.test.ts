@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../app';
 import { memoryDb } from './helpers/memory_db';
-import { normalizeCitySlug } from '../geo/types';
+import { normalizeCitySlug } from '../redis/types';
 
 function appFor(db: ReturnType<typeof memoryDb>, uid: string) {
   db.seed('users', uid, {

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,35 +14,20 @@ import '../../../../core/utils/responsive.dart';
 import '../../../ride/domain/entities/ride.dart';
 import '../../../ride/presentation/history/ride_history_display.dart';
 import '../../../ride/presentation/widgets/ride_card/ride_card.dart';
-import '../../../ride/presentation/widgets/ride_card/ride_card_assets.dart';
-import '../../domain/location/driver_location_lifecycle.dart';
 import '../driver_display.dart';
 import '../location/driver_location_session.dart';
 import '../view_models/driver_assigned_ride_view_model.dart';
 import '../widgets/driver_job_map.dart';
 import '../widgets/driver_location_status_line.dart';
-import '../widgets/driver_ui_kit.dart';
 
 /// Driver assigned-job detail — progression + cancel/close.
 ///
 /// Live job map (pickup/destination/driver marker) plus RTDB trip-location
 /// publishing via [driverLocationSessionProvider].
 class DriverAssignedRideView extends ConsumerStatefulWidget {
-  const DriverAssignedRideView({
-    required this.rideId,
-    this.title = 'Active Ride',
-    this.subtitle = 'Manage your current trip',
-    this.homeRoute = AppRoutes.driverHome,
-    super.key,
-  });
+  const DriverAssignedRideView({required this.rideId, super.key});
 
   final String rideId;
-
-  /// Header copy + fallback route — logistics partners get delivery wording
-  /// and their own shell home.
-  final String title;
-  final String subtitle;
-  final String homeRoute;
 
   @override
   ConsumerState<DriverAssignedRideView> createState() =>
@@ -66,9 +50,8 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final vm = ref.read(
-      driverAssignedRideViewModelProvider(widget.rideId).notifier,
-    );
+    final vm =
+        ref.read(driverAssignedRideViewModelProvider(widget.rideId).notifier);
     if (state == AppLifecycleState.resumed) {
       unawaited(vm.resumePolling());
     } else {
@@ -125,9 +108,8 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
   /// primary action delegates to the view model as before. Ora Courier v2
   /// is code-free — the stop checklist carries its actions instead.
   Future<void> _runPrimary(DriverAssignedRideViewModel vm) async {
-    final ride = ref.read(
-      driverAssignedRideViewModelProvider(widget.rideId).select((s) => s.ride),
-    );
+    final ride = ref.read(driverAssignedRideViewModelProvider(widget.rideId)
+        .select((s) => s.ride));
     if (ride == null) return;
     final s = ride.state.toUpperCase();
     if (!ride.isCourier || ride.isCourierV2) {
@@ -136,20 +118,20 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
     }
     final spec = switch (s) {
       'DRIVER_ARRIVED' => (
-        'Confirm pickup',
-        'Ask the sender for the pickup code, then take the parcel.',
-        (String code) => vm.startRide(otp: code),
-      ),
+          'Confirm pickup',
+          'Ask the sender for the pickup code, then take the parcel.',
+          (String code) => vm.startRide(otp: code),
+        ),
       'RIDE_STARTED' => (
-        'Confirm delivery',
-        'Ask the receiver for the delivery code.',
-        (String code) => vm.completeRide(otp: code),
-      ),
+          'Confirm delivery',
+          'Ask the receiver for the delivery code.',
+          (String code) => vm.completeRide(otp: code),
+        ),
       'RETURNING' => (
-        'Confirm return',
-        'Ask the sender for the return code when handing the parcel back.',
-        (String code) => vm.completeReturn(otp: code),
-      ),
+          'Confirm return',
+          'Ask the sender for the return code when handing the parcel back.',
+          (String code) => vm.completeReturn(otp: code),
+        ),
       _ => null,
     };
     if (spec == null) {
@@ -161,7 +143,10 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
     await spec.$3(code);
   }
 
-  Future<String?> _showOtpSheet({required String title, required String hint}) {
+  Future<String?> _showOtpSheet({
+    required String title,
+    required String hint,
+  }) {
     return showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
@@ -274,57 +259,83 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
     final phase = ref.watch(
       driverAssignedRideViewModelProvider(rideId).select((s) => s.phase),
     );
+    final isRefreshing = ref.watch(
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.isRefreshing),
+    );
     final errorMessage = ref.watch(
-      driverAssignedRideViewModelProvider(rideId).select((s) => s.errorMessage),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.errorMessage),
     );
     final vm = ref.read(driverAssignedRideViewModelProvider(rideId).notifier);
     final padding = Responsive.horizontalPadding(context);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Column(
-        children: [
-          DriverHeroArtHeader(
-            title: widget.title,
-            subtitle: widget.subtitle,
-            leadingIcon: context.canPop() ? Icons.arrow_back_rounded : null,
-            leadingTooltip: 'Back',
-            onLeading: context.canPop() ? () => context.pop() : null,
-          ),
-          Expanded(
-            child: switch (phase) {
-              DriverAssignedRidePhase.initialLoading => const Center(
-                child: OraLoadingIndicator(message: 'Loading job…'),
-              ),
-              DriverAssignedRidePhase.fatalError => OraErrorState(
-                title: 'Ride unavailable',
-                message: errorMessage ?? 'Something went wrong.',
-                onRetry: () => vm.start(),
-              ),
-              DriverAssignedRidePhase.active ||
-              DriverAssignedRidePhase.mutating ||
-              DriverAssignedRidePhase.ended => _JobBody(
-                rideId: rideId,
-                padding: padding,
-                onPrimary: () => _runPrimary(vm),
-                onCancel: () => _confirmCancel(vm),
-                onClose: () => vm.closeRide(),
-                onRefresh: () => vm.refresh(),
-                onFailDelivery: () => _showFailureSheet(vm),
-                onRetryDelivery: () => vm.retryDelivery(),
-                onStartReturn: () => _confirmReturnStart(vm),
-                onRate: () => context.push(AppRoutes.rideRatingPath(rideId)),
-                onBack: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    context.go(widget.homeRoute);
-                  }
-                },
-              ),
-            },
+      backgroundColor: OraColors.background,
+      appBar: AppBar(
+        backgroundColor: OraColors.background,
+        title: Text(
+          'Assigned ride',
+          style: OraTypography.title(OraColors.textPrimary),
+        ),
+        leading: IconButton(
+          tooltip: 'Back',
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.driverHome);
+            }
+          },
+          icon: const Icon(Icons.arrow_back_rounded),
+        ),
+        actions: [
+          IconButton(
+            tooltip: 'Refresh',
+            onPressed: isRefreshing ? null : () => vm.refresh(),
+            icon: isRefreshing
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.refresh_rounded),
           ),
         ],
+      ),
+      body: SafeArea(
+        child: switch (phase) {
+          DriverAssignedRidePhase.initialLoading => const Center(
+              child: OraLoadingIndicator(message: 'Loading job…'),
+            ),
+          DriverAssignedRidePhase.fatalError => OraErrorState(
+              title: 'Ride unavailable',
+              message: errorMessage ?? 'Something went wrong.',
+              onRetry: () => vm.start(),
+            ),
+          DriverAssignedRidePhase.active ||
+          DriverAssignedRidePhase.mutating ||
+          DriverAssignedRidePhase.ended =>
+            _JobBody(
+              rideId: rideId,
+              padding: padding,
+              onPrimary: () => _runPrimary(vm),
+              onCancel: () => _confirmCancel(vm),
+              onClose: () => vm.closeRide(),
+              onRefresh: () => vm.refresh(),
+              onFailDelivery: () => _showFailureSheet(vm),
+              onRetryDelivery: () => vm.retryDelivery(),
+              onStartReturn: () => _confirmReturnStart(vm),
+              onRate: () => context.push(AppRoutes.rideRatingPath(rideId)),
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go(AppRoutes.driverHome);
+                }
+              },
+            ),
+        },
       ),
     );
   }
@@ -369,9 +380,8 @@ class _JobBody extends ConsumerWidget {
       driverAssignedRideViewModelProvider(rideId).select((s) => s.isMutating),
     );
     final activeMutation = ref.watch(
-      driverAssignedRideViewModelProvider(
-        rideId,
-      ).select((s) => s.activeMutation),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.activeMutation),
     );
     final canCancel = ref.watch(
       driverAssignedRideViewModelProvider(rideId).select((s) => s.canCancel),
@@ -380,40 +390,35 @@ class _JobBody extends ConsumerWidget {
       driverAssignedRideViewModelProvider(rideId).select((s) => s.canClose),
     );
     final canFailDelivery = ref.watch(
-      driverAssignedRideViewModelProvider(
-        rideId,
-      ).select((s) => s.canFailDelivery),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.canFailDelivery),
     );
     final canRetryDelivery = ref.watch(
-      driverAssignedRideViewModelProvider(
-        rideId,
-      ).select((s) => s.canRetryDelivery),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.canRetryDelivery),
     );
     final canStartReturn = ref.watch(
-      driverAssignedRideViewModelProvider(
-        rideId,
-      ).select((s) => s.canStartReturn),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.canStartReturn),
     );
     final canConfirmReturn = ref.watch(
-      driverAssignedRideViewModelProvider(
-        rideId,
-      ).select((s) => s.canConfirmReturn),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.canConfirmReturn),
     );
     final primaryLabel = ref.watch(
-      driverAssignedRideViewModelProvider(
-        rideId,
-      ).select((s) => s.primaryActionLabel),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.primaryActionLabel),
     );
     final connectivityDegraded = ref.watch(
-      driverAssignedRideViewModelProvider(
-        rideId,
-      ).select((s) => s.connectivityDegraded),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.connectivityDegraded),
     );
     final infoMessage = ref.watch(
       driverAssignedRideViewModelProvider(rideId).select((s) => s.infoMessage),
     );
     final errorMessage = ref.watch(
-      driverAssignedRideViewModelProvider(rideId).select((s) => s.errorMessage),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.errorMessage),
     );
 
     if (ride == null) {
@@ -421,8 +426,7 @@ class _JobBody extends ConsumerWidget {
     }
 
     final status = ride.state.toUpperCase();
-    final primaryLoading =
-        isMutating &&
+    final primaryLoading = isMutating &&
         activeMutation != DriverRideMutation.cancel &&
         activeMutation != DriverRideMutation.close &&
         activeMutation != DriverRideMutation.failDelivery &&
@@ -445,16 +449,35 @@ class _JobBody extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _StatusHeroCard(status: status, ride: ride),
-            DriverLocationStatusLine(rideId: rideId),
-            const SizedBox(height: OraSpacing.sm),
-            _PassengerCard(ride: ride),
+            OraCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  OraChip(
+                    label: status,
+                    selected: !isDriverJobTerminalState(status),
+                    variant: OraChipVariant.status,
+                  ),
+                  const SizedBox(height: OraSpacing.sm),
+                  Text(
+                    driverJobTitle(status, courier: ride.isDelivery),
+                    style: OraTypography.headline(OraColors.textPrimary),
+                  ),
+                  const SizedBox(height: OraSpacing.xs),
+                  Text(
+                    driverJobMessage(
+                      status,
+                      courier: ride.isDelivery,
+                      courierV2: ride.isCourierV2,
+                    ),
+                    style: OraTypography.body(OraColors.textSecondary),
+                  ),
+                  DriverLocationStatusLine(rideId: rideId),
+                ],
+              ),
+            ),
             const SizedBox(height: OraSpacing.md),
-            _MapCard(ride: ride),
-            const SizedBox(height: OraSpacing.md),
-            _TripRouteCard(ride: ride),
-            const SizedBox(height: OraSpacing.md),
-            _ServiceFareCard(ride: ride),
+            DriverJobMap(ride: ride),
             if (connectivityDegraded || infoMessage != null) ...[
               const SizedBox(height: OraSpacing.sm),
               Text(
@@ -470,6 +493,14 @@ class _JobBody extends ConsumerWidget {
                 style: OraTypography.caption(OraColors.dangerForeground),
               ),
             ],
+            const SizedBox(height: OraSpacing.md),
+            RideCard(model: RideCardAdapters.fromDriverJob(ride)),
+            const SizedBox(height: OraSpacing.xs),
+            Text(
+              '${historyServiceTypeLabel(ride.serviceType)} · '
+              'Category ${ride.category}',
+              style: OraTypography.caption(OraColors.textMuted),
+            ),
             if (ride.cancellationReason != null &&
                 ride.cancellationReason!.trim().isNotEmpty) ...[
               const SizedBox(height: OraSpacing.xs),
@@ -506,12 +537,10 @@ class _JobBody extends ConsumerWidget {
               ),
             const SizedBox(height: OraSpacing.md),
             if (primaryLabel != null)
-              DriverActionButton(
+              OraButton(
                 label: primaryLabel,
                 isLoading: primaryLoading,
                 onPressed: isMutating ? null : onPrimary,
-                icon: Icons.send_rounded,
-                trailingIcon: null,
               ),
             // Ora Courier — delivery exceptions + return-to-sender.
             if (canFailDelivery) ...[
@@ -519,7 +548,8 @@ class _JobBody extends ConsumerWidget {
               OraButton(
                 label: 'Delivery failed',
                 variant: OraButtonVariant.outline,
-                isLoading: activeMutation == DriverRideMutation.failDelivery,
+                isLoading:
+                    activeMutation == DriverRideMutation.failDelivery,
                 onPressed: isMutating ? null : onFailDelivery,
               ),
             ],
@@ -527,7 +557,8 @@ class _JobBody extends ConsumerWidget {
               const SizedBox(height: OraSpacing.sm),
               OraButton(
                 label: 'Retry delivery',
-                isLoading: activeMutation == DriverRideMutation.retryDelivery,
+                isLoading:
+                    activeMutation == DriverRideMutation.retryDelivery,
                 onPressed: isMutating ? null : onRetryDelivery,
               ),
             ],
@@ -536,7 +567,8 @@ class _JobBody extends ConsumerWidget {
               OraButton(
                 label: 'Return parcel to sender',
                 variant: OraButtonVariant.outline,
-                isLoading: activeMutation == DriverRideMutation.startReturn,
+                isLoading:
+                    activeMutation == DriverRideMutation.startReturn,
                 onPressed: isMutating ? null : onStartReturn,
               ),
             ],
@@ -546,16 +578,16 @@ class _JobBody extends ConsumerWidget {
               const SizedBox(height: OraSpacing.sm),
               OraButton(
                 label: 'Confirm parcel returned',
-                isLoading: activeMutation == DriverRideMutation.completeReturn,
+                isLoading:
+                    activeMutation == DriverRideMutation.completeReturn,
                 onPressed: isMutating
                     ? null
                     : () => ref
-                          .read(
-                            driverAssignedRideViewModelProvider(
-                              rideId,
-                            ).notifier,
-                          )
-                          .completeReturn(),
+                        .read(
+                          driverAssignedRideViewModelProvider(rideId)
+                              .notifier,
+                        )
+                        .completeReturn(),
               ),
             ],
             if (canCancel) ...[
@@ -600,8 +632,6 @@ class _JobBody extends ConsumerWidget {
                 onPressed: onBack,
               ),
             ],
-            const SizedBox(height: OraSpacing.md),
-            _TripStepper(status: status),
           ],
         ),
       ),
@@ -626,7 +656,10 @@ class _DriverParcelCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Parcel', style: OraTypography.label(OraColors.textSecondary)),
+          Text(
+            'Parcel',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
           const SizedBox(height: OraSpacing.xs),
           Text(
             '${parcel['description'] ?? 'Parcel'} — '
@@ -692,9 +725,11 @@ class _OtpEntrySheetState extends State<_OtpEntrySheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(widget.title, style: OraTypography.title(OraColors.textPrimary)),
+          Text(widget.title,
+              style: OraTypography.title(OraColors.textPrimary)),
           const SizedBox(height: OraSpacing.xs),
-          Text(widget.hint, style: OraTypography.body(OraColors.textSecondary)),
+          Text(widget.hint,
+              style: OraTypography.body(OraColors.textSecondary)),
           const SizedBox(height: OraSpacing.md),
           OraTextField(
             controller: _controller,
@@ -744,10 +779,10 @@ class _DriverStopsCard extends ConsumerWidget {
   };
 
   IconData _iconFor(RideStop s) => switch (s.type) {
-    'SHOP' => Icons.storefront_outlined,
-    'DROPOFF' => Icons.flag_outlined,
-    _ => Icons.inventory_2_outlined,
-  };
+        'SHOP' => Icons.storefront_outlined,
+        'DROPOFF' => Icons.flag_outlined,
+        _ => Icons.inventory_2_outlined,
+      };
 
   String _stopTitle(RideStop s) =>
       s.label ?? s.location.address ?? 'Stop ${s.seq + 1}';
@@ -762,9 +797,8 @@ class _DriverStopsCard extends ConsumerWidget {
       isScrollControlled: true,
       backgroundColor: OraColors.surfaceElevated,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(OraRadius.xxl),
-        ),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(OraRadius.xxl)),
       ),
       builder: (_) => _QuoteEntrySheet(stop: stop),
     );
@@ -785,9 +819,8 @@ class _DriverStopsCard extends ConsumerWidget {
       isScrollControlled: true,
       backgroundColor: OraColors.surfaceElevated,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(OraRadius.xxl),
-        ),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(OraRadius.xxl)),
       ),
       builder: (_) => _PurchaseTotalSheet(approvedMinor: approved),
     );
@@ -806,9 +839,8 @@ class _DriverStopsCard extends ConsumerWidget {
       context: context,
       backgroundColor: OraColors.surfaceElevated,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(OraRadius.xxl),
-        ),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(OraRadius.xxl)),
       ),
       builder: (_) =>
           const _StopFailSheet(reasons: _DriverStopsCard._failReasons),
@@ -819,14 +851,16 @@ class _DriverStopsCard extends ConsumerWidget {
         .failStop(stop.seq, reason: reason);
   }
 
-  Future<void> _openSettlementSheet(BuildContext context, WidgetRef ref) async {
+  Future<void> _openSettlementSheet(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     final status = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: OraColors.surfaceElevated,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(OraRadius.xxl),
-        ),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(OraRadius.xxl)),
       ),
       builder: (_) => const _SettlementReportSheet(),
     );
@@ -843,20 +877,20 @@ class _DriverStopsCard extends ConsumerWidget {
       driverAssignedRideViewModelProvider(rideId).select((s) => s.isMutating),
     );
     final activeMutation = ref.watch(
-      driverAssignedRideViewModelProvider(
-        rideId,
-      ).select((s) => s.activeMutation),
+      driverAssignedRideViewModelProvider(rideId)
+          .select((s) => s.activeMutation),
     );
     final stops = ride.stops ?? const <RideStop>[];
     final current = ride.currentStop;
     final settlement = ride.settlement;
     final shopping = ride.shopping;
-    String fmt(Object? minor) => minor is int ? 'Rs ${minor ~/ 100}' : '—';
-    final canReportCash =
-        settlement != null &&
+    String fmt(Object? minor) =>
+        minor is int ? 'Rs ${minor ~/ 100}' : '—';
+    final canReportCash = settlement != null &&
         settlement['driverReportedStatus'] == null &&
         ride.state == 'RIDE_COMPLETED';
-    final alreadyReported = settlement?['driverReportedStatus'] as String?;
+    final alreadyReported =
+        settlement?['driverReportedStatus'] as String?;
 
     return OraCard(
       child: Column(
@@ -877,10 +911,10 @@ class _DriverStopsCard extends ConsumerWidget {
                   color: s.isDone
                       ? OraColors.tealBright
                       : s.isFailed
-                      ? OraColors.danger
-                      : (current?.seq == s.seq
-                            ? OraColors.primary
-                            : OraColors.textMuted),
+                          ? OraColors.danger
+                          : (current?.seq == s.seq
+                              ? OraColors.primary
+                              : OraColors.textMuted),
                 ),
                 const SizedBox(width: OraSpacing.xs),
                 Expanded(
@@ -896,10 +930,8 @@ class _DriverStopsCard extends ConsumerWidget {
                       if (s.items != null && s.items!.isNotEmpty)
                         Text(
                           s.items!
-                              .map(
-                                (i) =>
-                                    '${i['qty'] ?? 1}× ${i['name'] ?? 'item'}',
-                              )
+                              .map((i) =>
+                                  '${i['qty'] ?? 1}× ${i['name'] ?? 'item'}')
                               .join(', '),
                           style: OraTypography.caption(OraColors.textMuted),
                           maxLines: 2,
@@ -910,7 +942,8 @@ class _DriverStopsCard extends ConsumerWidget {
                           'Shop budget: ${fmt(s.shopBudgetMinor)}',
                           style: OraTypography.caption(OraColors.goldSoft),
                         ),
-                      if (s.instructions != null && s.instructions!.isNotEmpty)
+                      if (s.instructions != null &&
+                          s.instructions!.isNotEmpty)
                         Text(
                           s.instructions!,
                           style: OraTypography.caption(OraColors.textMuted),
@@ -946,18 +979,18 @@ class _DriverStopsCard extends ConsumerWidget {
                   s.status == 'DONE'
                       ? 'Done'
                       : s.status == 'ARRIVED'
-                      ? 'Arrived'
-                      : s.isFailed
-                      ? 'Failed'
-                      : current?.seq == s.seq
-                      ? 'Next'
-                      : 'Pending',
+                          ? 'Arrived'
+                          : s.isFailed
+                              ? 'Failed'
+                              : current?.seq == s.seq
+                                  ? 'Next'
+                                  : 'Pending',
                   style: OraTypography.caption(
                     s.isDone
                         ? OraColors.tealBright
                         : s.isFailed
-                        ? OraColors.danger
-                        : OraColors.textMuted,
+                            ? OraColors.danger
+                            : OraColors.textMuted,
                   ),
                 ),
               ],
@@ -970,8 +1003,10 @@ class _DriverStopsCard extends ConsumerWidget {
             if (current.status == 'PENDING')
               OraButton(
                 label: 'Arrived at ${_stopTitle(current)}',
-                isLoading: activeMutation == DriverRideMutation.stopArrive,
-                onPressed: isMutating ? null : () => vm.arriveStop(current.seq),
+                isLoading:
+                    activeMutation == DriverRideMutation.stopArrive,
+                onPressed:
+                    isMutating ? null : () => vm.arriveStop(current.seq),
               ),
             if (current.status == 'ARRIVED') ...[
               if (current.type == 'SHOP' &&
@@ -979,7 +1014,8 @@ class _DriverStopsCard extends ConsumerWidget {
                       current.quote!['rejectedAt'] != null))
                 OraButton(
                   label: 'Enter item prices',
-                  isLoading: activeMutation == DriverRideMutation.stopQuote,
+                  isLoading:
+                      activeMutation == DriverRideMutation.stopQuote,
                   onPressed: isMutating
                       ? null
                       : () => _openQuoteSheet(context, ref, current),
@@ -987,10 +1023,10 @@ class _DriverStopsCard extends ConsumerWidget {
               else if (current.type == 'SHOP' &&
                   current.quote?['approvedAt'] != null)
                 OraButton(
-                  label:
-                      'Confirm purchase '
+                  label: 'Confirm purchase '
                       '(${fmt(current.quote?['totalMinor'])})',
-                  isLoading: activeMutation == DriverRideMutation.stopConfirm,
+                  isLoading:
+                      activeMutation == DriverRideMutation.stopConfirm,
                   onPressed: isMutating
                       ? null
                       : () => _openPurchaseSheet(context, ref, current),
@@ -1000,7 +1036,8 @@ class _DriverStopsCard extends ConsumerWidget {
                   label: current.type == 'DROPOFF'
                       ? 'Confirm delivered'
                       : 'Confirm collected',
-                  isLoading: activeMutation == DriverRideMutation.stopConfirm,
+                  isLoading:
+                      activeMutation == DriverRideMutation.stopConfirm,
                   onPressed: isMutating
                       ? null
                       : () => vm.confirmStop(current.seq),
@@ -1141,7 +1178,9 @@ class _QuoteEntrySheetState extends State<_QuoteEntrySheet> {
   @override
   void initState() {
     super.initState();
-    _priceControllers = [for (final _ in _requested) TextEditingController()];
+    _priceControllers = [
+      for (final _ in _requested) TextEditingController(),
+    ];
   }
 
   @override
@@ -1273,7 +1312,9 @@ class _PurchaseTotalSheetState extends State<_PurchaseTotalSheet> {
   @override
   void initState() {
     super.initState();
-    _total = TextEditingController(text: '${widget.approvedMinor ~/ 100}');
+    _total = TextEditingController(
+      text: '${widget.approvedMinor ~/ 100}',
+    );
   }
 
   @override
@@ -1450,660 +1491,6 @@ class _SettlementReportSheet extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop('UNPAID'),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Passenger header card — 3D avatar + role label + call/chat slots.
-/// The job API exposes no passenger profile fields to the driver, so the
-/// avatar falls back to the bundled 3D asset and no name/rating is shown.
-class _PassengerCard extends StatelessWidget {
-  const _PassengerCard({required this.ride});
-
-  final Ride ride;
-
-  @override
-  Widget build(BuildContext context) {
-    final contactName = ride.isCourier
-        ? (ride.parcel?['senderName'] as String?)?.trim()
-        : null;
-    final role = ride.isDelivery ? 'Sender' : 'Passenger';
-    final name = (contactName != null && contactName.isNotEmpty)
-        ? contactName
-        : role;
-
-    return OraCard(
-      padding: const EdgeInsets.all(OraSpacing.sm),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: OraColors.info.withValues(alpha: 0.45),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: OraColors.info.withValues(alpha: 0.16),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: const RideCardAssetImage(
-              assetPath: RideCardAssets.avatar3d,
-              width: 46,
-              height: 46,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(width: OraSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: OraTypography.bodyEmphasis(
-                    OraColors.textPrimary,
-                  ).copyWith(fontSize: 15),
-                ),
-                if (name != role)
-                  Text(
-                    role,
-                    style: OraTypography.caption(
-                      OraColors.textMuted,
-                    ).copyWith(fontSize: 11.5),
-                  ),
-              ],
-            ),
-          ),
-          _RoundContactButton(
-            assetPath: RideCardAssets.phone,
-            semanticLabel: 'Call $role',
-            enabled: false,
-          ),
-          const SizedBox(width: OraSpacing.xs),
-          _RoundContactButton(
-            icon: Icons.chat_bubble_outline_rounded,
-            semanticLabel: 'Chat with $role',
-            enabled: false,
-          ),
-          const SizedBox(width: OraSpacing.xs),
-          _RoundContactButton(
-            icon: Icons.near_me_rounded,
-            semanticLabel: 'Navigate to $role',
-            enabled: false,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RoundContactButton extends StatelessWidget {
-  const _RoundContactButton({
-    this.icon,
-    this.assetPath,
-    required this.semanticLabel,
-    this.enabled = false,
-  });
-
-  final IconData? icon;
-  final String? assetPath;
-  final String semanticLabel;
-  final bool enabled;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: semanticLabel,
-      enabled: enabled,
-      child: Container(
-        width: 40,
-        height: 40,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: OraColors.surfaceElevated,
-          border: Border.all(color: OraColors.border),
-          boxShadow: const [
-            BoxShadow(
-              color: OraColors.shadow,
-              blurRadius: 8,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Opacity(
-          opacity: enabled ? 1 : 0.45,
-          child: assetPath != null
-              ? RideCardAssetImage(assetPath: assetPath!, width: 20, height: 20)
-              : Icon(icon, size: 18, color: OraColors.textPrimary),
-        ),
-      ),
-    );
-  }
-}
-
-/// Orange status hero — pill chip + title + guidance over the winding-road
-/// artwork extracted from the reference design.
-class _StatusHeroCard extends StatelessWidget {
-  const _StatusHeroCard({required this.status, required this.ride});
-
-  final String status;
-  final Ride ride;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFF9A3E), OraColors.goldSharp],
-        ),
-        borderRadius: BorderRadius.circular(OraRadius.card),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x59FF6A0D),
-            blurRadius: 20,
-            offset: Offset(0, 9),
-            spreadRadius: -6,
-          ),
-          BoxShadow(
-            color: Color(0x332A211D),
-            blurRadius: 30,
-            offset: Offset(0, 16),
-            spreadRadius: -11,
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          Positioned(
-            right: 0,
-            top: 0,
-            bottom: 0,
-            child: ShaderMask(
-              shaderCallback: (rect) => const LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [Colors.transparent, Colors.white],
-                stops: [0.0, 0.45],
-              ).createShader(rect),
-              blendMode: BlendMode.dstIn,
-              child: Image.asset(
-                'assets/driver_tiles/status_road.png',
-                fit: BoxFit.cover,
-                filterQuality: FilterQuality.high,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(OraSpacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: OraSpacing.xs,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0x38FFFFFF),
-                    borderRadius: BorderRadius.circular(OraRadius.pill),
-                    border: Border.all(color: const Color(0x52FFFFFF)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.directions_car_filled_rounded,
-                        size: 14,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        status.replaceAll('_', ' '),
-                        style: OraTypography.caption(Colors.white).copyWith(
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.6,
-                          fontSize: 10.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: OraSpacing.sm),
-                Text(
-                  driverJobTitle(status, courier: ride.isDelivery),
-                  style: OraTypography.headline(Colors.white).copyWith(
-                    fontWeight: FontWeight.w900,
-                    shadows: const [
-                      Shadow(
-                        color: Color(0x33000000),
-                        blurRadius: 6,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: OraSpacing.xxs),
-                SizedBox(
-                  width: 230,
-                  child: Text(
-                    driverJobMessage(
-                      status,
-                      courier: ride.isDelivery,
-                      courierV2: ride.isCourierV2,
-                    ),
-                    style: OraTypography.caption(
-                      const Color(0xE6FFFFFF),
-                    ).copyWith(fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Live job map in a rounded card with an honest distance pill — the
-/// straight-line pickup→destination distance, shown when it is positive.
-/// While GPS is still acquiring, a quiet placeholder holds the slot so no
-/// preview chrome or coordinates leak before the driver's fix exists.
-class _MapCard extends ConsumerWidget {
-  const _MapCard({required this.ride});
-
-  final Ride ride;
-
-  static String? _straightLineKm(LatLngPoint a, LatLngPoint b) {
-    const r = 6371.0;
-    final dLat = (b.lat - a.lat) * math.pi / 180;
-    final dLng = (b.lng - a.lng) * math.pi / 180;
-    final h =
-        math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(a.lat * math.pi / 180) *
-            math.cos(b.lat * math.pi / 180) *
-            math.sin(dLng / 2) *
-            math.sin(dLng / 2);
-    final km = r * 2 * math.atan2(math.sqrt(h), math.sqrt(1 - h));
-    if (km <= 0) return null;
-    return km >= 10
-        ? '${km.toStringAsFixed(0)} km'
-        : '${km.toStringAsFixed(1)} km';
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (!driverLocationShouldWatch(ride.state)) {
-      return const SizedBox.shrink();
-    }
-    final fix = ref.watch(driverTripLatestFixProvider(ride.rideId));
-    final distance = _straightLineKm(ride.pickup, ride.destination);
-
-    return OraCard(
-      padding: const EdgeInsets.all(OraSpacing.xs),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(OraRadius.md),
-        child: Stack(
-          children: [
-            if (fix == null)
-              Container(
-                height: 220,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFFF9EDE6), Color(0xFFF3E0CE)],
-                  ),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.route_rounded,
-                        size: 26,
-                        color: OraColors.goldSoft,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Locating you…',
-                        style: OraTypography.caption(OraColors.textMuted),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else
-              DriverJobMap(ride: ride, height: 220),
-            if (distance != null)
-              Positioned(
-                top: OraSpacing.xs,
-                left: OraSpacing.xs,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: OraSpacing.xs,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: OraColors.surfaceElevated,
-                    borderRadius: BorderRadius.circular(OraRadius.pill),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: OraColors.shadow,
-                        blurRadius: 8,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.schedule_rounded,
-                        size: 14,
-                        color: OraColors.goldSharp,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        'Est. $distance',
-                        style: OraTypography.caption(
-                          OraColors.textPrimary,
-                        ).copyWith(fontWeight: FontWeight.w700, fontSize: 11.5),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Pickup + drop-off rows — green/orange pins, real addresses, trip
-/// distance + agreed fare on the destination row.
-class _TripRouteCard extends StatelessWidget {
-  const _TripRouteCard({required this.ride});
-
-  final Ride ride;
-
-  @override
-  Widget build(BuildContext context) {
-    final fare = formatMinorFare(
-      ride.agreedFareMinor ?? ride.driverPayoutMinor,
-      ride.agreedFareCurrency ?? ride.payoutCurrency,
-    );
-
-    return OraCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: OraSpacing.md,
-        vertical: OraSpacing.sm,
-      ),
-      child: Column(
-        children: [
-          _RouteRow(
-            pinColor: const Color(0xFF22C55E),
-            title: 'Pickup',
-            subtitle: rideCardLocationLabel(ride.pickup),
-          ),
-          const Divider(height: OraSpacing.lg, color: OraColors.border),
-          _RouteRow(
-            pinColor: OraColors.goldSharp,
-            title: 'Drop-off',
-            subtitle: rideCardLocationLabel(ride.destination),
-            trailingTop: _MapCard._straightLineKm(
-              ride.pickup,
-              ride.destination,
-            ),
-            trailingBottom: fare ?? ride.paymentMethod,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RouteRow extends StatelessWidget {
-  const _RouteRow({
-    required this.pinColor,
-    required this.title,
-    required this.subtitle,
-    this.trailingTop,
-    this.trailingBottom,
-  });
-
-  final Color pinColor;
-  final String title;
-  final String subtitle;
-  final String? trailingTop;
-  final String? trailingBottom;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(Icons.location_on_rounded, size: 22, color: pinColor),
-        const SizedBox(width: OraSpacing.xs),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: OraTypography.bodyEmphasis(
-                  OraColors.textPrimary,
-                ).copyWith(fontSize: 14),
-              ),
-              Text(
-                subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: OraTypography.caption(
-                  OraColors.textMuted,
-                ).copyWith(fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-        if (trailingTop != null || trailingBottom != null)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              if (trailingTop != null)
-                Text(
-                  trailingTop!,
-                  style: OraTypography.bodyEmphasis(
-                    OraColors.textPrimary,
-                  ).copyWith(fontSize: 13),
-                ),
-              if (trailingBottom != null)
-                Text(
-                  trailingBottom!,
-                  style: OraTypography.caption(
-                    OraColors.goldSharp,
-                  ).copyWith(fontWeight: FontWeight.w700, fontSize: 12),
-                ),
-            ],
-          ),
-        const SizedBox(width: OraSpacing.xxs),
-        const Icon(
-          Icons.chevron_right_rounded,
-          size: 20,
-          color: OraColors.textMuted,
-        ),
-      ],
-    );
-  }
-}
-
-/// "Ride · Economy" service strip with the agreed fare.
-class _ServiceFareCard extends StatelessWidget {
-  const _ServiceFareCard({required this.ride});
-
-  final Ride ride;
-
-  @override
-  Widget build(BuildContext context) {
-    final fare = formatMinorFare(
-      ride.agreedFareMinor ?? ride.driverPayoutMinor,
-      ride.agreedFareCurrency ?? ride.payoutCurrency,
-    );
-
-    return OraCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: OraSpacing.md,
-        vertical: OraSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.directions_car_filled_rounded,
-            size: 18,
-            color: OraColors.goldSharp,
-          ),
-          const SizedBox(width: OraSpacing.sm),
-          Expanded(
-            child: Text(
-              '${historyServiceTypeLabel(ride.serviceType)} · '
-              '${ride.category}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: OraTypography.bodyEmphasis(
-                OraColors.textPrimary,
-              ).copyWith(fontSize: 13.5),
-            ),
-          ),
-          if (fare != null)
-            Text(
-              fare,
-              style: OraTypography.title(
-                OraColors.goldSharp,
-              ).copyWith(fontWeight: FontWeight.w900, fontSize: 17),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Trip progress stepper — Assigned → En Route → Pick Up → Complete.
-class _TripStepper extends StatelessWidget {
-  const _TripStepper({required this.status});
-
-  final String status;
-
-  static const _labels = ['Assigned', 'En Route', 'Pick Up', 'Complete'];
-  static const _icons = [
-    Icons.check_rounded,
-    Icons.send_rounded,
-    Icons.person_rounded,
-    Icons.flag_rounded,
-  ];
-
-  int get _activeIndex => switch (status.toUpperCase()) {
-    'DRIVER_ASSIGNED' => 0,
-    'DRIVER_EN_ROUTE' => 1,
-    'DRIVER_ARRIVED' => 2,
-    'RIDE_STARTED' || 'RIDE_COMPLETED' || 'RIDE_CLOSED' => 3,
-    _ => 0,
-  };
-
-  bool get _finished =>
-      const {'RIDE_COMPLETED', 'RIDE_CLOSED'}.contains(status.toUpperCase());
-
-  @override
-  Widget build(BuildContext context) {
-    final active = _activeIndex;
-    return OraCard(
-      padding: const EdgeInsets.symmetric(
-        horizontal: OraSpacing.md,
-        vertical: OraSpacing.sm,
-      ),
-      child: Row(
-        children: [
-          for (var i = 0; i < _labels.length; i++) ...[
-            if (i > 0)
-              Expanded(
-                child: Container(
-                  height: 1.4,
-                  margin: const EdgeInsets.only(bottom: 18),
-                  decoration: BoxDecoration(
-                    color: i <= active
-                        ? OraColors.goldSharp.withValues(alpha: 0.55)
-                        : OraColors.border,
-                    borderRadius: BorderRadius.circular(1),
-                  ),
-                ),
-              ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: i <= active || _finished
-                        ? OraColors.goldSharp
-                        : OraColors.surfaceElevated,
-                    border: Border.all(
-                      color: i <= active
-                          ? OraColors.goldSharp
-                          : OraColors.border,
-                    ),
-                    boxShadow: i == active
-                        ? [
-                            const BoxShadow(
-                              color: Color(0x59FF6A0D),
-                              blurRadius: 10,
-                              offset: Offset(0, 3),
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: Icon(
-                    i < active || _finished ? Icons.check_rounded : _icons[i],
-                    size: 15,
-                    color: i <= active || _finished
-                        ? Colors.white
-                        : OraColors.textMuted,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _labels[i],
-                  style:
-                      OraTypography.caption(
-                        i <= active ? OraColors.goldSharp : OraColors.textMuted,
-                      ).copyWith(
-                        fontSize: 10.5,
-                        fontWeight: i == active
-                            ? FontWeight.w800
-                            : FontWeight.w600,
-                      ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     );

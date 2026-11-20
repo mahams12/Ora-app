@@ -1,0 +1,98 @@
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=60ms (0ms mobile, 0ms wifi, 60ms not connected)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (5287 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (11597 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 2.4 MB/s (11597 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (11597 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (2691 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 3.3 MB/s (9663 bytes in 0.003s)
+ERROR: could not get idle state.
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 4.2 MB/s (9663 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 3.6 MB/s (9663 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (10491 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (10491 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (6051 bytes in 0.002s)
+OK
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=60ms (0ms mobile, 0ms wifi, 60ms not connected)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (4982 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 5.5 MB/s (12485 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 5.0 MB/s (12485 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 4.9 MB/s (12485 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 3.4 MB/s (10035 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (10035 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 5.1 MB/s (10479 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (10018 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 4.3 MB/s (11092 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 3.4 MB/s (10523 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (10028 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 0.5 MB/s (10028 bytes in 0.021s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (10028 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 5.5 MB/s (13367 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (4356 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/qa_ui.xml
+/sdcard/qa_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (6194 bytes in 0.002s)
+FAIL: request button missing
+{
+  "gates": {
+    "driver_ready": "GREEN",
+    "ride_creation": "RED"
+  },
+  "timings": {
+    "pricing_s": 22.3
+  },
+  "rideId": null,
+  "offerId": null,
+  "started": "2026-09-28T07:54:49.959890+00:00"
+}

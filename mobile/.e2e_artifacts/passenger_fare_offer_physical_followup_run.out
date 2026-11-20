@@ -1,0 +1,25 @@
+{
+  "verdict": "PHYSICAL FAIL",
+  "failedChecks": [
+    "outOfRangeRejected",
+    "customOfferEntered",
+    "requestEnabledForCustom",
+    "submitTapped"
+  ],
+  "checks": {
+    "deviceAttached": true,
+    "apkInstalled": true,
+    "reviewReached": true,
+    "offerFieldLocated": true,
+    "offerFieldLocateMethod": "resource-id-or-desc",
+    "outOfRangeRejected": false,
+    "customOfferEntered": false,
+    "customOfferDiffersFromRecommended": true,
+    "requestEnabledForCustom": false,
+    "submitTapped": false,
+    "postSubmitOffersOrCreated": false,
+    "durableOfferMatches": "UNVERIFIED",
+    "openListShowsOffer": "UNVERIFIED",
+    "pickupConfirmed": true
+  }
+}

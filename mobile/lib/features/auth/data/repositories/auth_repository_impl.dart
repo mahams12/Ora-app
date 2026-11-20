@@ -186,23 +186,6 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<UserProfile> submitVendorApplication({
-    required String type,
-    Map<String, dynamic>? details,
-  }) async {
-    final context = _apiClient.newContext(
-      operationId: 'vendor_application',
-      idempotencyKey: 'vendor_apply_${type}_${_uuid.v4()}',
-    );
-    final model = await _remote.submitVendorApplication(
-      type: type,
-      details: details,
-      context: context,
-    );
-    return model.toDomain();
-  }
-
-  @override
   Future<Map<String, dynamic>> submitDriverOnboarding({
     required String vehicleType,
     String? vehicleModel,

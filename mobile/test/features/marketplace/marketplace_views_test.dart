@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ora/app/router/routes.dart';
 import 'package:ora/app/theme/ora_theme.dart';
+import 'package:ora/app/theme/widgets/ora_button.dart';
 import 'package:ora/features/marketplace/catalogue/catalogue_models.dart';
+import 'package:ora/features/marketplace/logistics/presentation/views/quote_request_form.dart';
 import 'package:ora/features/marketplace/rental/presentation/views/rental_filter_sheet.dart';
 import 'package:ora/features/marketplace/rental/presentation/views/rental_category_view.dart';
 import 'package:ora/features/marketplace/shared/widgets/illustrated_category_card.dart';
@@ -23,35 +25,116 @@ void main() {
     catalogue = await loadMarketplaceCatalogue();
   });
 
-  testWidgets('Logistics home offers the ride-style delivery flow', (
+  testWidgets('Logistics catalogue navigates to a non-submitting quote form', (
     tester,
   ) async {
     await pumpMarketplaceRoute(
       tester,
-      location: AppRoutes.logistics,
+      location: AppRoutes.logisticsCategoryPath('trucks'),
       catalogue: catalogue,
     );
 
-    // Same shape as the rides hub — service tiles + vehicle grid, and
-    // every entry opens the shared request composer (no listings).
-    expect(find.text('Move cargo'), findsOneWidget);
-    expect(find.text('Send parcel'), findsOneWidget);
-    expect(find.text('Buy & Deliver'), findsOneWidget);
-    expect(find.text('Choose a vehicle'), findsOneWidget);
+    expect(find.text('Medium & Heavy Trucks near me'), findsOneWidget);
+    expect(find.text('Quotation'), findsWidgets);
+    final type = catalogue.logisticsCategory('trucks')!.types.first;
+    final typeCard = find.byKey(ValueKey('logistics-type-${type.id}'));
+    await tester.ensureVisible(typeCard);
+    await tester.pumpAndSettle();
+    await tester.tap(typeCard);
+    for (var frame = 0; frame < 6; frame++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+
+    expect(find.byType(QuoteRequestForm), findsOneWidget);
+    expect(find.text(type.name), findsWidgets);
+    expect(find.text('Photo uploads available after setup'), findsOneWidget);
+    expect(
+      find.text(
+        'A quotation from verified operators will appear here once requests '
+        'are enabled.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Nothing will be sent'), findsOneWidget);
+    expect(find.text('Quotation requests open soon'), findsOneWidget);
+    expect(find.text('Submit request'), findsNothing);
+    expect(find.text('Request sent'), findsNothing);
+    expect(tester.widget<OraButton>(find.byType(OraButton)).onPressed, isNull);
+
+    final firstField = find.byType(TextFormField).first;
+    await tester.enterText(firstField, 'Pickup');
+    await tester.enterText(firstField, '');
+    await tester.pump();
+    expect(find.text('Pickup address is required'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    tester.testTextInput.hide();
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('quote form limits optional stops to three', (tester) async {
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.logisticsQuotePath('trucks', 'heavy_truck'),
+      catalogue: catalogue,
+    );
+
+    for (var index = 0; index < 3; index++) {
+      await tester.tap(find.text('Add optional stop'));
+      await tester.pump();
+    }
+    expect(find.text('Optional stop 1'), findsOneWidget);
+    expect(find.text('Optional stop 2'), findsOneWidget);
+    expect(find.text('Optional stop 3'), findsOneWidget);
+    expect(find.text('Add optional stop'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'demo logistics operators are labeled and actions stay sample-only',
+    (tester) async {
+      await pumpMarketplaceRoute(
+        tester,
+        location: AppRoutes.logisticsCategoryPath('trucks'),
+        catalogue: catalogue,
+        demoListingsEnabled: true,
+      );
+
+      await tester.scrollUntilVisible(
+        find.text('Operators near you'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('SAMPLE'), findsWidgets);
+      await tester.ensureVisible(find.text('Book now').first);
+      await tester.tap(find.text('Book now').first);
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          'Booking opens soon — this is sample data, nothing is booked.',
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets('demo-off logistics keeps the honest operators empty state', (
+    tester,
+  ) async {
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.logisticsCategoryPath('trucks'),
+      catalogue: catalogue,
+    );
+
     await tester.scrollUntilVisible(
-      find.text(catalogue.logistics.last.name),
-      160,
+      find.text('Operators near you'),
+      200,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
-    expect(find.text(catalogue.logistics.last.name), findsWidgets);
-    expect(find.text('Operators near you'), findsNothing);
-    expect(find.text('Quotation'), findsNothing);
-    final moduleBar = tester.widget<OraModuleBottomBar>(
-      find.byType(OraModuleBottomBar),
-    );
-    expect(moduleBar.selected, OraModuleDestination.logistics);
-    expect(tester.takeException(), isNull);
+    expect(find.text('No verified operators yet'), findsOneWidget);
+    expect(find.text('SAMPLE'), findsNothing);
   });
 
   testWidgets('Services home shows categories and catalogue sections', (
@@ -142,12 +225,7 @@ void main() {
       catalogue: catalogue,
     );
 
-    await tester.scrollUntilVisible(
-      find.text('See all').first,
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('See all').first);
     await tester.tap(find.text('See all').first);
     for (var frame = 0; frame < 6; frame++) {
       await tester.pump(const Duration(milliseconds: 50));
@@ -164,12 +242,7 @@ void main() {
       catalogue: catalogue,
     );
     final card = find.byType(SubcategoryPhotoCard).first;
-    await tester.scrollUntilVisible(
-      card,
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
+    await tester.ensureVisible(card);
     await tester.tap(card);
     for (var frame = 0; frame < 6; frame++) {
       await tester.pump(const Duration(milliseconds: 50));
@@ -331,6 +404,21 @@ void main() {
   ) async {
     await pumpMarketplaceRoute(
       tester,
+      location: AppRoutes.logistics,
+      catalogue: catalogue,
+      demoListingsEnabled: true,
+    );
+    await tester.scrollUntilVisible(
+      find.text('Operators near you'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Operators near you'), findsOneWidget);
+    expect(find.text('SAMPLE'), findsWidgets);
+
+    await pumpMarketplaceRoute(
+      tester,
       location: AppRoutes.rental,
       catalogue: catalogue,
       demoListingsEnabled: true,
@@ -351,6 +439,33 @@ void main() {
     );
     expect(find.text('Near you'), findsOneWidget);
     expect(find.text('SAMPLE'), findsWidgets);
+  });
+
+  testWidgets('rental property listing action is coming later', (tester) async {
+    await pumpMarketplaceRoute(
+      tester,
+      location: AppRoutes.rental,
+      catalogue: catalogue,
+    );
+    await tester.scrollUntilVisible(
+      find.text('List your property'),
+      160,
+      scrollable: find
+          .descendant(
+            of: find.byType(CustomScrollView).first,
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.tap(find.text('List your property'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'List your property is planned for Ora but is not wired to the backend '
+        'in this build. Nothing is faked.',
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('rental categories open subcategories and honest empty state', (
@@ -457,6 +572,9 @@ void main() {
     const sizes = [Size(320, 640), Size(360, 640), Size(430, 932)];
     final routes = [
       AppRoutes.logistics,
+      AppRoutes.logisticsCategoryPath('trucks'),
+      AppRoutes.logisticsQuotePath('trucks', 'heavy_truck'),
+      AppRoutes.logisticsSearchPath('tow'),
       AppRoutes.services,
       AppRoutes.servicesCategoryPath('home_repair'),
       AppRoutes.servicesSubcategoryPath('home_repair', 'plumbing'),
@@ -501,6 +619,7 @@ void main() {
     setMarketplaceTestSurface(tester, const Size(360, 740));
 
     final sampleRoutes = [
+      AppRoutes.logisticsCategoryPath('trucks'),
       AppRoutes.rentalCategoryPath('hotels'),
       AppRoutes.servicesSubcategoryPath('home_repair', 'plumbing'),
     ];
@@ -512,7 +631,13 @@ void main() {
         demoListingsEnabled: true,
         textScale: 1.3,
       );
-      if (location.startsWith('/rental/')) {
+      if (location.startsWith('/logistics/')) {
+        await tester.scrollUntilVisible(
+          find.text('Operators near you'),
+          200,
+          scrollable: find.byType(Scrollable).first,
+        );
+      } else if (location.startsWith('/rental/')) {
         await tester.scrollUntilVisible(
           find.text('Places near you'),
           200,

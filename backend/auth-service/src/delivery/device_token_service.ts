@@ -4,7 +4,7 @@
 
 import type { Firestore } from 'firebase-admin/firestore';
 import type { AuthenticatedCaller } from '../types';
-import { isDeliveryEligible, loadActor } from '../rides/eligibility';
+import { loadActor } from '../rides/eligibility';
 import { DriverDomainError } from '../drivers/types';
 import {
   DRIVER_DEVICE_TOKENS,
@@ -71,11 +71,11 @@ export class DeviceTokenService {
     body: unknown;
   }): Promise<{ httpStatus: number; data: { driverId: string; tokenId: string } }> {
     const actor = await loadActor(this.db, input.caller.uid);
-    if (!isDeliveryEligible(actor)) {
+    if (actor.role !== 'driver' || actor.driverStatus !== 'approved') {
       throw new DriverDomainError(
         'FORBIDDEN',
         403,
-        'Only approved drivers or logistics partners may register device tokens.',
+        'Only approved drivers may register device tokens.',
       );
     }
     const token = parseToken(input.body);
@@ -105,11 +105,11 @@ export class DeviceTokenService {
     body: unknown;
   }): Promise<{ httpStatus: number; data: { driverId: string; cleared: boolean } }> {
     const actor = await loadActor(this.db, input.caller.uid);
-    if (!isDeliveryEligible(actor)) {
+    if (actor.role !== 'driver' || actor.driverStatus !== 'approved') {
       throw new DriverDomainError(
         'FORBIDDEN',
         403,
-        'Only approved drivers or logistics partners may clear device tokens.',
+        'Only approved drivers may clear device tokens.',
       );
     }
     const token = parseToken(input.body);
@@ -158,10 +158,9 @@ export class DeviceTokenService {
     body: unknown;
   }): Promise<{ httpStatus: number; data: { uid: string; tokenId: string } }> {
     const actor = await loadActor(this.db, input.caller.uid);
-    // Dual-role accounts (Switch to Driver / logistics partner): an approved
-    // driver or cargo partner acting in passenger mode may also register
-    // passenger tokens.
-    if (actor.role !== 'passenger' && !isDeliveryEligible(actor)) {
+    // Dual-role accounts (Switch to Driver): an approved driver acting in
+    // passenger mode may also register passenger tokens.
+    if (actor.role !== 'passenger' && actor.driverStatus !== 'approved') {
       throw new DriverDomainError(
         'FORBIDDEN',
         403,
@@ -195,7 +194,7 @@ export class DeviceTokenService {
     body: unknown;
   }): Promise<{ httpStatus: number; data: { uid: string; cleared: boolean } }> {
     const actor = await loadActor(this.db, input.caller.uid);
-    if (actor.role !== 'passenger' && !isDeliveryEligible(actor)) {
+    if (actor.role !== 'passenger' && actor.driverStatus !== 'approved') {
       throw new DriverDomainError(
         'FORBIDDEN',
         403,

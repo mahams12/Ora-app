@@ -7,9 +7,8 @@ import type {
 import type { AuthenticatedCaller } from '../types';
 import { hashRequest } from './hash';
 import {
-  assertDeliveryEligible,
+  assertDriverEligible,
   assertPassenger,
-  isDeliveryEligible,
   loadActor,
 } from './eligibility';
 import {
@@ -31,10 +30,6 @@ import {
   isExpirable,
 } from './state_machine';
 import type { TripLocationRtdb } from '../rtdb/types';
-import {
-  chargeCommissionInsideTx,
-  walletCommissionBpsInsideTx,
-} from '../wallet/wallet';
 import type { LocationStreamStore } from '../location/stream_store';
 import { NullTripLocationRtdb } from '../rtdb/admin_trip_location_rtdb';
 import {
@@ -55,11 +50,9 @@ import {
 } from '../pricing/fee_policy';
 import {
   COURIER_PROTOCOL_EVIDENCE,
-  COURIER_VEHICLES,
   DELIVERY_FAILURE_REASONS,
   DISPUTE_CATEGORIES,
   DISPUTES_COLLECTION,
-  driverCourierVehicle,
   IDEMPOTENCY_TTL_MS,
   IdempotencyReplay,
   MAX_OFFERS_SUPERSEDE_IN_TXN,
@@ -71,7 +64,6 @@ import {
   RideDomainError,
   SETTLEMENT_REPORTS,
   STOP_FAILURE_REASONS,
-  type CourierVehicle,
   type DeliveryFailureReason,
   type DisputeCategory,
   type DisputeDoc,
@@ -115,7 +107,7 @@ import {
   discoveryBinding,
   parseOpenDiscoveryQuery,
 } from './open_discovery_query';
-import { normalizeCitySlug } from '../geo/types';
+import { normalizeCitySlug } from '../redis/types';
 
 const RIDES = 'rides';
 const OFFERS = 'rideOffers';
@@ -771,7 +763,6 @@ function publicOpenRide(ride: RideDoc) {
             quantity: ride.parcel.quantity,
             description: ride.parcel.description,
           },
-          courierVehicle: ride.courierVehicle ?? null,
         }
       : {}),
     // Ora Courier v2 — itinerary summary for driver offer evaluation:
@@ -888,7 +879,6 @@ function publicRide(ride: RideDoc, viewer: RideViewer) {
     ...(ride.serviceType === 'courier' && ride.parcel
       ? {
           parcel: ride.parcel,
-          courierVehicle: ride.courierVehicle ?? null,
         }
       : {}),
     ...((ride.serviceType === 'courier' ||
@@ -1222,7 +1212,6 @@ export class RideService {
         'parcel',
         'stops',
         'shopping',
-        'courierVehicle',
       ]),
     );
 
@@ -1291,32 +1280,6 @@ export class RideService {
         400,
         'parcel is only valid for courier bookings.',
       );
-    }
-
-    // Ora Courier — optional sender-requested vehicle class (bike/car/
-    // rickshaw). Absent keeps legacy no-filter behaviour for old APKs.
-    let courierVehicle: CourierVehicle | undefined;
-    if (body.courierVehicle !== undefined) {
-      if (serviceType !== 'courier') {
-        throw new RideDomainError(
-          'VALIDATION_ERROR',
-          400,
-          'courierVehicle is only valid for courier bookings.',
-        );
-      }
-      if (
-        typeof body.courierVehicle !== 'string' ||
-        !(COURIER_VEHICLES as readonly string[]).includes(
-          body.courierVehicle,
-        )
-      ) {
-        throw new RideDomainError(
-          'VALIDATION_ERROR',
-          400,
-          `courierVehicle must be one of: ${COURIER_VEHICLES.join(', ')}.`,
-        );
-      }
-      courierVehicle = body.courierVehicle as CourierVehicle;
     }
 
     // Ora Courier v2 — stops itinerary. `buy_deliver` requires stops;
@@ -1498,7 +1461,6 @@ export class RideService {
       paymentIntentId: null,
       passengerCount,
       ...(parcel ? { parcel } : {}),
-      ...(courierVehicle ? { courierVehicle } : {}),
       // Ora Courier v2 — protocol stamp + itinerary. v1 (no stops) keeps the
       // OTP-era contract so the shipped APK continues to work.
       ...(stops
@@ -1666,7 +1628,8 @@ export class RideService {
   }> {
     const actor = await loadActor(this.db, input.caller.uid);
     const parsed = parseRideListQuery(input.query);
-    const isDriverEligible = isDeliveryEligible(actor);
+    const isDriverEligible =
+      actor.role === 'driver' && actor.driverStatus === 'approved';
     let queryRole: RideListQueryRole;
     if (parsed.as === 'driver') {
       if (!isDriverEligible) {
@@ -1769,7 +1732,7 @@ export class RideService {
     };
   }> {
     const actor = await loadActor(this.db, input.caller.uid);
-    assertDeliveryEligible(actor);
+    assertDriverEligible(actor);
 
     const parsed = parseOpenDiscoveryQuery(input.query);
     const binding = discoveryBinding({
@@ -1862,7 +1825,7 @@ export class RideService {
   }): Promise<{ httpStatus: number; body: unknown }> {
     const idempotencyKey = requireIdempotencyKey(input.idempotencyKeyHeader);
     const actor = await loadActor(this.db, input.caller.uid);
-    assertDeliveryEligible(actor);
+    assertDriverEligible(actor);
 
     const body = rejectUnknownKeys(
       input.body,
@@ -1883,7 +1846,6 @@ export class RideService {
     }
 
     const type = body.type as OfferType;
-
     if (type !== 'PASSENGER_PRICE_ACCEPTED' && type !== 'DRIVER_COUNTEROFFER') {
       throw new RideDomainError(
         'VALIDATION_ERROR',
@@ -1957,25 +1919,6 @@ export class RideService {
             409,
             'Ride offer window has expired.',
           );
-        }
-
-        // Ora Courier — sender-requested vehicle class is authoritative and
-        // checked before the busy gate: a driver who can never do this job
-        // gets the clearer mismatch error.
-        if (ride.serviceType === 'courier' && ride.courierVehicle) {
-          const driverSnap = await tx.get(
-            this.db.collection('drivers').doc(input.caller.uid),
-          );
-          const driverDoc = driverSnap.exists
-            ? (driverSnap.data() as Record<string, unknown>)
-            : null;
-          if (driverCourierVehicle(driverDoc) !== ride.courierVehicle) {
-            throw new RideDomainError(
-              'DRIVER_VEHICLE_MISMATCH',
-              422,
-              `This courier request needs a ${ride.courierVehicle}.`,
-            );
-          }
         }
 
         // Driver may not create offers while already assigned on another ride.
@@ -2508,18 +2451,11 @@ export class RideService {
           );
         }
         const driver = driverSnap.data() ?? {};
-        const driverCargoApp = ((driver.vendorApplications ?? {}) as Record<
-          string,
-          unknown
-        >)['cargo'] as Record<string, unknown> | undefined;
-        const driverEligible =
-          (driver.role === 'driver' &&
-            driver.driverStatus === 'approved') ||
-          driverCargoApp?.['status'] === 'approved';
         if (
           driver.banned === true ||
           driver.isActive === false ||
-          !driverEligible
+          driver.role !== 'driver' ||
+          driver.driverStatus !== 'approved'
         ) {
           throw new RideDomainError(
             'DRIVER_NOT_ELIGIBLE',
@@ -2564,21 +2500,11 @@ export class RideService {
             policyDoc = parseFeePolicyDoc(GLOBAL_FEE_POLICY_ID, snap.data());
           }
         }
-        // Mutual exclusion (P0): read the driver commission bps inside the
-        // tx so a non-zero feePolicies doc can never double-charge alongside
-        // the shared-wallet commission — the snapshot then records
-        // SUPERSEDED_BY_COMMISSION and the platform fee stays 0.
-        const commissionBps = await walletCommissionBpsInsideTx(
-          this.db,
-          tx,
-          'driver',
-        );
         const payout = derivePayoutSnapshot({
           fareMinor: offer.amountMinor,
           currency: offer.currency,
           policy: policyDoc,
           capturedAt: nowIso,
-          walletCommissionBps: commissionBps,
         });
 
         const nextVersion = ride.version + 1;
@@ -3488,33 +3414,6 @@ export class RideService {
           patch.pickupPhotoUrl = pickupPhotoUrl;
         }
 
-        // Shared partner wallet — commission settles inside the completion
-        // transaction so the ledger write is atomic with RIDE_COMPLETED.
-        // Base = delivery fare only (courier shopping totals pass through to
-        // the customer and are never partner income). Exactly-once via the
-        // deterministic ledger id; negative balances allowed by policy.
-        if (input.toState === 'RIDE_COMPLETED' && ride.assignedDriverId) {
-          const charge = await chargeCommissionInsideTx(this.db, tx, {
-            uid: ride.assignedDriverId,
-            role: 'driver',
-            sourceType: 'ride',
-            sourceId: input.rideId,
-            grossMinor:
-              ride.settlement?.deliveryFareMinor ?? ride.agreedFareMinor ?? 0,
-            description: `Commission — ride ${input.rideId}`,
-          }, now);
-          if (charge) {
-            patch.commission = {
-              points: charge.commissionPoints,
-              amountMinor: charge.commissionMinor,
-              grossMinor: charge.grossMinor,
-              bps: charge.bps,
-              ledgerEntryId: charge.entryId,
-              chargedAt: nowIso,
-            };
-          }
-        }
-
         tx.update(rideRef, patch);
 
         const arrivedAtValue =
@@ -3681,15 +3580,6 @@ export class RideService {
         data: Record<string, unknown>;
       };
     };
-    /** Optional async settlement hook — runs inside the transaction after
-     * `apply` (so completion flags set by apply are visible) and before the
-     * ride update commits. Used for the wallet commission charge. */
-    settleInTx?: (ctx: {
-      tx: FirebaseFirestore.Transaction;
-      ride: RideDoc;
-      now: Date;
-      nowIso: string;
-    }) => Promise<void>;
   }): Promise<{ httpStatus: number; body: unknown }> {
     const idempotencyKey = requireIdempotencyKey(input.idempotencyKeyHeader);
     const body = rejectUnknownKeys(input.body ?? {}, input.allowedKeys);
@@ -3761,9 +3651,6 @@ export class RideService {
         }
 
         const applied = input.apply({ ride, body, now, nowIso });
-        // Settlement hook (wallet commission) — reads happen before the
-        // ride write below, keeping Firestore's reads-before-writes rule.
-        await input.settleInTx?.({ tx, ride, now, nowIso });
         const nextVersion = ride.version + 1;
         tx.update(rideRef, {
           ...applied.patch,
@@ -4203,20 +4090,6 @@ export class RideService {
             purchaseTotalMinor: purchase?.totalMinor ?? null,
           },
         };
-      },
-      // Wallet commission settles in the same transaction when the stop
-      // sequence completes the ride (apply() sets the flag first).
-      settleInTx: async ({ tx, ride, now }) => {
-        if (!completedRide || !ride.assignedDriverId) return;
-        await chargeCommissionInsideTx(this.db, tx, {
-          uid: ride.assignedDriverId,
-          role: 'driver',
-          sourceType: 'ride',
-          sourceId: input.rideId,
-          grossMinor:
-            ride.settlement?.deliveryFareMinor ?? ride.agreedFareMinor ?? 0,
-          description: `Commission — ride ${input.rideId}`,
-        }, now);
       },
     });
 

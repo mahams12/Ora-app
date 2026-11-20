@@ -12,10 +12,8 @@ import '../../domain/ports/place_search_port.dart';
 /// test fleets, not for production scale.
 class NominatimPlaceSearch implements PlaceSearchPort {
   NominatimPlaceSearch({Dio? dio})
-    : _dio =
-          dio ??
-          Dio(
-            BaseOptions(
+      : _dio = dio ??
+            Dio(BaseOptions(
               baseUrl: 'https://nominatim.openstreetmap.org',
               connectTimeout: const Duration(seconds: 10),
               receiveTimeout: const Duration(seconds: 10),
@@ -23,8 +21,7 @@ class NominatimPlaceSearch implements PlaceSearchPort {
                 'User-Agent': 'OraApp-TestBuild/1.0 (dev testing)',
                 'Accept': 'application/json',
               },
-            ),
-          );
+            ));
 
   final Dio _dio;
 
@@ -61,19 +58,19 @@ class NominatimPlaceSearch implements PlaceSearchPort {
           continue;
         }
         final parts = name.split(',');
-        out.add(
-          PlaceSuggestion(
-            placeId: '$_idPrefix$lat:$lng:${parts.first.trim()}',
-            primaryText: parts.first.trim(),
-            secondaryText: parts.length > 1
-                ? parts.sublist(1).join(',').trim()
-                : null,
-          ),
-        );
+        out.add(PlaceSuggestion(
+          placeId: '$_idPrefix$lat:$lng:${parts.first.trim()}',
+          primaryText: parts.first.trim(),
+          secondaryText:
+              parts.length > 1 ? parts.sublist(1).join(',').trim() : null,
+        ));
       }
       return out;
     } on DioException catch (e) {
-      throw PlaceSearchException(PlaceSearchFailureKind.network, e.message);
+      throw PlaceSearchException(
+        PlaceSearchFailureKind.network,
+        e.message,
+      );
     } catch (_) {
       throw const PlaceSearchException(
         PlaceSearchFailureKind.unavailable,
@@ -97,9 +94,7 @@ class NominatimPlaceSearch implements PlaceSearchPort {
     final rest = id.substring(_idPrefix.length);
     final firstColon = rest.indexOf(':');
     final secondColon = firstColon < 0 ? -1 : rest.indexOf(':', firstColon + 1);
-    final lat = firstColon < 0
-        ? null
-        : double.tryParse(rest.substring(0, firstColon));
+    final lat = firstColon < 0 ? null : double.tryParse(rest.substring(0, firstColon));
     final lng = secondColon < 0
         ? null
         : double.tryParse(rest.substring(firstColon + 1, secondColon));

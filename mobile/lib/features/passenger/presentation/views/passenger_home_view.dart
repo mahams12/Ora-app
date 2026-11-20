@@ -65,28 +65,26 @@ class PassengerHomeView extends StatelessWidget {
             profileDisplayName: profileDisplayName,
             onOpenDrawer: onOpenDrawer,
             onOpenProfile: onOpenProfile,
-            onHeroTap: () => onRequestRideEntry(null, serviceType: 'intercity'),
           ),
         ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(
             padding,
-            0,
+            OraSpacing.md,
             padding,
             OraSpacing.xxl,
           ),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              Transform.translate(
-                offset: const Offset(0, -44),
-                child: const Column(
-                  children: [
-                    OraModuleGrid(),
-                    SizedBox(height: OraSpacing.lg),
-                    RecentActivitySection(),
-                  ],
-                ),
+              _PromoCard(
+                onTap: () => onRequestRideEntry(null, serviceType: 'intercity'),
               ),
+              const SizedBox(height: OraSpacing.md),
+              const OraSectionHeader(title: 'Explore ORA'),
+              const SizedBox(height: OraSpacing.sm),
+              const OraModuleGrid(),
+              const SizedBox(height: OraSpacing.lg),
+              const RecentActivitySection(),
             ]),
           ),
         ),
@@ -100,7 +98,6 @@ class _HomeHeroHeader extends StatelessWidget {
     required this.state,
     required this.onOpenDrawer,
     required this.onOpenProfile,
-    required this.onHeroTap,
     this.avatarData,
     this.profileDisplayName,
   });
@@ -110,7 +107,6 @@ class _HomeHeroHeader extends StatelessWidget {
   final String? profileDisplayName;
   final VoidCallback onOpenDrawer;
   final VoidCallback onOpenProfile;
-  final VoidCallback onHeroTap;
 
   String get _avatarInitials {
     final name = (profileDisplayName ?? state.displayName)?.trim();
@@ -123,42 +119,27 @@ class _HomeHeroHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final padding = Responsive.horizontalPadding(context);
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 92),
-          child: _BlendedHeroArt(onTap: onHeroTap),
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(
+        padding,
+        OraSpacing.sm,
+        padding,
+        OraSpacing.lg,
+      ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [OraColors.navy, OraColors.navyElevated],
         ),
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.fromLTRB(
-            padding,
-            OraSpacing.sm,
-            padding,
-            OraSpacing.lg,
-          ),
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [OraColors.navyElevated, OraColors.primaryMuted],
-            ),
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-            border: Border(
-              bottom: BorderSide(color: Color(0x66F88733), width: 1.4),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Color(0x33F88733),
-                blurRadius: 18,
-                offset: Offset(0, 6),
-                spreadRadius: -8,
-              ),
-            ],
-          ),
-          child: SafeArea(
-            bottom: false,
-            child: Row(
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Row(
               children: [
                 IconButton(
                   tooltip: 'Menu',
@@ -185,107 +166,120 @@ class _HomeHeroHeader extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Full-bleed 3D road art that melts into the page gradient — the tagline
-/// floats freely on the blended area like the reference hero.
-class _BlendedHeroArt extends StatelessWidget {
-  const _BlendedHeroArt({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final padding = Responsive.horizontalPadding(context);
-    final height = (MediaQuery.sizeOf(context).height * 0.36).clamp(
-      260.0,
-      340.0,
-    );
-    return Semantics(
-      button: true,
-      label: 'Intercity rides',
-      onTap: onTap,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: SizedBox(
-          width: double.infinity,
-          height: height,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              ShaderMask(
-                shaderCallback: (rect) => const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.white,
-                    Colors.white,
-                    Colors.transparent,
-                  ],
-                  stops: [0.0, 0.42, 0.9],
-                ).createShader(rect),
-                blendMode: BlendMode.dstIn,
-                child: ShaderMask(
-                  shaderCallback: (rect) => const LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Colors.transparent,
-                      Colors.white,
-                      Colors.white,
-                      Colors.transparent,
-                    ],
-                    stops: [0.0, 0.14, 0.8, 1.0],
-                  ).createShader(rect),
-                  blendMode: BlendMode.dstIn,
-                  child: Image.asset(
-                    AppConstants.homeIntercityRoadAsset,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                    filterQuality: FilterQuality.high,
-                    cacheWidth: 1100,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: padding + 4,
-                right: padding + 24,
-                bottom: height * 0.12,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            const SizedBox(height: OraSpacing.md),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(OraRadius.lg),
+              child: SizedBox(
+                height: 118,
+                width: double.infinity,
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Text(
-                      'ORA',
-                      style: OraTypography.sectionTitle(OraColors.goldDeep),
+                    Image.asset(
+                      AppConstants.homeIntercityRoadAsset,
+                      fit: BoxFit.cover,
+                      filterQuality: FilterQuality.high,
+                      cacheWidth: 900,
                     ),
-                    const SizedBox(height: OraSpacing.xxs),
-                    Text(
-                      'Your World.\nOne App.',
-                      style: OraTypography.display(OraColors.ink),
-                    ),
-                    const SizedBox(height: OraSpacing.xs),
-                    Container(
-                      width: 34,
-                      height: 3,
+                    const DecoratedBox(
                       decoration: BoxDecoration(
-                        color: OraColors.gold,
-                        borderRadius: BorderRadius.circular(2),
+                        gradient: LinearGradient(
+                          begin: Alignment.centerRight,
+                          end: Alignment.centerLeft,
+                          colors: [
+                            Colors.transparent,
+                            OraColors.photoScrimStrong,
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
+class _PromoCard extends StatelessWidget {
+  const _PromoCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Intercity rides',
+      onTap: onTap,
+      child: Material(
+        color: OraColors.navy,
+        borderRadius: BorderRadius.circular(OraRadius.lg),
+        child: InkWell(
+          excludeFromSemantics: true,
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(OraRadius.lg),
+          child: SizedBox(
+            height: 176,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(OraRadius.lg),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    AppConstants.homeIntercityRoadAsset,
+                    cacheWidth: 800,
+                    fit: BoxFit.cover,
+                    filterQuality: FilterQuality.medium,
+                  ),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerRight,
+                        end: Alignment.centerLeft,
+                        colors: [
+                          Colors.transparent,
+                          OraColors.photoScrimStrong,
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(OraSpacing.md),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'INTERCITY',
+                          style: OraTypography.sectionTitle(OraColors.goldSoft),
+                        ),
+                        const SizedBox(height: OraSpacing.xxs),
+                        Text(
+                          'Travel beyond the city',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: OraTypography.title(OraColors.onPhoto),
+                        ),
+                        const SizedBox(height: OraSpacing.xxs),
+                        Text(
+                          'Continue with the existing Intercity ride flow.',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: OraTypography.caption(OraColors.onPhotoMuted),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

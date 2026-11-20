@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../app/di/providers.dart';
 import '../../../../app/router/routes.dart';
@@ -10,28 +9,13 @@ import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../app/theme/widgets/widgets.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../auth/presentation/view_models/session_user_profile.dart';
-import '../../../registration/widgets/registration_scaffold.dart';
 import '../../domain/driver_onboarding_application.dart';
 import '../../../super_app/domain/ride_type_catalogue.dart';
 
-const _vehicleColours = [
-  'White',
-  'Black',
-  'Silver',
-  'Grey',
-  'Red',
-  'Blue',
-  'Green',
-  'Beige',
-  'Other',
-];
+const _stepTitles = ['Personal', 'Licence', 'Vehicle', 'Review'];
 
-/// Driver registration — single-scroll form matching the partner
-/// registration designs. Collects every field the design shows (photo,
-/// name, mobile, vehicle type/colour/registration, document uploads) plus
-/// the fields the onboarding API requires (CNIC, home city, licence
-/// number/expiry, make, model, year).
 class DriverRegistrationView extends ConsumerStatefulWidget {
   const DriverRegistrationView({super.key});
 
@@ -44,7 +28,6 @@ class _DriverRegistrationViewState
     extends ConsumerState<DriverRegistrationView> {
   final _scrollController = ScrollController();
   late final TextEditingController _fullNameController;
-  late final TextEditingController _mobileController;
   final _cnicController = TextEditingController();
   final _cityController = TextEditingController();
   final _licenseController = TextEditingController();
@@ -52,17 +35,11 @@ class _DriverRegistrationViewState
   final _makeController = TextEditingController();
   final _modelController = TextEditingController();
   final _yearController = TextEditingController();
+  final _colorController = TextEditingController();
   final _plateController = TextEditingController();
-  final _picker = ImagePicker();
   final Map<String, String> _errors = {};
-
+  int _step = 0;
   String? _vehicleCategory;
-  String? _vehicleColour;
-  XFile? _profilePhoto;
-  XFile? _vehiclePhoto;
-  XFile? _registrationCertificate;
-  XFile? _drivingLicence;
-  XFile? _cnicPhoto;
   bool _confirmed = false;
   bool _submitting = false;
   String? _submitError;
@@ -74,18 +51,15 @@ class _DriverRegistrationViewState
   @override
   void initState() {
     super.initState();
-    final profile = ref.read(sessionUserProfileProvider);
     _fullNameController = TextEditingController(
-      text: profile?.displayName ?? '',
+      text: ref.read(sessionUserProfileProvider)?.displayName ?? '',
     );
-    _mobileController = TextEditingController(text: profile?.phoneNumber ?? '');
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     _fullNameController.dispose();
-    _mobileController.dispose();
     _cnicController.dispose();
     _cityController.dispose();
     _licenseController.dispose();
@@ -93,6 +67,7 @@ class _DriverRegistrationViewState
     _makeController.dispose();
     _modelController.dispose();
     _yearController.dispose();
+    _colorController.dispose();
     _plateController.dispose();
     super.dispose();
   }
@@ -113,48 +88,76 @@ class _DriverRegistrationViewState
     return true;
   }
 
-  bool _validate() {
+  bool _validateStep() {
+    final stepErrors = <String, String>{};
     _errors.clear();
-    _required('fullName', 'Full name', _fullNameController.text, 2, 64);
-    final cnic = _cnicController.text.trim();
-    if (!RegExp(r'^\d{5}-\d{7}-\d$').hasMatch(cnic)) {
-      _errors['cnicNumber'] = 'Enter a valid 13-digit CNIC.';
+    switch (_step) {
+      case 0:
+        _required('fullName', 'Full name', _fullNameController.text, 2, 64);
+        final cnic = _cnicController.text.trim();
+        if (!RegExp(r'^\d{5}-\d{7}-\d$').hasMatch(cnic)) {
+          _errors['cnicNumber'] = 'Enter a valid 13-digit CNIC.';
+        }
+        _required('homeCity', 'Home city', _cityController.text, 2, 64);
+      case 1:
+        _required(
+          'licenseNumber',
+          'Licence number',
+          _licenseController.text,
+          3,
+          32,
+        );
+        final expiry = _expiryController.text;
+        final parsed = DateTime.tryParse(expiry);
+        final today = DateTime.now().toUtc().toIso8601String().substring(0, 10);
+        if (parsed == null ||
+            parsed.toIso8601String().substring(0, 10) != expiry ||
+            expiry.compareTo(today) < 0) {
+          _errors['licenseExpiry'] = 'Choose a valid date not before today.';
+        }
+      case 2:
+        if (_vehicleCategory == null) {
+          _errors['vehicleCategory'] = 'Select a vehicle category.';
+        }
+        _required('vehicleMake', 'Vehicle make', _makeController.text, 1, 64);
+        _required(
+          'vehicleModel',
+          'Vehicle model',
+          _modelController.text,
+          1,
+          64,
+        );
+        final year = int.tryParse(_yearController.text.trim());
+        final maxYear = DateTime.now().toUtc().year + 1;
+        if (year == null || year < 1980 || year > maxYear) {
+          _errors['vehicleYear'] = 'Enter a year from 1980 to $maxYear.';
+        }
+        _required(
+          'vehicleColor',
+          'Vehicle colour',
+          _colorController.text,
+          1,
+          32,
+        );
+        _required('plateNumber', 'Plate number', _plateController.text, 2, 16);
+      case 3:
+        if (!_confirmed) {
+          _errors['confirmation'] = 'Confirm these details before submitting.';
+        }
     }
-    _required('homeCity', 'Home city', _cityController.text, 2, 64);
-    if (_vehicleCategory == null) {
-      _errors['vehicleCategory'] = 'Select a vehicle category.';
-    }
-    if (_vehicleColour == null) {
-      _errors['vehicleColor'] = 'Select a vehicle colour.';
-    }
-    _required('vehicleMake', 'Vehicle make', _makeController.text, 1, 64);
-    _required('vehicleModel', 'Vehicle model', _modelController.text, 1, 64);
-    final year = int.tryParse(_yearController.text.trim());
-    final maxYear = DateTime.now().toUtc().year + 1;
-    if (year == null || year < 1980 || year > maxYear) {
-      _errors['vehicleYear'] = 'Enter a year from 1980 to $maxYear.';
-    }
-    _required('plateNumber', 'Plate number', _plateController.text, 2, 16);
-    _required(
-      'licenseNumber',
-      'Licence number',
-      _licenseController.text,
-      3,
-      32,
-    );
-    final expiry = _expiryController.text;
-    final parsed = DateTime.tryParse(expiry);
-    final today = DateTime.now().toUtc().toIso8601String().substring(0, 10);
-    if (parsed == null ||
-        parsed.toIso8601String().substring(0, 10) != expiry ||
-        expiry.compareTo(today) < 0) {
-      _errors['licenseExpiry'] = 'Choose a valid date not before today.';
-    }
-    if (!_confirmed) {
-      _errors['confirmation'] = 'Confirm these details before submitting.';
-    }
+    stepErrors.addAll(_errors);
     setState(() {});
-    return _errors.isEmpty;
+    return stepErrors.isEmpty;
+  }
+
+  void _continue() {
+    if (!_validateStep()) return;
+    if (_step == _stepTitles.length - 1) {
+      _submit();
+      return;
+    }
+    setState(() => _step++);
+    if (_scrollController.hasClients) _scrollController.jumpTo(0);
   }
 
   Future<void> _pickExpiry() async {
@@ -179,84 +182,8 @@ class _DriverRegistrationViewState
     _changed('licenseExpiry');
   }
 
-  Future<void> _pickVehicleCategory() async {
-    final options = [
-      for (final option in _vehicleOptions)
-        RegOption(
-          option.name,
-          imageAsset: option.image,
-          key: ValueKey(
-            'driver-category-'
-            '${(option.action as RideCategoryAction).categoryId}',
-          ),
-        ),
-    ];
-    final selected = await showRegOptions(
-      context,
-      title: 'Vehicle type',
-      options: options,
-      selected: _categoryName().isEmpty ? null : _categoryName(),
-    );
-    if (selected == null || !mounted) return;
-    for (final option in _vehicleOptions) {
-      if (option.name == selected) {
-        setState(() {
-          _vehicleCategory = (option.action as RideCategoryAction).categoryId;
-          _errors.remove('vehicleCategory');
-        });
-        return;
-      }
-    }
-  }
-
-  Future<void> _pickVehicleColour() async {
-    final selected = await showRegOptions(
-      context,
-      title: 'Vehicle colour',
-      options: [
-        for (final colour in _vehicleColours)
-          RegOption(
-            colour,
-            icon: Icons.palette_outlined,
-            key: ValueKey('driver-colour-${colour.toLowerCase()}'),
-          ),
-      ],
-      selected: _vehicleColour,
-    );
-    if (selected == null || !mounted) return;
-    setState(() {
-      _vehicleColour = selected;
-      _errors.remove('vehicleColor');
-    });
-  }
-
-  Future<void> _pickPhoto(void Function(XFile) apply) async {
-    try {
-      final file = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1600,
-        imageQuality: 85,
-      );
-      if (file == null || !mounted) return;
-      setState(() => apply(file));
-    } catch (_) {
-      // Picker unavailable (e.g. plugin missing in tests) — keep the tile
-      // in its unpicked state rather than surfacing a crash.
-    }
-  }
-
-  String _categoryName() {
-    for (final option in _vehicleOptions) {
-      if ((option.action as RideCategoryAction).categoryId ==
-          _vehicleCategory) {
-        return option.name;
-      }
-    }
-    return '';
-  }
-
   Future<void> _submit() async {
-    if (_submitting || !_validate()) return;
+    if (_submitting || !_validateStep()) return;
     setState(() {
       _submitting = true;
       _submitError = null;
@@ -271,7 +198,7 @@ class _DriverRegistrationViewState
       vehicleMake: _makeController.text.trim(),
       vehicleModel: _modelController.text.trim(),
       vehicleYear: int.parse(_yearController.text.trim()),
-      vehicleColor: _vehicleColour!,
+      vehicleColor: _colorController.text.trim(),
       plateNumber: _plateController.text.trim(),
     );
     try {
@@ -321,295 +248,412 @@ class _DriverRegistrationViewState
     }
   }
 
-  Widget _field({
+  Widget _textField({
     required String field,
-    required IconData icon,
     required String label,
     required TextEditingController controller,
     String? hint,
     TextInputType? keyboardType,
     TextCapitalization capitalization = TextCapitalization.none,
     List<TextInputFormatter>? inputFormatters,
-    bool verified = false,
   }) {
     final errorField = switch (field) {
       'full-name' => 'fullName',
-      'mobile-number' => 'mobileNumber',
       'cnic-number' => 'cnicNumber',
       'home-city' => 'homeCity',
       'license-number' => 'licenseNumber',
       'vehicle-make' => 'vehicleMake',
       'vehicle-model' => 'vehicleModel',
       'vehicle-year' => 'vehicleYear',
+      'vehicle-color' => 'vehicleColor',
       'plate-number' => 'plateNumber',
       _ => field,
     };
-    return RegFieldTile(
-      fieldKey: ValueKey('driver-$field'),
-      icon: icon,
-      label: label,
+    return OraTextField(
+      key: ValueKey('driver-$field'),
       controller: controller,
+      label: label,
       hint: hint,
+      errorText: _errors[errorField],
       keyboardType: keyboardType,
       textCapitalization: capitalization,
       inputFormatters: inputFormatters,
-      verified: verified,
-      errorText: _errors[errorField],
       onChanged: (_) => _changed(errorField),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return OraRegistrationScaffold(
-      title: 'Driver\nRegistration',
-      subtitle: 'Join ORA and start earning today!',
-      heroAsset: 'assets/brand/reg_rides.webp',
-      footer: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: OraSpacing.sm),
-          const RegInfoBanner(),
-          if (_submitError != null) ...[
-            const SizedBox(height: OraSpacing.sm),
-            Text(
-              _submitError!,
-              key: const ValueKey('driver-submit-error'),
-              style: OraTypography.body(OraColors.danger),
-            ),
-          ],
-          const SizedBox(height: OraSpacing.md),
-          OraButton(
-            label: 'Submit Registration',
-            trailingIcon: Icons.arrow_forward_rounded,
-            isLoading: _submitting,
-            onPressed: _submitting ? null : _submit,
-          ),
-          const SizedBox(height: OraSpacing.md),
-          const RegSupportFooter(),
-        ],
+  Widget _buildPersonalStep() => Column(
+    children: [
+      _textField(
+        field: 'full-name',
+        label: 'Full name',
+        controller: _fullNameController,
+        hint: 'As shown on your documents',
+        capitalization: TextCapitalization.words,
       ),
-      children: [
-        const RegSection(number: 1, title: 'Personal Information'),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      const SizedBox(height: OraSpacing.md),
+      _textField(
+        field: 'cnic-number',
+        label: 'CNIC number',
+        controller: _cnicController,
+        hint: '#####-#######-#',
+        keyboardType: TextInputType.number,
+        inputFormatters: const [_CnicInputFormatter()],
+      ),
+      const SizedBox(height: OraSpacing.md),
+      _textField(
+        field: 'home-city',
+        label: 'Home city',
+        controller: _cityController,
+        hint: 'e.g. Lahore',
+        capitalization: TextCapitalization.words,
+      ),
+    ],
+  );
+
+  Widget _buildLicenseStep() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      _textField(
+        field: 'license-number',
+        label: 'Licence number',
+        controller: _licenseController,
+        hint: 'Enter your licence number',
+        capitalization: TextCapitalization.characters,
+      ),
+      const SizedBox(height: OraSpacing.md),
+      Text(
+        'Licence expiry',
+        style: OraTypography.label(OraColors.textSecondary),
+      ),
+      const SizedBox(height: OraSpacing.xs),
+      OraCard(
+        key: const ValueKey('driver-license-expiry'),
+        onTap: _pickExpiry,
+        child: Row(
           children: [
-            RegAvatarUpload(
-              photo: _profilePhoto,
-              onPick: () => _pickPhoto((f) => _profilePhoto = f),
-            ),
+            const Icon(Icons.calendar_month, color: OraColors.primary),
             const SizedBox(width: OraSpacing.sm),
             Expanded(
-              child: Column(
-                children: [
-                  _field(
-                    field: 'full-name',
-                    icon: Icons.person_outline_rounded,
-                    label: 'Full Name',
-                    controller: _fullNameController,
-                    hint: 'Ali Raza',
-                    capitalization: TextCapitalization.words,
-                  ),
-                  const SizedBox(height: OraSpacing.sm),
-                  _field(
-                    field: 'mobile-number',
-                    icon: Icons.phone_iphone_rounded,
-                    label: 'Mobile Number',
-                    controller: _mobileController,
-                    hint: '0300 1234567',
-                    keyboardType: TextInputType.phone,
-                    verified: _mobileController.text.trim().isNotEmpty,
-                  ),
-                ],
+              child: Text(
+                _expiryController.text.isEmpty
+                    ? 'Choose expiry date'
+                    : _expiryController.text,
+                style: OraTypography.body(
+                  _expiryController.text.isEmpty
+                      ? OraColors.textMuted
+                      : OraColors.textPrimary,
+                ),
               ),
             ),
+            const Icon(Icons.chevron_right, color: OraColors.textMuted),
           ],
         ),
-        const SizedBox(height: OraSpacing.sm),
-        RegRow(
-          children: [
-            _field(
-              field: 'cnic-number',
-              icon: Icons.badge_outlined,
-              label: 'CNIC Number',
-              controller: _cnicController,
-              hint: '#####-#######-#',
-              keyboardType: TextInputType.number,
-              inputFormatters: const [_CnicInputFormatter()],
-            ),
-            _field(
-              field: 'home-city',
-              icon: Icons.location_city_rounded,
-              label: 'Home City',
-              controller: _cityController,
-              hint: 'e.g. Lahore',
-              capitalization: TextCapitalization.words,
-            ),
-          ],
+      ),
+      if (_errors['licenseExpiry'] != null)
+        Padding(
+          padding: const EdgeInsets.only(top: OraSpacing.xs),
+          child: Text(
+            _errors['licenseExpiry']!,
+            style: OraTypography.caption(OraColors.danger),
+          ),
         ),
-        const SizedBox(height: OraSpacing.lg),
-        const RegSection(number: 2, title: 'Vehicle Information'),
-        RegRow(
-          children: [
-            RegDropdownTile(
-              tileKey: const ValueKey('driver-vehicle-type'),
-              icon: Icons.directions_car_filled_rounded,
-              label: 'Vehicle Type',
-              value: _categoryName(),
-              placeholder: 'Select type',
-              errorText: _errors['vehicleCategory'],
-              onTap: _pickVehicleCategory,
-            ),
-            RegDropdownTile(
-              tileKey: const ValueKey('driver-vehicle-colour'),
-              icon: Icons.palette_outlined,
-              label: 'Vehicle Colour',
-              value: _vehicleColour,
-              placeholder: 'Select colour',
-              errorText: _errors['vehicleColor'],
-              onTap: _pickVehicleColour,
-            ),
-            _field(
-              field: 'plate-number',
-              icon: Icons.pin_outlined,
-              label: 'Registration Number',
-              controller: _plateController,
-              hint: 'LEA-1234',
-              capitalization: TextCapitalization.characters,
-              verified: _plateController.text.trim().length >= 2,
-            ),
-          ],
+    ],
+  );
+
+  Widget _buildVehicleStep() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Text(
+        'Ride category',
+        style: OraTypography.label(OraColors.textSecondary),
+      ),
+      const SizedBox(height: OraSpacing.sm),
+      if (_errors['vehicleCategory'] != null)
+        Padding(
+          padding: const EdgeInsets.only(bottom: OraSpacing.xs),
+          child: Text(
+            _errors['vehicleCategory']!,
+            style: OraTypography.caption(OraColors.danger),
+          ),
         ),
-        const SizedBox(height: OraSpacing.sm),
-        RegRow(
-          children: [
-            _field(
-              field: 'vehicle-make',
-              icon: Icons.factory_outlined,
-              label: 'Vehicle Make',
-              controller: _makeController,
-              hint: 'e.g. Toyota',
-              capitalization: TextCapitalization.words,
-            ),
-            _field(
-              field: 'vehicle-model',
-              icon: Icons.directions_car_outlined,
-              label: 'Vehicle Model',
-              controller: _modelController,
-              hint: 'e.g. Corolla',
-              capitalization: TextCapitalization.words,
-            ),
-            _field(
-              field: 'vehicle-year',
-              icon: Icons.calendar_month_rounded,
-              label: 'Vehicle Year',
-              controller: _yearController,
-              hint: 'e.g. 2024',
-              keyboardType: TextInputType.number,
-            ),
-          ],
+      GridView.builder(
+        key: const ValueKey('driver-category-grid'),
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: _vehicleOptions.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: OraSpacing.sm,
+          crossAxisSpacing: OraSpacing.sm,
+          childAspectRatio: 1.6,
         ),
-        const SizedBox(height: OraSpacing.sm),
-        RegUploadTile(
-          title: 'Vehicle Photo',
-          subtitle: 'Front view of your vehicle',
-          icon: Icons.directions_car_filled_rounded,
-          file: _vehiclePhoto,
-          onPick: () => _pickPhoto((f) => _vehiclePhoto = f),
-        ),
-        const SizedBox(height: OraSpacing.lg),
-        const RegSection(number: 3, title: 'Vehicle Registration Documents'),
-        RegRow(
-          children: [
-            RegUploadTile(
-              title: 'Registration Certificate',
-              subtitle: 'Smart Card / Book',
-              file: _registrationCertificate,
-              onPick: () => _pickPhoto((f) => _registrationCertificate = f),
-            ),
-            RegUploadTile(
-              title: 'Driving Licence',
-              subtitle: 'Front Side',
-              icon: Icons.contact_page_outlined,
-              file: _drivingLicence,
-              onPick: () => _pickPhoto((f) => _drivingLicence = f),
-            ),
-            RegUploadTile(
-              title: 'CNIC',
-              subtitle: 'Front & Back',
-              icon: Icons.badge_outlined,
-              file: _cnicPhoto,
-              onPick: () => _pickPhoto((f) => _cnicPhoto = f),
-            ),
-          ],
-        ),
-        const SizedBox(height: OraSpacing.sm),
-        RegRow(
-          children: [
-            _field(
-              field: 'license-number',
-              icon: Icons.contact_page_outlined,
-              label: 'Licence Number',
-              controller: _licenseController,
-              hint: 'Enter licence number',
-              capitalization: TextCapitalization.characters,
-            ),
-            RegDropdownTile(
-              tileKey: const ValueKey('driver-license-expiry'),
-              icon: Icons.calendar_month_rounded,
-              label: 'Licence Expiry',
-              value: _expiryController.text.isEmpty
-                  ? null
-                  : _expiryController.text,
-              placeholder: 'Choose expiry date',
-              errorText: _errors['licenseExpiry'],
-              onTap: _pickExpiry,
-            ),
-          ],
-        ),
-        const SizedBox(height: OraSpacing.md),
-        Semantics(
-          checked: _confirmed,
-          child: OraCard(
-            key: const ValueKey('driver-confirm-details'),
-            padding: const EdgeInsets.symmetric(
-              horizontal: OraSpacing.sm,
-              vertical: OraSpacing.xs,
-            ),
-            onTap: _submitting
-                ? null
-                : () => setState(() {
-                    _confirmed = !_confirmed;
-                    _errors.remove('confirmation');
-                  }),
+        itemBuilder: (context, index) {
+          final option = _vehicleOptions[index];
+          final category = (option.action as RideCategoryAction).categoryId;
+          return OraCard(
+            key: ValueKey('driver-category-$category'),
+            variant: OraCardVariant.selectable,
+            selected: category == _vehicleCategory,
+            onTap: () => setState(() {
+              _vehicleCategory = category;
+              _errors.remove('vehicleCategory');
+            }),
+            padding: const EdgeInsets.all(OraSpacing.xs),
             child: Row(
               children: [
-                Icon(
-                  _confirmed
-                      ? Icons.check_circle_rounded
-                      : Icons.radio_button_unchecked,
-                  color: _confirmed ? OraColors.gold : OraColors.textMuted,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    option.image,
+                    width: 56,
+                    height: 56,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                const SizedBox(width: OraSpacing.sm),
+                const SizedBox(width: OraSpacing.xs),
                 Expanded(
                   child: Text(
-                    'I confirm these details are correct',
-                    style: OraTypography.body(OraColors.textPrimary),
+                    option.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: OraTypography.bodyEmphasis(OraColors.textPrimary),
                   ),
                 ),
               ],
             ),
+          );
+        },
+      ),
+      const SizedBox(height: OraSpacing.md),
+      _textField(
+        field: 'vehicle-make',
+        label: 'Make',
+        controller: _makeController,
+        hint: 'e.g. Honda',
+        capitalization: TextCapitalization.words,
+      ),
+      const SizedBox(height: OraSpacing.md),
+      _textField(
+        field: 'vehicle-model',
+        label: 'Model',
+        controller: _modelController,
+        hint: 'e.g. City',
+        capitalization: TextCapitalization.words,
+      ),
+      const SizedBox(height: OraSpacing.md),
+      _textField(
+        field: 'vehicle-year',
+        label: 'Year',
+        controller: _yearController,
+        hint: 'e.g. 2024',
+        keyboardType: TextInputType.number,
+      ),
+      const SizedBox(height: OraSpacing.md),
+      _textField(
+        field: 'vehicle-color',
+        label: 'Colour',
+        controller: _colorController,
+        hint: 'e.g. White',
+        capitalization: TextCapitalization.words,
+      ),
+      const SizedBox(height: OraSpacing.md),
+      _textField(
+        field: 'plate-number',
+        label: 'Plate number',
+        controller: _plateController,
+        hint: 'e.g. LEA-1234',
+        capitalization: TextCapitalization.characters,
+      ),
+    ],
+  );
+
+  String _categoryName() {
+    for (final option in _vehicleOptions) {
+      if ((option.action as RideCategoryAction).categoryId ==
+          _vehicleCategory) {
+        return option.name;
+      }
+    }
+    return '';
+  }
+
+  Widget _reviewRow(String label, String value) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: OraSpacing.xs),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 116,
+          child: Text(label, style: OraTypography.caption(OraColors.textMuted)),
+        ),
+        Expanded(
+          child: Text(value, style: OraTypography.body(OraColors.textPrimary)),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildReviewStep() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      OraCard(
+        child: Column(
+          children: [
+            _reviewRow('Full name', _fullNameController.text.trim()),
+            _reviewRow('CNIC', _cnicController.text),
+            _reviewRow('Home city', _cityController.text.trim()),
+            _reviewRow('Licence number', _licenseController.text.trim()),
+            _reviewRow('Licence expiry', _expiryController.text),
+            _reviewRow('Ride category', _categoryName()),
+            _reviewRow(
+              'Vehicle',
+              '${_makeController.text.trim()} ${_modelController.text.trim()}',
+            ),
+            _reviewRow('Year', _yearController.text.trim()),
+            _reviewRow('Colour', _colorController.text.trim()),
+            _reviewRow('Plate', _plateController.text.trim().toUpperCase()),
+          ],
+        ),
+      ),
+      const SizedBox(height: OraSpacing.md),
+      OraCard(
+        padding: EdgeInsets.zero,
+        child: Material(
+          color: Colors.transparent,
+          child: CheckboxListTile(
+            key: const ValueKey('driver-confirm-details'),
+            value: _confirmed,
+            onChanged: _submitting
+                ? null
+                : (value) => setState(() {
+                    _confirmed = value ?? false;
+                    _errors.remove('confirmation');
+                  }),
+            activeColor: OraColors.gold,
+            title: const Text('I confirm these details are correct'),
+            controlAffinity: ListTileControlAffinity.leading,
           ),
         ),
-        if (_errors['confirmation'] != null)
-          Padding(
-            padding: const EdgeInsets.only(top: OraSpacing.xs),
-            child: Text(
-              _errors['confirmation']!,
-              style: OraTypography.caption(OraColors.danger),
+      ),
+      if (_errors['confirmation'] != null)
+        Padding(
+          padding: const EdgeInsets.only(top: OraSpacing.xs),
+          child: Text(
+            _errors['confirmation']!,
+            style: OraTypography.caption(OraColors.danger),
+          ),
+        ),
+    ],
+  );
+
+  Widget _buildStep() => switch (_step) {
+    0 => _buildPersonalStep(),
+    1 => _buildLicenseStep(),
+    2 => _buildVehicleStep(),
+    _ => _buildReviewStep(),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: OraColors.background,
+      appBar: AppBar(title: const Text('Driver registration')),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppConstants.maxContentWidth,
+            ),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(OraSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Step ${_step + 1} of 4 · ${_stepTitles[_step]}',
+                    key: ValueKey('driver-step-$_step'),
+                    style: OraTypography.label(OraColors.primary),
+                  ),
+                  const SizedBox(height: OraSpacing.sm),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: (_step + 1) / _stepTitles.length,
+                      minHeight: 6,
+                      backgroundColor: OraColors.border,
+                      valueColor: const AlwaysStoppedAnimation(OraColors.gold),
+                    ),
+                  ),
+                  const SizedBox(height: OraSpacing.lg),
+                  Text(
+                    _stepTitles[_step],
+                    style: OraTypography.display(OraColors.textPrimary),
+                  ),
+                  const SizedBox(height: OraSpacing.md),
+                  _buildStep(),
+                  const SizedBox(height: OraSpacing.md),
+                  OraCard(
+                    child: Row(
+                      children: [
+                        const Icon(Icons.info_outline, color: OraColors.info),
+                        const SizedBox(width: OraSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            'Document photo upload will be added with admin review.',
+                            style: OraTypography.caption(OraColors.textMuted),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_submitError != null) ...[
+                    const SizedBox(height: OraSpacing.sm),
+                    Text(
+                      _submitError!,
+                      key: const ValueKey('driver-submit-error'),
+                      style: OraTypography.body(OraColors.danger),
+                    ),
+                  ],
+                  const SizedBox(height: OraSpacing.lg),
+                  Row(
+                    children: [
+                      if (_step > 0) ...[
+                        Expanded(
+                          child: OraButton(
+                            label: 'Back',
+                            variant: OraButtonVariant.outline,
+                            onPressed: _submitting
+                                ? null
+                                : () {
+                                    setState(() => _step--);
+                                    if (_scrollController.hasClients) {
+                                      _scrollController.jumpTo(0);
+                                    }
+                                  },
+                          ),
+                        ),
+                        const SizedBox(width: OraSpacing.sm),
+                      ],
+                      Expanded(
+                        flex: _step == _stepTitles.length - 1 ? 2 : 1,
+                        child: OraButton(
+                          label: _step == _stepTitles.length - 1
+                              ? 'Submit application'
+                              : 'Continue',
+                          isLoading: _submitting,
+                          onPressed: _submitting ? null : _continue,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-      ],
+        ),
+      ),
     );
   }
 }

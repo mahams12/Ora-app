@@ -93,14 +93,6 @@ class _FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<UserProfile> submitVendorApplication({
-    required String type,
-    Map<String, dynamic>? details,
-  }) async {
-    return profile!;
-  }
-
-  @override
   Future<Map<String, dynamic>> submitDriverOnboarding({
     required String vehicleType,
     String? vehicleModel,

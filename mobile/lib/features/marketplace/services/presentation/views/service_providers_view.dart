@@ -11,9 +11,6 @@ import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../../super_app/recent/recent_activity.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
-import '../../../data/marketplace_models.dart';
-import '../../../data/marketplace_providers.dart';
-import '../../../presentation/widgets/booking_request_sheet.dart';
 import '../../../shared/demo/demo_listings.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/provider_card.dart';
@@ -83,7 +80,7 @@ class _ServiceProvidersViewState extends ConsumerState<ServiceProvidersView> {
     final demoEnabled = ref.watch(demoListingsEnabledProvider);
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Services')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.services,
@@ -107,35 +104,11 @@ class _ServiceProvidersViewState extends ConsumerState<ServiceProvidersView> {
             return const MarketplaceEmptyState(title: 'Service not found');
           }
           _recordActivity(category, subcategory);
-          // Vendor-posted services surface first under their exact
-          // category/subcategory, ahead of any demo/sample listings.
-          final published = ref.watch(
-            publishedListingsProvider(
-              PublishedQuery(
-                type: 'service',
-                categoryId: widget.categoryId,
-                subcategoryId: widget.subcategoryId,
-              ),
-            ),
-          );
-          final vendorListings =
-              published.value ?? const <MarketplaceListing>[];
-          final visibleProviders = [
-            for (final listing in vendorListings)
-              ServiceProviderSummary(
-                name: listing.vendorName,
-                specialization: listing.title,
-                location: listing.location,
-                photo: listing.coverImage,
-                rate: listing.priceLabel,
-                isVerified: true,
-              ),
-            ...widget.providers.isNotEmpty
-                ? widget.providers
-                : demoEnabled
-                ? demoServiceProviders(subcategory)
-                : const <ServiceProviderSummary>[],
-          ];
+          final visibleProviders = widget.providers.isNotEmpty
+              ? widget.providers
+              : demoEnabled
+              ? demoServiceProviders(subcategory)
+              : const <ServiceProviderSummary>[];
           final isSample = demoEnabled;
           return Center(
             child: ConstrainedBox(
@@ -159,7 +132,7 @@ class _ServiceProvidersViewState extends ConsumerState<ServiceProvidersView> {
                         child: Text(
                           widget.previewBannerLabel!,
                           style: const TextStyle(
-                            color: OraColors.onPhoto,
+                            color: OraColors.navy,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -230,37 +203,22 @@ class _ServiceProvidersViewState extends ConsumerState<ServiceProvidersView> {
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
                           final provider = visibleProviders[index];
-                          final isVendor = index < vendorListings.length;
-                          final sample = isSample && !isVendor;
-                          final listing = isVendor
-                              ? vendorListings[index]
-                              : null;
                           return Padding(
                             padding: const EdgeInsets.only(
                               bottom: OraSpacing.sm,
                             ),
                             child: ProviderCard(
                               model: provider,
-                              isSample: sample,
-                              onBookmark: sample
+                              isSample: isSample,
+                              onBookmark: isSample
                                   ? () => showDemoBookingSheet(context)
                                   : null,
-                              onContact: sample
+                              onContact: isSample
                                   ? () => showDemoBookingSheet(context)
-                                  : listing == null
-                                  ? null
-                                  : () => showBookingRequestSheet(
-                                      context,
-                                      listing,
-                                    ),
-                              onViewProfile: sample
+                                  : null,
+                              onViewProfile: isSample
                                   ? () => showDemoBookingSheet(context)
-                                  : listing == null
-                                  ? null
-                                  : () => showBookingRequestSheet(
-                                      context,
-                                      listing,
-                                    ),
+                                  : null,
                             ),
                           );
                         }, childCount: visibleProviders.length),
@@ -290,13 +248,10 @@ class _ServiceProviderHero extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            const Positioned.fill(
-              child: ColoredBox(color: OraColors.primaryMuted),
-            ),
             Image.asset(
               'assets/marketplace/${subcategory.image}',
               cacheWidth: 960,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) =>
                   const ColoredBox(color: OraColors.navyElevated),
             ),

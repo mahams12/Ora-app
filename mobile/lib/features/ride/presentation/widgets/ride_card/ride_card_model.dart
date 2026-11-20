@@ -84,13 +84,21 @@ class RideCardModel {
   bool get isActiveTone => tone == RideCardTone.active;
 
   String get carAssetPath => switch (carAsset) {
-    RideCardCarAsset.white => 'assets/branding/ride_card/car_white.png',
-    RideCardCarAsset.silver => 'assets/branding/ride_card/car_silver.png',
-    RideCardCarAsset.black => 'assets/branding/ride_card/car_black.png',
-  };
+        RideCardCarAsset.white =>
+          'assets/branding/ride_card/car_white.png',
+        RideCardCarAsset.silver =>
+          'assets/branding/ride_card/car_silver.png',
+        RideCardCarAsset.black =>
+          'assets/branding/ride_card/car_black.png',
+      };
 }
 
-enum RideCardVariant { openRequest, driverJob, passengerHistory, offer }
+enum RideCardVariant {
+  openRequest,
+  driverJob,
+  passengerHistory,
+  offer,
+}
 
 enum RideCardTone { standard, active }
 

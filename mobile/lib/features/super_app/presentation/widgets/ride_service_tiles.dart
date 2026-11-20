@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/ora_colors.dart';
-import '../../../../app/theme/ora_elevation.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
-import '../../../../app/theme/widgets/ora_floaty.dart';
 import '../../../../core/constants/app_constants.dart';
 
 class RideServiceTiles extends StatelessWidget {
@@ -65,8 +63,8 @@ class RideServiceTiles extends StatelessWidget {
                 onTap: onCourier,
               ),
             ),
-            // Logistics ("Move") intentionally removed from the rides page —
-            // it stays reachable from the bottom-bar Logistics module.
+            // Logistics ("Move") intentionally removed from the rides
+            // page — still reachable from the bottom-bar Logistics module.
             const Spacer(),
           ],
         ),
@@ -108,15 +106,12 @@ class RideServiceTile extends StatelessWidget {
           excludeFromSemantics: true,
           onTap: onTap,
           borderRadius: BorderRadius.circular(OraRadius.card),
-          child: OraFloaty(
-            child: OraTapScale(
-              child: SizedBox(
-                height: 112,
-                child: Container(
+          child: SizedBox(
+            height: 112,
+            child: Ink(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(OraRadius.card),
                 color: OraColors.navyElevated,
-                boxShadow: OraElevation.cardShadow,
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(OraRadius.card),
@@ -124,23 +119,21 @@ class RideServiceTile extends StatelessWidget {
                   fit: StackFit.expand,
                   clipBehavior: Clip.hardEdge,
                   children: [
-                    const Positioned.fill(
-                      child: ColoredBox(color: OraColors.surfaceElevated),
+                    const ColoredBox(color: OraColors.navyElevated),
+                    Image.asset(
+                      imageAsset,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.medium,
                     ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: FractionallySizedBox(
-                        widthFactor: 0.55,
-                        heightFactor: 0.72,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: OraFloaty(
-                            child: Image.asset(
-                              imageAsset,
-                              fit: BoxFit.contain,
-                              filterQuality: FilterQuality.medium,
-                            ),
-                          ),
+                    const DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            OraColors.photoScrim,
+                            OraColors.photoScrimStrong,
+                          ],
                         ),
                       ),
                     ),
@@ -174,7 +167,7 @@ class RideServiceTile extends StatelessWidget {
                             statusLabel!,
                             maxLines: 1,
                             style: OraTypography.caption(
-                              OraColors.textPrimary,
+                              OraColors.navy,
                             ).copyWith(fontSize: 9, height: 1),
                           ),
                         ),
@@ -192,7 +185,7 @@ class RideServiceTile extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: OraTypography.bodyEmphasis(
-                              OraColors.textPrimary,
+                              OraColors.onPhoto,
                             ).copyWith(fontSize: 14, height: 1.1),
                           ),
                           Text(
@@ -200,15 +193,13 @@ class RideServiceTile extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: OraTypography.caption(
-                              OraColors.textMuted,
+                              OraColors.onPhotoMuted,
                             ).copyWith(fontSize: 10.5, height: 1.15),
                           ),
                         ],
                       ),
                     ),
                   ],
-                ),
-              ),
                 ),
               ),
             ),

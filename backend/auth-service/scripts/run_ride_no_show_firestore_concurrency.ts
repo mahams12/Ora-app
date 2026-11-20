@@ -263,7 +263,7 @@ async function main(): Promise<void> {
   for (const app of getApps()) {
     await deleteApp(app);
   }
-  const app = initializeApp({ projectId: 'oraapp-a9be5' });
+  const app = initializeApp({ projectId: 'ora-app-d8112' });
   const db = getFirestore(app);
   const stats = instrumentRunTransaction(db);
 

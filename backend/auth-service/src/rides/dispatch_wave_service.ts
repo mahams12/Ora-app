@@ -18,13 +18,11 @@ import {
   type N3InviteRevalidationContext,
 } from '../drivers/nearby_service';
 import { logSafe } from '../http/errors';
-import type { DispatchTaskScheduler } from '../tasks/dispatch_tasks';
-import { driverCourierVehicle, type RideDoc } from './types';
+import type { RideDoc } from './types';
 import { RideDomainError } from './types';
 import {
   DISPATCH_WAVES,
   DISPATCHABLE_STATES,
-  DRIVER_INVITE_RESPONSES,
   N4_INVITE_TTL_MS,
   N4_MAX_TOTAL_INVITES,
   N4_MAX_WAVES,
@@ -34,7 +32,6 @@ import {
   waveRadiusKm,
   type DispatchTickResult,
   type DispatchWaveDoc,
-  type DriverInviteResponseDoc,
   type SweepDispatchResult,
 } from './dispatch_types';
 
@@ -99,33 +96,7 @@ export class DispatchWaveService {
   constructor(
     private readonly db: Firestore,
     private readonly nearby: NearbyDriversService,
-    private readonly scheduler?: DispatchTaskScheduler,
   ) {}
-
-  /**
-   * Arms a Cloud Task for the next dispatch wake-up. Best-effort by design:
-   * failure is logged, not thrown — the low-frequency sweep and event-driven
-   * ticks recover any missed wake-up.
-   */
-  private async armNextTick(input: {
-    rideId: string;
-    waveNumber: number;
-    runAtMs: number;
-    correlationId: string;
-  }): Promise<void> {
-    if (!this.scheduler) return;
-    try {
-      await this.scheduler.scheduleDispatchTick(input);
-    } catch (err) {
-      logSafe('N4_DISPATCH_TASK_FAILED', {
-        operation: 'N4_DISPATCH_TASK_FAILED',
-        requestId: input.correlationId,
-        rideId: input.rideId,
-        waveNumber: input.waveNumber,
-        error: err instanceof Error ? err.message : String(err),
-      });
-    }
-  }
 
   async tickRide(input: {
     rideId: string;
@@ -197,17 +168,6 @@ export class DispatchWaveService {
     }
 
     if (!isWaveDue(ride, nowMs)) {
-      // Self-heal: a task that fired early (or a manual tick) re-arms at the
-      // true deadline so a single wake-up miss can't stall progression.
-      const nextMs = Date.parse(ride.dispatchNextAt ?? '');
-      if (Number.isFinite(nextMs)) {
-        await this.armNextTick({
-          rideId: input.rideId,
-          waveNumber: nextWave,
-          runAtMs: nextMs,
-          correlationId: input.correlationId,
-        });
-      }
       return {
         outcome: 'not_due',
         rideId: input.rideId,
@@ -305,26 +265,12 @@ export class DispatchWaveService {
         throw err;
       }
       if (!stillOk) continue;
-
-      // Ora Courier — sender-requested vehicle class: only invite drivers
-      // whose registered vehicle maps to it. Driver docs are already in the
-      // batched revalidation context — no extra reads.
-      if (ride.serviceType === 'courier' && ride.courierVehicle) {
-        const driverDoc =
-          revalidationCtx?.prefetched.driverByDriverId.get(
-            candidate.driverId,
-          ) ?? null;
-        if (driverCourierVehicle(driverDoc) !== ride.courierVehicle) {
-          continue;
-        }
-      }
-
       selected.push(candidate.driverId);
     }
 
     const boundRequestVersion = ride.requestVersion;
 
-    const result = await this.db.runTransaction(async (tx) => {
+    return this.db.runTransaction(async (tx) => {
       const rideSnapTx = await tx.get(rideRef);
       if (!rideSnapTx.exists) {
         throw new RideDomainError('RIDE_NOT_FOUND', 404, 'Ride not found.');
@@ -482,107 +428,6 @@ export class DispatchWaveService {
         driverIds: selected,
       };
     });
-
-    // Post-commit: arm the next wave's deadline wake-up. Task names embed
-    // (rideId, wave, target-second) so concurrent armers dedupe at the queue.
-    if (
-      result.outcome === 'wave_completed' &&
-      (result.waveNumber ?? 0) < N4_MAX_WAVES
-    ) {
-      await this.armNextTick({
-        rideId: input.rideId,
-        waveNumber: (result.waveNumber ?? 0) + 1,
-        runAtMs: nowMs + N4_WAVE_CADENCE_MS,
-        correlationId: input.correlationId,
-      });
-    }
-
-    return result;
-  }
-
-  /**
-   * Event-driven fast path: when every driver in the LATEST wave has a
-   * durable response (accept/decline), pull the next wave forward instead of
-   * waiting out the cadence. Overlapping earlier-wave invites stay valid —
-   * this never invalidates a live invitation.
-   */
-  async accelerateIfWaveResolved(input: {
-    rideId: string;
-    correlationId: string;
-    nowMs?: number;
-  }): Promise<{ accelerated: boolean; tick?: DispatchTickResult; reason: string }> {
-    const nowMs = input.nowMs ?? Date.now();
-    const rideRef = this.db.collection(RIDES).doc(input.rideId);
-    const rideSnap = await rideRef.get();
-    if (!rideSnap.exists) {
-      return { accelerated: false, reason: 'ride_not_found' };
-    }
-    const ride = rideSnap.data() as RideDoc;
-    if (
-      isDispatchStoppedOrExhausted(ride) ||
-      !isRideDispatchable(ride, nowMs)
-    ) {
-      return { accelerated: false, reason: 'dispatch_inactive' };
-    }
-    const lastWave = currentDispatchWave(ride);
-    if (lastWave < 1 || lastWave >= N4_MAX_WAVES) {
-      return { accelerated: false, reason: 'no_pending_wave' };
-    }
-    const nextMs = Date.parse(ride.dispatchNextAt ?? '');
-    if (!Number.isFinite(nextMs) || nextMs <= nowMs) {
-      return { accelerated: false, reason: 'already_due' };
-    }
-
-    const waveRef = this.db
-      .collection(DISPATCH_WAVES)
-      .doc(waveDocId(input.rideId, lastWave));
-    const waveSnap = await waveRef.get();
-    if (!waveSnap.exists) {
-      return { accelerated: false, reason: 'wave_missing' };
-    }
-    const wave = waveSnap.data() as DispatchWaveDoc;
-    const invited = wave.driverIds ?? [];
-    if (invited.length === 0) {
-      return { accelerated: false, reason: 'empty_wave' };
-    }
-
-    const responsesSnap = await this.db
-      .collection(DRIVER_INVITE_RESPONSES)
-      .where('waveId', '==', waveSnap.id)
-      .get();
-    const responded = new Set(
-      responsesSnap.docs.map(
-        (d) => (d.data() as DriverInviteResponseDoc).driverId,
-      ),
-    );
-    if (!invited.every((id) => responded.has(id))) {
-      return { accelerated: false, reason: 'pending_responses' };
-    }
-
-    // All invited drivers resolved — advance dispatchNextAt to now inside a
-    // transaction so a concurrent tick can't race us into double-advancing.
-    const armed = await this.db.runTransaction(async (tx) => {
-      const snap = await tx.get(rideRef);
-      if (!snap.exists) return false;
-      const cur = snap.data() as RideDoc;
-      if (currentDispatchWave(cur) !== lastWave) return false;
-      const curNext = Date.parse(cur.dispatchNextAt ?? '');
-      if (!Number.isFinite(curNext) || curNext <= nowMs) return false;
-      tx.update(rideRef, {
-        dispatchNextAt: new Date(nowMs).toISOString(),
-      });
-      return true;
-    });
-    if (!armed) {
-      return { accelerated: false, reason: 'race_lost' };
-    }
-
-    const tick = await this.tickRide({
-      rideId: input.rideId,
-      correlationId: input.correlationId,
-      nowMs,
-    });
-    return { accelerated: true, tick, reason: 'wave_resolved' };
   }
 
   async sweepDispatch(input: {

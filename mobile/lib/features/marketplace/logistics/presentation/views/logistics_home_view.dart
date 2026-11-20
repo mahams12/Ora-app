@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,214 +8,249 @@ import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../app/theme/widgets/ora_section_header.dart';
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/utils/responsive.dart';
-import '../../../../super_app/domain/ride_type_catalogue.dart';
-import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
-import '../../../../super_app/presentation/widgets/ride_service_tiles.dart';
-import '../../../../super_app/presentation/widgets/ride_type_photo_card.dart';
-import '../../../../super_app/recent/recent_activity.dart';
 import '../../../catalogue/catalogue_provider.dart';
+import '../../../shared/demo/demo_listings.dart';
+import '../../../shared/demo/demo_logistics_operator_card.dart';
+import '../../../shared/widgets/illustrated_category_card.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
+import '../../../shared/widgets/marketplace_search_field.dart';
+import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 
-/// Passenger Logistics — same shape as the Rides hub: hero, service
-/// tiles and a vehicle picker grid. Every card deep-links into the
-/// shared ride request composer (`?service=move` / courier / buy_deliver)
-/// so delivery requests flow through the same dispatch pipeline the
-/// logistics partners watch — no listings, no posting.
-class LogisticsHomeView extends ConsumerWidget {
+const _logisticsCategoryIcons = <String, IconData>{
+  'bikes': Icons.two_wheeler,
+  'three_wheeler': Icons.electric_rickshaw,
+  'pickups': Icons.local_shipping,
+  'vans': Icons.airport_shuttle,
+  'trucks': Icons.local_shipping,
+  'trailers': Icons.rv_hookup,
+  'specialized': Icons.construction,
+  'freight': Icons.sailing,
+};
+
+class LogisticsHomeView extends ConsumerStatefulWidget {
   const LogisticsHomeView({super.key});
 
-  void _openComposer(
-    BuildContext context,
-    WidgetRef ref, {
-    required String service,
-    required String recentId,
-    required String title,
-    required String subtitle,
-    required String imageAsset,
-  }) {
-    final route = AppRoutes.rideRequestUri(service: service);
-    ref
-        .read(recentActivityProvider.notifier)
-        .record(
-          RecentActivity(
-            kind: RecentActivityKind.logistics,
-            id: recentId,
-            title: title,
-            subtitle: subtitle,
-            imageAsset: imageAsset,
-            route: route,
-            atMs: DateTime.now().millisecondsSinceEpoch,
-          ),
-        );
-    unawaited(context.push<void>(route));
-  }
+  @override
+  ConsumerState<LogisticsHomeView> createState() => _LogisticsHomeViewState();
+}
+
+class _LogisticsHomeViewState extends ConsumerState<LogisticsHomeView> {
+  String _query = '';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final catalogue = ref.watch(catalogueProvider);
+    final demoEnabled = ref.watch(demoListingsEnabledProvider);
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Logistics')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.logistics,
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 960),
-          child: CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  padding,
-                  OraSpacing.md,
-                  padding,
-                  OraSpacing.md,
-                ),
-                sliver: SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const _LogisticsHero(),
-                      const SizedBox(height: OraSpacing.lg),
-                      Column(
+      body: catalogue.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stackTrace) => const MarketplaceEmptyState(
+          title: 'Catalogue unavailable',
+          message: 'Please try again later.',
+        ),
+        data: (data) {
+          final List<DemoLogisticsOperator> nearYouOperators =
+              demoEnabled && data.logistics.isNotEmpty
+              ? demoLogisticsOperators(data.logistics.first).take(3).toList()
+              : const <DemoLogisticsOperator>[];
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 960),
+              child: CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                      padding,
+                      OraSpacing.md,
+                      padding,
+                      OraSpacing.lg,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: RideServiceTile(
-                                  title: 'Move cargo',
-                                  subtitle: 'Trucks, vans & freight',
-                                  imageAsset:
-                                      AppConstants.serviceMoveAsset,
-                                  icon: Icons.local_shipping_rounded,
-                                  badgeColor: OraColors.primary,
-                                  onTap: () => _openComposer(
-                                    context,
-                                    ref,
-                                    service: 'move',
-                                    recentId: 'move',
-                                    title: 'Move cargo',
-                                    subtitle: 'Book a delivery',
-                                    imageAsset:
-                                        AppConstants.serviceMoveAsset,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: OraSpacing.sm),
-                              Expanded(
-                                child: RideServiceTile(
-                                  title: 'Send parcel',
-                                  subtitle: 'Same-day courier',
-                                  imageAsset:
-                                      AppConstants.serviceCourierAsset,
-                                  icon: Icons.inventory_2_outlined,
-                                  badgeColor: OraColors.accentPurple,
-                                  onTap: () => _openComposer(
-                                    context,
-                                    ref,
-                                    service: 'courier',
-                                    recentId: 'courier',
-                                    title: 'Send parcel',
-                                    subtitle: 'Same-day courier',
-                                    imageAsset:
-                                        AppConstants.serviceCourierAsset,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          const _LogisticsHero(),
+                          const SizedBox(height: OraSpacing.md),
+                          Text(
+                            'Move anything, from a parcel to a container',
+                            style: OraTypography.headline(
+                              OraColors.textPrimary,
+                            ),
                           ),
-                          const SizedBox(height: OraSpacing.sm),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: RideServiceTile(
-                                  title: 'Buy & Deliver',
-                                  subtitle: 'We shop, you relax',
-                                  imageAsset:
-                                      'assets/marketplace/logistics/bikes.webp',
-                                  icon: Icons.shopping_bag_outlined,
-                                  badgeColor: OraColors.info,
-                                  onTap: () => _openComposer(
-                                    context,
-                                    ref,
-                                    service: 'buy_deliver',
-                                    recentId: 'buy_deliver',
-                                    title: 'Buy & Deliver',
-                                    subtitle: 'We shop, you relax',
-                                    imageAsset:
-                                        'assets/marketplace/logistics/bikes.webp',
+                          const SizedBox(height: OraSpacing.md),
+                          Container(
+                            padding: const EdgeInsets.all(OraSpacing.sm),
+                            decoration: BoxDecoration(
+                              color: OraColors.infoMuted,
+                              borderRadius: BorderRadius.circular(
+                                OraRadius.card,
+                              ),
+                              border: Border.all(
+                                color: OraColors.info.withValues(alpha: 0.35),
+                              ),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(
+                                  Icons.info_outline_rounded,
+                                  color: OraColors.info,
+                                ),
+                                SizedBox(width: OraSpacing.xs),
+                                Expanded(
+                                  child: Text(
+                                    'Quotation requests open soon — nothing is '
+                                    'booked or sent yet',
+                                    style: TextStyle(
+                                      color: OraColors.textPrimary,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const Spacer(),
-                            ],
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: OraSpacing.md),
+                          MarketplaceSearchField(
+                            hintText: 'Search vehicle types',
+                            onChanged: (value) =>
+                                setState(() => _query = value),
+                            onSubmitted: (value) {
+                              if (value.trim().isNotEmpty) {
+                                context.push(
+                                  AppRoutes.logisticsSearchPath(value.trim()),
+                                );
+                              }
+                            },
+                          ),
+                          if (_query.trim().isNotEmpty) ...[
+                            const SizedBox(height: OraSpacing.xs),
+                            Text(
+                              'Press search to view matching vehicle types.',
+                              style: OraTypography.caption(OraColors.textMuted),
+                            ),
+                          ],
+                          const SizedBox(height: OraSpacing.lg),
+                          Text(
+                            'Vehicle categories',
+                            style: OraTypography.title(OraColors.textPrimary),
                           ),
                         ],
                       ),
-                      const SizedBox(height: OraSpacing.lg),
-                      const OraSectionHeader(title: 'Choose a vehicle'),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-              catalogue.when(
-                loading: () => const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.all(OraSpacing.xl),
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                ),
-                error: (error, stackTrace) => const SliverToBoxAdapter(
-                  child: MarketplaceEmptyState(
-                    title: 'Catalogue unavailable',
-                    message: 'Please try again later.',
-                  ),
-                ),
-                data: (data) => SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: padding),
-                  sliver: SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: OraSpacing.sm,
-                          mainAxisSpacing: OraSpacing.sm,
-                          childAspectRatio: 1.08,
-                        ),
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final category = data.logistics[index];
-                      final image =
-                          'assets/marketplace/${category.image}';
-                      return RideTypePhotoCard(
-                        option: RideTypeOption(
-                          id: category.id,
-                          name: category.name,
-                          blurb: category.blurb,
-                          image: image,
-                          action: RideCategoryAction(category.id),
-                        ),
-                        onTap: () => _openComposer(
-                          context,
-                          ref,
-                          service: 'move',
-                          recentId: 'move_${category.id}',
+                  SliverPadding(
+                    padding: EdgeInsets.fromLTRB(
+                      padding,
+                      0,
+                      padding,
+                      OraSpacing.lg,
+                    ),
+                    sliver: SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: OraSpacing.sm,
+                            mainAxisSpacing: OraSpacing.sm,
+                            mainAxisExtent: 184,
+                          ),
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final category = data.logistics[index];
+                        return IllustratedCategoryCard(
+                          imageAsset: 'assets/marketplace/${category.image}',
                           title: category.name,
-                          subtitle: 'Book a delivery',
-                          imageAsset: image,
-                        ),
-                      );
-                    }, childCount: data.logistics.length),
+                          countLine: '${category.types.length} vehicle types',
+                          badgeIcon:
+                              _logisticsCategoryIcons[category.id] ??
+                              Icons.category_outlined,
+                          height: 184,
+                          onTap: () => context.push(
+                            AppRoutes.logisticsCategoryPath(category.id),
+                          ),
+                        );
+                      }, childCount: data.logistics.length),
+                    ),
                   ),
-                ),
+                  if (!demoEnabled)
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(
+                        padding,
+                        0,
+                        padding,
+                        OraSpacing.xxl,
+                      ),
+                      sliver: const SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            OraSectionHeader(title: 'Operators near you'),
+                            SizedBox(height: OraSpacing.sm),
+                            MarketplaceEmptyState(
+                              title: 'No verified operators yet',
+                              message:
+                                  'Verified logistics operators will appear '
+                                  'here when they are available.',
+                              icon: Icons.local_shipping_outlined,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    SliverPadding(
+                      padding: EdgeInsets.fromLTRB(
+                        padding,
+                        0,
+                        0,
+                        OraSpacing.xxl,
+                      ),
+                      sliver: SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: padding,
+                              ),
+                              child: const OraSectionHeader(
+                                title: 'Operators near you',
+                              ),
+                            ),
+                            const SizedBox(height: OraSpacing.sm),
+                            SizedBox(
+                              height: 256,
+                              child: ListView.separated(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: padding,
+                                ),
+                                scrollDirection: Axis.horizontal,
+                                itemCount: nearYouOperators.length,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(width: OraSpacing.sm),
+                                itemBuilder: (context, index) => SizedBox(
+                                  width: 330,
+                                  child: DemoLogisticsOperatorCard(
+                                    operator: nearYouOperators[index],
+                                    onSampleAction: () =>
+                                        showDemoBookingSheet(context),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              const SliverPadding(
-                padding: EdgeInsets.only(bottom: OraSpacing.xxl),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -235,11 +268,8 @@ class _LogisticsHero extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            const Positioned.fill(
-              child: ColoredBox(color: OraColors.primaryMuted),
-            ),
             Image.asset(
-              'assets/brand/mod_logistics.webp',
+              'assets/marketplace/modules/logistics.webp',
               cacheWidth: 720,
               fit: BoxFit.cover,
             ),
@@ -248,7 +278,7 @@ class _LogisticsHero extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [Colors.transparent, Color(0x73000000)],
+                  colors: [Colors.transparent, OraColors.photoScrimStrong],
                 ),
               ),
             ),
@@ -264,7 +294,7 @@ class _LogisticsHero extends StatelessWidget {
                   ),
                   const SizedBox(height: OraSpacing.xxs),
                   Text(
-                    'Move anything, from a parcel to a container.',
+                    'Move goods with a vehicle that fits.',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: OraTypography.body(OraColors.onPhotoMuted),

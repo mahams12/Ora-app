@@ -79,7 +79,7 @@ void main() {
             AppRoutes.driverHome,
             AppRoutes.driverRides,
             AppRoutes.driverRide,
-            AppRoutes.driverWallet,
+            AppRoutes.driverDirectOffer,
           ])
             GoRoute(
               path: path,

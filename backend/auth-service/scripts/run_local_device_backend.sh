@@ -13,13 +13,13 @@ cd "$ROOT"
 
 export PORT="${PORT:-8080}"
 export ORA_ENV="${ORA_ENV:-development}"
-export FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-oraapp-a9be5}"
+export FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-ora-app-d8112}"
 export FIRESTORE_EMULATOR_HOST="${FIRESTORE_EMULATOR_HOST:-127.0.0.1:8181}"
 export FIREBASE_AUTH_EMULATOR_HOST="${FIREBASE_AUTH_EMULATOR_HOST:-127.0.0.1:9099}"
 export FIREBASE_DATABASE_EMULATOR_HOST="${FIREBASE_DATABASE_EMULATOR_HOST:-127.0.0.1:9000}"
 # Required so the RTDB adapter is constructed; the emulator host above is what
 # actually receives traffic. Value is ignored when the emulator env is set.
-export FIREBASE_DATABASE_URL="${FIREBASE_DATABASE_URL:-https://oraapp-a9be5-default-rtdb.local-emulator.local}"
+export FIREBASE_DATABASE_URL="${FIREBASE_DATABASE_URL:-https://ora-app-d8112-default-rtdb.local-emulator.local}"
 export REQUIRE_APP_CHECK="${REQUIRE_APP_CHECK:-false}"
 export ORA_INTERNAL_WORKER_TOKEN="${ORA_INTERNAL_WORKER_TOKEN:-local-dev-worker-token-xx}"
 export ORA_REQUIRE_FIREBASE_EMULATOR="${ORA_REQUIRE_FIREBASE_EMULATOR:-true}"

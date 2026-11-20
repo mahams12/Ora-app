@@ -1,0 +1,1018 @@
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=111ms (0ms mobile, 0ms wifi, 111ms not connected)
+ERROR: null root node returned by UiTestAutomationBridge.
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (6082 bytes in 0.007s)
+ERROR: null root node returned by UiTestAutomationBridge.
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (6082 bytes in 0.007s)
+ERROR: null root node returned by UiTestAutomationBridge.
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.3 MB/s (6082 bytes in 0.021s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.5 MB/s (4978 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (12485 bytes in 0.005s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=67ms (0ms mobile, 0ms wifi, 67ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5283 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (11597 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.8 MB/s (11597 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.1 MB/s (11597 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (9877 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.4 MB/s (9877 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (10241 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.5 MB/s (9549 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.9 MB/s (10128 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.4 MB/s (8941 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (8613 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (9795 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (9795 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (10208 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (10827 bytes in 0.004s)
+/sdcard/lr_shot.png: 1 file pulled, 0 skipped. 19.6 MB/s (705731 bytes in 0.034s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.5 MB/s (10827 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6092 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6092 bytes in 0.004s)
+/sdcard/lr_shot.png: 1 file pulled, 0 skipped. 17.5 MB/s (158199 bytes in 0.009s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=40ms (0ms mobile, 0ms wifi, 40ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (12485 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.4 MB/s (11632 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7489 bytes in 0.008s)
+/sdcard/lr_shot.png: 1 file pulled, 0 skipped. 15.6 MB/s (272296 bytes in 0.017s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.2 MB/s (6082 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.2 MB/s (6082 bytes in 0.003s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=45ms (0ms mobile, 0ms wifi, 45ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.5 MB/s (9523 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6049 bytes in 0.003s)
+/sdcard/lr_shot.png: 1 file pulled, 0 skipped. 16.3 MB/s (205001 bytes in 0.012s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=32ms (0ms mobile, 0ms wifi, 32ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.5 MB/s (7996 bytes in 0.003s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=16ms (0ms mobile, 0ms wifi, 16ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.9 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.9 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=40ms (0ms mobile, 0ms wifi, 40ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.8 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.012s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.2 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=57ms (0ms mobile, 0ms wifi, 57ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.8 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.6 MB/s (7996 bytes in 0.013s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.6 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.6 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=35ms (0ms mobile, 0ms wifi, 35ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.8 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (7996 bytes in 0.006s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=42ms (0ms mobile, 0ms wifi, 42ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.8 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.6 MB/s (7996 bytes in 0.013s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.5 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.007s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=50ms (0ms mobile, 0ms wifi, 50ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.5 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.6 MB/s (7996 bytes in 0.012s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.1 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=12ms (0ms mobile, 0ms wifi, 12ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.6 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.8 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (7996 bytes in 0.003s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=55ms (0ms mobile, 0ms wifi, 55ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.6 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.3 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.4 MB/s (7996 bytes in 0.002s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=15ms (0ms mobile, 0ms wifi, 15ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.5 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.1 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.4 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.2 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.5 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.6 MB/s (7996 bytes in 0.002s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=25ms (0ms mobile, 0ms wifi, 25ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.4 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.2 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.5 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.9 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.1 MB/s (7996 bytes in 0.004s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=8ms (0ms mobile, 0ms wifi, 8ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.6 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=53ms (0ms mobile, 0ms wifi, 53ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=75ms (0ms mobile, 0ms wifi, 75ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=40ms (0ms mobile, 0ms wifi, 40ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=54ms (0ms mobile, 0ms wifi, 54ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.2 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=32ms (0ms mobile, 0ms wifi, 32ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.5 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.5 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=45ms (0ms mobile, 0ms wifi, 45ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.1 MB/s (7996 bytes in 0.112s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.3 MB/s (7996 bytes in 0.003s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=28ms (0ms mobile, 0ms wifi, 28ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.4 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 4.7 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.3 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (7996 bytes in 0.006s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=33ms (0ms mobile, 0ms wifi, 33ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.011s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.7 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.6 MB/s (7996 bytes in 0.013s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=29ms (0ms mobile, 0ms wifi, 29ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.1 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.6 MB/s (7996 bytes in 0.012s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.0 MB/s (7996 bytes in 0.008s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.5 MB/s (7996 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.8 MB/s (7996 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7996 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (7996 bytes in 0.007s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=37ms (0ms mobile, 0ms wifi, 37ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.4 MB/s (7996 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.9 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.5 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.4 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.9 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.4 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 4.4 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.9 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.6 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.1 MB/s (7996 bytes in 0.002s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=13ms (0ms mobile, 0ms wifi, 13ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.5 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.3 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.1 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.5 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.8 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.6 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.1 MB/s (7996 bytes in 0.065s)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=23ms (0ms mobile, 0ms wifi, 23ms not connected)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (7996 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.5 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.4 MB/s (7996 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.7 MB/s (7996 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.8 MB/s (8756 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 5.1 MB/s (11188 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.2 MB/s (11188 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 4.0 MB/s (11188 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 5.4 MB/s (11188 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.7 MB/s (11188 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 5.1 MB/s (11188 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 4.6 MB/s (11188 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11188 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.4 MB/s (11188 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11188 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 5.0 MB/s (11188 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 4.1 MB/s (11188 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.9 MB/s (11188 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 4.4 MB/s (11188 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.4 MB/s (11188 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 3.7 MB/s (11188 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 4.1 MB/s (11188 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.1 MB/s (11188 bytes in 0.010s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (11188 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.6 MB/s (11188 bytes in 0.019s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (11188 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.4 MB/s (7949 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (7949 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.3 MB/s (7949 bytes in 0.006s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.4 MB/s (7949 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.2 MB/s (7949 bytes in 0.007s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.7 MB/s (7949 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.9 MB/s (7949 bytes in 0.009s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 2.0 MB/s (7949 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 1.9 MB/s (7949 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/lr_ui.xml
+/sdcard/lr_ui.xml: 1 file pulled, 0 skipped. 0.1 MB/s (7949 bytes in 0.056s)
+Traceback (most recent call last):
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/two_actor_lifecycle_ratings_e2e.py", line 799, in <module>
+    main()
+    ~~~~^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/two_actor_lifecycle_ratings_e2e.py", line 754, in main
+    driver_progression(rid)
+    ~~~~~~~~~~~~~~~~~~^^^^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/two_actor_lifecycle_ratings_e2e.py", line 599, in driver_progression
+    t = open_driver_assigned_detail(rid, f"d_{gate}")
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/two_actor_lifecycle_ratings_e2e.py", line 550, in open_driver_assigned_detail
+    t = dump(D, tag)
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/two_actor_lifecycle_ratings_e2e.py", line 46, in dump
+    shell(dev, "uiautomator", "dump", "/sdcard/lr_ui.xml")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/two_actor_lifecycle_ratings_e2e.py", line 40, in shell
+    subprocess.check_call(["adb", "-s", dev, "shell", *args])
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 420, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['adb', '-s', 'emulator-5554', 'shell', 'uiautomator', 'dump', '/sdcard/lr_ui.xml']' returned non-zero exit status 137.

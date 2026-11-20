@@ -45,7 +45,7 @@ class MapLibrePoCGeometry {
     bearing: 48,
   );
 
-  /// Approved Ora map accent orange (route).
+  /// Approved Ora map accent blue (route).
   static const String routeBlue = '#F88733';
-  static const String routeGlow = '#FFC08A';
+  static const String routeGlow = '#FFB377';
 }

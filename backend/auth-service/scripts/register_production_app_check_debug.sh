@@ -6,7 +6,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 ENV_FILE="$ROOT/.env"
-PROJECT="${GCP_PROJECT_ID:-oraapp-a9be5}"
+PROJECT="${GCP_PROJECT_ID:-ora-app-d8112}"
 PN=498169438285
 APP_ID='1:498169438285:android:3b100b1c7a7248f1ddbc04'
 

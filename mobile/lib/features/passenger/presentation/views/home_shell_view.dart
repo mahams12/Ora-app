@@ -100,109 +100,8 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
     return showUnavailableFeatureSheet(context, feature);
   }
 
-  /// One row per earning role, gated by the server-authoritative profile:
-  /// never applied → registration flow; pending → under-review state;
-  /// approved → that role's posting/dashboard; rejected → re-apply;
-  /// suspended → contact support. Posting pages are additionally blocked
-  /// by the route guard for deep links.
-  Future<void> _showEarnSheet() async {
+  Future<void> _showVendorPortal() async {
     _closeDrawer();
-    final profile = ref.read(sessionUserProfileProvider);
-    String? statusOf(String type) => profile?.vendorStatusFor(type);
-
-    Widget row({
-      required IconData icon,
-      required String title,
-      required String subtitle,
-      required VoidCallback onTap,
-    }) => OraListRow(
-      leading: OraIconBadge(icon: icon),
-      title: title,
-      subtitle: subtitle,
-      onTap: () {
-        Navigator.of(context).pop();
-        onTap();
-      },
-    );
-
-    Widget rowFor({
-      required String type,
-      required IconData icon,
-      required String registerTitle,
-      required String registerSubtitle,
-      required String dashboardTitle,
-      required String dashboardSubtitle,
-      required String registerRoute,
-      required String dashboardRoute,
-      required String pendingTitle,
-    }) {
-      return switch (statusOf(type)) {
-        'approved' => row(
-          icon: icon,
-          title: dashboardTitle,
-          subtitle: dashboardSubtitle,
-          onTap: () => context.push(dashboardRoute),
-        ),
-        'pending' => row(
-          icon: Icons.hourglass_top_outlined,
-          title: registerTitle,
-          subtitle: 'Application under review',
-          onTap: () => _showAccessGateSheet(
-            title: pendingTitle,
-            description:
-                'Your application was received and is waiting for admin '
-                'review. We will notify you once it is approved.',
-          ),
-        ),
-        'suspended' => row(
-          icon: Icons.block_outlined,
-          title: registerTitle,
-          subtitle: 'Suspended — contact support',
-          onTap: () => _showAccessGateSheet(
-            title: 'Access suspended',
-            description:
-                'This partner access is suspended. Contact ORA support '
-                'for help.',
-          ),
-        ),
-        'rejected' => row(
-          icon: icon,
-          title: registerTitle,
-          subtitle: 'Application rejected — tap to re-apply',
-          onTap: () => context.push(registerRoute),
-        ),
-        _ => row(
-          icon: icon,
-          title: registerTitle,
-          subtitle: registerSubtitle,
-          onTap: () => context.push(registerRoute),
-        ),
-      };
-    }
-
-    final driverRow = switch (profile?.driverStatus) {
-      'pending' => row(
-          icon: Icons.hourglass_top_outlined,
-          title: 'Switch to Driver',
-          subtitle: 'Application under review',
-          onTap: _onSwitchToDriver,
-        ),
-      'suspended' => row(
-          icon: Icons.block_outlined,
-          title: 'Switch to Driver',
-          subtitle: 'Suspended — contact support',
-          onTap: _onSwitchToDriver,
-        ),
-      _ => row(
-          icon: Icons.directions_car_filled_rounded,
-          title: 'Switch to Driver',
-          subtitle: profile?.isApprovedDriver == true
-              ? 'Go to driver mode'
-              : 'Register your vehicle',
-          onTap: _onSwitchToDriver,
-        ),
-    };
-
     await showOraBottomSheet<void>(
       context: context,
       child: Column(
@@ -210,69 +109,11 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const OraSectionHeader(
-            eyebrow: 'Partner with ORA',
-            title: 'Earn on ORA',
+            eyebrow: 'Coming soon',
+            title: 'Vendor portal',
             description:
-                'Choose how you want to earn — drive passengers, deliver '
-                'cargo, list a property, or offer your services.',
-          ),
-          const SizedBox(height: OraSpacing.md),
-          driverRow,
-          const SizedBox(height: OraSpacing.xs),
-          rowFor(
-            type: 'cargo',
-            icon: Icons.local_shipping_outlined,
-            registerTitle: 'Switch to Logistics',
-            registerSubtitle: 'Register your truck or cargo vehicle',
-            dashboardTitle: 'Switch to Logistics',
-            dashboardSubtitle: 'Post and manage transport listings',
-            registerRoute: AppRoutes.cargoRegistration,
-            dashboardRoute: AppRoutes.logisticsVendorHome,
-            pendingTitle: 'Cargo application under review',
-          ),
-          const SizedBox(height: OraSpacing.xs),
-          rowFor(
-            type: 'rental',
-            icon: Icons.home_work_outlined,
-            registerTitle: 'Switch to Rental',
-            registerSubtitle: 'List your property and start earning',
-            dashboardTitle: 'Switch to Rental',
-            dashboardSubtitle: 'Post and manage rental properties',
-            registerRoute: AppRoutes.rentalRegistration,
-            dashboardRoute: AppRoutes.rentalVendorHome,
-            pendingTitle: 'Rental host application under review',
-          ),
-          const SizedBox(height: OraSpacing.xs),
-          rowFor(
-            type: 'service',
-            icon: Icons.handyman_outlined,
-            registerTitle: 'Switch to Services',
-            registerSubtitle: 'Offer services on the ORA marketplace',
-            dashboardTitle: 'Switch to Services',
-            dashboardSubtitle: 'Post and manage your services',
-            registerRoute: AppRoutes.serviceVendorRegistration,
-            dashboardRoute: AppRoutes.vendorHome,
-            pendingTitle: 'Service provider application under review',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _showAccessGateSheet({
-    required String title,
-    required String description,
-  }) {
-    return showOraBottomSheet<void>(
-      context: context,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          OraSectionHeader(
-            eyebrow: 'Partner access',
-            title: title,
-            description: description,
+                'Vendors will manage listings and bookings from the ORA '
+                'vendor web app. Coming soon.',
           ),
           const SizedBox(height: OraSpacing.lg),
           OraButton(
@@ -367,6 +208,8 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
   Widget build(BuildContext context) {
     final homeState = ref.watch(homeViewModelProvider);
     final vm = ref.read(homeViewModelProvider.notifier);
+    final isApprovedDriver =
+        ref.watch(sessionUserProfileProvider)?.isApprovedDriver == true;
     final sessionProfile = ref.watch(sessionUserProfileProvider);
     final displayName = homeState.displayName?.trim().isNotEmpty == true
         ? homeState.displayName!.trim()
@@ -374,7 +217,7 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       bottomNavigationBar: OraModuleBottomBar(
         selected: _page == PassengerShellPage.rides
             ? OraModuleDestination.rides
@@ -402,16 +245,6 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
             onTap: () => _selectPage(PassengerShellPage.rides),
           ),
           OraDrawerItem(
-            title: 'My bookings',
-            icon: Icons.event_note_rounded,
-            iconBackground: OraColors.primaryMuted,
-            iconColor: OraColors.gold,
-            onTap: () {
-              _closeDrawer();
-              context.push(AppRoutes.myBookings);
-            },
-          ),
-          OraDrawerItem(
             title: 'Refer & earn',
             icon: Icons.card_giftcard_rounded,
             iconBackground: OraColors.primaryMuted,
@@ -421,14 +254,26 @@ class _HomeShellViewState extends ConsumerState<HomeShellView> {
           ),
           const OraDrawerSeparator(),
           OraDrawerItem(
-            title: 'Earn on ORA',
-            subtitle: 'Drive, deliver, host or serve',
-            icon: Icons.payments_rounded,
+            title: 'Switch to driver mode',
+            subtitle: isApprovedDriver
+                ? 'Earn with the same account'
+                : 'Register your vehicle',
+            icon: Icons.directions_car_filled_rounded,
             iconBackground: Colors.transparent,
             iconColor: OraColors.textPrimary,
             bareIcon: true,
             showChevron: true,
-            onTap: _showEarnSheet,
+            onTap: _onSwitchToDriver,
+          ),
+          OraDrawerItem(
+            title: 'Switch to vendor mode',
+            subtitle: 'Vendor web portal',
+            icon: Icons.storefront_outlined,
+            iconBackground: Colors.transparent,
+            iconColor: OraColors.textPrimary,
+            bareIcon: true,
+            showChevron: true,
+            onTap: _showVendorPortal,
           ),
           OraDrawerItem(
             title: 'MapLibre PoC',

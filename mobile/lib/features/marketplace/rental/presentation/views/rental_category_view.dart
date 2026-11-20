@@ -8,19 +8,14 @@ import '../../../../../app/theme/ora_radius.dart';
 import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../core/utils/responsive.dart';
-import '../../../../../app/theme/widgets/ora_bottom_sheet.dart';
 import '../../../../super_app/recent/recent_activity.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
-import '../../../data/marketplace_models.dart';
-import '../../../data/marketplace_providers.dart';
-import '../../../presentation/widgets/booking_request_sheet.dart';
 import '../../../shared/demo/demo_listings.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../shared/widgets/marketplace_search_field.dart';
 import '../../../shared/widgets/rental_listing_card.dart';
-import 'rental_property_detail_view.dart';
 
 class RentalCategoryView extends ConsumerStatefulWidget {
   const RentalCategoryView({
@@ -48,60 +43,6 @@ class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
       _query = '';
       _recordedActivityKey = null;
     }
-  }
-
-  void _openVendorProperty(BuildContext context, MarketplaceListing listing) {
-    final availability = [
-      if (listing.availableFrom != null) 'From ${listing.availableFrom}',
-      if (listing.availableTo != null) 'to ${listing.availableTo}',
-    ].join(' ');
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => RentalPropertyDetailView(
-          model: RentalPropertyDetailModel(
-            title: listing.title,
-            galleryImages: [
-              for (final photo in listing.photos)
-                MarketplaceListing.photoProvider(photo),
-            ],
-            description: listing.description,
-            address: listing.location,
-            amenities: listing.amenities,
-            priceBreakdown: RentalPriceBreakdown(
-              lines: [
-                RentalPriceLine(
-                  label: 'Rent (${listing.priceUnit.toLowerCase()})',
-                  amount: listing.priceLabel,
-                ),
-              ],
-              total: listing.priceLabel,
-            ),
-            availability: availability.isEmpty
-                ? 'Contact the host for availability'
-                : availability,
-            hostName: listing.vendorName,
-            hostVerified: true,
-          ),
-          onRequest: () => showBookingRequestSheet(context, listing),
-          onContact: listing.contactNumber.isEmpty
-              ? null
-              : () => showOraBottomSheet<void>(
-                  context: context,
-                  child: ListTile(
-                    leading: const Icon(Icons.call_rounded),
-                    title: Text(listing.vendorName),
-                    subtitle: Text(
-                      [
-                        listing.contactNumber,
-                        if (listing.whatsappNumber != null)
-                          'WhatsApp: ${listing.whatsappNumber}',
-                      ].join('\n'),
-                    ),
-                  ),
-                ),
-        ),
-      ),
-    );
   }
 
   void _recordActivity(
@@ -139,7 +80,7 @@ class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
     final catalogue = ref.watch(catalogueProvider);
     final demoEnabled = ref.watch(demoListingsEnabledProvider);
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Rental')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.rental,
@@ -169,28 +110,6 @@ class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
           }
           _recordActivity(category, selectedSubcategory);
           final query = _query.trim().toLowerCase();
-          // Vendor-posted properties surface first under their exact
-          // category + property type, ahead of any demo listings.
-          final published = ref.watch(
-            publishedListingsProvider(
-              PublishedQuery(
-                type: 'rental',
-                categoryId: widget.categoryId,
-                subcategoryId: widget.subcategoryId,
-              ),
-            ),
-          );
-          final vendors = [
-            for (final listing
-                in published.value ?? const <MarketplaceListing>[])
-              if (query.isEmpty ||
-                  '${listing.vendorName} ${listing.title} '
-                          '${listing.subcategoryName} ${listing.location} '
-                          '${listing.amenities.join(' ')}'
-                      .toLowerCase()
-                      .contains(query))
-                listing,
-          ];
           final visibleSubcategories = category.subcategories
               .where((item) {
                 if (query.isEmpty) return true;
@@ -348,7 +267,7 @@ class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
                       ),
                     ),
                   ),
-                  if (vendors.isEmpty && !demoEnabled)
+                  if (!demoEnabled)
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: padding),
                       sliver: SliverToBoxAdapter(
@@ -364,12 +283,12 @@ class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
                         ),
                       ),
                     )
-                  else if (vendors.isEmpty && listings.isEmpty)
+                  else if (listings.isEmpty)
                     SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: padding),
                       sliver: const SliverToBoxAdapter(
                         child: MarketplaceEmptyState(
-                          title: 'No properties match',
+                          title: 'No sample properties match',
                           message: 'Try another property type or search.',
                           icon: Icons.search_off_rounded,
                         ),
@@ -385,33 +304,7 @@ class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
                       ),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
-                          if (index < vendors.length) {
-                            final vendor = vendors[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: OraSpacing.sm,
-                              ),
-                              child: RentalListingCard(
-                                model: RentalListingCardModel(
-                                  title: vendor.title,
-                                  location: vendor.location,
-                                  image: vendor.coverImage,
-                                  priceLabel: vendor.priceLabel,
-                                  amenities: vendor.amenities,
-                                  tag: vendor.subcategoryName.isEmpty
-                                      ? null
-                                      : vendor.subcategoryName,
-                                  isVerified: true,
-                                ),
-                                width: double.infinity,
-                                height: 190,
-                                horizontal: true,
-                                onTap: () =>
-                                    _openVendorProperty(context, vendor),
-                              ),
-                            );
-                          }
-                          final listing = listings[index - vendors.length];
+                          final listing = listings[index];
                           return Padding(
                             padding: const EdgeInsets.only(
                               bottom: OraSpacing.sm,
@@ -435,7 +328,7 @@ class _RentalCategoryViewState extends ConsumerState<RentalCategoryView> {
                               onBookmark: () => showDemoBookingSheet(context),
                             ),
                           );
-                        }, childCount: vendors.length + listings.length),
+                        }, childCount: listings.length),
                       ),
                     ),
                 ],
@@ -462,13 +355,10 @@ class _RentalCategoryHero extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            const Positioned.fill(
-              child: ColoredBox(color: OraColors.primaryMuted),
-            ),
             Image.asset(
               'assets/marketplace/${category.image}',
               cacheWidth: 960,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) =>
                   const ColoredBox(color: OraColors.navyElevated),
             ),
@@ -556,13 +446,10 @@ class _RentalSubcategoryPhotoCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  const Positioned.fill(
-                    child: ColoredBox(color: OraColors.primaryMuted),
-                  ),
                   Image.asset(
                     'assets/marketplace/${subcategory.image ?? category.image}',
                     cacheWidth: 440,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
                         const ColoredBox(color: OraColors.surfaceStrong),
                   ),

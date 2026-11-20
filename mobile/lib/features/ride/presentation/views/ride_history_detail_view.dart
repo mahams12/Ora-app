@@ -24,7 +24,8 @@ class RideHistoryDetailView extends ConsumerStatefulWidget {
       _RideHistoryDetailViewState();
 }
 
-class _RideHistoryDetailViewState extends ConsumerState<RideHistoryDetailView> {
+class _RideHistoryDetailViewState
+    extends ConsumerState<RideHistoryDetailView> {
   @override
   void initState() {
     super.initState();
@@ -53,9 +54,9 @@ class _RideHistoryDetailViewState extends ConsumerState<RideHistoryDetailView> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: OraColors.background,
         title: Text(
           'Ride details',
           style: OraTypography.title(OraColors.textPrimary),
@@ -76,18 +77,19 @@ class _RideHistoryDetailViewState extends ConsumerState<RideHistoryDetailView> {
         child: switch (state.phase) {
           RideHistoryDetailPhase.loading ||
           RideHistoryDetailPhase.redirectOffers ||
-          RideHistoryDetailPhase.redirectActive => const Center(
-            child: OraLoadingIndicator(message: 'Loading ride…'),
-          ),
+          RideHistoryDetailPhase.redirectActive =>
+            const Center(
+              child: OraLoadingIndicator(message: 'Loading ride…'),
+            ),
           RideHistoryDetailPhase.fatalError => OraErrorState(
-            title: 'Ride unavailable',
-            message: state.errorMessage ?? 'Something went wrong.',
-            onRetry: vm.retry,
-          ),
+              title: 'Ride unavailable',
+              message: state.errorMessage ?? 'Something went wrong.',
+              onRetry: vm.retry,
+            ),
           RideHistoryDetailPhase.ready => _DetailBody(
-            ride: state.ride!,
-            padding: padding,
-          ),
+              ride: state.ride!,
+              padding: padding,
+            ),
         },
       ),
     );
@@ -149,21 +151,16 @@ class _DetailBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Trip',
-                  style: OraTypography.label(OraColors.textSecondary),
-                ),
+                Text('Trip', style: OraTypography.label(OraColors.textSecondary)),
                 const SizedBox(height: OraSpacing.xs),
                 _Line(
                   label: 'Pickup',
-                  value:
-                      ride.pickup.address ??
+                  value: ride.pickup.address ??
                       '${ride.pickup.lat}, ${ride.pickup.lng}',
                 ),
                 _Line(
                   label: 'Destination',
-                  value:
-                      ride.destination.address ??
+                  value: ride.destination.address ??
                       '${ride.destination.lat}, ${ride.destination.lng}',
                 ),
                 _Line(label: 'Category', value: ride.category),
@@ -174,7 +171,8 @@ class _DetailBody extends StatelessWidget {
                 if (ride.paymentMethod.isNotEmpty)
                   _Line(label: 'Payment method', value: ride.paymentMethod),
                 if (fare != null) _Line(label: 'Agreed fare', value: fare),
-                if (ride.cancelledBy != null && ride.cancelledBy!.isNotEmpty)
+                if (ride.cancelledBy != null &&
+                    ride.cancelledBy!.isNotEmpty)
                   _Line(label: 'Cancelled by', value: ride.cancelledBy!),
                 if (ride.cancellationReason != null &&
                     ride.cancellationReason!.trim().isNotEmpty)

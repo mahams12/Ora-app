@@ -11,6 +11,7 @@ import 'app/config/app_config.dart';
 import 'app/config/environment.dart';
 import 'core/notifications/dispatch_fcm_background.dart';
 import 'core/security/firebase_app_check_bootstrap.dart';
+import 'firebase_options.dart';
 
 void _startupMark(String name) {
   if (kDebugMode) {
@@ -68,16 +69,25 @@ void main() async {
 
   try {
     _startupMark('firebase_init_begin');
-    await Firebase.initializeApp();
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    await Firebase.initializeApp(
+      options: kIsWeb ? DefaultFirebaseOptions.currentPlatform : null,
+    );
+    if (!kIsWeb) {
+      FirebaseMessaging.onBackgroundMessage(
+        firebaseMessagingBackgroundHandler,
+      );
+    }
     _startupMark('firebase_init_done');
     // Debug/emulator only: skip Play Integrity / reCAPTCHA so Firebase
     // Console test phone numbers work without Chrome. Never in release.
     if (kDebugMode) {
       _startupMark('firebase_auth_settings_begin');
-      await FirebaseAuth.instance.setSettings(
-        appVerificationDisabledForTesting: true,
-      );
+      // setSettings is native-only (not implemented on web).
+      if (!kIsWeb) {
+        await FirebaseAuth.instance.setSettings(
+          appVerificationDisabledForTesting: true,
+        );
+      }
       _startupMark('firebase_auth_settings_done');
       // Zero-cloud local dev: --dart-define=ORA_FIREBASE_EMULATOR_HOST=127.0.0.1
       // (use adb reverse for physical devices). Never active in release builds.

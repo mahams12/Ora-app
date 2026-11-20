@@ -1,0 +1,1 @@
+10-13 15:37:06.594  9940  9940 I flutter : [D1_FCM] local notification eventId=6ac27d60-fa8a-4afb-92ed-ddc99f97a79d rideId=94f13454-7874-45e7-a813-e5d7e42d6dc9

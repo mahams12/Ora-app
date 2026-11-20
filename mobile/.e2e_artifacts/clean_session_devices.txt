@@ -1,0 +1,4 @@
+List of devices attached
+RF8R40ZQ1JH            device usb:0-1 product:a32xx model:SM_A325F device:a32 transport_id:12
+emulator-5554          device product:sdk_gphone64_arm64 model:sdk_gphone64_arm64 device:emu64a transport_id:18
+

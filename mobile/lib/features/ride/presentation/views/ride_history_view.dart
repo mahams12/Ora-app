@@ -71,7 +71,9 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
         await context.push(AppRoutes.rideHistoryDetailPath(ride.rideId));
     }
     if (mounted) {
-      unawaited(ref.read(rideHistoryViewModelProvider.notifier).refresh());
+      unawaited(
+        ref.read(rideHistoryViewModelProvider.notifier).refresh(),
+      );
     }
   }
 
@@ -81,7 +83,7 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
     // spinner before the first gated load (breaks pumpAndSettle / wastes work).
     if (!widget.active && !_initialLoadRequested) {
       return const Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: OraColors.background,
         body: SizedBox.expand(),
       );
     }
@@ -91,7 +93,7 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
     final padding = Responsive.horizontalPadding(context);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -161,9 +163,7 @@ class _RideHistoryViewState extends ConsumerState<RideHistoryView> {
                 ],
               ),
             ),
-            Expanded(
-              child: _Body(state: state, onOpen: _openRide),
-            ),
+            Expanded(child: _Body(state: state, onOpen: _openRide)),
           ],
         ),
       ),
@@ -262,8 +262,7 @@ class _Body extends ConsumerWidget {
           OraSpacing.xxl,
         ),
         // Soft refresh error (+1) + rides + pagination footer.
-        itemCount:
-            state.rides.length + 1 + (state.errorMessage != null ? 1 : 0),
+        itemCount: state.rides.length + 1 + (state.errorMessage != null ? 1 : 0),
         itemBuilder: (context, index) {
           final hasSoftError = state.errorMessage != null;
           if (hasSoftError && index == 0) {
@@ -296,7 +295,10 @@ class _Body extends ConsumerWidget {
 }
 
 class _PaginationFooter extends StatelessWidget {
-  const _PaginationFooter({required this.state, required this.onLoadMore});
+  const _PaginationFooter({
+    required this.state,
+    required this.onLoadMore,
+  });
 
   final RideHistoryUiState state;
   final Future<void> Function() onLoadMore;

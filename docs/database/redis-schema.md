@@ -1,10 +1,8 @@
-# ORA — Redis (Memorystore) Schema — HISTORICAL REFERENCE ONLY
+# ORA — Redis (Memorystore) Schema
 
-> **STATUS: SUPERSEDED — NO REDIS IN THE ACTIVE ARCHITECTURE (2026-11-18)**  
-> The live geo store is Firestore `geoDrivers` via `backend/auth-service/src/geo/` (`GEO_BACKEND=firestore`). No `redis`/`ioredis` package, connection, or `REDIS_URL` exists in the codebase. Suspended Memorystore resources still exist in the old billing-closed project `ora-app-d8112` — see `docs/audits/ORA_GCP_RESOURCE_DELETION_PROOF.md`. This file is kept only as design history for migration traceability.
->
-> Historical context when this design was live: `geo:drivers` (matching), optional dual-write `geo:drivers:{city}`, `driver:online:{driverId}` (TTL 30s).  
-> Other keys below (locks, demand, rate, offer dedup, dispatch lists, idempotency cache) were **PLANNING** and never implemented.  
+> **STATUS: PARTIALLY SUPERSEDED / MIXED**  
+> **Implemented today (N2C/N3 coordinate-primary):** `geo:drivers` (matching), optional dual-write `geo:drivers:{city}`, `driver:online:{driverId}` (TTL 30s).  
+> Other keys below (locks, demand, rate, offer dedup, dispatch lists, idempotency cache) are **PLANNING** unless code appears under `backend/auth-service/src/redis/`.  
 > **Live status:** [`docs/ORA_CURRENT_STATE.md`](../ORA_CURRENT_STATE.md) · N2C: [`docs/implementation/n-series/N2C-redis-geo.md`](../implementation/n-series/N2C-redis-geo.md) · Partition: [`CITY-PARTITION-STRATEGY-DECISION.md`](../implementation/n-series/CITY-PARTITION-STRATEGY-DECISION.md)
 
 ## Key Namespacing

@@ -53,9 +53,8 @@ class GeolocatorDeviceLocation implements DeviceLocationPort {
         lat: position.latitude,
         lng: position.longitude,
         source: PassengerLocationSource.gps,
-        horizontalAccuracyMeters: accuracy.isFinite && accuracy >= 0
-            ? accuracy
-            : null,
+        horizontalAccuracyMeters:
+            accuracy.isFinite && accuracy >= 0 ? accuracy : null,
       );
       if (!location.hasValidCoordinates) {
         throw const DeviceLocationException(

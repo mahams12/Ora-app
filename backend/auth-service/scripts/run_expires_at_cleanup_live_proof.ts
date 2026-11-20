@@ -13,7 +13,7 @@ import {
 } from '../src/maintenance/expires_at_cleanup_service';
 import { PRICING_SNAPSHOTS_COLLECTION } from '../src/pricing/estimate_service';
 
-const PROJECT = 'oraapp-a9be5';
+const PROJECT = 'ora-app-d8112';
 const PREFIX = 'ttl-proof-20260929-';
 
 async function main() {

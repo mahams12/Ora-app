@@ -30,7 +30,7 @@ class RideRequestCreatedView extends StatelessWidget {
     final canOpenOffers = rideId.trim().isNotEmpty;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(padding),

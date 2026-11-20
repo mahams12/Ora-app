@@ -223,64 +223,6 @@ export type LatLng = { lat: number; lng: number; address?: string };
 export const PARCEL_SIZES = ['SMALL', 'MEDIUM', 'LARGE'] as const;
 export type ParcelSize = (typeof PARCEL_SIZES)[number];
 
-/**
- * Ora Courier — vehicle classes the sender may request (inDrive-style:
- * bike / car / rickshaw). Optional on the booking: when present, dispatch
- * waves only invite drivers whose vehicle maps to that class and any
- * direct offer from a mismatched driver is rejected.
- */
-export const COURIER_VEHICLES = ['bike', 'car', 'rickshaw'] as const;
-export type CourierVehicle = (typeof COURIER_VEHICLES)[number];
-
-/**
- * Ride-category id → courier vehicle class. Driver onboarding stores a ride
- * category (`drivers/{uid}.vehicle.category`), not a physical type.
- */
-const COURIER_VEHICLE_CATEGORIES: Record<CourierVehicle, readonly string[]> = {
-  bike: ['zip'],
-  car: [
-    'easy',
-    'breeze',
-    'premium',
-    'executive',
-    'business',
-    'six_seater',
-    'seven_seater',
-    'van',
-    'bus',
-  ],
-  rickshaw: ['trio'],
-};
-
-/**
- * Physical vehicle class of a drivers/{uid} doc. Checks
- * `vehicle.category` (onboarding shape) then a literal `vehicle.type`
- * (seed/legacy shape). Returns null when the doc gives no usable class.
- */
-export function driverCourierVehicle(
-  driverDoc: Record<string, unknown> | null | undefined,
-): CourierVehicle | null {
-  const vehicle = driverDoc?.['vehicle'];
-  if (vehicle == null || typeof vehicle !== 'object') return null;
-  const v = vehicle as Record<string, unknown>;
-  const category = v['category'];
-  if (typeof category === 'string' && category.trim()) {
-    for (const [cls, categories] of Object.entries(
-      COURIER_VEHICLE_CATEGORIES,
-    )) {
-      if ((categories as readonly string[]).includes(category)) {
-        return cls as CourierVehicle;
-      }
-    }
-    return null;
-  }
-  const type = v['type'];
-  return typeof type === 'string' &&
-    (COURIER_VEHICLES as readonly string[]).includes(type)
-    ? (type as CourierVehicle)
-    : null;
-}
-
 /** Ora Courier — parcel content categories (drives limits/prohibited list). */
 export const PARCEL_CATEGORIES = [
   'documents',
@@ -410,12 +352,6 @@ export interface RideDoc {
    * once drivers have quoted on it).
    */
   parcel?: ParcelDetails;
-  /**
-   * Ora Courier — sender-requested vehicle class (bike/car/rickshaw).
-   * Optional; when set, dispatch only invites matching-vehicle drivers and
-   * mismatched drivers cannot offer. Immutable after create.
-   */
-  courierVehicle?: CourierVehicle;
   /**
    * Ora Courier — server-issued confirmation codes (pickup/delivery/return).
    * Present only on assigned courier rides; NEVER serialized to drivers.

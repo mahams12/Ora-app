@@ -1,19 +1,19 @@
 /**
- * Standalone N3 unit proof (MemoryDb + MemoryGeoStore) — coordinate-primary.
+ * Standalone N3 unit proof (MemoryDb + MemoryRedis) — coordinate-primary.
  * Usage: npm run test:phase-n3-unit-proof
  */
 import request from 'supertest';
 import { createApp } from '../src/app';
 import { memoryDb } from '../src/__tests__/helpers/memory_db';
-import { createMemoryGeoStore } from '../src/geo/memory_geo_store';
+import { createMemoryRedis } from '../src/redis/memory_redis';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
-  N3_GEO_COUNT,
+  N3_REDIS_GEO_COUNT,
   driverOnlineKey,
   type DriverOnlineMarker,
-  type GeoStoreClient,
-} from '../src/geo/types';
+  type RedisGeoClient,
+} from '../src/redis/types';
 
 const WORKER = 'n3-unit-proof-worker-token';
 
@@ -58,13 +58,13 @@ function seedApprovedOnline(
 }
 
 async function seedGeo(
-  geoStore: ReturnType<typeof createMemoryGeoStore>,
+  redis: ReturnType<typeof createMemoryRedis>,
   driverId: string,
   lng: number,
   lat: number,
   marker: Partial<DriverOnlineMarker> & { lastLocationTs: number },
 ) {
-  await geoStore.geoadd(GEO_DRIVERS_KEY, lng, lat, driverId);
+  await redis.geoadd(GEO_DRIVERS_KEY, lng, lat, driverId);
   const full: DriverOnlineMarker = {
     driverId,
     accuracy: 8,
@@ -74,7 +74,7 @@ async function seedGeo(
     acceptedAt: new Date().toISOString(),
     ...marker,
   };
-  await geoStore.set(
+  await redis.set(
     driverOnlineKey(driverId),
     JSON.stringify(full),
     DRIVER_ONLINE_TTL_SECONDS,
@@ -83,7 +83,7 @@ async function seedGeo(
 
 function appFor(
   db: ReturnType<typeof memoryDb>,
-  geoStore: GeoStoreClient | null,
+  redis: RedisGeoClient | null,
 ) {
   return createApp({
     auth: {
@@ -93,7 +93,7 @@ function appFor(
     requireAppCheck: false,
     rateLimit: { windowMs: 60_000, max: 50_000 },
     internalWorkerToken: WORKER,
-    geoStore,
+    redis,
   });
 }
 
@@ -101,12 +101,12 @@ async function main(): Promise<void> {
   const now = Date.now();
   const pickup = { lat: 31.52, lng: 74.35 };
 
-  await test('geo-store COUNT constant is 100', async () => {
-    assert(N3_GEO_COUNT === 100, `got ${N3_GEO_COUNT}`);
+  await test('Redis COUNT constant is 100', async () => {
+    assert(N3_REDIS_GEO_COUNT === 100, `got ${N3_REDIS_GEO_COUNT}`);
   });
 
   await test('healthy empty without city → 200 []', async () => {
-    const res = await request(appFor(memoryDb(), createMemoryGeoStore()))
+    const res = await request(appFor(memoryDb(), createMemoryRedis()))
       .get('/v1/internal/drivers/nearby')
       .set('X-Ora-Worker-Token', WORKER)
       .query({ ...pickup });
@@ -115,7 +115,7 @@ async function main(): Promise<void> {
     assert(res.body.data.candidates.length === 0, 'empty');
   });
 
-  await test('geoStore null → 503 DEPENDENCY_ERROR', async () => {
+  await test('redis null → 503 DEPENDENCY_ERROR', async () => {
     const res = await request(appFor(memoryDb(), null))
       .get('/v1/internal/drivers/nearby')
       .set('X-Ora-Worker-Token', WORKER)
@@ -126,13 +126,13 @@ async function main(): Promise<void> {
 
   await test('valid candidate without city query', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1', null);
-    await seedGeo(geoStore, 'd1', pickup.lng + 0.01, pickup.lat, {
+    await seedGeo(redis, 'd1', pickup.lng + 0.01, pickup.lat, {
       lastLocationTs: now - 1000,
       city: null,
     });
-    const res = await request(appFor(db, geoStore))
+    const res = await request(appFor(db, redis))
       .get('/v1/internal/drivers/nearby')
       .set('X-Ora-Worker-Token', WORKER)
       .query({ ...pickup });
@@ -143,12 +143,12 @@ async function main(): Promise<void> {
 
   await test('stale marker dropped', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1');
-    await seedGeo(geoStore, 'd1', pickup.lng, pickup.lat, {
+    await seedGeo(redis, 'd1', pickup.lng, pickup.lat, {
       lastLocationTs: now - 20_000,
     });
-    const res = await request(appFor(db, geoStore))
+    const res = await request(appFor(db, redis))
       .get('/v1/internal/drivers/nearby')
       .set('X-Ora-Worker-Token', WORKER)
       .query({ ...pickup });
@@ -157,9 +157,9 @@ async function main(): Promise<void> {
 
   await test('busy DRIVER_ASSIGNED dropped', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1');
-    await seedGeo(geoStore, 'd1', pickup.lng, pickup.lat, {
+    await seedGeo(redis, 'd1', pickup.lng, pickup.lat, {
       lastLocationTs: now - 1000,
     });
     db.seed('rides', 'r1', {
@@ -168,7 +168,7 @@ async function main(): Promise<void> {
       state: 'DRIVER_ASSIGNED',
       passengerId: 'p1',
     });
-    const res = await request(appFor(db, geoStore))
+    const res = await request(appFor(db, redis))
       .get('/v1/internal/drivers/nearby')
       .set('X-Ora-Worker-Token', WORKER)
       .query({ ...pickup });
@@ -177,19 +177,19 @@ async function main(): Promise<void> {
 
   await test('distance ordering + limit', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     for (let i = 0; i < 4; i++) {
       const id = `d${i}`;
       seedApprovedOnline(db, id);
       await seedGeo(
-        geoStore,
+        redis,
         id,
         pickup.lng + 0.002 * (i + 1),
         pickup.lat,
         { lastLocationTs: now - 1000 },
       );
     }
-    const res = await request(appFor(db, geoStore))
+    const res = await request(appFor(db, redis))
       .get('/v1/internal/drivers/nearby')
       .set('X-Ora-Worker-Token', WORKER)
       .query({ ...pickup, limit: 2 });
@@ -203,7 +203,7 @@ async function main(): Promise<void> {
   });
 
   await test('JWT /v1/drivers/nearby not registered', async () => {
-    const res = await request(appFor(memoryDb(), createMemoryGeoStore()))
+    const res = await request(appFor(memoryDb(), createMemoryRedis()))
       .get('/v1/drivers/nearby')
       .set('Authorization', 'Bearer t');
     assert(res.status === 404, `got ${res.status}`);

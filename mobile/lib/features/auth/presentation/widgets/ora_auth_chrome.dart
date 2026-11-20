@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/ora_colors.dart';
+import '../../../../app/theme/ora_elevation.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../../core/constants/app_constants.dart';
 
-/// Official ORA wordmark used on auth and brand surfaces.
+/// Official ORA logo mark used on auth and brand surfaces.
 ///
-/// Renders the complete HD logo at its natural aspect — never cropped.
-/// `size` controls the wordmark height; width follows the ~3.45:1 ratio.
+/// Always renders as a square. Safe inside [CrossAxisAlignment.stretch]
+/// columns (phone entry) — those used to stretch this into a wide bar.
 class OraBrandMark extends StatelessWidget {
   const OraBrandMark({
     super.key,
@@ -24,12 +25,27 @@ class OraBrandMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mark = Image.asset(
-      AppConstants.logoAsset,
+    final mark = SizedBox(
+      width: size,
       height: size,
-      fit: BoxFit.contain,
-      alignment: Alignment.center,
-      filterQuality: FilterQuality.high,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(size * 0.28),
+          color: OraColors.surface,
+          boxShadow: OraElevation.primaryButtonShadow,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(size * 0.28),
+          child: Image.asset(
+            AppConstants.markAsset,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            alignment: Alignment.center,
+            filterQuality: FilterQuality.high,
+          ),
+        ),
+      ),
     );
 
     return Semantics(
@@ -55,7 +71,7 @@ class OraAuthScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

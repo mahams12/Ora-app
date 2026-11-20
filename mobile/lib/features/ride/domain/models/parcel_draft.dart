@@ -132,7 +132,8 @@ class ParcelDraft {
       weightText: weightText ?? this.weightText,
       quantityText: quantityText ?? this.quantityText,
       description: description ?? this.description,
-      handlingInstructions: handlingInstructions ?? this.handlingInstructions,
+      handlingInstructions:
+          handlingInstructions ?? this.handlingInstructions,
       photoUrl: clearPhoto ? null : (photoUrl ?? this.photoUrl),
     );
   }

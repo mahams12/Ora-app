@@ -1,0 +1,112 @@
+=== INSTALL MAP-3 APK ===
+=== ASSIGN ===
+{
+  "ok": true,
+  "rideId": "569b868c-7509-4981-b98c-179d2b4a1800",
+  "state": "DRIVER_ASSIGNED",
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "569b868c-7509-4981-b98c-179d2b4a1800",
+    "createOffer": {
+      "status": 201,
+      "body": {
+        "offerId": "569b868c-7509-4981-b98c-179d2b4a1800_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "569b868c-7509-4981-b98c-179d2b4a1800",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "amountMinor": 114000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "status": "PENDING",
+        "requestVersion": 1,
+        "expiresAt": "2026-10-12T11:07:55.683Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-10-12T11:04:55.683Z",
+        "selectedAt": null,
+        "withdrawnAt": null,
+        "rideState": "OFFERS_AVAILABLE",
+        "rideVersion": 2
+      }
+    },
+    "selectOffer": {
+      "status": 200,
+      "body": {
+        "rideId": "569b868c-7509-4981-b98c-179d2b4a1800",
+        "state": "DRIVER_ASSIGNED",
+        "version": 3,
+        "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "agreedFareMinor": 114000,
+        "agreedOfferId": "569b868c-7509-4981-b98c-179d2b4a1800_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "currency": "PKR"
+      }
+    }
+  }
+}
+ride 569b868c-7509-4981-b98c-179d2b4a1800
+=== A. INITIAL MAP (before publish) ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=96ms (0ms mobile, 0ms wifi, 96ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5283 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11597 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (11597 bytes in 0.005s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (8184 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (8190 bytes in 0.003s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5998 bytes in 0.003s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.9 MB/s (6003 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (5282 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.4 MB/s (11596 bytes in 0.003s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.4 MB/s (11596 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11596 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (8183 bytes in 0.004s)
+  TAP 'My rides'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.7 MB/s (14702 bytes in 0.004s)
+  MISS ('DRIVER_ASSIGNED',)
+  MISS ('Assigned',)
+  MISS ('EN_ROUTE',)
+  MISS ('ARRIVED',)
+  MISS ('STARTED',)
+  MISS ('Driver assigned',)
+  MISS ('Driver on the way',)
+  MISS ('569b868c',)
+  TAP ride row 'Ride\nRide'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (14702 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.0 MB/s (14702 bytes in 0.003s)
+/sdcard/map2a_map3_a_before.png: 1 file pulled, 0 skipped. 22.2 MB/s (643260 bytes in 0.028s)
+  A {'activeRide': False, 'googleMap': False, 'pickup': False, 'destination': False, 'waiting': False, 'locationUpdating': False, 'driverMarker': False, 'recenter': False, 'status': None, 'cancel': False, 'guideSemantics': False, 'guideDriverPickup': False, 'guideDriverDest': False, 'guidePickupDest': False}

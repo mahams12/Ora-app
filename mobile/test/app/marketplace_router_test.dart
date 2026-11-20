@@ -10,10 +10,9 @@ void main() {
 
     final cases = <String, String>{
       AppRoutes.logistics: AppRoutes.logistics,
-      '/logistics-vendor/deliveries/abc': AppRoutes.logisticsDelivery,
-      AppRoutes.logisticsVendorWallet: AppRoutes.logisticsVendorWallet,
-      AppRoutes.logisticsVendorWalletAddPoints:
-          AppRoutes.logisticsVendorWalletAddPoints,
+      AppRoutes.logisticsSearchPath('tow'): AppRoutes.logisticsSearch,
+      AppRoutes.logisticsCategoryPath('trucks'): AppRoutes.logisticsCategory,
+      AppRoutes.logisticsQuotePath('trucks', 'heavy'): AppRoutes.logisticsQuote,
       AppRoutes.services: AppRoutes.services,
       AppRoutes.servicesSearchPath('wedding'): AppRoutes.servicesSearch,
       AppRoutes.servicesBookings: AppRoutes.servicesBookings,
@@ -36,25 +35,12 @@ void main() {
 
   test('search route helpers preserve the complete query', () {
     final services = Uri.parse(AppRoutes.servicesSearchPath('AC gas'));
+    final logistics = Uri.parse(AppRoutes.logisticsSearchPath('TOW'));
 
     expect(services.path, AppRoutes.servicesSearch);
     expect(services.queryParameters['q'], 'AC gas');
-  });
-
-  test('no logistics listing routes are registered', () {
-    final router = createAppRouter();
-    addTearDown(router.dispose);
-
-    expect(
-      router.configuration.findMatch(Uri.parse('/logistics/trucks')).error,
-      isNotNull,
-    );
-    expect(
-      router.configuration
-          .findMatch(Uri.parse('/logistics/search?q=tow'))
-          .error,
-      isNotNull,
-    );
+    expect(logistics.path, AppRoutes.logisticsSearch);
+    expect(logistics.queryParameters['q'], 'TOW');
   });
 
   test('no logistics submission or confirmation routes are registered', () {

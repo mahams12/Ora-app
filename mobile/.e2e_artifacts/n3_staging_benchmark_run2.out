@@ -1,0 +1,861 @@
+== N3 staging benchmark prefix=n3bench_20260929T101143Z ==
+== skip deploy (N3_BENCH_DEPLOY=0) ==
+== bundle N3 seed for Cloud Run Job image ==
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+▲ [WARNING] "import.meta" is not available with the "cjs" output format and will be empty [empty-import-meta]
+
+    scripts/seed_n3_staging_benchmark.ts:24:64:
+      24 │ ...ame !== 'undefined' ? __filename : fileURLToPath(import.meta.url),
+         ╵                                                     ~~~~~~~~~~~
+
+  You need to set the output format to "esm" for "import.meta" to work correctly.
+
+1 warning
+
+  scripts/seed_n3_staging_benchmark.bundle.cjs  323.6kb
+
+⚡ Done in 48ms
+== wire Memorystore Redis to Cloud Run (idempotent) ==
+Updated property [core/project].
+Created version [4] of the secret [ora-staging-redis-url].
+Updated IAM policy for secret [ora-staging-redis-url].
+Deploying...
+Creating Revision....................................................................................................................................done
+Routing traffic.....done
+Done.
+Service [ora-auth-service-staging] revision [ora-auth-service-staging-00009-v9m] has been deployed and is serving 100 percent of traffic.
+Service URL: https://ora-auth-service-staging-498169438285.us-central1.run.app
+OK wired Redis to Cloud Run service=ora-auth-service-staging connector=ora-staging-vpc secret=ora-staging-redis-url (host redacted)
+== seed 100 approved/online bench drivers (VPC Cloud Run Job) ==
+Updating Cloud Run job [ora-n3-staging-seed] in project [ora-app-d8112] region [us-central1]
+Updating job...
+Done.
+Job [ora-n3-staging-seed] has successfully been updated.
+
+To execute this job, use:
+gcloud run jobs execute ora-n3-staging-seed
+Creating execution...
+Provisioning resources..............................................done
+Starting execution.....................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................done
+Running execution............................................................................................................done
+Done.
+Execution [ora-n3-staging-seed-t7kps] has successfully completed.
+
+View details about this execution by running:
+gcloud run jobs executions describe ora-n3-staging-seed-t7kps
+
+Or visit https://console.cloud.google.com/run/jobs/executions/details/us-central1/ora-n3-staging-seed-t7kps?project=498169438285
+OK seed job execution=ora-n3-staging-seed-t7kps prefix=n3bench_20260929T101143Z mode=seed
+== run benchmark scenarios (10 / 30 / 100 limits) ==
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+{"ok":true,"reportPath":"/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/N3_STAGING_BENCHMARK_REPORT.json","revision":"ora-auth-service-staging-00009-v9m"}
+== cleanup bench drivers (VPC Cloud Run Job) ==
+Updating Cloud Run job [ora-n3-staging-seed] in project [ora-app-d8112] region [us-central1]
+Updating job...
+Done.
+Job [ora-n3-staging-seed] has successfully been updated.
+
+To execute this job, use:
+gcloud run jobs execute ora-n3-staging-seed
+Creating execution...
+Provisioning resources......................done
+Starting execution............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................done
+Running execution........................................................................................................done
+Done.
+Execution [ora-n3-staging-seed-qlrch] has successfully completed.
+
+View details about this execution by running:
+gcloud run jobs executions describe ora-n3-staging-seed-qlrch
+
+Or visit https://console.cloud.google.com/run/jobs/executions/details/us-central1/ora-n3-staging-seed-qlrch?project=498169438285
+OK seed job execution=ora-n3-staging-seed-qlrch prefix=n3bench_20260929T101143Z mode=cleanup
+== vitest (N3 diagnostics + full suite) ==
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+
+> ora-auth-service@1.0.0 build
+> tsc -p tsconfig.json
+
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+
+> ora-auth-service@1.0.0 test
+> vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/jazimsaeed/Ora-app/backend/auth-service
+
+ ✓ src/__tests__/fare_calculator.test.ts (24 tests) 8ms
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > approved driver can access open discovery
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"b7da6405-5b5b-4036-bb58-327819c96fb4","actorId":"d-open-1","limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":1}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > passenger rejected
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"71775a5c-5023-435a-867e-098ef227d1cf","actorId":"p-open","durationMs":0,"errorCode":"DRIVER_NOT_ELIGIBLE"}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > pending and unapproved drivers rejected
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"c7a0cb55-5683-4179-aecc-1190eb0506c0","actorId":"d-pending","durationMs":0,"errorCode":"DRIVER_NOT_ELIGIBLE"}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > pending and unapproved drivers rejected
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"954f4cb2-9f56-4809-add1-2ea1250b4d4e","actorId":"d-none","durationMs":0,"errorCode":"DRIVER_NOT_ELIGIBLE"}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 1. approved driver can register token
+{"msg":"D1_DEVICE_TOKEN_REGISTER","operation":"D1_DEVICE_TOKEN_REGISTER","requestId":"cfeb9064-8e9e-4259-8a86-0695a5284461","actorId":"d1","durationMs":2}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > wave 1 invites up to 5 candidates by distance ASC using pickup lat/lng (no city)
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"7d41363d-2eea-4b49-8b3d-fff8d0a5e275","rideId":"r1","waveNumber":1,"invitedCount":5}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"7d41363d-2eea-4b49-8b3d-fff8d0a5e275","rideId":"r1","outcome":"wave_completed","waveNumber":1,"invitedCount":5,"durationMs":3}
+
+stdout | src/__tests__/profile.test.ts > PATCH /v1/auth/profile > sets a valid displayName and marks profileComplete
+{"msg":"profile_update_ok","requestId":"4889e343-bd85-4f49-820c-9a8ec9ee99ab","uid":"uid-1","op":"patch_profile","profileComplete":true}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > returns SEARCHING unassigned ride
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"4ed81dac-e2ab-417b-a521-35227fa79635","actorId":"d-search","limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 2. passenger cannot register device token
+{"msg":"D1_DEVICE_TOKEN_REGISTER","operation":"D1_DEVICE_TOKEN_REGISTER","requestId":"4957907b-ddd2-46b8-a806-c647f2e08bee","actorId":"p1","durationMs":0,"errorCode":"FORBIDDEN"}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 3. nearby works without city
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"184a9894-1df8-4dce-ae1f-1f8d7aa5ccfd","city":null,"radiusKm":10,"resultCount":1,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":1,"eligibleCount":1,"rejected":{},"durationMs":1}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > returns OFFERS_AVAILABLE unassigned ride
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"0dfdf259-bfe5-4903-b24a-567481fefeb1","actorId":"d-offers","limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 4–5. invalid lat/lng → 400
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"2f812da9-9400-44d1-b386-2b12c81aa684","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 3. repeated token registration is idempotent
+{"msg":"D1_DEVICE_TOKEN_REGISTER","operation":"D1_DEVICE_TOKEN_REGISTER","requestId":"63375a34-12b2-4e4f-b660-ef2d1945543d","actorId":"d1","durationMs":0}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > wave 2 invites up to 10 NEW candidates; wave 3 up to 15 NEW; never exceeds 30
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"e5ed431d-2cd4-457d-aae3-4ab88d9970c3","rideId":"r2","waveNumber":1,"invitedCount":5}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"e5ed431d-2cd4-457d-aae3-4ab88d9970c3","rideId":"r2","outcome":"wave_completed","waveNumber":1,"invitedCount":5,"durationMs":1}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > excludes assigned rides
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"dce65930-2be9-4d99-87ee-8d294f4cd3d5","actorId":"d-assigned","limit":10,"hasCursor":false,"resultCount":0,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 4–5. invalid lat/lng → 400
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"eb448d9a-9736-427c-9c65-3848c36c6be6","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 3. repeated token registration is idempotent
+{"msg":"D1_DEVICE_TOKEN_REGISTER","operation":"D1_DEVICE_TOKEN_REGISTER","requestId":"df130e01-c446-46a0-8a29-92dff9a8fa1e","actorId":"d1","durationMs":0}
+
+stdout | src/__tests__/profile.test.ts > PATCH /v1/auth/profile > trims and collapses whitespace
+{"msg":"profile_update_ok","requestId":"385b129e-6206-4c84-990f-046753a60e02","uid":"uid-1","op":"patch_profile","profileComplete":true}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 4. multiple tokens per driver are supported
+{"msg":"D1_DEVICE_TOKEN_REGISTER","operation":"D1_DEVICE_TOKEN_REGISTER","requestId":"87b473bd-5357-4a7c-a357-598ab2360cec","actorId":"d1","durationMs":0}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > excludes terminal rides
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"b41c3318-24af-44e0-bd09-1df2376f260f","actorId":"d-term","limit":10,"hasCursor":false,"resultCount":0,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/profile.test.ts > PATCH /v1/auth/profile > GET /me returns the updated name
+{"msg":"profile_update_ok","requestId":"abca41ed-f503-4467-863e-e69b2192cd89","uid":"uid-1","op":"patch_profile","profileComplete":true}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > excludes expired rides by server time
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"30046e13-3eb8-48d1-9d70-819224f7ff54","actorId":"d-exp","limit":10,"hasCursor":false,"resultCount":0,"hasNextPage":false,"durationMs":1}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > wave 2 invites up to 10 NEW candidates; wave 3 up to 15 NEW; never exceeds 30
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"2f601658-01b6-4da2-8b81-8dca5e4d55f0","rideId":"r2","waveNumber":2,"invitedCount":10}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"2f601658-01b6-4da2-8b81-8dca5e4d55f0","rideId":"r2","outcome":"wave_completed","waveNumber":2,"invitedCount":10,"durationMs":3}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 6–8. radius bounds
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"9574a6c3-b46a-434a-bb60-1f5c0021cd1b","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 6–8. radius bounds
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"14cf5384-9908-43c8-84a8-84c2142f671a","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 4. multiple tokens per driver are supported
+{"msg":"D1_DEVICE_TOKEN_REGISTER","operation":"D1_DEVICE_TOKEN_REGISTER","requestId":"fec5a82e-b733-4796-90c8-09df43fc2f38","actorId":"d1","durationMs":0}
+
+stdout | src/__tests__/profile.test.ts > PATCH /v1/auth/profile > repeating the same valid update is safe
+{"msg":"profile_update_ok","requestId":"272644c9-0053-4e68-b174-3ead68bd1300","uid":"uid-1","op":"patch_profile","profileComplete":true}
+
+stdout | src/__tests__/profile.test.ts > PATCH /v1/auth/profile > repeating the same valid update is safe
+{"msg":"profile_update_ok","requestId":"27ff3249-c6cc-440b-be0a-6e7290b59a81","uid":"uid-1","op":"patch_profile","profileComplete":true}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 6–8. radius bounds
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"8b2d04ae-ba70-45d1-a618-48149edc4aa9","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > wave 2 invites up to 10 NEW candidates; wave 3 up to 15 NEW; never exceeds 30
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"9ba5e155-ef44-4289-93ad-43f7e032740f","rideId":"r2","waveNumber":3,"invitedCount":15}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"9ba5e155-ef44-4289-93ad-43f7e032740f","rideId":"r2","outcome":"wave_completed","waveNumber":3,"invitedCount":15,"durationMs":1}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > wave 2 invites up to 10 NEW candidates; wave 3 up to 15 NEW; never exceeds 30
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"3611251a-6fb6-4419-9c89-82543fd370c2","rideId":"r2","outcome":"exhausted","waveNumber":null,"invitedCount":0,"durationMs":0}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > excludes unrelated in-progress ride states
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"dbf37bbe-c927-48f7-a33c-696ca9643536","actorId":"d-progress","limit":10,"hasCursor":false,"resultCount":0,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 9–10. limit bounds
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"5564afe0-eb15-441d-8926-48f7eefc7e5b","durationMs":1,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > deduplicates drivers that reappear across N3 responses
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"2adbe5d0-6d7c-4af8-b4e4-09fa145bf4ab","rideId":"r3","waveNumber":1,"invitedCount":5}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"2adbe5d0-6d7c-4af8-b4e4-09fa145bf4ab","rideId":"r3","outcome":"wave_completed","waveNumber":1,"invitedCount":5,"durationMs":0}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > paginates with stable non-duplicated cursors
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"e8ec9682-c00c-4cca-8683-d6cd1e5fec23","actorId":"d-page","limit":2,"hasCursor":false,"resultCount":2,"hasNextPage":true,"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 9–10. limit bounds
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"65bf6641-03ee-459d-a7a1-50d3a9bb9b6d","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 11. Redis healthy + zero candidates → 200 []
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"bdbe071b-6ce5-434b-a772-9422a4ee78fa","city":null,"radiusKm":10,"resultCount":0,"geoHits":0,"redisGetCount":0,"firestoreUsersReads":0,"firestoreDriversReads":0,"firestoreBusyRideQueries":0,"eligibleCount":0,"rejected":{},"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 12. Redis null → 503 DEPENDENCY_ERROR
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"187932bb-3bff-4f37-8469-05733b413bbb","durationMs":0,"errorCode":"DEPENDENCY_ERROR"}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > deduplicates drivers that reappear across N3 responses
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"16584537-54e3-4ca5-8daa-be8026a5da68","rideId":"r3","waveNumber":2,"invitedCount":0}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"16584537-54e3-4ca5-8daa-be8026a5da68","rideId":"r3","outcome":"wave_completed","waveNumber":2,"invitedCount":0,"durationMs":0}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > repeated worker tick is idempotent (create-once wave doc)
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"2e248d40-3df1-47e6-80d7-3ae7a032547d","rideId":"r4","waveNumber":1,"invitedCount":5}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"2e248d40-3df1-47e6-80d7-3ae7a032547d","rideId":"r4","outcome":"wave_completed","waveNumber":1,"invitedCount":5,"durationMs":0}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > repeated worker tick is idempotent (create-once wave doc)
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"0d7ee527-d606-4f75-8ef3-381a15c6176e","rideId":"r4","outcome":"already_completed","waveNumber":1,"invitedCount":5,"durationMs":1}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 5-10. projector consumes wave event, targets driverIds, data-only payload, no N3/city
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"59e06e11-21d5-4d00-950e-d28ae180c16c","eventId":"evt1","outcome":"delivered","sent":1,"skippedNoToken":1,"invalidTokens":0,"failedDrivers":0}
+{"msg":"D1_DISPATCH_FCM_SWEEP","operation":"D1_DISPATCH_FCM_SWEEP","requestId":"59e06e11-21d5-4d00-950e-d28ae180c16c","scanned":1,"processed":1,"delivered":1,"retryable":0,"deadLetter":0,"skipped":0,"failed":0,"durationMs":1}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 12b. Redis georadius throws → 503 DEPENDENCY_ERROR
+{"msg":"N3_REDIS_GEORADIUS_FAILED","requestId":"2b1db7e8-dc85-44c5-93a8-8c211623289a","geoKey":"geo:drivers","errorType":"Error"}
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"2b1db7e8-dc85-44c5-93a8-8c211623289a","durationMs":0,"errorCode":"DEPENDENCY_ERROR"}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 13. missing online marker → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"4ea06e7d-7d52-4ba3-8b48-e2ed063bda89","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":0,"firestoreDriversReads":0,"firestoreBusyRideQueries":0,"eligibleCount":0,"rejected":{"marker_missing":1},"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects same Idempotency-Key with different body
+{"msg":"ride_create_failed","requestId":"693df720-8c7d-48a5-88f5-4dfb6cefd327","errorType":"RideDomainError","code":"IDEMPOTENCY_KEY_REUSED"}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > assigned ride stops further dispatch
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"fde192fa-a8f8-45d5-8e47-316af4c427d1","rideId":"r5","waveNumber":1,"invitedCount":5}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"fde192fa-a8f8-45d5-8e47-316af4c427d1","rideId":"r5","outcome":"wave_completed","waveNumber":1,"invitedCount":5,"durationMs":0}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > assigned ride stops further dispatch
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"f5c9e8d8-6b9a-4bce-98e6-ebbb8fd39dc9","rideId":"r5","outcome":"stopped","waveNumber":null,"invitedCount":0,"durationMs":0}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > paginates with stable non-duplicated cursors
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"02341926-5b6d-4d1f-963d-40adc0161d61","actorId":"d-page","limit":2,"hasCursor":true,"resultCount":1,"hasNextPage":false,"durationMs":2}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 14. stale marker → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"32c83982-4991-465a-8ebf-928f8c17dfe8","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":0,"firestoreDriversReads":0,"firestoreBusyRideQueries":0,"eligibleCount":0,"rejected":{"marker_not_fresh":1},"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 15. future marker → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"7f73f1f3-2ec3-4365-930c-769b02b1703a","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":0,"firestoreDriversReads":0,"firestoreBusyRideQueries":0,"eligibleCount":0,"rejected":{"marker_not_fresh":1},"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 16. malformed marker → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"228da44d-cfcc-4763-9f5f-b503368c0f82","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":0,"firestoreDriversReads":0,"firestoreBusyRideQueries":0,"eligibleCount":0,"rejected":{"marker_malformed":1},"durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — authorization > rejects passenger go-online
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"2f15562a-bf68-4fcc-8aad-22dbb4f9601e","actorId":"p1","durationMs":0,"errorCode":"DRIVER_NOT_APPROVED"}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 17. accuracy > 50 → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"aa82068b-602c-4c5f-876d-c500683361d1","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":0,"firestoreDriversReads":0,"firestoreBusyRideQueries":0,"eligibleCount":0,"rejected":{"marker_accuracy":1},"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 18. mismatched homeCity / marker city still returned
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"9a65b8b4-f555-4783-8a5e-26c280969f89","city":null,"radiusKm":10,"resultCount":1,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":1,"eligibleCount":1,"rejected":{},"durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — authorization > rejects unapproved (pending) driver go-online
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"329683b3-2b4a-4251-85cd-c1d85f9b7e64","actorId":"d-pending","durationMs":0,"errorCode":"DRIVER_NOT_APPROVED"}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > rejects page size above bounded maximum
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"a0bbf303-0653-4cfd-9c7a-81f0053c3d82","actorId":"d-limit","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > cancelled ride stops further dispatch
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"63a54463-9f54-4236-9008-7dccac2341a1","rideId":"r6","waveNumber":1,"invitedCount":5}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"63a54463-9f54-4236-9008-7dccac2341a1","rideId":"r6","outcome":"wave_completed","waveNumber":1,"invitedCount":5,"durationMs":1}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 19. driver not approved → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"98999cf6-60b3-46c2-916b-4f860e0ac251","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":0,"firestoreBusyRideQueries":0,"eligibleCount":0,"rejected":{"user_not_approved":1},"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 20. driver offline → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"0ed8ff99-4e4e-4735-a1f9-a9ac40da9131","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":0,"eligibleCount":0,"rejected":{"driver_offline":1},"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects same Idempotency-Key reused by a different actor
+{"msg":"ride_create_failed","requestId":"fe6f464a-5129-4c38-aa66-c777e315b09f","errorType":"RideDomainError","code":"IDEMPOTENCY_KEY_REUSED"}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — authorization > rejects suspended driver go-online
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"2ab3ccbe-0ac4-425a-bd97-74504209983c","actorId":"d-susp","durationMs":0,"errorCode":"DRIVER_NOT_APPROVED"}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 11-12. projector does not create rideOffers or assign
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c","eventId":"evt2","outcome":"delivered","sent":1,"skippedNoToken":0,"invalidTokens":0,"failedDrivers":0}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 13. duplicate event processing is safe (idempotent ACK)
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c1","eventId":"evt3","outcome":"delivered","sent":1,"skippedNoToken":0,"invalidTokens":0,"failedDrivers":0}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 14. missing token is handled safely (skip driver, still deliver event)
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c","eventId":"evt4","outcome":"delivered","sent":0,"skippedNoToken":1,"invalidTokens":0,"failedDrivers":0}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 15. invalid token is cleaned up
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c","eventId":"evt5","outcome":"delivered","sent":0,"skippedNoToken":0,"invalidTokens":1,"failedDrivers":0}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 16. partial recipient failure is retry-safe (only retry failed)
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c","eventId":"evt6","outcome":"retryable","sent":1,"skippedNoToken":0,"invalidTokens":0,"failedDrivers":1}
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c2","eventId":"evt6","outcome":"delivered","sent":2,"skippedNoToken":0,"invalidTokens":0,"failedDrivers":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > busy DRIVER_ASSIGNED → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"da21b10c-1264-4599-9dc1-25d954ab1b5d","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":1,"eligibleCount":0,"rejected":{"driver_busy":1},"durationMs":1}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > cancelled ride stops further dispatch
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"2c6e3cb4-d8b9-4252-9967-6acc092defb6","rideId":"r6","outcome":"stopped","waveNumber":null,"invitedCount":0,"durationMs":1}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > busy DRIVER_EN_ROUTE → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"2dc0897a-45e4-4704-ba87-aa340cce6e65","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":1,"eligibleCount":0,"rejected":{"driver_busy":1},"durationMs":0}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > discovery response omits prohibited fields and includes requestVersion
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"c778294b-c6a1-47fb-a19e-1d43c90e597d","actorId":"d-dto","limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — authorization > approved driver go-online succeeds
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"6ce89316-7774-4fa4-a920-6f0e2fa9f3d5","actorId":"d1","availabilityState":"online","durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — authorization > approved driver go-offline succeeds
+{"msg":"DRIVER_GO_OFFLINE","operation":"DRIVER_GO_OFFLINE","requestId":"38ecae80-00fb-4949-b007-a257d43b9c11","actorId":"d1","availabilityState":"offline","durationMs":1}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > busy DRIVER_ARRIVED → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"0fee9386-bcf1-4f70-a1fd-1febb868a267","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":1,"eligibleCount":0,"rejected":{"driver_busy":1},"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > busy RIDE_STARTED → dropped
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"a48e8edf-2158-47cd-a573-13d61bc2fd40","city":null,"radiusKm":10,"resultCount":0,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":1,"eligibleCount":0,"rejected":{"driver_busy":1},"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 25. valid driver returned with exact shape
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"b79ddf50-9cc3-4b0c-a523-7f7a15d39b1f","city":null,"radiusKm":10,"resultCount":1,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":1,"eligibleCount":1,"rejected":{},"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 26. distance ordering preserved
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"78f26add-37ba-4c4b-abfb-67b10a41d738","city":null,"radiusKm":10,"resultCount":2,"geoHits":2,"redisGetCount":2,"firestoreUsersReads":2,"firestoreDriversReads":2,"firestoreBusyRideQueries":2,"eligibleCount":2,"rejected":{},"durationMs":0}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 19. unrelated outbox events are not consumed
+{"msg":"D1_DISPATCH_FCM_SWEEP","operation":"D1_DISPATCH_FCM_SWEEP","requestId":"3a926a41-86dc-4b21-b3ff-bb488431cfad","scanned":0,"processed":0,"delivered":0,"retryable":0,"deadLetter":0,"skipped":0,"failed":0,"durationMs":0}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > offer submission works against a discovered ride
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"b25944e5-8f6f-4e98-b2fe-46da2d4215e1","actorId":"d-offer-open","limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — state > offline → online
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"3c934993-8c68-4a78-8fd5-aa75674f7910","actorId":"d1","availabilityState":"online","durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 27. limit truncates final response
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"bcc9b684-907c-4b05-9658-95654ed4af63","city":null,"radiusKm":10,"resultCount":2,"geoHits":5,"redisGetCount":2,"firestoreUsersReads":2,"firestoreDriversReads":2,"firestoreBusyRideQueries":2,"eligibleCount":2,"rejected":{},"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 29. city query param does not restrict matching
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"b9f8f351-1e62-46b6-8ad6-d4b618347e4e","city":"islamabad","radiusKm":10,"resultCount":1,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":1,"eligibleCount":1,"rejected":{},"durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — state > online → offline
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"be4b6929-d301-473f-b5a7-6cb2272b7ffe","actorId":"d1","availabilityState":"online","durationMs":0}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > expired ride stops further dispatch
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"5b5b91b3-7bb8-4f2e-b834-69fd658bc3d3","rideId":"r7","outcome":"stopped","waveNumber":null,"invitedCount":0,"durationMs":0}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 30. null homeCity driver discoverable
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"6d500041-e047-46ca-a914-eca6e20e6b40","city":null,"radiusKm":10,"resultCount":1,"geoHits":1,"redisGetCount":1,"firestoreUsersReads":1,"firestoreDriversReads":1,"firestoreBusyRideQueries":1,"eligibleCount":1,"rejected":{},"durationMs":0}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > assignment race remains protected after discovery
+{"msg":"RIDE_OPEN_DISCOVERY","operation":"RIDE_OPEN_DISCOVERY","requestId":"1a5aa9ca-316b-4d70-a3f5-8c5d0cc233fe","actorId":"d-race-a","limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":1}
+
+stdout | src/__tests__/nearby.test.ts > N3 GET /v1/internal/drivers/nearby (coordinate-primary) > 31. legacy city GEO key is not consulted
+{"msg":"N3_NEARBY","operation":"N3_NEARBY","requestId":"3089de76-c200-4e65-8bd5-67ea0cd5f224","city":null,"radiusKm":10,"resultCount":0,"geoHits":0,"redisGetCount":0,"firestoreUsersReads":0,"firestoreDriversReads":0,"firestoreBusyRideQueries":0,"eligibleCount":0,"rejected":{},"durationMs":0}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 18/20. clear token + createOffer remains ungated by ledger
+{"msg":"D1_DEVICE_TOKEN_REGISTER","operation":"D1_DEVICE_TOKEN_REGISTER","requestId":"70c022fb-1c76-4123-8203-5e5c07ba80a1","actorId":"d1","durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects forged passengerId and unknown fields on create
+{"msg":"ride_create_failed","requestId":"cedb5dc2-2584-40b0-bfc5-d7ddee4d8ad1","errorType":"RideDomainError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — state > online → offline
+{"msg":"DRIVER_GO_OFFLINE","operation":"DRIVER_GO_OFFLINE","requestId":"0886a23f-584d-4824-821f-14292cb9a3ea","actorId":"d1","availabilityState":"offline","durationMs":0}
+
+ ✓ src/__tests__/nearby.test.ts (29 tests) 118ms
+stdout | src/__tests__/delivery_d1.test.ts > D1 dispatch invite delivery > 18/20. clear token + createOffer remains ungated by ledger
+{"msg":"D1_DEVICE_TOKEN_CLEAR","operation":"D1_DEVICE_TOKEN_CLEAR","requestId":"92ce9ccd-4bc0-468f-9612-9eb167e437fd","actorId":"d1","cleared":true,"durationMs":1}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 hardening H2/H4/H5 > H2-1 concurrent claim: only one worker commits delivery
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c-a","eventId":"evt-h2-1","outcome":"delivered","sent":1,"skippedNoToken":0,"invalidTokens":0,"failedDrivers":0}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects unauthenticated and banned users
+{"msg":"ride_create_failed","requestId":"84a7d545-a41c-4565-a7b0-0c599d5b6cfb","errorType":"RideDomainError","code":"ACCOUNT_DISABLED"}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > assignment race remains protected after discovery
+{"msg":"ride_offer_create_failed","requestId":"08134567-d8c9-4362-807b-be6f8f4f6ced","errorType":"RideDomainError","code":"STATE_CONFLICT"}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > skips candidate that becomes ineligible between N3 and invite
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"corr-skip","rideId":"r8","waveNumber":1,"invitedCount":5}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > GET /v1/rides driver listing unchanged — no unassigned open rides
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"de2ae1b8-dd2a-4660-839a-c748551b1474","actorId":"d-reg","actorRole":"driver","statusFilter":"all","serviceType":null,"limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":1}
+
+stdout | src/__tests__/open_discovery.test.ts > Slice M0 open ride discovery > GET /v1/rides passenger listing unchanged
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"aa37144e-ad79-46b7-ae71-eb1e92d27b68","actorId":"p-reg2","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":1}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > does not require city; uses pickup coordinates for N3
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"aec972fa-f6cd-4434-b7cd-d5fb0b190e07","rideId":"r10","waveNumber":1,"invitedCount":3}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"aec972fa-f6cd-4434-b7cd-d5fb0b190e07","rideId":"r10","outcome":"wave_completed","waveNumber":1,"invitedCount":3,"durationMs":0}
+
+ ✓ src/__tests__/open_discovery.test.ts (17 tests) 134ms
+stdout | src/__tests__/delivery_d1.test.ts > D1 hardening H2/H4/H5 > H2-2/3 expired lease reclaim: stale W1 cannot overwrite W2 state
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c-w2","eventId":"evt-h2-2","outcome":"delivered","sent":1,"skippedNoToken":0,"invalidTokens":0,"failedDrivers":0}
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c-w1","eventId":"evt-h2-2","outcome":"stale_aborted","attemptCount":1,"workerId":"w1"}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 hardening H2/H4/H5 > H4 classify: invalid-argument is transient; genuine invalid deletes token
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c","eventId":"evt-h4-arg","outcome":"retryable","sent":0,"skippedNoToken":0,"invalidTokens":0,"failedDrivers":1}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 hardening H2/H4/H5 > H4 genuine invalid_token still removes token
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c","eventId":"evt-h4-bad","outcome":"delivered","sent":0,"skippedNoToken":0,"invalidTokens":1,"failedDrivers":0}
+
+stdout | src/__tests__/delivery_d1.test.ts > D1 hardening H2/H4/H5 > H5 mixed multi-device: A SENT + B retryable; retry only B
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c1","eventId":"evt-h5-mix","outcome":"retryable","sent":0,"skippedNoToken":0,"invalidTokens":0,"failedDrivers":1}
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c2","eventId":"evt-h5-mix","outcome":"delivered","sent":1,"skippedNoToken":0,"invalidTokens":0,"failedDrivers":0}
+
+ ✓ src/__tests__/delivery_d1.test.ts (19 tests) 136ms
+stdout | src/__tests__/delivery_d1.test.ts > D1 hardening H2/H4/H5 > H5 invalid + valid token: remove invalid, keep valid, deliver
+{"msg":"D1_DISPATCH_FCM","operation":"D1_DISPATCH_FCM","requestId":"c","eventId":"evt-h5-iv","outcome":"delivered","sent":1,"skippedNoToken":0,"invalidTokens":1,"failedDrivers":0}
+
+stdout | src/__tests__/profile.test.ts > PATCH /v1/auth/profile > IDOR: token uid is the only write target
+{"msg":"profile_update_ok","requestId":"d7d163f2-a06a-484e-ad23-f8e514f708a1","uid":"uid-1","op":"patch_profile","profileComplete":true}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > does not auto-assign or fabricate/auto-accept offers
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"9b944a1e-9722-413e-b924-c3e2e29652dc","rideId":"r11","waveNumber":1,"invitedCount":5}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"9b944a1e-9722-413e-b924-c3e2e29652dc","rideId":"r11","outcome":"wave_completed","waveNumber":1,"invitedCount":5,"durationMs":1}
+
+stdout | src/__tests__/profile.test.ts > PATCH /v1/auth/profile > does not leak Firestore internals on update failure
+{"msg":"profile_update_failed","requestId":"26eafbf3-8158-48b7-8729-ad10a619b7d3","uid":"uid-1","op":"patch_profile","errorType":"Error"}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — state > repeated go-online is idempotent
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"b762285d-5dda-475f-ab2e-7605919d3d2b","actorId":"d1","availabilityState":"online","durationMs":0}
+
+stdout | src/__tests__/profile.test.ts > PATCH /v1/auth/profile > concurrent valid updates remain consistent
+{"msg":"profile_update_ok","requestId":"23b3dcca-3ef6-445b-b7b8-a2ee071cf715","uid":"uid-1","op":"patch_profile","profileComplete":true}
+{"msg":"profile_update_ok","requestId":"5f0260cc-3ee1-4949-bf18-8282152656d6","uid":"uid-1","op":"patch_profile","profileComplete":true}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — state > repeated go-online is idempotent
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"42531a0a-769b-4764-8628-5c716918a8be","actorId":"d1","availabilityState":"online","durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > enforces offer uniqueness per driver/requestVersion
+{"msg":"ride_offer_create_failed","requestId":"70203fad-12e9-4678-8441-9dc5a87b8813","errorType":"RideDomainError","code":"OFFER_ALREADY_EXISTS"}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > worker endpoint requires X-Ora-Worker-Token
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"c1f0e9cb-9aee-4670-bbbe-5f542f10eb42","rideId":"r12","waveNumber":1,"invitedCount":0}
+{"msg":"N4_DISPATCH_SWEEP","operation":"N4_DISPATCH_SWEEP","requestId":"c1f0e9cb-9aee-4670-bbbe-5f542f10eb42","scanned":1,"completed":1,"alreadyCompleted":0,"notDue":0,"skipped":0,"stopped":0,"exhausted":0,"failed":0,"durationMs":1}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > handles N3 under-fill safely without assuming 30 candidates
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"c56a0892-60a2-480a-97a9-59e5a75cf266","rideId":"r13","waveNumber":1,"invitedCount":2}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"c56a0892-60a2-480a-97a9-59e5a75cf266","rideId":"r13","outcome":"wave_completed","waveNumber":1,"invitedCount":2,"durationMs":1}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — state > repeated go-offline is idempotent
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"9a6e0552-9aa9-4d71-ae84-5b41106ce346","actorId":"d1","availabilityState":"online","durationMs":0}
+{"msg":"DRIVER_GO_OFFLINE","operation":"DRIVER_GO_OFFLINE","requestId":"e57a39de-5a95-4a27-9c2e-c91bbdf4bdb0","actorId":"d1","availabilityState":"offline","durationMs":1}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — state > repeated go-offline is idempotent
+{"msg":"DRIVER_GO_OFFLINE","operation":"DRIVER_GO_OFFLINE","requestId":"046eeb70-0c01-40a4-b49c-2334c6ea02da","actorId":"d1","availabilityState":"offline","durationMs":0}
+
+stdout | src/__tests__/profile.test.ts > register failure surface > returns 500 without internals when Firestore is down
+{"msg":"register_failed","requestId":"7dbb71d1-f2a8-4532-93a4-a2f98fae00b9","uid":"uid-1","op":"register","errorType":"Error"}
+
+ ✓ src/__tests__/profile.test.ts (24 tests) 161ms
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > handles N3 under-fill safely without assuming 30 candidates
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"ce2cfa09-779a-4aef-b55d-6ff85da1b180","rideId":"r13","waveNumber":2,"invitedCount":0}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"ce2cfa09-779a-4aef-b55d-6ff85da1b180","rideId":"r13","outcome":"wave_completed","waveNumber":2,"invitedCount":0,"durationMs":1}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — security > client cannot select another driver via body
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"d0180d3a-b53e-48b7-b49c-ab8106335176","actorId":"d1","availabilityState":"online","durationMs":0}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > handles N3 under-fill safely without assuming 30 candidates
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"ee6192aa-ec64-4261-9f55-ae7ebcffa75d","rideId":"r13","waveNumber":3,"invitedCount":0}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"ee6192aa-ec64-4261-9f55-ae7ebcffa75d","rideId":"r13","outcome":"wave_completed","waveNumber":3,"invitedCount":0,"durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — security > authoritative availability is not client-writable path (server-only field)
+{"msg":"DRIVER_GO_OFFLINE","operation":"DRIVER_GO_OFFLINE","requestId":"9d41d12b-6d92-452e-b182-dc9ed48e6708","actorId":"d1","availabilityState":"offline","durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects ineligible driver offers and forged driverId
+{"msg":"ride_offer_create_failed","requestId":"e91d6eae-a79a-4b19-a06f-13de3c3463c4","errorType":"RideDomainError","code":"DRIVER_NOT_ELIGIBLE"}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > respects 5-second cadence (not_due before dispatchNextAt)
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"84545a58-0796-4ff8-89ac-5443e49abd2c","rideId":"r14","waveNumber":1,"invitedCount":5}
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"84545a58-0796-4ff8-89ac-5443e49abd2c","rideId":"r14","outcome":"wave_completed","waveNumber":1,"invitedCount":5,"durationMs":1}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — concurrency > concurrent go-online requests converge to online
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"18432160-ca44-46c8-9c80-e3e0353479c6","actorId":"d1","availabilityState":"online","durationMs":0}
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"4e2ac608-811e-4e53-8c81-428f510aad2f","actorId":"d1","availabilityState":"online","durationMs":0}
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"2a97bc53-43fc-460a-bd02-629958cd544f","actorId":"d1","availabilityState":"online","durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — concurrency > concurrent go-offline requests converge to offline
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"1728fa05-1db9-4223-871c-3a4c34db6339","actorId":"d1","availabilityState":"online","durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — concurrency > concurrent go-offline requests converge to offline
+{"msg":"DRIVER_GO_OFFLINE","operation":"DRIVER_GO_OFFLINE","requestId":"c48e86ae-0ec8-4921-90b0-006859f6091a","actorId":"d1","availabilityState":"offline","durationMs":0}
+{"msg":"DRIVER_GO_OFFLINE","operation":"DRIVER_GO_OFFLINE","requestId":"cdf09f4e-aacb-4caa-a6d0-3ebc6724f394","actorId":"d1","availabilityState":"offline","durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — concurrency > concurrent go-offline requests converge to offline
+{"msg":"DRIVER_GO_OFFLINE","operation":"DRIVER_GO_OFFLINE","requestId":"1939bc6f-2e5b-46df-bc62-f8ae9ceb2759","actorId":"d1","availabilityState":"offline","durationMs":0}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > respects 5-second cadence (not_due before dispatchNextAt)
+{"msg":"N4_DISPATCH_TICK","operation":"N4_DISPATCH_TICK","requestId":"9d87e6ac-9cab-4043-ae46-c3edeb5d6f81","rideId":"r14","outcome":"not_due","waveNumber":2,"invitedCount":0,"durationMs":0}
+
+stdout | src/__tests__/dispatch.test.ts > N4 dispatch wave MVP > dispatch-sweep processes due rides
+{"msg":"N4_DISPATCH_WAVE","operation":"N4_DISPATCH_WAVE","requestId":"a8ea6687-08fe-4132-84b2-f48f757ff583","rideId":"r15","waveNumber":1,"invitedCount":5}
+{"msg":"N4_DISPATCH_SWEEP","operation":"N4_DISPATCH_SWEEP","requestId":"a8ea6687-08fe-4132-84b2-f48f757ff583","scanned":1,"completed":1,"alreadyCompleted":0,"notDue":0,"skipped":0,"stopped":0,"exhausted":0,"failed":0,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects ineligible driver offers and forged driverId
+{"msg":"ride_offer_create_failed","requestId":"34e86c71-dfd5-473e-8643-0299faf01545","errorType":"RideDomainError","code":"VALIDATION_ERROR"}
+
+ ✓ src/__tests__/dispatch.test.ts (15 tests) 165ms
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — persistence > Firestore contains authoritative state after mutations
+{"msg":"DRIVER_GO_ONLINE","operation":"DRIVER_GO_ONLINE","requestId":"69269cc4-793b-48f6-b1fa-cf5f780c5ccc","actorId":"d1","availabilityState":"online","durationMs":0}
+
+stdout | src/__tests__/driver_availability.test.ts > N1 driver availability — persistence > Firestore contains authoritative state after mutations
+{"msg":"DRIVER_GO_OFFLINE","operation":"DRIVER_GO_OFFLINE","requestId":"23a9abd7-0984-4a0e-8a60-0d63faa2e392","actorId":"d1","availabilityState":"offline","durationMs":0}
+
+ ✓ src/__tests__/driver_availability.test.ts (15 tests) 113ms
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects forged agreedFareMinor / assignedDriverId on select
+{"msg":"ride_select_failed","requestId":"a8ee55f5-54c3-4578-9867-e30e04879f5c","errorType":"RideDomainError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects stale expectedVersion with VERSION_CONFLICT
+{"msg":"ride_select_failed","requestId":"9fa2add1-dbb1-4881-8404-7c4a4643c974","errorType":"RideDomainError","code":"VERSION_CONFLICT"}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects expired offer select
+{"msg":"ride_select_failed","requestId":"56efee59-f09d-4aae-8042-a083d8fd5fb7","errorType":"RideDomainError","code":"OFFER_EXPIRED"}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects select when ride search window has expired
+{"msg":"ride_select_failed","requestId":"164a1feb-e9ed-46fe-ac91-9e9c48f0ad85","errorType":"RideDomainError","code":"STATE_CONFLICT"}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects fare out of bounds and expired pricing snapshot
+{"msg":"ride_create_failed","requestId":"43eedd40-91e6-4496-b557-93ef556d1fdb","errorType":"RideDomainError","code":"FARE_OUT_OF_BOUNDS"}
+
+stdout | src/__tests__/rides.test.ts > ride HTTP vertical slice > rejects fare out of bounds and expired pricing snapshot
+{"msg":"ride_create_failed","requestId":"971a45a9-db96-479d-8aa6-86ad3ef73e11","errorType":"RideDomainError","code":"PRICING_SNAPSHOT_EXPIRED"}
+
+stdout | src/__tests__/rides.test.ts > ride assignment concurrency > 2-way concurrent select → exactly 1 assignment
+{"msg":"ride_select_failed","requestId":"1db3fcc4-ee0f-4597-a222-4e4a7475f2cf","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+
+stdout | src/__tests__/rides.test.ts > ride assignment concurrency > 10-way concurrent select → 1 winner, 9 conflicts
+{"msg":"ride_select_failed","requestId":"c3092c82-e491-4dc3-bf76-32eacc542b57","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"be2042fa-a1e9-45fb-b408-d9cd6f98717e","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"02fc41dc-f462-4105-af67-a350f8ce928f","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"8e8cf675-f609-48e8-a357-9fe992c10fff","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"baa6e55d-a2ae-4b2d-87aa-02432fcce34a","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"a6475a8e-b8ef-4362-8333-1b6b72f58cd7","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"fa936c4c-1e89-4e90-8a40-481eaf9b8c16","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"235efb50-b29d-42cc-9ffe-1e71bcafb9e8","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"1dde9120-e580-4422-bf60-467bd874d214","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+
+ ✓ src/__tests__/google_routes_provider.test.ts (12 tests) 11ms
+ ✓ src/__tests__/n3_nearby_diagnostics.test.ts (6 tests) 7ms
+ ✓ src/__tests__/city_catalog.test.ts (14 tests) 10ms
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > 1. authenticated valid request succeeds
+{"msg":"pricing_estimate_begin","requestId":"4e7f3c34-ee78-494f-a8dc-a419ecd636f6","uid":"passenger-1"}
+{"msg":"pricing_estimate_ok","requestId":"4e7f3c34-ee78-494f-a8dc-a419ecd636f6","category":"easy"}
+
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > 2. unauthenticated request rejected
+{"msg":"pricing_estimate_auth","result":"rejected","reason":"missing_or_malformed_bearer","hasAuthorizationHeader":false}
+
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > 3. invalid pickup rejected
+{"msg":"pricing_estimate_begin","requestId":"6bf052ad-444c-4884-9fbb-c6b29ba86f2d","uid":"passenger-1"}
+{"msg":"pricing_estimate_failed","requestId":"6bf052ad-444c-4884-9fbb-c6b29ba86f2d","errorType":"PricingError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > 4. invalid destination rejected
+{"msg":"pricing_estimate_begin","requestId":"3b9e3ff3-2ef9-46ab-91c0-d8281d0936be","uid":"passenger-1"}
+{"msg":"pricing_estimate_failed","requestId":"3b9e3ff3-2ef9-46ab-91c0-d8281d0936be","errorType":"PricingError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > 5. invalid category rejected
+{"msg":"pricing_estimate_begin","requestId":"6b31b150-9282-434b-abee-b03eb2549dea","uid":"passenger-1"}
+{"msg":"pricing_estimate_failed","requestId":"6b31b150-9282-434b-abee-b03eb2549dea","errorType":"PricingError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > 6. missing city rejected
+{"msg":"pricing_estimate_begin","requestId":"4e3e8601-5201-40b9-92df-3e17e03bef27","uid":"passenger-1"}
+{"msg":"pricing_estimate_failed","requestId":"4e3e8601-5201-40b9-92df-3e17e03bef27","errorType":"PricingError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > 7–8. missing pricing rule fails closed
+{"msg":"pricing_estimate_begin","requestId":"2a4c9919-dd4b-426e-80a4-1112f649e0ec","uid":"passenger-1"}
+{"msg":"pricing_estimate_failed","requestId":"2a4c9919-dd4b-426e-80a4-1112f649e0ec","errorType":"PricingError","code":"PRICING_UNAVAILABLE"}
+
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > 9. Google route failure → PRICING_UNAVAILABLE
+{"msg":"pricing_estimate_begin","requestId":"05db039c-0b7f-4d7a-801d-2d1e785630cc","uid":"passenger-1"}
+{"msg":"pricing_estimate_failed","requestId":"05db039c-0b7f-4d7a-801d-2d1e785630cc","errorType":"PricingError","code":"PRICING_UNAVAILABLE"}
+
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > route unavailable → 422 ROUTE_UNAVAILABLE
+{"msg":"pricing_estimate_begin","requestId":"06eb38b3-5ff9-4246-a7dd-b02646c5055a","uid":"passenger-1"}
+{"msg":"pricing_estimate_failed","requestId":"06eb38b3-5ff9-4246-a7dd-b02646c5055a","errorType":"PricingError","code":"ROUTE_UNAVAILABLE"}
+
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > 19–20. client fare/distance fields rejected
+{"msg":"pricing_estimate_begin","requestId":"1ee03fab-59a9-4f60-8994-de19d0f1f918","uid":"passenger-1"}
+{"msg":"pricing_estimate_failed","requestId":"1ee03fab-59a9-4f60-8994-de19d0f1f918","errorType":"PricingError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/expires_at_cleanup.test.ts > POST /v1/internal/storage/expires-at-cleanup > returns cleanup summary for worker
+{"msg":"EXPIRES_AT_CLEANUP","operation":"EXPIRES_AT_CLEANUP","requestId":"29b663c4-ac0d-4067-ae3f-21fe43953755","idempotencyDeleted":0,"pricingSnapshotsDeleted":1,"locationStreamsDeleted":0,"durationMs":0}
+
+ ✓ src/__tests__/expires_at_cleanup.test.ts (9 tests) 25ms
+stdout | src/__tests__/pricing_estimate.test.ts > POST /v1/pricing/estimate > rejects invalid serviceType
+{"msg":"pricing_estimate_begin","requestId":"47460351-0a0c-4ae4-92d5-0433e81b448a","uid":"passenger-1"}
+{"msg":"pricing_estimate_failed","requestId":"47460351-0a0c-4ae4-92d5-0433e81b448a","errorType":"PricingError","code":"VALIDATION_ERROR"}
+
+ ✓ src/__tests__/pricing_estimate.test.ts (13 tests) 105ms
+stdout | src/__tests__/geo_projection.test.ts > N2C coordinate-primary GEO projection > 1. accepted location projects into geo:drivers
+{"msg":"REDIS_GEO_PROJECTED","driverId":"d1","geoKey":"geo:drivers","city":"lahore","locationSeq":1,"requestId":null}
+
+stdout | src/__tests__/geo_projection.test.ts > N2C coordinate-primary GEO projection > 2. driver with no homeCity still projects
+{"msg":"REDIS_GEO_PROJECTED","driverId":"d1","geoKey":"geo:drivers","city":null,"locationSeq":1,"requestId":null}
+
+stdout | src/__tests__/geo_projection.test.ts > N2C coordinate-primary GEO projection > 3. changing homeCity does not leave primary index; dual-writes legacy
+{"msg":"REDIS_GEO_PROJECTED","driverId":"d1","geoKey":"geo:drivers","city":"lahore","locationSeq":1,"requestId":null}
+{"msg":"REDIS_GEO_PROJECTED","driverId":"d1","geoKey":"geo:drivers","city":"islamabad","locationSeq":2,"requestId":null}
+
+stdout | src/__tests__/geo_projection.test.ts > N2C coordinate-primary GEO projection > 4–5. newer sequence wins; older does not overwrite
+{"msg":"REDIS_GEO_PROJECTED","driverId":"d1","geoKey":"geo:drivers","city":"lahore","locationSeq":5,"requestId":null}
+{"msg":"REDIS_GEO_SKIP","reason":"stale_projection","driverId":"d1","requestId":null}
+
+stdout | src/__tests__/geo_projection.test.ts > N2C coordinate-primary GEO projection > 7. offline removes from geo:drivers
+{"msg":"REDIS_GEO_PROJECTED","driverId":"d1","geoKey":"geo:drivers","city":"lahore","locationSeq":1,"requestId":null}
+{"msg":"REDIS_GEO_OFFLINE_REMOVED","driverId":"d1","geoKey":"geo:drivers","legacyCities":["lahore"],"requestId":null}
+
+stdout | src/__tests__/geo_projection.test.ts > N2C coordinate-primary GEO projection > 7b. offline without homeCity still removes primary membership
+{"msg":"REDIS_GEO_PROJECTED","driverId":"d1","geoKey":"geo:drivers","city":null,"locationSeq":1,"requestId":null}
+{"msg":"REDIS_GEO_OFFLINE_REMOVED","driverId":"d1","geoKey":"geo:drivers","legacyCities":[],"requestId":null}
+
+stdout | src/__tests__/geo_projection.test.ts > N2C coordinate-primary GEO projection > 8. re-project after offline restores membership
+{"msg":"REDIS_GEO_PROJECTED","driverId":"d1","geoKey":"geo:drivers","city":"lahore","locationSeq":1,"requestId":null}
+{"msg":"REDIS_GEO_OFFLINE_REMOVED","driverId":"d1","geoKey":"geo:drivers","legacyCities":["lahore"],"requestId":null}
+{"msg":"REDIS_GEO_PROJECTED","driverId":"d1","geoKey":"geo:drivers","city":"lahore","locationSeq":2,"requestId":null}
+
+stdout | src/__tests__/geo_projection.test.ts > N2C coordinate-primary GEO projection > 9. Redis failure remains best-effort (no throw)
+{"msg":"REDIS_GEO_PROJECT_FAILED","driverId":"d1","requestId":null,"errorType":"Error"}
+{"msg":"REDIS_GEO_OFFLINE_FAILED","driverId":"d1","requestId":null,"errorType":"Error"}
+
+ ✓ src/__tests__/geo_projection.test.ts (8 tests) 5ms
+stdout | src/__tests__/rides.test.ts > ride assignment concurrency > 50-way concurrent select → 1 winner, 49 conflicts
+{"msg":"ride_select_failed","requestId":"81522ff1-56cd-4210-80a0-caec818d609d","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"17b2b1e9-7f4d-4bc1-ad9f-66a71b7c0143","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"949d59ee-5b6b-4a83-9a2b-f4ca62f368b4","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"a6c927a4-4bc6-4277-84a9-c0092246edeb","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"3d5efdd7-04b2-4503-aaff-113a82f293a3","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"75dd6a4d-4eae-451a-9c58-5444b6190ef9","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"88c9347d-fc60-484e-84f2-69f322e2f5d5","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"af59a07d-3e11-48d5-9755-5eb1dea66ead","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"beb4bdf2-37bb-4509-8de4-3e95d9bb44da","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"3d9252b6-d1c8-4974-85c2-d3b897186834","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"d17c72d8-9ede-45ab-911a-1adea9739b6e","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"a68b5e4f-09b2-405d-90ce-ad4e2209128c","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"8cbfb813-93ef-4eff-b7d9-78d5be554628","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"eaeb8ccf-cf6c-4959-9a63-82aa0cfa130d","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"eba61d2b-d8d5-490d-8a23-6aba9af93ade","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"5f677465-4981-46ca-b656-12a71f1d6ced","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"3ee13a63-57e8-4139-8dd8-876812895e71","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"38d365ab-f841-4e45-8a59-97a25dd48db8","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"e5e1f5ce-afbc-4dcc-b7ed-01307bf53b5f","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"f8d32c12-a49f-4233-b4c1-081630aec1fe","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"f5f4d058-f8e3-40b1-8c02-09e143edf1f0","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"f485f11b-3d06-468b-a481-450c81417b3a","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"7a4ed975-65ec-44e5-96dc-ea3d35b4a961","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"f9716242-8d86-4add-b54a-e8841f86bc05","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"2d3db1a1-4de9-4a3d-a46e-9a48375b6e9a","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"7e0b75c4-b5ac-436a-9312-818ce8c32a31","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"f38d2d3f-7b3b-464b-97ca-97618b708ed3","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"31628b48-bb3e-4fc5-80e1-cf7cc6ccef31","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"994c8ca3-b903-4797-bee8-ad6697738fa4","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"09b265a2-4ede-4b24-914e-1c8ccf374264","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"f013b147-9abf-49d5-b4b3-f645a4fed826","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"e41d2e09-1a61-455d-ae6e-6ee7be38a465","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"46233810-e848-4945-a4a5-9caa4dd2828c","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"a42d9644-29fe-421c-9ba8-c7a3c1f6c373","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"f3f41690-c867-42c6-91d7-5a1a6dd5759d","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"b978eb3d-1e01-4353-a571-e004a534809a","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"85feb42a-1433-4176-a105-44f9b0f0410d","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"05a94076-6864-4cc9-9f8c-1711cf77b900","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"668babcb-b5db-4141-85bd-08456124f9db","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"de8713f0-db29-484a-909d-934f976b416b","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"ef5fa20a-dd9e-40d9-9843-00ea49f9e775","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"a649ef59-6891-4afe-8638-f0bfd92ed46a","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"69e71a0f-6ef3-45c2-a113-3f0750ef28c6","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"9f529399-d9a7-4f60-b328-6a983cb40634","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"939eccbb-0024-49bf-9012-14369c61a3eb","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"81d3fafb-dba8-4c3e-9b4b-77c09f48bbc4","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"a21cca5f-28e4-4a6b-a8f3-e924a4c52ea0","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"c0dcb125-18d9-4a2a-ad47-6e949b85a21f","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+{"msg":"ride_select_failed","requestId":"99d6b6c0-56e5-4a80-8a48-8787ded765ee","errorType":"RideDomainError","code":"ALREADY_ASSIGNED"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2F offer hardening > rejects passenger creating an offer
+{"msg":"ride_offer_create_failed","requestId":"32acc364-3cf9-451f-8840-47ae04e04652","errorType":"RideDomainError","code":"DRIVER_NOT_ELIGIBLE"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2F offer hardening > rejects offer when driver already has DRIVER_ASSIGNED ride
+{"msg":"ride_offer_create_failed","requestId":"84e3e2eb-b559-40d6-9ad6-f0b86346ce26","errorType":"RideDomainError","code":"DRIVER_NOT_ELIGIBLE"}
+
+ ✓ src/__tests__/security_phase2b.test.ts (12 tests) 183ms
+stdout | src/__tests__/rides.test.ts > Phase 2F offer hardening > rejects selecting withdrawn and superseded offers
+{"msg":"ride_select_failed","requestId":"7d3087c7-7a9d-4ba4-8ba0-169a37eaeebe","errorType":"RideDomainError","code":"OFFER_NOT_SELECTABLE"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2F offer hardening > concurrent same-driver offer creates one logical offer
+{"msg":"ride_offer_create_failed","requestId":"37007a93-1530-4d7d-9c31-afbfcea9f5f7","errorType":"RideDomainError","code":"OFFER_ALREADY_EXISTS"}
+
+ ✓ src/__tests__/pricing_rules_repository.test.ts (13 tests) 4ms
+stdout | src/__tests__/rides.test.ts > Phase 2G post-assignment progression > rejects skip, reverse, passenger, and foreign driver
+{"msg":"ride_arrive_failed","requestId":"7bb5d493-63bc-4e05-89d4-9381cf6f57a0","errorType":"RideDomainError","code":"STATE_CONFLICT"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2G post-assignment progression > rejects skip, reverse, passenger, and foreign driver
+{"msg":"ride_en_route_failed","requestId":"0299ab67-984d-450e-b752-1fea1932b306","errorType":"RideDomainError","code":"FORBIDDEN"}
+
+stdout | src/__tests__/ride_city.test.ts > rides.city create contract > 3. empty city rejected
+{"msg":"ride_create_failed","requestId":"d3ecc957-c64d-4b14-81ed-d0b924160375","errorType":"RideDomainError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2G post-assignment progression > rejects skip, reverse, passenger, and foreign driver
+{"msg":"ride_en_route_failed","requestId":"48ab217e-bce1-497d-8244-7ce3711393e3","errorType":"RideDomainError","code":"FORBIDDEN"}
+
+stdout | src/__tests__/ride_city.test.ts > rides.city create contract > 4. missing city rejected
+{"msg":"ride_create_failed","requestId":"1fa9c926-7156-44c7-9b31-e669496a98d5","errorType":"RideDomainError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/auth.test.ts > auth HTTP security > ignores forged body uid and uses token uid for register
+{"msg":"register_ok","requestId":"d327530c-f0d2-46d0-98c8-758ed5c45a18","uid":"real-uid","op":"register"}
+
+ ✓ src/__tests__/firestore_rules_contract.test.ts (5 tests) 2ms
+stdout | src/__tests__/ride_city.test.ts > rides.city create contract > 5. non-string city rejected
+{"msg":"ride_create_failed","requestId":"08a38653-d9e2-4b25-84fb-ca50d36947d2","errorType":"RideDomainError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2G post-assignment progression > rejects stale expectedVersion and forged fields
+{"msg":"ride_en_route_failed","requestId":"f30e14d3-2199-4c94-9de0-3e3ff7713b15","errorType":"RideDomainError","code":"VERSION_CONFLICT"}
+
+ ✓ src/__tests__/city_catalog_import.test.ts (6 tests) 14ms
+stdout | src/__tests__/rides.test.ts > Phase 2G post-assignment progression > rejects stale expectedVersion and forged fields
+{"msg":"ride_en_route_failed","requestId":"c8d7b194-4227-4f25-9bd4-7fc0faaf8a6a","errorType":"RideDomainError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/auth.test.ts > auth HTTP security > duplicate concurrent-style register is idempotent
+{"msg":"register_ok","requestId":"8ff10b2d-b948-4cdd-88c4-34ba33874280","uid":"uid-1","op":"register"}
+
+stdout | src/__tests__/auth.test.ts > auth HTTP security > duplicate concurrent-style register is idempotent
+{"msg":"register_ok","requestId":"0d4292e6-8638-4e11-9156-168dd322d5c0","uid":"uid-1","op":"register"}
+
+ ✓ src/__tests__/ride_city.test.ts (8 tests) 77ms
+ ✓ src/__tests__/auth.test.ts (9 tests) 103ms
+stdout | src/__tests__/rides.test.ts > Phase 2G post-assignment progression > idempotent replay and key reuse
+{"msg":"ride_arrive_failed","requestId":"fa3d4327-ec7b-474b-b652-23ae8c24532a","errorType":"RideDomainError","code":"IDEMPOTENCY_KEY_REUSED"}
+
+ ✓ src/__tests__/offer_lifecycle.test.ts (3 tests) 3ms
+ ✓ src/__tests__/ride_list_index_contract.test.ts (2 tests) 9ms
+ ✓ src/__tests__/open_discovery_index_contract.test.ts (1 test) 2ms
+ ✓ src/__tests__/production_guards.test.ts (4 tests) 3ms
+stdout | src/__tests__/rides.test.ts > Phase 2H ride aggregate closure > rejects foreign actors and wrong states
+{"msg":"ride_close_failed","requestId":"91340ab7-1b81-4a88-8798-b178931a677d","operation":"RIDE_CLOSE","rideId":"6cfeff83-190b-4da1-aa01-2807547258cc","errorType":"RideDomainError","code":"FORBIDDEN"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2H ride aggregate closure > rejects foreign actors and wrong states
+{"msg":"ride_close_failed","requestId":"9afa91b0-4eb8-44dd-991f-272d5f9f8e64","operation":"RIDE_CLOSE","rideId":"6cfeff83-190b-4da1-aa01-2807547258cc","errorType":"RideDomainError","code":"FORBIDDEN"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2H ride aggregate closure > rejects foreign actors and wrong states
+{"msg":"ride_close_failed","requestId":"e4042581-fd2d-49d4-9791-9f87d7e5e133","operation":"RIDE_CLOSE","rideId":"026d07aa-4950-4474-b2ec-e8fa913981ef","errorType":"RideDomainError","code":"STATE_CONFLICT"}
+
+ ✓ src/__tests__/display_name.test.ts (4 tests) 4ms
+stdout | src/__tests__/rides.test.ts > Phase 2H ride aggregate closure > idempotent replay and already-CLOSED new key
+{"msg":"ride_close_failed","requestId":"9c43cd91-0a16-4783-b34e-afca3f3b7a07","operation":"RIDE_CLOSE","rideId":"9c72ec12-4d52-4f6a-98e8-d295e5bfe7b9","errorType":"RideDomainError","code":"IDEMPOTENCY_KEY_REUSED"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2H ride aggregate closure > CLOSED rejects cancel and progression
+{"msg":"ride_en_route_failed","requestId":"10481f68-68d0-4034-bddf-c9ca1871acff","errorType":"RideDomainError","code":"STATE_CONFLICT"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2H ride aggregate closure > stale expectedVersion and forged fields rejected
+{"msg":"ride_close_failed","requestId":"dc0562df-8c14-4719-98ea-bf6e259c7880","operation":"RIDE_CLOSE","rideId":"642e8b5e-4377-4a57-82ec-a824d78e8620","errorType":"RideDomainError","code":"VERSION_CONFLICT"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2H ride aggregate closure > stale expectedVersion and forged fields rejected
+{"msg":"ride_close_failed","requestId":"b7e7745b-30b2-409f-a91b-d1e6071a81c4","operation":"RIDE_CLOSE","rideId":"642e8b5e-4377-4a57-82ec-a824d78e8620","errorType":"RideDomainError","code":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > returns empty history for passenger with no rides
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"74c45cc2-2fe3-4574-868a-9a41c2a722a3","actorId":"p-empty","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":10,"hasCursor":false,"resultCount":0,"hasNextPage":false,"durationMs":1}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > passenger sees only own rides; forged passengerId rejected
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"454544ad-38e2-4e51-aa25-e033b5ba9de8","actorId":"pA","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":1}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > passenger sees only own rides; forged passengerId rejected
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"6e928bd8-a58e-45d6-b55e-e30fb6cd91e3","actorId":"pA","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > passenger sees only own rides; forged passengerId rejected
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"94bf4b1a-6972-4565-a3b1-490be214806e","actorId":"pA","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > driver sees assigned rides only; never unassigned SEARCHING
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"32a41a50-5b0e-4e08-bc7c-d6ea3982d1d0","actorId":"dA","actorRole":"driver","statusFilter":"all","serviceType":null,"limit":10,"hasCursor":false,"resultCount":2,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > status filters: all / completed / cancelled; EXPIRED only in all
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"48e8b061-149d-4cbb-b882-b9d6564c9879","actorId":"p-st","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":50,"hasCursor":false,"resultCount":10,"hasNextPage":false,"durationMs":1}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > status filters: all / completed / cancelled; EXPIRED only in all
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"1ce3ce43-a388-49b9-9c49-e37993e9f593","actorId":"p-st","actorRole":"passenger","statusFilter":"completed","serviceType":null,"limit":10,"hasCursor":false,"resultCount":2,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > status filters: all / completed / cancelled; EXPIRED only in all
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"1a6d83b5-957f-41b0-b7dc-56cc7658a6f6","actorId":"p-st","actorRole":"passenger","statusFilter":"cancelled","serviceType":null,"limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > serviceType filter isolates types
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"4a5d5e3a-a2a8-4afa-bcdb-b0a5fea53936","actorId":"p-svc","actorRole":"passenger","statusFilter":"all","serviceType":"courier","limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > serviceType filter isolates types
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"ed528627-10a7-4205-955b-d08c92218f2e","actorId":"p-svc","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > keyset pagination is deterministic with identical createdAt
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"cd600827-7621-4c04-acb2-ad38475a0300","actorId":"p-page","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":2,"hasCursor":false,"resultCount":2,"hasNextPage":true,"durationMs":0}
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"c1b74673-8b56-46c9-9f20-7b79c77f525a","actorId":"p-page","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":2,"hasCursor":true,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > rejects invalid limit/cursor/status and cross-user cursor
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"e56f6d46-bafe-466d-8533-f342ff01ce4e","actorId":"p-cur","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"f26d51d3-9f4a-4940-bcd6-e5610c8d4202","actorId":"p-cur","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > rejects invalid limit/cursor/status and cross-user cursor
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"cb9dbdc7-a766-4239-b297-7632d53d50a8","actorId":"p-cur","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > rejects invalid limit/cursor/status and cross-user cursor
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"87acd13b-4f68-4442-add9-1e0ac206484a","actorId":"p-cur","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"0c901162-d96e-41d0-a64d-bfca4a19d1c6","actorId":"p-cur","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"afcfcd66-04c5-49ef-8827-a1e1e1cd96ca","actorId":"p-cur","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > rejects invalid limit/cursor/status and cross-user cursor
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"f5a304f5-b0a5-4fa1-8d97-e51602ee93a2","actorId":"p-cur","durationMs":1,"errorCode":"VALIDATION_ERROR"}
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"1d6641f1-ad6c-41a8-96d9-04924f42d995","actorId":"p-cur","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":1,"hasCursor":false,"resultCount":1,"hasNextPage":true,"durationMs":0}
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"64852ce9-b14c-4dac-9d7b-e3731a5849b1","actorId":"p-other","durationMs":0,"errorCode":"VALIDATION_ERROR"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > publicRide omits internal fields on list items
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"b000ab0a-aad5-44ee-90ad-9b89f415ac11","actorId":"p-dto","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > list reflects create then cancel mutation
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"9a73b456-0f74-4ab7-9f9c-7a0748253c54","actorId":"p-mut","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > list reflects create then cancel mutation
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"dda3b12d-7948-4f80-938c-52f66e8c2d2a","actorId":"p-mut","actorRole":"passenger","statusFilter":"cancelled","serviceType":null,"limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > GET /v1/rides does not collide with get-by-id; IDOR intact
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"dc7d7fd5-ebbd-45c9-8601-c39649bb40d8","actorId":"p-idor","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":10,"hasCursor":false,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > limit boundaries 1 and 50
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"54e3f35f-1206-41d7-9d34-1d642c4b37e7","actorId":"p-lim","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":1,"hasCursor":false,"resultCount":1,"hasNextPage":true,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > limit boundaries 1 and 50
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"6d6bdc1d-faf6-46e3-8984-46f67a7b9ff2","actorId":"p-lim","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":50,"hasCursor":false,"resultCount":50,"hasNextPage":true,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2I ride list / history > limit boundaries 1 and 50
+{"msg":"RIDE_LIST","operation":"RIDE_LIST","requestId":"50953ddd-04f5-4426-a914-1e11cb1b0c10","actorId":"p-lim","actorRole":"passenger","statusFilter":"all","serviceType":null,"limit":50,"hasCursor":true,"resultCount":1,"hasNextPage":false,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2J ride expired sweeper > SEARCHING + past expiresAt → EXPIRED with outbox
+{"msg":"RIDE_EXPIRE_SWEEP","operation":"RIDE_EXPIRE_SWEEP","requestId":"bd66a238-b996-4ad6-8ef4-36b814eb2fc6","scanned":1,"expired":1,"alreadyExpired":0,"skipped":0,"failed":0,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2J ride expired sweeper > OFFERS_AVAILABLE + past expiresAt → EXPIRED
+{"msg":"RIDE_EXPIRE_SWEEP","operation":"RIDE_EXPIRE_SWEEP","requestId":"9639d2f4-b65b-4d57-a8e0-e7ead9737d15","scanned":1,"expired":1,"alreadyExpired":0,"skipped":0,"failed":0,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2J ride expired sweeper > future expiresAt ride remains unchanged
+{"msg":"RIDE_EXPIRE_SWEEP","operation":"RIDE_EXPIRE_SWEEP","requestId":"eee4be64-8d50-4f15-bb17-4af1f4af8af6","scanned":0,"expired":0,"alreadyExpired":0,"skipped":0,"failed":0,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2J ride expired sweeper > does not overwrite assigned or terminal rides
+{"msg":"RIDE_EXPIRE_SWEEP","operation":"RIDE_EXPIRE_SWEEP","requestId":"5ea21b5f-06b8-4012-a0ef-37c527c0594c","scanned":0,"expired":0,"alreadyExpired":0,"skipped":0,"failed":0,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2J ride expired sweeper > does not overwrite cancelled ride
+{"msg":"RIDE_EXPIRE_SWEEP","operation":"RIDE_EXPIRE_SWEEP","requestId":"b175a602-6ae1-44e8-a0db-838f6950a6e7","scanned":0,"expired":0,"alreadyExpired":0,"skipped":0,"failed":0,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2J ride expired sweeper > concurrent expire vs select — select wins
+{"msg":"ride_select_failed","requestId":"27f1bd18-3a67-44a3-b252-2fb0613c6f2b","errorType":"RideDomainError","code":"STATE_CONFLICT"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2J ride expired sweeper > offer create rejected after ride expired
+{"msg":"RIDE_EXPIRE_SWEEP","operation":"RIDE_EXPIRE_SWEEP","requestId":"89fbaf29-bac9-4a45-b131-4e57c23e7c2e","scanned":1,"expired":1,"alreadyExpired":0,"skipped":0,"failed":0,"durationMs":0}
+
+stdout | src/__tests__/rides.test.ts > Phase 2J ride expired sweeper > offer create rejected after ride expired
+{"msg":"ride_offer_create_failed","requestId":"5938a272-b3df-4875-8666-8c2682529287","errorType":"RideDomainError","code":"STATE_CONFLICT"}
+
+stdout | src/__tests__/rides.test.ts > Phase 2J ride expired sweeper > batch mixes expired and skipped without blocking
+{"msg":"RIDE_EXPIRE_SWEEP","operation":"RIDE_EXPIRE_SWEEP","requestId":"bc103d65-f835-4ddc-90c8-fb5e7b0c5f35","scanned":1,"expired":1,"alreadyExpired":0,"skipped":0,"failed":0,"durationMs":1}
+
+ ✓ src/__tests__/rides.test.ts (87 tests) 1365ms
+   ✓ ride assignment concurrency > 50-way concurrent select → 1 winner, 49 conflicts 366ms
+
+ Test Files  25 passed (25)
+      Tests  359 passed (359)
+   Start at  15:22:55
+   Duration  2.04s (transform 582ms, setup 0ms, collect 4.15s, tests 2.77s, environment 5ms, prepare 1.79s)
+
+DONE — see mobile/.e2e_artifacts/N3_STAGING_BENCHMARK_REPORT.json

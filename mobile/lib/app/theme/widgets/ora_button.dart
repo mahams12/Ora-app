@@ -161,7 +161,7 @@ class _OraButtonState extends State<OraButton> {
         stops: [0, 0.5, 1],
       ),
       OraButtonVariant.secondary => const LinearGradient(
-        colors: [Color(0xFFFFB066), OraColors.goldDeep],
+        colors: [OraColors.teal, OraColors.tealDeep],
       ),
       _ => null,
     };

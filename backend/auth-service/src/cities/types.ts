@@ -1,7 +1,7 @@
 /**
  * Server-managed city catalog (Slice 1).
  *
- * Document ID = canonical city id = rides.city = drivers.homeCity = geo-store shard.
+ * Document ID = canonical city id = rides.city = drivers.homeCity = Redis GEO shard.
  * Authority: docs/implementation/n-series/PAKISTAN-CITY-ARCHITECTURE.md
  */
 

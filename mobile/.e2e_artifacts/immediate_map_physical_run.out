@@ -1,0 +1,51 @@
+{
+  "ok": true,
+  "partial": "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/immediate_map_physical_partial.json",
+  "checks": {
+    "rideRequestOpened": true,
+    "idleMapShellAbsent": true,
+    "idleHasExpandChrome": true,
+    "idleStatusChip": true,
+    "pickupResolved": true,
+    "pickupLabels": [
+      "Expand map",
+      "3D",
+      "Pickup set \u00b7 destination needed",
+      "Where to?",
+      "Search a place or use your current location. Confirm each point before continuing \u2014 text alone is not enough.",
+      "Pickup\nIzmir Extension, Lahore\nCurrent location\nDestination",
+      "Izmir Extension, Lahore",
+      "Continue\nContinue"
+    ],
+    "destinationSuggestionTapped": true,
+    "compactRouteLabels": [
+      "3D",
+      "Confirm pickup & destination to continue",
+      "Expand map",
+      "Where to?",
+      "Search a place or use your current location. Confirm each point before continuing \u2014 text alone is not enough.",
+      "Pickup\nDestination",
+      "Liberty Marke5\u2075\u215a\u2075\u2075\u2075\u2075\u2075\u215a\u215at Lahore",
+      "Continue\nContinue"
+    ],
+    "expanded": true,
+    "toggled3d": true,
+    "toggledLayers": true,
+    "collapsedBackToSheet": true,
+    "reviewFareLabels": [
+      "Expand map",
+      "3D",
+      "Confirm pickup & destination to continue",
+      "Where to?",
+      "Search a place or use your current location. Confirm each point before continuing \u2014 text alone is not enough.",
+      "Pickup\nDestination",
+      "Liberty Marke5\u2075\u215a\u2075\u2075\u2075\u2075\u2075\u215a\u215at Lahore",
+      "Continue\nContinue"
+    ],
+    "fareVisible": false,
+    "reviewChrome": false,
+    "notes": [
+      "Confirm destination not found"
+    ]
+  }
+}

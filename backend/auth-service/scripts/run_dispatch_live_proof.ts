@@ -12,12 +12,12 @@ import { initializeApp, deleteApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import request from 'supertest';
 import { createApp } from '../src/app';
-import { createFirestoreGeoClient } from '../src/geo/firestore_geo_client';
+import { createFirestoreGeoClient } from '../src/redis/firestore_geo_client';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
   driverOnlineKey,
-} from '../src/geo/types';
+} from '../src/redis/types';
 import { waveDocId } from '../src/rides/dispatch_types';
 
 const WORKER = 'n4-live-proof-worker-tokenx';
@@ -56,7 +56,7 @@ async function main(): Promise<void> {
   const appName = `n4-dispatch-${Date.now()}`;
   const fbApp = initializeApp({ projectId: 'ora-n4-dispatch' }, appName);
   const db = getFirestore(fbApp);
-  const geoStore = createFirestoreGeoClient(db);
+  const redis = createFirestoreGeoClient(db);
   db.settings({ ignoreUndefinedProperties: true });
 
   const prefix = `n4live-${Date.now()}`;
@@ -80,13 +80,13 @@ async function main(): Promise<void> {
         userId: id,
         availabilityState: 'online',
       });
-      await geoStore.geoadd(
+      await redis.geoadd(
         GEO_DRIVERS_KEY,
         PICKUP.lng + i * 0.001,
         PICKUP.lat,
         id,
       );
-      await geoStore.set(
+      await redis.set(
         driverOnlineKey(id),
         JSON.stringify({
           driverId: id,
@@ -146,7 +146,7 @@ async function main(): Promise<void> {
       requireAppCheck: false,
       rateLimit: { windowMs: 60_000, max: 50_000 },
       internalWorkerToken: WORKER,
-      geoStore,
+      redis,
     });
 
     await test('worker auth rejects missing token', async () => {
@@ -156,7 +156,7 @@ async function main(): Promise<void> {
       assert(res.status === 403, `got ${res.status}`);
     });
 
-    await test('live wave 1 via geo store + Firestore', async () => {
+    await test('live wave 1 via Redis GEO + Firestore', async () => {
       const res = await request(app)
         .post(`/v1/internal/rides/${rideId}/dispatch-tick`)
         .set('X-Ora-Worker-Token', WORKER);
@@ -213,18 +213,18 @@ async function main(): Promise<void> {
   } finally {
     for (const id of driverIds) {
       try {
-        await geoStore.zrem(GEO_DRIVERS_KEY, id);
+        await redis.zrem(GEO_DRIVERS_KEY, id);
       } catch {
         /* best-effort */
       }
       try {
-        await geoStore.del(driverOnlineKey(id));
+        await redis.del(driverOnlineKey(id));
       } catch {
         /* best-effort */
       }
     }
     try {
-      await geoStore.quit?.();
+      await redis.quit?.();
     } catch {
       /* ignore */
     }

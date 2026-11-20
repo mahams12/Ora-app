@@ -47,9 +47,8 @@ class _ActiveRideViewState extends ConsumerState<ActiveRideView>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final vm = ref.read(activeRideViewModelProvider(widget.rideId).notifier);
-    final tripSession = ref.read(
-      tripLocationSessionProvider(widget.rideId).notifier,
-    );
+    final tripSession =
+        ref.read(tripLocationSessionProvider(widget.rideId).notifier);
     tripSession.onAppLifecycle(state);
     if (state == AppLifecycleState.resumed) {
       unawaited(vm.resumePolling());
@@ -121,9 +120,9 @@ class _ActiveRideViewState extends ConsumerState<ActiveRideView>
     });
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: OraColors.background,
         title: Text(
           'Active ride',
           style: OraTypography.title(OraColors.textPrimary),
@@ -150,25 +149,26 @@ class _ActiveRideViewState extends ConsumerState<ActiveRideView>
       body: SafeArea(
         child: switch (phase) {
           ActiveRidePhase.initialLoading => const Center(
-            child: OraLoadingIndicator(message: 'Loading your ride…'),
-          ),
+              child: OraLoadingIndicator(message: 'Loading your ride…'),
+            ),
           ActiveRidePhase.fatalError => OraErrorState(
-            title: 'Ride unavailable',
-            message: errorMessage ?? 'Something went wrong.',
-            onRetry: () => vm.start(),
-          ),
+              title: 'Ride unavailable',
+              message: errorMessage ?? 'Something went wrong.',
+              onRetry: () => vm.start(),
+            ),
           ActiveRidePhase.active ||
           ActiveRidePhase.mutating ||
-          ActiveRidePhase.ended => _ActiveBody(
-            rideId: rideId,
-            padding: padding,
-            onCancel: () => _confirmCancel(vm),
-            onClose: () => vm.closeRide(),
-            onRefresh: () => vm.refresh(),
-            onHome: () => context.go(AppRoutes.home),
-            onOffers: () => context.go(AppRoutes.offersInboxPath(rideId)),
-            onRate: () => context.push(AppRoutes.rideRatingPath(rideId)),
-          ),
+          ActiveRidePhase.ended =>
+            _ActiveBody(
+              rideId: rideId,
+              padding: padding,
+              onCancel: () => _confirmCancel(vm),
+              onClose: () => vm.closeRide(),
+              onRefresh: () => vm.refresh(),
+              onHome: () => context.go(AppRoutes.home),
+              onOffers: () => context.go(AppRoutes.offersInboxPath(rideId)),
+              onRate: () => context.push(AppRoutes.rideRatingPath(rideId)),
+            ),
         },
       ),
     );
@@ -217,7 +217,8 @@ class _ActiveBody extends ConsumerWidget {
       activeRideViewModelProvider(rideId).select((s) => s.canClose),
     );
     final connectivityDegraded = ref.watch(
-      activeRideViewModelProvider(rideId).select((s) => s.connectivityDegraded),
+      activeRideViewModelProvider(rideId)
+          .select((s) => s.connectivityDegraded),
     );
     final infoMessage = ref.watch(
       activeRideViewModelProvider(rideId).select((s) => s.infoMessage),
@@ -403,7 +404,10 @@ class _ActiveBody extends ConsumerWidget {
             ],
             if (isMarketplaceRideState(status)) ...[
               const SizedBox(height: OraSpacing.sm),
-              OraButton(label: 'View offers', onPressed: onOffers),
+              OraButton(
+                label: 'View offers',
+                onPressed: onOffers,
+              ),
             ],
           ],
         ),
@@ -421,9 +425,8 @@ class _ArrivedWaitLabel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final clock = ref
-        .read(activeRideViewModelProvider(rideId).notifier)
-        .arrivedNow;
+    final clock =
+        ref.read(activeRideViewModelProvider(rideId).notifier).arrivedNow;
     return ValueListenableBuilder<DateTime>(
       valueListenable: clock,
       builder: (context, now, _) {
@@ -440,6 +443,7 @@ class _ArrivedWaitLabel extends ConsumerWidget {
     );
   }
 }
+
 
 // ── Ora Courier ─────────────────────────────────────────────────────────────
 
@@ -459,7 +463,10 @@ class _CourierParcelCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Parcel', style: OraTypography.label(OraColors.textSecondary)),
+          Text(
+            'Parcel',
+            style: OraTypography.label(OraColors.textSecondary),
+          ),
           const SizedBox(height: OraSpacing.xs),
           if (parcel != null) ...[
             Text(
@@ -537,7 +544,10 @@ class _OtpCodeRow extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(label, style: OraTypography.body(OraColors.textSecondary)),
+              Text(
+                label,
+                style: OraTypography.body(OraColors.textSecondary),
+              ),
               const Spacer(),
               Text(
                 used ? 'used' : code!,
@@ -548,7 +558,10 @@ class _OtpCodeRow extends StatelessWidget {
             ],
           ),
           if (hint != null && !used)
-            Text(hint!, style: OraTypography.caption(OraColors.textMuted)),
+            Text(
+              hint!,
+              style: OraTypography.caption(OraColors.textMuted),
+            ),
         ],
       ),
     );
@@ -577,19 +590,19 @@ class _DeliveryProgressCard extends ConsumerWidget {
   };
 
   IconData _iconFor(RideStop s) => switch (s.type) {
-    'SHOP' => Icons.storefront_outlined,
-    'DROPOFF' => Icons.flag_outlined,
-    _ => Icons.inventory_2_outlined,
-  };
+        'SHOP' => Icons.storefront_outlined,
+        'DROPOFF' => Icons.flag_outlined,
+        _ => Icons.inventory_2_outlined,
+      };
 
   String _statusLabel(RideStop s) => switch (s.status) {
-    'ARRIVED' => 'Driver at stop',
-    'WAITING_APPROVAL' => 'Waiting on you',
-    'DONE' => 'Done',
-    'FAILED' => 'Failed',
-    'SKIPPED' => 'Skipped',
-    _ => 'Pending',
-  };
+        'ARRIVED' => 'Driver at stop',
+        'WAITING_APPROVAL' => 'Waiting on you',
+        'DONE' => 'Done',
+        'FAILED' => 'Failed',
+        'SKIPPED' => 'Skipped',
+        _ => 'Pending',
+      };
 
   Future<void> _openDisputeSheet(BuildContext context, WidgetRef ref) async {
     final vm = ref.read(activeRideViewModelProvider(rideId).notifier);
@@ -598,9 +611,8 @@ class _DeliveryProgressCard extends ConsumerWidget {
       isScrollControlled: true,
       backgroundColor: OraColors.surfaceElevated,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(OraRadius.xxl),
-        ),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(OraRadius.xxl)),
       ),
       builder: (_) => _DisputeSheet(onSubmit: vm.reportIssue),
     );
@@ -616,14 +628,13 @@ class _DeliveryProgressCard extends ConsumerWidget {
     final shopping = ride.shopping;
     final settlement = ride.settlement;
     final currency = settlement?['currency'] as String? ?? 'PKR';
-    String fmt(Object? minor) =>
-        minor is int ? formatOfferAmountMinor(minor, currency) : '—';
-    final concluded =
-        ride.state == 'RIDE_COMPLETED' ||
+    String fmt(Object? minor) => minor is int
+        ? formatOfferAmountMinor(minor, currency)
+        : '—';
+    final concluded = ride.state == 'RIDE_COMPLETED' ||
         ride.state == 'RETURNED' ||
         ride.state == 'RIDE_CLOSED';
-    final acked =
-        ride.evidence?['customerAckAt'] != null ||
+    final acked = ride.evidence?['customerAckAt'] != null ||
         settlement?['customerAckAt'] != null;
     final pendingQuote = stops
         .where((s) => s.status == 'WAITING_APPROVAL' && s.quote != null)
@@ -648,8 +659,8 @@ class _DeliveryProgressCard extends ConsumerWidget {
                   color: s.isDone
                       ? OraColors.tealBright
                       : s.isFailed
-                      ? OraColors.danger
-                      : OraColors.textMuted,
+                          ? OraColors.danger
+                          : OraColors.textMuted,
                 ),
                 const SizedBox(width: OraSpacing.xs),
                 Expanded(
@@ -670,10 +681,8 @@ class _DeliveryProgressCard extends ConsumerWidget {
                       if (s.items != null && s.items!.isNotEmpty)
                         Text(
                           s.items!
-                              .map(
-                                (i) =>
-                                    '${i['qty'] ?? 1}× ${i['name'] ?? 'item'}',
-                              )
+                              .map((i) =>
+                                  '${i['qty'] ?? 1}× ${i['name'] ?? 'item'}')
                               .join(', '),
                           style: OraTypography.caption(OraColors.textMuted),
                           maxLines: 2,
@@ -688,8 +697,8 @@ class _DeliveryProgressCard extends ConsumerWidget {
                     s.isDone
                         ? OraColors.tealBright
                         : s.isFailed
-                        ? OraColors.danger
-                        : OraColors.textMuted,
+                            ? OraColors.danger
+                            : OraColors.textMuted,
                   ),
                 ),
               ],
@@ -713,7 +722,8 @@ class _DeliveryProgressCard extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         '${item['qty'] ?? 1}× ${item['name'] ?? 'item'}',
-                        style: OraTypography.body(OraColors.textSecondary),
+                        style:
+                            OraTypography.body(OraColors.textSecondary),
                       ),
                     ),
                     Text(
@@ -732,7 +742,8 @@ class _DeliveryProgressCard extends ConsumerWidget {
                 ),
                 Text(
                   fmt(pendingQuote.quote!['totalMinor']),
-                  style: OraTypography.bodyEmphasis(OraColors.primary),
+                  style:
+                      OraTypography.bodyEmphasis(OraColors.primary),
                 ),
               ],
             ),
@@ -746,9 +757,9 @@ class _DeliveryProgressCard extends ConsumerWidget {
                     onPressed: isActing
                         ? null
                         : () => vm.respondToStopQuote(
-                            pendingQuote.seq,
-                            approve: true,
-                          ),
+                              pendingQuote.seq,
+                              approve: true,
+                            ),
                   ),
                 ),
                 const SizedBox(width: OraSpacing.sm),
@@ -759,9 +770,9 @@ class _DeliveryProgressCard extends ConsumerWidget {
                     onPressed: isActing
                         ? null
                         : () => vm.respondToStopQuote(
-                            pendingQuote.seq,
-                            approve: false,
-                          ),
+                              pendingQuote.seq,
+                              approve: false,
+                            ),
                   ),
                 ),
               ],
@@ -780,7 +791,10 @@ class _DeliveryProgressCard extends ConsumerWidget {
                 value: fmt(shopping['approvedTotalMinor']),
               ),
             if ((shopping['spentMinor'] as int? ?? 0) > 0)
-              _SettleRow(label: 'Spent', value: fmt(shopping['spentMinor'])),
+              _SettleRow(
+                label: 'Spent',
+                value: fmt(shopping['spentMinor']),
+              ),
           ],
           // Cash breakdown — server-computed at assignment.
           if (settlement != null) ...[
@@ -793,26 +807,24 @@ class _DeliveryProgressCard extends ConsumerWidget {
             if (settlement['deliveryFareMinor'] != null) ...[
               // The agreed fare already includes serviceFee + stopFees;
               // decompose so the rows sum exactly to totalDueMinor.
-              Builder(
-                builder: (context) {
-                  final fare = settlement['deliveryFareMinor'] as int;
-                  final fee = settlement['serviceFeeMinor'] as int? ?? 0;
-                  final stops = settlement['stopFeesMinor'] as int? ?? 0;
-                  final base = fare - fee - stops;
-                  return Column(
-                    children: [
-                      _SettleRow(
-                        label: 'Delivery fare',
-                        value: fmt(base >= 0 ? base : fare),
-                      ),
-                      if (base >= 0 && fee > 0)
-                        _SettleRow(label: 'Service fee', value: fmt(fee)),
-                      if (base >= 0 && stops > 0)
-                        _SettleRow(label: 'Extra stops', value: fmt(stops)),
-                    ],
-                  );
-                },
-              ),
+              Builder(builder: (context) {
+                final fare = settlement['deliveryFareMinor'] as int;
+                final fee = settlement['serviceFeeMinor'] as int? ?? 0;
+                final stops = settlement['stopFeesMinor'] as int? ?? 0;
+                final base = fare - fee - stops;
+                return Column(
+                  children: [
+                    _SettleRow(
+                      label: 'Delivery fare',
+                      value: fmt(base >= 0 ? base : fare),
+                    ),
+                    if (base >= 0 && fee > 0)
+                      _SettleRow(label: 'Service fee', value: fmt(fee)),
+                    if (base >= 0 && stops > 0)
+                      _SettleRow(label: 'Extra stops', value: fmt(stops)),
+                  ],
+                );
+              }),
             ],
             if ((settlement['shoppingTotalMinor'] as int? ?? 0) > 0)
               _SettleRow(
@@ -932,8 +944,7 @@ class _DisputeSheet extends StatefulWidget {
   final Future<void> Function({
     required String category,
     required String message,
-  })
-  onSubmit;
+  }) onSubmit;
 
   @override
   State<_DisputeSheet> createState() => _DisputeSheetState();

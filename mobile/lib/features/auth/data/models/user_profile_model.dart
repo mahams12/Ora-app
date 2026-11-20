@@ -15,7 +15,6 @@ class UserProfileModel {
     this.banned = false,
     this.profileComplete = false,
     this.avatarData,
-    this.vendorApplications = const {},
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
@@ -33,28 +32,7 @@ class UserProfileModel {
       // granting access to home.
       profileComplete: json['profileComplete'] as bool? ?? false,
       avatarData: json['avatarData'] as String?,
-      vendorApplications: _parseVendorApplications(
-        json['vendorApplications'],
-      ),
     );
-  }
-
-  /// Flattens `{type: {status, submittedAt, reviewedAt?}}` → `{type: status}`.
-  /// Only the status drives client gating; unknown types/statuses drop.
-  static Map<String, String> _parseVendorApplications(Object? raw) {
-    if (raw is! Map) return const {};
-    const statuses = {'pending', 'approved', 'rejected', 'suspended'};
-    final out = <String, String>{};
-    for (final entry in raw.entries) {
-      final key = entry.key;
-      final value = entry.value;
-      if (key is! String || value is! Map) continue;
-      final status = value['status'];
-      if (status is String && statuses.contains(status)) {
-        out[key] = status;
-      }
-    }
-    return out;
   }
 
   final String uid;
@@ -74,9 +52,6 @@ class UserProfileModel {
   /// Profile photo as a `data:image/...;base64,...` URL (server-capped).
   final String? avatarData;
 
-  /// Partner applications as type → status ('pending'|'approved'|…).
-  final Map<String, String> vendorApplications;
-
   UserProfile toDomain() => UserProfile(
         uid: uid,
         phoneNumber: phoneNumber,
@@ -88,6 +63,5 @@ class UserProfileModel {
         banned: banned,
         profileComplete: profileComplete,
         avatarData: avatarData,
-        vendorApplications: vendorApplications,
       );
 }

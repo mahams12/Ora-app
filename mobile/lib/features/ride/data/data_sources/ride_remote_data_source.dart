@@ -55,12 +55,15 @@ class RideRemoteDataSource {
     final raw = data['rides'];
     final rides = raw is List
         ? raw
-              .whereType<Map<Object?, Object?>>()
-              .map((e) => _parseRide(Map<String, dynamic>.from(e)))
-              .toList()
+            .whereType<Map<Object?, Object?>>()
+            .map((e) => _parseRide(Map<String, dynamic>.from(e)))
+            .toList()
         : const <Ride>[];
     final next = data['nextCursor'];
-    return RideListPage(rides: rides, nextCursor: next is String ? next : null);
+    return RideListPage(
+      rides: rides,
+      nextCursor: next is String ? next : null,
+    );
   }
 
   Future<OpenRideListPage> listOpenRides({
@@ -84,9 +87,9 @@ class RideRemoteDataSource {
     final raw = data['rides'];
     final rides = raw is List
         ? raw
-              .whereType<Map<Object?, Object?>>()
-              .map((e) => _parseOpenRide(Map<String, dynamic>.from(e)))
-              .toList()
+            .whereType<Map<Object?, Object?>>()
+            .map((e) => _parseOpenRide(Map<String, dynamic>.from(e)))
+            .toList()
         : const <OpenRide>[];
     final next = data['nextCursor'];
     return OpenRideListPage(
@@ -107,9 +110,9 @@ class RideRemoteDataSource {
     final raw = data['items'];
     final items = raw is List
         ? raw
-              .whereType<Map<Object?, Object?>>()
-              .map((e) => _parseDriverInvite(Map<String, dynamic>.from(e)))
-              .toList()
+            .whereType<Map<Object?, Object?>>()
+            .map((e) => _parseDriverInvite(Map<String, dynamic>.from(e)))
+            .toList()
         : const <DriverInvite>[];
     final serverNow = data['serverNowMs'];
     return DriverInvitePage(
@@ -385,12 +388,12 @@ class RideRemoteDataSource {
     required Map<String, Object?> body,
     required RequestContext context,
   }) => _stopAction(
-    rideId: rideId,
-    seq: seq,
-    action: 'arrive',
-    body: body,
-    context: context,
-  );
+        rideId: rideId,
+        seq: seq,
+        action: 'arrive',
+        body: body,
+        context: context,
+      );
 
   Future<Ride> confirmStop({
     required String rideId,
@@ -398,12 +401,12 @@ class RideRemoteDataSource {
     required Map<String, Object?> body,
     required RequestContext context,
   }) => _stopAction(
-    rideId: rideId,
-    seq: seq,
-    action: 'confirm',
-    body: body,
-    context: context,
-  );
+        rideId: rideId,
+        seq: seq,
+        action: 'confirm',
+        body: body,
+        context: context,
+      );
 
   Future<Ride> failStop({
     required String rideId,
@@ -411,12 +414,12 @@ class RideRemoteDataSource {
     required Map<String, Object?> body,
     required RequestContext context,
   }) => _stopAction(
-    rideId: rideId,
-    seq: seq,
-    action: 'fail',
-    body: body,
-    context: context,
-  );
+        rideId: rideId,
+        seq: seq,
+        action: 'fail',
+        body: body,
+        context: context,
+      );
 
   Future<Ride> submitStopQuote({
     required String rideId,
@@ -424,12 +427,12 @@ class RideRemoteDataSource {
     required Map<String, Object?> body,
     required RequestContext context,
   }) => _stopAction(
-    rideId: rideId,
-    seq: seq,
-    action: 'quote',
-    body: body,
-    context: context,
-  );
+        rideId: rideId,
+        seq: seq,
+        action: 'quote',
+        body: body,
+        context: context,
+      );
 
   Future<Ride> respondToStopQuote({
     required String rideId,
@@ -437,12 +440,12 @@ class RideRemoteDataSource {
     required Map<String, Object?> body,
     required RequestContext context,
   }) => _stopAction(
-    rideId: rideId,
-    seq: seq,
-    action: 'quote-response',
-    body: body,
-    context: context,
-  );
+        rideId: rideId,
+        seq: seq,
+        action: 'quote-response',
+        body: body,
+        context: context,
+      );
 
   Future<Ride> reportSettlement({
     required String rideId,
@@ -544,16 +547,15 @@ class RideRemoteDataSource {
       return RideStop(
         seq: (s['seq'] as num).toInt(),
         type: s['type'] as String,
-        location: _parseLatLng(
-          Map<Object?, Object?>.from(s['location'] as Map),
-        ),
+        location:
+            _parseLatLng(Map<Object?, Object?>.from(s['location'] as Map)),
         status: s['status'] as String? ?? 'PENDING',
         label: s['label'] as String?,
         instructions: s['instructions'] as String?,
         items: s['items'] is List
             ? (s['items'] as List)
-                  .map((i) => Map<String, Object?>.from(i as Map))
-                  .toList()
+                .map((i) => Map<String, Object?>.from(i as Map))
+                .toList()
             : null,
         shopBudgetMinor: s['shopBudgetMinor'] as int?,
         arrivedAt: s['arrivedAt'] as String?,
@@ -598,7 +600,6 @@ class RideRemoteDataSource {
       parcel: json['parcel'] is Map
           ? Map<String, Object?>.from(json['parcel'] as Map)
           : null,
-      courierVehicle: json['courierVehicle'] as String?,
       stops: _parseStops(json['stops']),
       shopping: _mapOrNull(json['shopping']),
     );
@@ -620,9 +621,8 @@ class RideRemoteDataSource {
       serviceType: json['serviceType'] as String,
       category: json['category'] as String,
       passengerCount: json['passengerCount'] as int,
-      inviteExpiresAt: rawExpiry is String
-          ? DateTime.tryParse(rawExpiry)
-          : null,
+      inviteExpiresAt:
+          rawExpiry is String ? DateTime.tryParse(rawExpiry) : null,
       respondedAt: json['respondedAt'] as String?,
       offerId: json['offerId'] as String?,
       distanceKm: json['distanceKm'] == null
@@ -631,7 +631,6 @@ class RideRemoteDataSource {
       parcel: json['parcel'] is Map
           ? Map<String, Object?>.from(json['parcel'] as Map)
           : null,
-      courierVehicle: json['courierVehicle'] as String?,
       stops: _parseStops(json['stops']),
       shopping: _mapOrNull(json['shopping']),
     );
@@ -676,7 +675,6 @@ class RideRemoteDataSource {
       parcel: json['parcel'] is Map
           ? Map<String, Object?>.from(json['parcel'] as Map)
           : null,
-      courierVehicle: json['courierVehicle'] as String?,
       otpCodes: json['otpCodes'] is Map
           ? Map<String, Object?>.from(json['otpCodes'] as Map)
           : null,

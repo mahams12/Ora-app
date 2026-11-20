@@ -1,0 +1,67 @@
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 5.0 MB/s (11632 bytes in 0.002s)
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 6.8 MB/s (11632 bytes in 0.002s)
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 1.5 MB/s (7615 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.9 MB/s (11260 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.1 MB/s (11260 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.5 MB/s (9604 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9604 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.4 MB/s (10038 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.9 MB/s (9606 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.0 MB/s (7492 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.2 MB/s (6486 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.6 MB/s (7645 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 1.9 MB/s (7645 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.7 MB/s (10074 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.0 MB/s (10074 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.7 MB/s (10074 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.4 MB/s (9636 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.9 MB/s (9636 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9636 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.6 MB/s (9636 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.0 MB/s (9636 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.9 MB/s (9636 bytes in 0.003s)
+{
+  "gates": {
+    "auth_emulator": "PASS",
+    "auth_samsung": "PASS",
+    "passenger_pricing": "PASS",
+    "ride_creation": "FAIL"
+  },
+  "started": "2026-09-29T09:33:54.410549+00:00",
+  "driver_ui_evidence": "fin_d_auth_0.xml",
+  "auth_me": {
+    "skipped": true,
+    "reason": "custom_token_failed"
+  },
+  "error": "ride not created",
+  "finished": "2026-09-29T09:36:07.529944+00:00",
+  "verdict": "NOT GREEN"
+}

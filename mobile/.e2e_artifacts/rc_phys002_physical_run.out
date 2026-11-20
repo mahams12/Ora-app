@@ -1,0 +1,64 @@
+=== PASSENGER LOGIN ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=58ms (0ms mobile, 0ms wifi, 58ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (5283 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (11597 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (8184 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (8190 bytes in 0.003s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (5998 bytes in 0.003s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (6003 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5282 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (11596 bytes in 0.004s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.1 MB/s (11596 bytes in 0.003s)
+/sdcard/rc_phys002_01_home.png: 1 file pulled, 0 skipped. 19.7 MB/s (1393867 bytes in 0.067s)
+=== OPEN RIDE REQUEST ===
+  TAP 'Where are you headed?\nSet pickup & destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.4 MB/s (9544 bytes in 0.003s)
+/sdcard/rc_phys002_02_request.png: 1 file pulled, 0 skipped. 19.9 MB/s (326611 bytes in 0.016s)
+=== ATTEMPT 1 Use current location ===
+  TAP 'Use current location'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (12182 bytes in 0.004s)
+/sdcard/rc_phys002_03_attempt1.png: 1 file pulled, 0 skipped. 19.5 MB/s (397985 bytes in 0.019s)
+  attempt1 {'hasConfirmPickup': True, 'hasFindingLocation': False, 'hasLocationSelected': False, 'placeNameIsCurrentLocation': False, 'badRawCoords': False, 'resolvedLabel': 'Pickup\nIzmir Extension, Lahore\nCurrent location\nDestination', 'candidatesSample': ['Google Map', 'Back', 'Pickup set · destination needed', 'Where to?', 'Pickup\nIzmir Extension, Lahore\nCurrent location\nDestination', 'Confirm pickup\nConfirm pickup', 'Pickup selected · confirm needed', 'Destination needed'], 'success': False, 'tapped': True}
+  TAP 'Confirm pickup\nConfirm pickup'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11777 bytes in 0.004s)
+/sdcard/rc_phys002_04_attempt1_confirmed.png: 1 file pulled, 0 skipped. 15.1 MB/s (332813 bytes in 0.021s)
+=== ATTEMPT 2 reselect current location ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (11777 bytes in 0.005s)
+  TAP 'Use current location'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (12182 bytes in 0.006s)
+/sdcard/rc_phys002_05_attempt2.png: 1 file pulled, 0 skipped. 12.2 MB/s (397904 bytes in 0.031s)
+  attempt2 {'hasConfirmPickup': True, 'hasFindingLocation': False, 'hasLocationSelected': False, 'placeNameIsCurrentLocation': False, 'badRawCoords': False, 'resolvedLabel': 'Pickup\nIzmir Extension, Lahore\nCurrent location\nDestination', 'candidatesSample': ['Google Map', 'Back', 'Pickup set · destination needed', 'Where to?', 'Pickup\nIzmir Extension, Lahore\nCurrent location\nDestination', 'Confirm pickup\nConfirm pickup', 'Pickup selected · confirm needed', 'Destination needed'], 'success': False, 'tapped': True}
+=== MANUAL PLACES REGRESSION ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (12182 bytes in 0.005s)
+  MISS ('Search destination',)
+  MISS ('Destination',)
+/sdcard/rc_phys002_06_manual_places_miss.png: 1 file pulled, 0 skipped. 10.9 MB/s (397924 bytes in 0.035s)
+WROTE /Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/RC_PHYS_002_REVERSE_GEOCODE_PHYSICAL_VERIFICATION_REPORT.json
+VERDICT RC-PHYS-002 YELLOW — IMPLEMENTED BUT PHYSICAL PROOF INCOMPLETE
+  attempt1: success=False label='Pickup\nIzmir Extension, Lahore\nCurrent location\nDestination'
+  attempt2: success=False label='Pickup\nIzmir Extension, Lahore\nCurrent location\nDestination'

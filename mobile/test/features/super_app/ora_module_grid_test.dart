@@ -54,8 +54,6 @@ void main() {
     ];
 
     for (final (title, path) in destinations) {
-      await tester.ensureVisible(find.text(title));
-      await tester.pumpAndSettle();
       await tester.tap(find.text(title));
       await tester.pumpAndSettle();
       expect(find.text('Route $path'), findsOneWidget);

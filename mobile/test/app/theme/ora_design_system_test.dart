@@ -18,9 +18,9 @@ void main() {
       expect(OraColors.background, const Color(0xFFF2E3DD));
       expect(OraColors.border, const Color(0xFFE9C2AD));
       expect(OraColors.textPrimary, const Color(0xFF2A211D));
-      expect(OraColors.textSecondary, const Color(0xFF8A6A56));
+      expect(OraColors.textSecondary, const Color(0xFFA67D68));
       expect(OraColors.surface, const Color(0xFFFFFFFF));
-      expect(OraColors.surfaceElevated, const Color(0xFFFBEAD8));
+      expect(OraColors.surfaceElevated, const Color(0xFFFFF7F3));
       expect(OraColors.danger, isNot(OraColors.primary));
     });
 
@@ -47,7 +47,7 @@ void main() {
       final theme = material.theme!;
       expect(theme.brightness, Brightness.light);
       expect(theme.textTheme.bodyMedium?.fontFamily, OraTypography.bodyFamily);
-      expect(theme.scaffoldBackgroundColor, Colors.transparent);
+      expect(theme.scaffoldBackgroundColor, OraColors.background);
       expect(theme.colorScheme.primary, OraColors.primary);
       expect(theme.colorScheme.secondary, OraColors.secondary);
       expect(material.darkTheme!.brightness, Brightness.light);

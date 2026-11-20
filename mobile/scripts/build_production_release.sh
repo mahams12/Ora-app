@@ -57,7 +57,6 @@ COMMON=(
   --release
   --dart-define=ORA_ENV=production
   --dart-define=ORA_APP_CHECK=true
-  --dart-define=ORA_ADAPTIVE_PRESENCE=true
   --dart-define=ORA_API_BASE_URL="$ORA_API_BASE_URL"
   --dart-define=ORA_GOOGLE_PLACES_API_KEY="$ORA_GOOGLE_PLACES_API_KEY"
 )

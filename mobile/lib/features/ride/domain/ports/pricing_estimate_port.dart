@@ -89,23 +89,12 @@ class PricingEstimate {
 
     return PricingEstimate(
       pricingSnapshotId: snapshotId.trim(),
-      recommendedFareMinor: asInt(
-        json['recommendedFareMinor'],
-        'recommendedFareMinor',
-      ),
-      offerBoundMinMinor: asInt(
-        json['offerBoundMinMinor'],
-        'offerBoundMinMinor',
-      ),
-      offerBoundMaxMinor: asInt(
-        json['offerBoundMaxMinor'],
-        'offerBoundMaxMinor',
-      ),
+      recommendedFareMinor: asInt(json['recommendedFareMinor'], 'recommendedFareMinor'),
+      offerBoundMinMinor: asInt(json['offerBoundMinMinor'], 'offerBoundMinMinor'),
+      offerBoundMaxMinor: asInt(json['offerBoundMaxMinor'], 'offerBoundMaxMinor'),
       currency: asString(json['currency'], 'currency'),
-      pricingRulesVersion: asString(
-        json['pricingRulesVersion'],
-        'pricingRulesVersion',
-      ),
+      pricingRulesVersion:
+          asString(json['pricingRulesVersion'], 'pricingRulesVersion'),
       computedAt: asString(json['computedAt'], 'computedAt'),
       expiresAt: asString(json['expiresAt'], 'expiresAt'),
       distanceKm: asDouble(json['distanceKm'], 'distanceKm'),
@@ -116,8 +105,8 @@ class PricingEstimate {
       serviceFeeMinor: json['serviceFeeMinor'] as int?,
       legs: json['legs'] is List
           ? (json['legs'] as List)
-                .map((e) => Map<String, Object?>.from(e as Map))
-                .toList()
+              .map((e) => Map<String, Object?>.from(e as Map))
+              .toList()
           : null,
     );
   }
@@ -180,24 +169,24 @@ class PricingEstimateRequest {
   final List<Map<String, double>>? stops;
 
   Map<String, Object?> toJson() => <String, Object?>{
-    'pickup': <String, Object?>{
-      'lat': pickupLat,
-      'lng': pickupLng,
-      if (pickupAddress != null) 'address': pickupAddress,
-    },
-    'destination': <String, Object?>{
-      'lat': destinationLat,
-      'lng': destinationLng,
-      if (destinationAddress != null) 'address': destinationAddress,
-    },
-    'category': category,
-    'city': city,
-    'serviceType': serviceType,
-    if (stops != null)
-      'stops': stops!
-          .map((s) => <String, Object?>{'lat': s['lat'], 'lng': s['lng']})
-          .toList(),
-  };
+        'pickup': <String, Object?>{
+          'lat': pickupLat,
+          'lng': pickupLng,
+          if (pickupAddress != null) 'address': pickupAddress,
+        },
+        'destination': <String, Object?>{
+          'lat': destinationLat,
+          'lng': destinationLng,
+          if (destinationAddress != null) 'address': destinationAddress,
+        },
+        'category': category,
+        'city': city,
+        'serviceType': serviceType,
+        if (stops != null)
+          'stops': stops!
+              .map((s) => <String, Object?>{'lat': s['lat'], 'lng': s['lng']})
+              .toList(),
+      };
 }
 
 abstract class PricingEstimatePort {

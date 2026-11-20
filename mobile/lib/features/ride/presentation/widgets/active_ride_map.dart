@@ -1,19 +1,13 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:ui' as ui;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
-import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_spacing.dart';
 import '../../../../app/theme/ora_typography.dart';
 import '../../../maps/preview/map_preview_config.dart';
-import '../../../maps/preview/map_preview_style_loader.dart';
 import '../../domain/entities/ride.dart';
 import '../../domain/location/trip_location_freshness.dart';
 import '../location/trip_location_session.dart';
@@ -21,9 +15,7 @@ import '../utils/active_ride_map_camera_policy.dart';
 import '../utils/active_ride_map_progression_policy.dart';
 import '../utils/driver_marker_interpolator.dart';
 
-/// Active-ride MapLibre map — pickup/destination from HTTP [Ride], driver
-/// from RTDB. Rendered through the same Ora dark style + tile provider
-/// (MapTiler → OpenFreeMap $0 fallback) as [RideMapPreview].
+/// Active-ride Google Map — pickup/destination from HTTP [Ride], driver from RTDB.
 ///
 /// MAP-2B: camera reframes only on semantic [ActiveRideMapCameraPolicy.fitIdentity]
 /// changes — never on every RTDB tick. Soft-fails. Never gates cancel/close.
@@ -54,11 +46,11 @@ class ActiveRideMap extends StatefulWidget {
   /// Slightly taller than MAP-2A 168px for readable phase framing on SM-A325F.
   final double height;
 
-  /// Test hook — when false, never mounts [MapLibreMap].
+  /// Test hook — when false, never mounts [GoogleMap].
   final bool enableMaps;
 
   /// Test / instrumentation hook. When set, invoked instead of platform
-  /// [MapLibreMapController.animateCamera]. Also enables camera scheduling
+  /// [GoogleMapController.animateCamera]. Also enables camera scheduling
   /// without a platform controller (for widget tests with [enableMaps] false).
   final Future<void> Function(CameraUpdate update)? onAnimateCamera;
 
@@ -73,8 +65,8 @@ class ActiveRideMap extends StatefulWidget {
   /// Test / instrumentation hook — fired when MAP-3 ownership latches change.
   final ValueChanged<bool>? onUserOwnsCameraChanged;
 
-  /// Test hook — bumping this value simulates a user camera move without
-  /// mounting a platform [MapLibreMap] (`enableMaps: false`).
+  /// Test hook — bumping this value simulates a user [onCameraMoveStarted]
+  /// without mounting a platform [GoogleMap] (`enableMaps: false`).
   final int userCameraMoveEpoch;
 
   @override
@@ -83,11 +75,7 @@ class ActiveRideMap extends StatefulWidget {
 
 class _ActiveRideMapState extends State<ActiveRideMap>
     with SingleTickerProviderStateMixin {
-  MapLibreMapController? _controller;
-
-  String? _styleJson;
-  String? _styleError;
-  bool _styleReady = false;
+  GoogleMapController? _controller;
 
   /// Last successfully applied camera identity (guards against rebuild thrash).
   String? _fittedIdentity;
@@ -104,26 +92,9 @@ class _ActiveRideMapState extends State<ActiveRideMap>
   /// MAP-3: passenger owns framing after a genuine user camera gesture.
   bool _userOwnsCamera = false;
 
-  /// MAP-3: true while our own [animateCamera] / test hook animate is in
-  /// flight (cleared on [onCameraIdle] so trailing platform camera events
-  /// cannot latch [_userOwnsCamera]).
+  /// MAP-3: true while our own [animateCamera] / test hook animate is in flight.
+  /// Prevents programmatic moves from latching [_userOwnsCamera].
   bool _programmaticCameraMove = false;
-
-  /// Overlay sync coalescing — interpolator ticks at frame rate; pushing a
-  /// GeoJSON diff every tick would spam the platform channel. Cap source
-  /// updates at ~30fps, always flushing the final rendered position.
-  bool _overlaySyncQueued = false;
-  int _lastOverlayPushMs = 0;
-  bool _overlayDirty = false;
-
-  static const String _sourceId = 'ora_active_ride';
-  static const String _guideLayerId = 'ora_active_ride_guides';
-  static const String _poiLayerId = 'ora_active_ride_poi';
-  static const String _driverLayerId = 'ora_active_ride_driver';
-  static const String _pickupImageId = 'ora_active_pickup';
-  static const String _destImageId = 'ora_active_dest';
-  static const String _driverImageId = 'ora_active_driver';
-  static const int _minOverlayPushIntervalMs = 33;
 
   LatLng? get _pickup => _toLatLng(widget.ride.pickup);
   LatLng? get _destination => _toLatLng(widget.ride.destination);
@@ -149,15 +120,11 @@ class _ActiveRideMapState extends State<ActiveRideMap>
   );
 
   bool get _cameraReady =>
-      (_controller != null && _styleReady) ||
-      widget.onAnimateCamera != null;
+      _controller != null || widget.onAnimateCamera != null;
 
   @override
   void initState() {
     super.initState();
-    if (widget.enableMaps) {
-      _prepareStyle();
-    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _feedLocationFix();
@@ -173,10 +140,6 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     // MAP-3 test hook — epoch bump == user camera gesture (not programmatic).
     if (widget.userCameraMoveEpoch != oldWidget.userCameraMoveEpoch) {
       _onUserCameraMoveStarted();
-    }
-
-    if (oldWidget.enableMaps != widget.enableMaps && widget.enableMaps) {
-      _prepareStyle();
     }
 
     // Ride-state transition — restart interpolation so the next fix snaps.
@@ -208,343 +171,6 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     super.dispose();
   }
 
-  // ── Style ──────────────────────────────────────────────────────────────
-
-  Future<void> _prepareStyle() async {
-    final result = await MapPreviewStyleLoader.load();
-    if (!mounted) return;
-    setState(() {
-      if (result.isOk) {
-        _styleJson = result.styleJson;
-        _styleError = null;
-      } else {
-        _styleJson = null;
-        _styleError = result.errorMessage;
-      }
-    });
-  }
-
-  Future<void> _onMapCreated(MapLibreMapController controller) async {
-    _controller = controller;
-    try {
-      await controller.setCustomHeaders(
-        {HttpHeaders.userAgentHeader: MapPreviewConfig.mapTilerUserAgent},
-        const [r'https://api\.maptiler\.com/.*'],
-      );
-    } catch (_) {
-      // Soft — global setHttpHeaders from style loader still applies.
-    }
-  }
-
-  /// Registers marker icons, the GeoJSON source, and guide/point layers.
-  /// All overlays update through a single [setGeoJsonSource] diff — no
-  /// annotation churn during interpolation.
-  Future<void> _onStyleLoaded() async {
-    _styleReady = true;
-    final c = _controller;
-    if (c == null) return;
-    try {
-      await _addImage(c, _pickupImageId, MapPreviewConfig.pickupMarkerAsset);
-      await _addImage(c, _destImageId, MapPreviewConfig.destinationMarkerAsset);
-      final driverBytes = await _buildDriverPuckBytes();
-      if (driverBytes != null) {
-        try {
-          await c.addImage(_driverImageId, driverBytes);
-        } catch (_) {}
-      }
-
-      await c.addGeoJsonSource(_sourceId, _buildGeoJson());
-
-      await c.addLineLayer(
-        _sourceId,
-        _guideLayerId,
-        const LineLayerProperties(
-          lineColor: '#8B93AD',
-          lineWidth: 3,
-          lineOpacity: 0.9,
-          lineDasharray: [2.5, 1.8],
-          lineCap: 'round',
-        ),
-        filter: [
-          '==',
-          ['geometry-type'],
-          'LineString',
-        ],
-      );
-
-      await c.addSymbolLayer(
-        _sourceId,
-        _poiLayerId,
-        const SymbolLayerProperties(
-          iconImage: ['get', 'icon'],
-          iconSize: 0.9,
-          iconAnchor: 'bottom',
-          iconAllowOverlap: true,
-          iconIgnorePlacement: true,
-          textField: ['get', 'label'],
-          textSize: 11,
-          textFont: ['Noto Sans Regular'],
-          textAnchor: 'top',
-          textOffset: [0, 0.2],
-          textColor: '#B9C2DD',
-          textHaloColor: '#12182B',
-          textHaloWidth: 1.5,
-          textAllowOverlap: true,
-        ),
-        filter: [
-          'in',
-          ['get', 'kind'],
-          ['literal', ['pickup', 'destination']],
-        ],
-      );
-
-      await c.addSymbolLayer(
-        _sourceId,
-        _driverLayerId,
-        const SymbolLayerProperties(
-          iconImage: _driverImageId,
-          iconSize: 0.55,
-          iconAnchor: 'center',
-          iconRotate: ['get', 'rot'],
-          iconRotationAlignment: 'map',
-          iconOpacity: ['get', 'opa'],
-          iconAllowOverlap: true,
-          iconIgnorePlacement: true,
-          textField: 'Driver',
-          textSize: 11,
-          textFont: ['Noto Sans Regular'],
-          textAnchor: 'top',
-          textOffset: [0, 1.4],
-          textColor: '#9FE8C8',
-          textHaloColor: '#12182B',
-          textHaloWidth: 1.5,
-          textOpacity: ['get', 'opa'],
-        ),
-        filter: [
-          '==',
-          ['get', 'kind'],
-          'driver',
-        ],
-      );
-
-      _scheduleCameraFit();
-      _scheduleOverlaySync();
-    } catch (error, stack) {
-      if (kDebugMode) {
-        debugPrint('ActiveRideMap overlay setup soft-failed: $error');
-        debugPrint('$stack');
-      }
-    }
-  }
-
-  Future<void> _addImage(
-    MapLibreMapController c,
-    String name,
-    String asset,
-  ) async {
-    try {
-      final data = await rootBundle.load(asset);
-      await c.addImage(name, data.buffer.asUint8List());
-    } catch (_) {
-      // Image may already exist after style reload — ignore.
-    }
-  }
-
-  /// Driver puck — white ring + green disc + north-facing heading wedge.
-  /// Rendered once per style load; rotated by icon-rotate (never invents
-  /// motion — rotation comes from the authoritative fix's heading).
-  static Future<Uint8List?> _buildDriverPuckBytes() async {
-    try {
-      const size = 64.0;
-      final recorder = ui.PictureRecorder();
-      final canvas = Canvas(recorder);
-      const center = Offset(size / 2, size / 2);
-
-      canvas.drawCircle(
-        center,
-        22,
-        Paint()
-          ..color = Colors.white
-          ..style = PaintingStyle.fill,
-      );
-      canvas.drawCircle(
-        center,
-        18,
-        Paint()
-          ..color = const Color(0xFF2ECC71)
-          ..style = PaintingStyle.fill,
-      );
-      final wedge = Path()
-        ..moveTo(center.dx, center.dy - 13)
-        ..lineTo(center.dx - 6.5, center.dy + 2)
-        ..lineTo(center.dx + 6.5, center.dy + 2)
-        ..close();
-      canvas.drawPath(wedge, Paint()..color = Colors.white);
-      canvas.drawCircle(
-        center,
-        4,
-        Paint()..color = Colors.white,
-      );
-
-      final image = await recorder.endRecording().toImage(
-        size.round(),
-        size.round(),
-      );
-      final data = await image.toByteData(format: ui.ImageByteFormat.png);
-      return data?.buffer.asUint8List();
-    } catch (_) {
-      return null;
-    }
-  }
-
-  // ── Overlays ───────────────────────────────────────────────────────────
-
-  List<ActiveRideMapGuideSegment> _guideSegments() {
-    return ActiveRideMapProgressionPolicy.segments(
-      rideState: widget.ride.state,
-      pickup: _pickup,
-      destination: _destination,
-      driver: _displayDriver,
-    );
-  }
-
-  Map<String, Object?> _buildGeoJson() {
-    final features = <Map<String, Object?>>[];
-
-    final pickup = _pickup;
-    if (pickup != null) {
-      features.add(
-        _pointFeature(
-          kind: 'pickup',
-          icon: _pickupImageId,
-          label: 'Pickup',
-          point: pickup,
-        ),
-      );
-    }
-    final destination = _destination;
-    if (destination != null) {
-      features.add(
-        _pointFeature(
-          kind: 'destination',
-          icon: _destImageId,
-          label: 'Destination',
-          point: destination,
-        ),
-      );
-    }
-
-    final driver = _displayDriver;
-    final latest = widget.locationSession.latest;
-    if (driver != null && latest != null) {
-      final alpha = switch (widget.locationSession.freshness) {
-        TripLocationFreshness.fresh => 1.0,
-        TripLocationFreshness.stale => 0.75,
-        TripLocationFreshness.degraded => 0.55,
-        TripLocationFreshness.expired || TripLocationFreshness.missing => 0.0,
-      };
-      if (alpha > 0) {
-        features.add(
-          _pointFeature(
-            kind: 'driver',
-            icon: _driverImageId,
-            label: 'Driver',
-            point: driver,
-            opacity: alpha,
-            rotation: latest.heading.isFinite ? latest.heading : 0,
-          ),
-        );
-      }
-    }
-
-    for (final segment in _guideSegments()) {
-      features.add(<String, Object?>{
-        'type': 'Feature',
-        'properties': <String, Object?>{'kind': segment.kind.name},
-        'geometry': <String, Object?>{
-          'type': 'LineString',
-          'coordinates': [
-            [segment.start.longitude, segment.start.latitude],
-            [segment.end.longitude, segment.end.latitude],
-          ],
-        },
-      });
-    }
-
-    return <String, Object?>{
-      'type': 'FeatureCollection',
-      'features': features,
-    };
-  }
-
-  static Map<String, Object?> _pointFeature({
-    required String kind,
-    required String icon,
-    required String label,
-    required LatLng point,
-    double opacity = 1,
-    double rotation = 0,
-  }) {
-    return <String, Object?>{
-      'type': 'Feature',
-      'properties': <String, Object?>{
-        'kind': kind,
-        'icon': icon,
-        'label': label,
-        'opa': opacity,
-        'rot': rotation,
-      },
-      'geometry': <String, Object?>{
-        'type': 'Point',
-        'coordinates': [point.longitude, point.latitude],
-      },
-    };
-  }
-
-  /// Coalesced overlay push — at most ~30fps, always flushing final state.
-  void _scheduleOverlaySync() {
-    if (!_styleReady || _controller == null) return;
-    if (_overlaySyncQueued) {
-      _overlayDirty = true;
-      return;
-    }
-    _overlaySyncQueued = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _overlaySyncQueued = false;
-      if (!mounted) return;
-      _pushOverlays();
-    });
-  }
-
-  Future<void> _pushOverlays() async {
-    final now = DateTime.now().millisecondsSinceEpoch;
-    if (now - _lastOverlayPushMs < _minOverlayPushIntervalMs) {
-      if (_overlayDirty) return;
-      _overlayDirty = true;
-      Future<void>.delayed(
-        const Duration(milliseconds: _minOverlayPushIntervalMs),
-        () {
-          if (mounted && _overlayDirty) {
-            _overlayDirty = false;
-            _pushOverlays();
-          }
-        },
-      );
-      return;
-    }
-    _overlayDirty = false;
-    _lastOverlayPushMs = now;
-    final c = _controller;
-    if (c == null || !_styleReady || !mounted) return;
-    try {
-      await c.setGeoJsonSource(_sourceId, _buildGeoJson());
-    } catch (_) {
-      // Soft — overlay stays at last good state.
-    }
-  }
-
-  // ── MAP-RT marker smoothing ────────────────────────────────────────────
-
   /// MAP-RT: feed the newest authoritative fix into the interpolator.
   /// Ineligible input (no fix, invalid coords, marker hidden by freshness)
   /// resets smoothing so the marker can't coast on stale data.
@@ -564,7 +190,6 @@ class _ActiveRideMapState extends State<ActiveRideMap>
         _renderedDriver = null;
         _stopMarkerTicker();
         setState(() {});
-        _scheduleOverlaySync();
       }
       return;
     }
@@ -579,7 +204,6 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     if (rendered != null && rendered != _renderedDriver) {
       _renderedDriver = rendered;
       setState(() {});
-      _scheduleOverlaySync();
     }
     if (_interpolator.isAnimating) {
       _ensureMarkerTicker();
@@ -608,7 +232,6 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     if (rendered != null && rendered != _renderedDriver) {
       _renderedDriver = rendered;
       setState(() {});
-      _scheduleOverlaySync();
     }
     if (!_interpolator.isAnimating) {
       _stopMarkerTicker();
@@ -623,11 +246,13 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     return _driverLatLng;
   }
 
-  // ── MAP-3 camera ownership ─────────────────────────────────────────────
+  void _onMapCreated(GoogleMapController controller) {
+    _controller = controller;
+    _scheduleCameraFit();
+  }
 
-  /// MAP-3 — genuine user gesture. MapLibre has no camera-move-started
-  /// callback, so this latches on the first [onCameraMove] outside a
-  /// programmatic animate window.
+  /// MAP-3 — genuine user gesture. Programmatic animate must not call this
+  /// without the [_programmaticCameraMove] guard (see [_performAnimate]).
   void _onUserCameraMoveStarted() {
     if (_programmaticCameraMove) return;
     if (_userOwnsCamera) return;
@@ -641,15 +266,6 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     widget.onUserOwnsCameraChanged?.call(false);
   }
 
-  void _onCameraMove(CameraPosition _) {
-    _onUserCameraMoveStarted();
-  }
-
-  void _onCameraIdle() {
-    // Camera settled — safe to accept user gestures again.
-    _programmaticCameraMove = false;
-  }
-
   void _onRecenter() {
     // Recenter: clear ownership, reset smoothing (next render snaps to the
     // authoritative fix), then one MAP-2B policy fit.
@@ -661,14 +277,12 @@ class _ActiveRideMapState extends State<ActiveRideMap>
     _scheduleCameraFit();
   }
 
-  // ── MAP-2B identity-driven camera fit ──────────────────────────────────
-
   void _scheduleCameraFit() {
     if (!_cameraReady) return;
 
     // MAP-3: while the user owns the camera, suppress automatic animateCamera.
-    // Markers + MAP-2C guides still update via overlay sync. Recenter clears
-    // ownership before calling this method.
+    // Markers + MAP-2C guides still update via rebuild. Recenter clears ownership
+    // before calling this method.
     if (_userOwnsCamera) {
       _pendingIdentity = null;
       return;
@@ -727,8 +341,7 @@ class _ActiveRideMapState extends State<ActiveRideMap>
   }
 
   Future<void> _performAnimate(CameraUpdate update) async {
-    // Guard: platform onCameraMove fires for our own animateCamera — keep the
-    // latch suppressed until the camera goes idle.
+    // Guard: platform may emit onCameraMoveStarted for our own animateCamera.
     _programmaticCameraMove = true;
     try {
       final hook = widget.onAnimateCamera;
@@ -740,16 +353,128 @@ class _ActiveRideMapState extends State<ActiveRideMap>
       if (controller == null) return;
       await controller.animateCamera(update);
     } finally {
-      if (widget.onAnimateCamera != null) {
-        // No platform stream in test-hook mode — clear immediately.
-        _programmaticCameraMove = false;
-      }
-      // Platform mode: cleared by _onCameraIdle so trailing move events
-      // emitted during the animation can't latch user ownership.
+      _programmaticCameraMove = false;
     }
   }
 
-  // ── Build ──────────────────────────────────────────────────────────────
+  Set<Marker> _markers() {
+    final markers = <Marker>{};
+    final pickup = _pickup;
+    final destination = _destination;
+    if (pickup != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('pickup'),
+          position: pickup,
+          infoWindow: const InfoWindow(title: 'Pickup'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueAzure,
+          ),
+        ),
+      );
+    }
+    if (destination != null) {
+      markers.add(
+        Marker(
+          markerId: const MarkerId('destination'),
+          position: destination,
+          infoWindow: const InfoWindow(title: 'Destination'),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueOrange,
+          ),
+        ),
+      );
+    }
+
+    final driver = _displayDriver;
+    final latest = widget.locationSession.latest;
+    if (driver != null && latest != null) {
+      final band = widget.locationSession.freshness;
+      final alpha = switch (band) {
+        TripLocationFreshness.fresh => 1.0,
+        TripLocationFreshness.stale => 0.75,
+        TripLocationFreshness.degraded => 0.55,
+        TripLocationFreshness.expired || TripLocationFreshness.missing => 0.0,
+      };
+      if (alpha > 0) {
+        markers.add(
+          Marker(
+            markerId: const MarkerId('driver'),
+            position: driver,
+            infoWindow: const InfoWindow(title: 'Driver'),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueGreen,
+            ),
+            alpha: alpha,
+            // Heading is display metadata only — never invent motion.
+            rotation: latest.heading.isFinite ? latest.heading : 0,
+            flat: true,
+          ),
+        );
+      }
+    }
+    return markers;
+  }
+
+  List<ActiveRideMapGuideSegment> _guideSegments() {
+    return ActiveRideMapProgressionPolicy.segments(
+      rideState: widget.ride.state,
+      pickup: _pickup,
+      destination: _destination,
+      driver: _displayDriver,
+    );
+  }
+
+  /// Presentation-only polyline set — stroke constants live here (not in policy)
+  /// so a future Ora visual layer can restyle without touching progression logic.
+  Set<Polyline> _polylines(List<ActiveRideMapGuideSegment> segments) {
+    if (segments.isEmpty) return const <Polyline>{};
+    final out = <Polyline>{};
+    for (final segment in segments) {
+      out.add(
+        Polyline(
+          polylineId: PolylineId(segment.kind.name),
+          points: <LatLng>[segment.start, segment.end],
+          color: _guideStrokeColor,
+          width: _guideStrokeWidth,
+          patterns: _guidePatterns,
+          geodesic: false,
+          consumeTapEvents: false,
+        ),
+      );
+    }
+    return out;
+  }
+
+  // Presentation constants — replaceable by Ora visual layer later.
+  static const Color _guideStrokeColor = OraColors.textMuted;
+  static const int _guideStrokeWidth = 3;
+  static final List<PatternItem> _guidePatterns = <PatternItem>[
+    PatternItem.dash(18),
+    PatternItem.gap(12),
+  ];
+
+  /// Ora dark base style — matches the MapLibre preview theme so the live
+  /// map and the RideMapPreview cards share one visual language.
+  static const String _darkMapStyle = '''[
+    {"elementType":"geometry","stylers":[{"color":"#12182b"}]},
+    {"elementType":"labels.text.stroke","stylers":[{"color":"#12182b"}]},
+    {"elementType":"labels.text.fill","stylers":[{"color":"#8b93ad"}]},
+    {"featureType":"administrative.locality","elementType":"labels.text.fill","stylers":[{"color":"#b9c2dd"}]},
+    {"featureType":"poi","elementType":"labels.text.fill","stylers":[{"color":"#7d88a5"}]},
+    {"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#1b2340"}]},
+    {"featureType":"poi.park","elementType":"labels.text.fill","stylers":[{"color":"#6f7a99"}]},
+    {"featureType":"road","elementType":"geometry","stylers":[{"color":"#2a3352"}]},
+    {"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#1e2540"}]},
+    {"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#98a3c2"}]},
+    {"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#3d4a6e"}]},
+    {"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#1e2540"}]},
+    {"featureType":"road.highway","elementType":"labels.text.fill","stylers":[{"color":"#d0d8ec"}]},
+    {"featureType":"transit","elementType":"geometry","stylers":[{"color":"#1e2540"}]},
+    {"featureType":"transit.station","elementType":"labels.text.fill","stylers":[{"color":"#7d88a5"}]},
+    {"featureType":"water","elementType":"geometry","stylers":[{"color":"#1b2340"}]},
+    {"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#4a5578"}]}
+  ]''';
 
   CameraPosition _initialCamera() {
     final pickup = _pickup;
@@ -789,12 +514,7 @@ class _ActiveRideMapState extends State<ActiveRideMap>
   @override
   Widget build(BuildContext context) {
     final hasAnchors = _pickup != null || _destination != null;
-    final showMap =
-        widget.enableMaps &&
-        hasAnchors &&
-        _styleJson != null &&
-        _styleJson!.isNotEmpty;
-    final styleFailed = widget.enableMaps && _styleError != null;
+    final showMap = widget.enableMaps && hasAnchors;
     final status = widget.locationSession.statusMessage;
     final guides = _guideSegments();
     // Test hook only — never drives camera or side effects in production.
@@ -815,30 +535,25 @@ class _ActiveRideMapState extends State<ActiveRideMap>
             fit: StackFit.expand,
             children: [
               if (showMap)
-                MapLibreMap(
-                  styleString: _styleJson!,
+                GoogleMap(
                   initialCameraPosition: _initialCamera(),
-                  onMapCreated: _onMapCreated,
-                  onStyleLoadedCallback: _onStyleLoaded,
-                  // MAP-3: latch ownership on genuine user gestures only.
-                  // Programmatic moves are filtered via [_programmaticCameraMove].
-                  onCameraMove: _onCameraMove,
-                  onCameraIdle: _onCameraIdle,
-                  trackCameraPosition: true,
+                  markers: _markers(),
+                  polylines: _polylines(guides),
+                  style: _darkMapStyle,
+                  buildingsEnabled: true,
+                  myLocationButtonEnabled: false,
+                  myLocationEnabled: false,
+                  zoomControlsEnabled: false,
                   compassEnabled: false,
-                  rotateGesturesEnabled: true,
-                  scrollGesturesEnabled: true,
-                  zoomGesturesEnabled: true,
-                  tiltGesturesEnabled: true,
-                  logoEnabled: false,
-                  attributionButtonPosition:
-                      AttributionButtonPosition.bottomLeft,
-                  foregroundLoadColor: OraColors.navy,
+                  mapToolbarEnabled: false,
+                  liteModeEnabled: false,
+                  onMapCreated: _onMapCreated,
+                  // MAP-3: latch ownership on genuine user gestures only.
+                  // Programmatic animateCamera is filtered via [_programmaticCameraMove].
+                  onCameraMoveStarted: _onUserCameraMoveStarted,
                 )
-              else if (!hasAnchors || styleFailed || widget.enableMaps == false)
-                const _ActiveRideMapShell()
               else
-                const ColoredBox(color: OraColors.navyElevated),
+                const _ActiveRideMapShell(),
               Positioned(
                 left: OraSpacing.sm,
                 right: OraSpacing.sm,

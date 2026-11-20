@@ -1,0 +1,39 @@
+=== INSTALL MAP-3 APK ===
+=== ASSIGN ===
+{
+  "ok": false,
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "1931e98b-06eb-4ce7-aa51-67112b852492",
+    "createOffer": {
+      "status": 422,
+      "body": {
+        "code": "DRIVER_NOT_ELIGIBLE",
+        "message": "Driver already has an active assigned ride."
+      }
+    }
+  }
+}
+Traceback (most recent call last):
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/map3_physical.py", line 902, in <module>
+    main()
+    ~~~~^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/map3_physical.py", line 306, in main
+    assigned = assign_ride()
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l2_step4_physical.py", line 49, in assign_ride
+    subprocess.check_call(["python3", str(ART / "l1_staging_assign_ride.py")], cwd=str(ART))
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 420, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['python3', '/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l1_staging_assign_ride.py']' returned non-zero exit status 1.

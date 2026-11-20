@@ -5,80 +5,19 @@ import { getRequestId } from '../http/request_id';
 import { sendApiError, logSafe } from '../http/errors';
 import { RideService } from './ride_service';
 import { InviteService } from './invite_service';
-import { DispatchWaveService } from './dispatch_wave_service';
-import { NearbyDriversService } from '../drivers/nearby_service';
-import { DispatchFcmProjector } from '../delivery/dispatch_fcm_projector';
-import { createNullFcmSender } from '../delivery/fcm_sender';
-import type { FcmSender } from '../delivery/fcm_sender';
-import type { GeoStoreClient } from '../geo/types';
-import type { DispatchTaskScheduler } from '../tasks/dispatch_tasks';
 import { sendRideData, sendRideDomainError } from './http';
 import { RideDomainError } from './types';
 import type { TripLocationRtdb } from '../rtdb/types';
 import type { LocationStreamStore } from '../location/stream_store';
 
-export interface RidesDispatchDeps {
-  geoStore?: GeoStoreClient | null;
-  fcmSender?: FcmSender | null;
-  adaptiveFreshness?: boolean;
-  scheduler?: DispatchTaskScheduler;
-}
-
 export function createRidesRouter(
   db: Firestore,
   tripLocationRtdb: TripLocationRtdb | null = null,
   streamStore: LocationStreamStore | null = null,
-  dispatchDeps?: RidesDispatchDeps,
 ): Router {
   const router = Router();
   const rides = new RideService(db, tripLocationRtdb, streamStore);
-
-  // Event-driven dispatch (Phase: inDrive-style matching). When wired, wave 1
-  // fires inline on booking, FCM projects right after each wave commit, and a
-  // fully-responded wave pulls the next wave forward — the Cloud Tasks wake-
-  // ups and the low-frequency sweep stay as recovery, not the mechanism.
-  let kickDispatch: ((rideId: string, correlationId: string) => Promise<void>) | null =
-    null;
-  const dispatchTaskSchedulerRef = dispatchDeps?.scheduler ?? null;
-  let dispatch: DispatchWaveService | null = null;
-  let dispatchFcm: DispatchFcmProjector | null = null;
-  if (dispatchDeps) {
-    const nearby = new NearbyDriversService(
-      db,
-      dispatchDeps.geoStore ?? null,
-      dispatchDeps.adaptiveFreshness === true,
-    );
-    dispatch = new DispatchWaveService(
-      db,
-      nearby,
-      dispatchDeps.scheduler,
-    );
-    dispatchFcm = new DispatchFcmProjector(
-      db,
-      dispatchDeps.fcmSender ?? createNullFcmSender(),
-    );
-    kickDispatch = async (rideId: string, correlationId: string) => {
-      await dispatch!.tickRide({ rideId, correlationId });
-      await dispatchFcm!.sweep({ correlationId });
-    };
-  }
-  const invites = new InviteService(
-    db,
-    rides,
-    dispatch
-      ? {
-          onWaveResponded: async (rideId, correlationId) => {
-            const accel = await dispatch!.accelerateIfWaveResolved({
-              rideId,
-              correlationId,
-            });
-            if (accel.accelerated) {
-              await dispatchFcm!.sweep({ correlationId });
-            }
-          },
-        }
-      : undefined,
-  );
+  const invites = new InviteService(db, rides);
 
   router.post('/', async (req: AuthedRequest, res) => {
     if (!req.caller) {
@@ -94,68 +33,7 @@ export function createRidesRouter(
       });
       // Envelope already includes data; attach requestId/timestamp via helper.
       const data = (result.body as { data: unknown }).data;
-
-      // Durable dispatch wake-ups armed BEFORE the response: if this instance
-      // is killed or CPU-throttled afterwards, Cloud Tasks still guarantees
-      // wave-1 dispatch (+~1s) and ride expiry at the server deadline. Both
-      // land on idempotent ticks — a successful inline kick just makes them
-      // no-ops. Arming failure is logged, never fails the booking.
-      const dataRecord = data as
-        | { rideId?: string; expiresAt?: string }
-        | undefined;
-      const rideId =
-        result.httpStatus === 201 ? dataRecord?.rideId : undefined;
-      if (kickDispatch && rideId) {
-        try {
-          await dispatchTaskSchedulerRef?.scheduleDispatchTick({
-            rideId,
-            waveNumber: 1,
-            runAtMs: Date.now() + 1000,
-            correlationId: getRequestId(req),
-          });
-        } catch (err) {
-          logSafe('RIDE_CREATE_KICK_TASK_FAILED', {
-            operation: 'RIDE_CREATE_KICK_TASK_FAILED',
-            requestId: getRequestId(req),
-            rideId,
-            error: err instanceof Error ? err.message : String(err),
-          });
-        }
-        const expiresAtMs = Date.parse(dataRecord?.expiresAt ?? '');
-        if (Number.isFinite(expiresAtMs)) {
-          try {
-            await dispatchTaskSchedulerRef?.scheduleRideExpire({
-              rideId,
-              runAtMs: expiresAtMs,
-              correlationId: getRequestId(req),
-            });
-          } catch (err) {
-            logSafe('RIDE_CREATE_EXPIRE_TASK_FAILED', {
-              operation: 'RIDE_CREATE_EXPIRE_TASK_FAILED',
-              requestId: getRequestId(req),
-              rideId,
-              error: err instanceof Error ? err.message : String(err),
-            });
-          }
-        }
-      }
       sendRideData(req, res, result.httpStatus, data);
-
-      // Fast path: inline wave-1 tick + FCM projection so drivers are invited
-      // in-request rather than waiting for the armed task. Fully guarded —
-      // booking succeeded before this point regardless of outcome.
-      if (kickDispatch && rideId) {
-        try {
-          await kickDispatch(rideId, getRequestId(req));
-        } catch (err) {
-          logSafe('RIDE_CREATE_DISPATCH_KICK_FAILED', {
-            operation: 'RIDE_CREATE_DISPATCH_KICK_FAILED',
-            requestId: getRequestId(req),
-            rideId,
-            error: err instanceof Error ? err.message : String(err),
-          });
-        }
-      }
     } catch (err) {
       logSafe('ride_create_failed', {
         requestId: getRequestId(req),

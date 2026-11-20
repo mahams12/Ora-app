@@ -43,7 +43,9 @@ class _OraCardState extends State<OraCard> {
 
     final bg = widget.selected
         ? OraColors.primaryMuted
-        : OraColors.surfaceElevated;
+        : isDark
+        ? OraColors.surfaceElevated
+        : OraColors.surface;
 
     final borderColor = widget.selected
         ? OraColors.primary
@@ -53,7 +55,7 @@ class _OraCardState extends State<OraCard> {
 
     final shadows = widget.variant == OraCardVariant.elevated
         ? OraElevation.raisedShadow
-        : OraElevation.cardShadow;
+        : null;
 
     final surface = AnimatedContainer(
       duration: OraMotion.select,

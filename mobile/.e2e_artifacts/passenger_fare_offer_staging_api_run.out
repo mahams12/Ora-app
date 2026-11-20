@@ -1,0 +1,9 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+{
+  "verdict": "STAGING_API_PASS",
+  "rideIdPrefix": "91f8fac6",
+  "chosen": 47000,
+  "durableOffer": 47000,
+  "outOfRangeBlocked": true,
+  "openListShowsChosenOffer": true
+}

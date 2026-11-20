@@ -1,0 +1,115 @@
+=== ASSIGN fresh ride ===
+{
+  "ok": true,
+  "rideId": "d389e505-c702-4414-bc15-1552b115c22d",
+  "state": "DRIVER_ASSIGNED",
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "d389e505-c702-4414-bc15-1552b115c22d",
+    "createOffer": {
+      "status": 201,
+      "body": {
+        "offerId": "d389e505-c702-4414-bc15-1552b115c22d_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "d389e505-c702-4414-bc15-1552b115c22d",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "amountMinor": 114000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "status": "PENDING",
+        "requestVersion": 1,
+        "expiresAt": "2026-10-08T08:28:26.498Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-10-08T08:25:26.498Z",
+        "selectedAt": null,
+        "withdrawnAt": null,
+        "rideState": "OFFERS_AVAILABLE",
+        "rideVersion": 2
+      }
+    },
+    "selectOffer": {
+      "status": 200,
+      "body": {
+        "rideId": "d389e505-c702-4414-bc15-1552b115c22d",
+        "state": "DRIVER_ASSIGNED",
+        "version": 3,
+        "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "agreedFareMinor": 114000,
+        "agreedOfferId": "d389e505-c702-4414-bc15-1552b115c22d_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "currency": "PKR"
+      }
+    }
+  }
+}
+ride d389e505-c702-4414-bc15-1552b115c22d DRIVER_ASSIGNED
+=== Open passenger Active Ride BEFORE any publish ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=52ms (0ms mobile, 0ms wifi, 52ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6000 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (5998 bytes in 0.004s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (6003 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.7 MB/s (5282 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (11596 bytes in 0.004s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (11596 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (11596 bytes in 0.005s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (8442 bytes in 0.003s)
+  TAP 'My rides'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (9901 bytes in 0.004s)
+  TAP 'Driver assigned\nDRIVER_ASSIGNED\nLiberty Market Lahore → Gulberg Lahore'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.1 MB/s (10588 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (10588 bytes in 0.004s)
+/sdcard/map2a_retry_before.png: 1 file pulled, 0 skipped. 19.8 MB/s (451635 bytes in 0.022s)
+  before {'activeRide': True, 'googleMap': True, 'pickup': True, 'destination': True, 'waiting': True, 'locationUpdating': False, 'driverMarker': False, 'recenter': True, 'status': 'DRIVER_ASSIGNED', 'cancel': True}
+=== TEST2 first fresh publish (passenger stays FG) ===
+  publish1 {'status': 200, 'accepted': True, 'locationSeq': 1, 'hasLatLng': True}
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 6.8 MB/s (48491 bytes in 0.007s)
+  poll 0 {'activeRide': False, 'googleMap': False, 'pickup': False, 'destination': False, 'waiting': False, 'locationUpdating': False, 'driverMarker': False, 'recenter': False, 'status': None, 'cancel': False}
+/sdcard/map2a_retry_after_0.png: 1 file pulled, 0 skipped. 18.1 MB/s (265063 bytes in 0.014s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 9.2 MB/s (48491 bytes in 0.005s)
+  poll 5 {'activeRide': False, 'googleMap': False, 'pickup': False, 'destination': False, 'waiting': False, 'locationUpdating': False, 'driverMarker': False, 'recenter': False, 'status': None, 'cancel': False}
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 6.1 MB/s (48491 bytes in 0.008s)
+  poll 10 {'activeRide': False, 'googleMap': False, 'pickup': False, 'destination': False, 'waiting': False, 'locationUpdating': False, 'driverMarker': False, 'recenter': False, 'status': None, 'cancel': False}
+/sdcard/map2a_retry_after_10.png: 1 file pulled, 0 skipped. 17.0 MB/s (265063 bytes in 0.015s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 7.9 MB/s (48491 bytes in 0.006s)
+  poll 17 {'activeRide': False, 'googleMap': False, 'pickup': False, 'destination': False, 'waiting': False, 'locationUpdating': False, 'driverMarker': False, 'recenter': False, 'status': None, 'cancel': False}
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 7.1 MB/s (51714 bytes in 0.007s)
+  poll 21 {'activeRide': False, 'googleMap': False, 'pickup': False, 'destination': False, 'waiting': False, 'locationUpdating': False, 'driverMarker': False, 'recenter': False, 'status': None, 'cancel': False}
+/sdcard/map2a_retry_after_21.png: 1 file pulled, 0 skipped. 15.7 MB/s (274014 bytes in 0.017s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 9.4 MB/s (51714 bytes in 0.005s)
+  poll 27 {'activeRide': False, 'googleMap': False, 'pickup': False, 'destination': False, 'waiting': False, 'locationUpdating': False, 'driverMarker': False, 'recenter': False, 'status': None, 'cancel': False}
+/sdcard/map2a_retry_after_27.png: 1 file pulled, 0 skipped. 18.7 MB/s (274014 bytes in 0.014s)
+  marker False at_s None

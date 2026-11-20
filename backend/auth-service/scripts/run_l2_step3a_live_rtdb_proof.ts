@@ -2,8 +2,8 @@
  * L2 Step 3A — LIVE staging RTDB proof (Admin + TripLocationRtdb abstraction).
  *
  * Requires:
- *   FIREBASE_PROJECT_ID=oraapp-a9be5
- *   FIREBASE_DATABASE_URL=https://oraapp-a9be5-default-rtdb.asia-southeast1.firebasedatabase.app
+ *   FIREBASE_PROJECT_ID=ora-app-d8112
+ *   FIREBASE_DATABASE_URL=https://ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app
  *   GOOGLE_APPLICATION_CREDENTIALS=<staging Admin SA>
  *
  * Does NOT print credentials. Writes only under a dedicated proof ride id, then cleans up.
@@ -28,9 +28,9 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const EXPECTED_HOST =
-  'oraapp-a9be5-default-rtdb.asia-southeast1.firebasedatabase.app';
+  'ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app';
 const EXPECTED_URL = `https://${EXPECTED_HOST}`;
-const EXPECTED_PROJECT = 'oraapp-a9be5';
+const EXPECTED_PROJECT = 'ora-app-d8112';
 
 type Evidence = Record<string, unknown>;
 

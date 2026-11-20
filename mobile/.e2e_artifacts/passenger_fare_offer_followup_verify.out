@@ -1,0 +1,2 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+{"ok":true,"expectedMinor":86000,"rideIdPrefix":"ccbeab0a","openListStatus":200,"openListPassengerOfferMinor":86000,"openListShowsChosenOffer":true,"durablePassengerOfferMinor":86000,"durableMatchesChosen":true}

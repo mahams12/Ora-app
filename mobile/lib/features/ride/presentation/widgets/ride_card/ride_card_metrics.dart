@@ -106,9 +106,10 @@ class RideCardMetricsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final cancelledCaption =
         (fareCaption ?? '').trim().toLowerCase() == 'cancelled';
-    final resolvedFareCaptionColor =
-        fareCaptionColor ??
-        (cancelledCaption ? OraColors.dangerForeground : OraColors.info);
+    final resolvedFareCaptionColor = fareCaptionColor ??
+        (cancelledCaption
+            ? OraColors.dangerForeground
+            : OraColors.info);
 
     final cells = forceThreeSlots
         ? [
@@ -137,15 +138,9 @@ class RideCardMetricsGrid extends StatelessWidget {
                 captionColor: resolvedFareCaptionColor,
               ),
             if (_hasText(distanceLabel))
-              _MetricCell(
-                value: distanceLabel!.trim(),
-                caption: distanceCaption,
-              ),
+              _MetricCell(value: distanceLabel!.trim(), caption: distanceCaption),
             if (_hasText(durationLabel))
-              _MetricCell(
-                value: durationLabel!.trim(),
-                caption: durationCaption,
-              ),
+              _MetricCell(value: durationLabel!.trim(), caption: durationCaption),
           ];
     if (cells.isEmpty) return const SizedBox.shrink();
 
@@ -165,7 +160,8 @@ class RideCardMetricsGrid extends StatelessWidget {
     );
   }
 
-  static bool _hasText(String? raw) => raw != null && raw.trim().isNotEmpty;
+  static bool _hasText(String? raw) =>
+      raw != null && raw.trim().isNotEmpty;
 
   static String _visibleValue(String? raw) =>
       _hasText(raw) ? raw!.trim() : missingValue;
@@ -195,7 +191,10 @@ class _MetricCell extends StatelessWidget {
           value,
           style: OraTypography.numeric(
             valueMuted ? OraColors.textMuted : OraColors.textPrimary,
-          ).copyWith(fontSize: 16, height: 1.15),
+          ).copyWith(
+            fontSize: 16,
+            height: 1.15,
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -203,7 +202,9 @@ class _MetricCell extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             caption,
-            style: OraTypography.caption(captionColor ?? OraColors.textMuted),
+            style: OraTypography.caption(
+              captionColor ?? OraColors.textMuted,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

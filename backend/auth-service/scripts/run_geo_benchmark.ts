@@ -3,7 +3,7 @@
  *
  * Seeds geoDrivers/{driverId} docs + users/drivers eligibility docs at fleet
  * sizes [10, 100, 1000], then measures:
- *   - GPS projection write latency (GeoProjectionService.projectAcceptedLocation)
+ *   - GPS projection write latency (RedisGeoProjectionService.projectAcceptedLocation)
  *   - findNearby match latency per size (bounding-box + filters)
  *   - N3 diagnostics: geoHits, user/driver reads, busy queries
  * Read/write counts feed the zero-cost cost model in the audit report.
@@ -14,10 +14,10 @@ import { performance } from 'node:perf_hooks';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getDatabase } from 'firebase-admin/database';
-import { createFirestoreGeoClient } from '../src/geo/firestore_geo_client';
+import { createFirestoreGeoClient } from '../src/redis/firestore_geo_client';
 import { createRtdbGeoClient } from '../src/rtdb/rtdb_geo_client';
-import type { GeoStoreClient } from '../src/geo/types';
-import { GeoProjectionService } from '../src/geo/geo_projection';
+import type { RedisGeoClient } from '../src/redis/types';
+import { RedisGeoProjectionService } from '../src/redis/geo_projection';
 import {
   NearbyDriversService,
   type N3NearbyDiagnostics,
@@ -59,12 +59,12 @@ async function main(): Promise<void> {
       : {}),
   });
   const db = getFirestore();
-  const geo: GeoStoreClient =
+  const geo: RedisGeoClient =
     geoBackend === 'rtdb'
       ? createRtdbGeoClient(getDatabase().ref('/'))
       : createFirestoreGeoClient(db);
   console.log(`geo_backend=${geoBackend}`);
-  const proj = new GeoProjectionService(geo);
+  const proj = new RedisGeoProjectionService(geo);
   const nearby = new NearbyDriversService(db, geo);
   const nowMs = Date.now();
 

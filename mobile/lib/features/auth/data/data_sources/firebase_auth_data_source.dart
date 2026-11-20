@@ -1,8 +1,8 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -158,8 +158,12 @@ class FirebaseAuthDataSource {
   Future<String> _getLocalEmulatorOtp(
     String verificationId,
   ) async {
-    final client = HttpClient()
-      ..connectionTimeout = const Duration(seconds: 5);
+    final dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 5),
+        receiveTimeout: const Duration(seconds: 5),
+      ),
+    );
 
     try {
       final projectId = _auth.app.options.projectId;
@@ -172,25 +176,18 @@ class FirebaseAuthDataSource {
             '/emulator/v1/projects/$projectId/verificationCodes',
       );
 
-      final request = await client.getUrl(uri);
+      final response = await dio.getUri<Object>(uri);
 
-      final response = await request.close().timeout(
-        const Duration(seconds: 5),
-      );
-
-      if (response.statusCode != HttpStatus.ok) {
+      if (response.statusCode != 200) {
         throw StateError(
           'Firebase Auth emulator returned HTTP '
           '${response.statusCode}.',
         );
       }
 
-      final responseText = await response
-          .transform(utf8.decoder)
-          .join()
-          .timeout(const Duration(seconds: 5));
-
-      final decoded = jsonDecode(responseText);
+      final decoded = response.data is String
+          ? jsonDecode(response.data as String)
+          : response.data;
 
       if (decoded is! Map<String, dynamic>) {
         throw StateError(
@@ -231,7 +228,14 @@ class FirebaseAuthDataSource {
         'No matching OTP found for this verification session. '
         'Request a new OTP and try again.',
       );
-    } on SocketException {
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw StateError(
+          'Firebase Auth emulator connection timed out.',
+        );
+      }
       throw StateError(
         'Cannot connect to Firebase Auth emulator at '
         '$_emulatorHost:9099. '
@@ -242,7 +246,7 @@ class FirebaseAuthDataSource {
         'Firebase Auth emulator connection timed out.',
       );
     } finally {
-      client.close(force: true);
+      dio.close();
     }
   }
 

@@ -29,7 +29,6 @@ import '../../features/auth/domain/use_cases/request_otp_use_case.dart';
 import '../../features/auth/domain/use_cases/resend_otp_use_case.dart';
 import '../../features/auth/domain/use_cases/resolve_auth_profile_use_case.dart';
 import '../../features/auth/domain/use_cases/restore_session_use_case.dart';
-import '../../features/auth/domain/use_cases/submit_vendor_application_use_case.dart';
 import '../../features/auth/domain/use_cases/switch_mode_use_case.dart';
 import '../../features/auth/domain/use_cases/update_display_name_use_case.dart';
 import '../../features/auth/domain/use_cases/update_profile_use_case.dart';
@@ -90,7 +89,9 @@ final appConfigProvider = Provider<AppConfig>(
 
 // ── Logging ───────────────────────────────────────────────────────────────────
 
-final appLoggerProvider = Provider<AppLogger>((ref) => ConsoleAppLogger());
+final appLoggerProvider = Provider<AppLogger>(
+  (ref) => ConsoleAppLogger(),
+);
 
 // ── Errors ────────────────────────────────────────────────────────────────────
 
@@ -124,8 +125,8 @@ final rideRemoteDataSourceProvider = Provider<RideRemoteDataSource>(
 
 final driverDeviceTokenRemoteDataSourceProvider =
     Provider<DriverDeviceTokenRemoteDataSource>(
-      (ref) => DriverDeviceTokenRemoteDataSource(ref.watch(apiClientProvider)),
-    );
+  (ref) => DriverDeviceTokenRemoteDataSource(ref.watch(apiClientProvider)),
+);
 
 final dispatchFcmServiceProvider = Provider<DispatchFcmService>(
   (ref) => DispatchFcmService(
@@ -177,21 +178,19 @@ final driverLocationSourceProvider = Provider<DriverLocationSource>(
 /// Trip-mode POST /v1/location/update (L2 Step 4). Uses existing ApiClient auth.
 final driverLocationRemoteDataSourceProvider =
     Provider<DriverLocationRemoteDataSource>(
-      (ref) => ApiDriverLocationRemoteDataSource(ref.watch(apiClientProvider)),
-    );
+  (ref) => ApiDriverLocationRemoteDataSource(ref.watch(apiClientProvider)),
+);
 
 /// Driver availability endpoints (N1) — go-online/go-offline + status GET.
 final driverAvailabilityRemoteDataSourceProvider =
     Provider<DriverAvailabilityRemoteDataSource>(
-      (ref) =>
-          ApiDriverAvailabilityRemoteDataSource(ref.watch(apiClientProvider)),
-    );
+  (ref) => ApiDriverAvailabilityRemoteDataSource(ref.watch(apiClientProvider)),
+);
 
 final driverOnboardingRemoteDataSourceProvider =
     Provider<DriverOnboardingRemoteDataSource>(
-      (ref) =>
-          ApiDriverOnboardingRemoteDataSource(ref.watch(apiClientProvider)),
-    );
+  (ref) => ApiDriverOnboardingRemoteDataSource(ref.watch(apiClientProvider)),
+);
 
 final driverOnboardingRepositoryProvider = Provider<DriverOnboardingRepository>(
   (ref) => DriverOnboardingRepositoryImpl(
@@ -202,10 +201,10 @@ final driverOnboardingRepositoryProvider = Provider<DriverOnboardingRepository>(
 
 final submitDriverOnboardingUseCaseProvider =
     Provider<SubmitDriverOnboardingUseCase>(
-      (ref) => SubmitDriverOnboardingUseCase(
-        ref.watch(driverOnboardingRepositoryProvider),
-      ),
-    );
+  (ref) => SubmitDriverOnboardingUseCase(
+    ref.watch(driverOnboardingRepositoryProvider),
+  ),
+);
 
 /// Google Places autocomplete + details (Phase 4A). Not Routes.
 /// Reverse-geocode additionally falls back to the platform geocoder
@@ -245,8 +244,8 @@ final tripLocationPortProvider = Provider<TripLocationPort>((ref) {
 
 final tripLocationFreshnessPolicyProvider =
     Provider<TripLocationFreshnessPolicy>(
-      (ref) => const TripLocationFreshnessPolicy(),
-    );
+  (ref) => const TripLocationFreshnessPolicy(),
+);
 
 /// Injectable clock for freshness tests.
 final tripLocationClockProvider = Provider<DateTime Function()>(
@@ -358,9 +357,8 @@ final authTokenProviderProvider = Provider<AuthTokenProvider>((ref) {
   return FirebaseAuthTokenProvider(
     getIdToken: (forceRefresh) async {
       try {
-        return await FirebaseAuth.instance.currentUser?.getIdToken(
-          forceRefresh,
-        );
+        return await FirebaseAuth.instance.currentUser
+            ?.getIdToken(forceRefresh);
       } catch (_) {
         return null;
       }
@@ -370,16 +368,18 @@ final authTokenProviderProvider = Provider<AuthTokenProvider>((ref) {
 
 // ── Network ───────────────────────────────────────────────────────────────────
 
-final networkConfigProvider = Provider<NetworkConfig>((ref) {
-  final config = ref.watch(appConfigProvider);
-  return NetworkConfig(
-    baseUrl: config.apiBaseUrl,
-    connectTimeout: const Duration(seconds: 15),
-    receiveTimeout: const Duration(seconds: 30),
-    sendTimeout: const Duration(seconds: 30),
-    enableRequestLogging: !config.environment.isProduction,
-  );
-});
+final networkConfigProvider = Provider<NetworkConfig>(
+  (ref) {
+    final config = ref.watch(appConfigProvider);
+    return NetworkConfig(
+      baseUrl: config.apiBaseUrl,
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 30),
+      sendTimeout: const Duration(seconds: 30),
+      enableRequestLogging: !config.environment.isProduction,
+    );
+  },
+);
 
 final appCheckTokenProviderProvider = Provider<AppCheckTokenProvider>((ref) {
   final config = ref.watch(appConfigProvider);
@@ -464,13 +464,6 @@ final switchModeUseCaseProvider = Provider<SwitchModeUseCase>(
   (ref) => SwitchModeUseCase(ref.watch(authRepositoryProvider)),
 );
 
-final submitVendorApplicationUseCaseProvider =
-    Provider<SubmitVendorApplicationUseCase>(
-      (ref) => SubmitVendorApplicationUseCase(
-        ref.watch(authRepositoryProvider),
-      ),
-    );
-
 final updateDisplayNameUseCaseProvider = Provider<UpdateDisplayNameUseCase>(
   (ref) => UpdateDisplayNameUseCase(ref.watch(authRepositoryProvider)),
 );
@@ -483,10 +476,13 @@ final updateProfileUseCaseProvider = Provider<UpdateProfileUseCase>(
 
 /// Global authentication status — used by route guards.
 final authStateNotifierProvider =
-    NotifierProvider<AuthStateNotifier, AuthStatus>(AuthStateNotifier.new);
+    NotifierProvider<AuthStateNotifier, AuthStatus>(
+  AuthStateNotifier.new,
+);
 
 /// OTP flow ViewModel.
-final authViewModelProvider = NotifierProvider<AuthViewModel, AuthFlowState>(
+final authViewModelProvider =
+    NotifierProvider<AuthViewModel, AuthFlowState>(
   AuthViewModel.new,
 );
 
@@ -495,10 +491,11 @@ final authViewModelProvider = NotifierProvider<AuthViewModel, AuthFlowState>(
 /// Onboarding ViewModel — persists displayName; guard owns navigation.
 final onboardingViewModelProvider =
     NotifierProvider<OnboardingViewModel, OnboardingViewState>(
-      OnboardingViewModel.new,
-    );
+  OnboardingViewModel.new,
+);
 
-final homeViewModelProvider = NotifierProvider<HomeViewModel, HomeUiState>(
+final homeViewModelProvider =
+    NotifierProvider<HomeViewModel, HomeUiState>(
   HomeViewModel.new,
 );
 
@@ -517,4 +514,6 @@ final getAppBootstrapUseCaseProvider = Provider<GetAppBootstrapUseCase>(
 );
 
 final splashViewModelProvider =
-    NotifierProvider<SplashViewModel, SplashViewState>(SplashViewModel.new);
+    NotifierProvider<SplashViewModel, SplashViewState>(
+  SplashViewModel.new,
+);

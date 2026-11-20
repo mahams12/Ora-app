@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 
 import '../../../../app/theme/ora_colors.dart';
 import '../../../../app/theme/ora_elevation.dart';
+import '../../../../app/theme/ora_motion.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_typography.dart';
-import '../../../../app/theme/widgets/ora_floaty.dart';
 import 'status_pill.dart';
 
 class IllustratedCategoryCard extends StatefulWidget {
@@ -36,6 +36,13 @@ class IllustratedCategoryCard extends StatefulWidget {
 }
 
 class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
+  var _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed == value) return;
+    setState(() => _pressed = value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(OraRadius.card);
@@ -50,96 +57,104 @@ class _IllustratedCategoryCardState extends State<IllustratedCategoryCard> {
         if (status != null) widget.statusVariant!.name,
       ].join(', '),
       onTap: widget.onTap,
-      child: OraFloaty(
-        child: OraTapScale(
+      child: GestureDetector(
+        onTapDown: (_) => _setPressed(true),
+        onTapUp: (_) => _setPressed(false),
+        onTapCancel: () => _setPressed(false),
+        child: AnimatedScale(
+          scale: _pressed ? 0.96 : 1,
+          duration: OraMotion.press,
+          curve: OraMotion.standard,
           child: SizedBox(
             width: widget.width,
             height: widget.height,
-            child: ExcludeSemantics(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: OraColors.navyElevated,
-                  borderRadius: radius,
-                  border: Border.fromBorderSide(OraElevation.cardBorder),
-                  boxShadow: OraElevation.cardShadow,
-                ),
-                child: ClipRRect(
-                  borderRadius: radius,
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      excludeFromSemantics: true,
-                      onTap: () {
-                        HapticFeedback.selectionClick();
-                        widget.onTap();
-                      },
-                      child: Stack(
-                        fit: StackFit.expand,
-                        clipBehavior: Clip.hardEdge,
-                        children: [
-                          const Positioned.fill(
-                            child: ColoredBox(color: OraColors.surfaceElevated),
-                          ),
-                          Positioned.fill(
-                            bottom: 44,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(14, 12, 14, 2),
-                              child: Image.asset(
-                                widget.imageAsset,
-                                cacheWidth: 480,
-                                fit: BoxFit.contain,
-                                filterQuality: FilterQuality.medium,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 10,
-                            left: 10,
-                            child: Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                color: OraColors.photoChip,
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Icon(
-                                widget.badgeIcon,
-                                size: 16,
-                                color: OraColors.gold,
-                              ),
-                            ),
-                          ),
-                          if (status != null)
-                            Positioned(top: 10, right: 8, child: status),
-                          Positioned(
-                            left: 12,
-                            right: 10,
-                            bottom: 10,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  widget.title,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: OraTypography.bodyEmphasis(
-                                    OraColors.textPrimary,
-                                  ),
-                                ),
-                                Text(
-                                  widget.countLine,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: OraTypography.caption(
-                                    OraColors.textMuted,
-                                  ),
-                                ),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: OraColors.navyElevated,
+                borderRadius: radius,
+                border: Border.fromBorderSide(OraElevation.cardBorder),
+                boxShadow: OraElevation.cardShadow,
+              ),
+              child: ClipRRect(
+                borderRadius: radius,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    excludeFromSemantics: true,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      widget.onTap();
+                    },
+                    child: Stack(
+                      fit: StackFit.expand,
+                      clipBehavior: Clip.hardEdge,
+                      children: [
+                        const ColoredBox(color: OraColors.navyElevated),
+                        Image.asset(
+                          widget.imageAsset,
+                          cacheWidth: 480,
+                          fit: BoxFit.contain,
+                          filterQuality: FilterQuality.medium,
+                        ),
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                OraColors.shadow,
+                                OraColors.photoScrimStrong,
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: OraColors.photoChip,
+                              borderRadius: BorderRadius.circular(9),
+                            ),
+                            child: Icon(
+                              widget.badgeIcon,
+                              size: 16,
+                              color: OraColors.navy,
+                            ),
+                          ),
+                        ),
+                        if (status != null)
+                          Positioned(top: 10, right: 8, child: status),
+                        Positioned(
+                          left: 12,
+                          right: 10,
+                          bottom: 10,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                widget.title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: OraTypography.bodyEmphasis(
+                                  OraColors.onPhoto,
+                                ),
+                              ),
+                              Text(
+                                widget.countLine,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: OraTypography.caption(
+                                  OraColors.onPhotoMuted,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

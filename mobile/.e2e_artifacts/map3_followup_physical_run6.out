@@ -1,0 +1,247 @@
+=== INSTALL MAP-3 APK ===
+=== ASSIGN ===
+{
+  "ok": true,
+  "rideId": "2ee3fa76-11d2-47af-9151-dcc9dea1980d",
+  "state": "DRIVER_ASSIGNED",
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "2ee3fa76-11d2-47af-9151-dcc9dea1980d",
+    "createOffer": {
+      "status": 201,
+      "body": {
+        "offerId": "2ee3fa76-11d2-47af-9151-dcc9dea1980d_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "2ee3fa76-11d2-47af-9151-dcc9dea1980d",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "amountMinor": 114000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "status": "PENDING",
+        "requestVersion": 1,
+        "expiresAt": "2026-10-13T05:57:05.481Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-10-13T05:54:05.481Z",
+        "selectedAt": null,
+        "withdrawnAt": null,
+        "rideState": "OFFERS_AVAILABLE",
+        "rideVersion": 2
+      }
+    },
+    "selectOffer": {
+      "status": 200,
+      "body": {
+        "rideId": "2ee3fa76-11d2-47af-9151-dcc9dea1980d",
+        "state": "DRIVER_ASSIGNED",
+        "version": 3,
+        "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "agreedFareMinor": 114000,
+        "agreedOfferId": "2ee3fa76-11d2-47af-9151-dcc9dea1980d_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "currency": "PKR"
+      }
+    }
+  }
+}
+ride 2ee3fa76-11d2-47af-9151-dcc9dea1980d
+=== A. INITIAL MAP (before publish) ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=55ms (0ms mobile, 0ms wifi, 55ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (10624 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.0 MB/s (2691 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (11597 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11597 bytes in 0.003s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (8266 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.1 MB/s (14748 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (13668 bytes in 0.005s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.2 MB/s (13668 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (13668 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.0 MB/s (13668 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (13668 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.2 MB/s (13668 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.8 MB/s (13668 bytes in 0.003s)
+  MISS ('Log out',)
+  MISS ('Log out',)
+  ensure_ora:logout_fail_0 fg='com.sec.android.app.launcher' → relaunch
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=71ms (0ms mobile, 0ms wifi, 71ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (11597 bytes in 0.004s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (8184 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (8190 bytes in 0.003s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (6000 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (5998 bytes in 0.003s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (6003 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 0.6 MB/s (5282 bytes in 0.008s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11596 bytes in 0.004s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (11596 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.4 MB/s (11596 bytes in 0.003s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (8183 bytes in 0.004s)
+  TAP 'My rides'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 4.3 MB/s (14627 bytes in 0.003s)
+  TAP ride card 'Ride 2ee3fa76-11d2-47af-9151-dcc9dea1980d' @(540,1083)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (10645 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (10645 bytes in 0.003s)
+/sdcard/map2a_map3_a_before.png: 1 file pulled, 0 skipped. 19.7 MB/s (458185 bytes in 0.022s)
+  A {'activeRide': True, 'googleMap': True, 'pickup': True, 'destination': True, 'waiting': True, 'locationUpdating': False, 'driverMarker': False, 'recenter': True, 'status': 'DRIVER_ASSIGNED', 'cancel': True, 'guideSemantics': True, 'guideDriverPickup': False, 'guideDriverDest': False, 'guidePickupDest': True}
+=== B. FIRST DRIVER FIX ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (10919 bytes in 0.004s)
+  poll 0 {'activeRide': True, 'googleMap': True, 'pickup': True, 'destination': True, 'waiting': False, 'locationUpdating': False, 'driverMarker': True, 'recenter': True, 'status': 'DRIVER_ASSIGNED', 'cancel': True, 'guideSemantics': True, 'guideDriverPickup': True, 'guideDriverDest': False, 'guidePickupDest': False}
+/sdcard/map2a_map3_b_first_fix.png: 1 file pulled, 0 skipped. 20.7 MB/s (478722 bytes in 0.022s)
+=== C. USER PAN → OWN CAMERA ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.2 MB/s (10919 bytes in 0.009s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.0 MB/s (10943 bytes in 0.003s)
+/sdcard/map2a_map3_c_after_pan.png: 1 file pulled, 0 skipped. 17.8 MB/s (419496 bytes in 0.022s)
+  C pan {'bounds': [53, 259, 1028, 784], 'swipe1': [540, 521, 120, 744], 'swipe2': [540, 521, 940, 299], 'swipe3': [540, 521, 240, 299], 'injectionAttempts': [{'args': ['touchscreen', 'swipe', '540', '521', '120', '744', '900'], 'outTail': ''}, {'args': ['touchscreen', 'swipe', '540', '521', '940', '299', '850'], 'outTail': ''}, {'args': ['swipe', '540', '521', '940', '299', '850'], 'outTail': ''}, {'args': ['touchscreen', 'swipe', '540', '521', '240', '299', '1000'], 'outTail': ''}, {'args': ['swipe', '540', '521', '240', '299', '1000'], 'outTail': ''}]} vsB {'comparable': True, 'exactHashMatch': False, 'stableFraming': False, 'largeShift': True}
+=== D. MULTI PUBLISH WHILE OWNED (PRIMARY) ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.6 MB/s (10918 bytes in 0.003s)
+/sdcard/map2a_map3_d_seq2.png: 1 file pulled, 0 skipped. 21.4 MB/s (431565 bytes in 0.019s)
+  D seq 2 True stable False
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (10918 bytes in 0.004s)
+/sdcard/map2a_map3_d_seq3.png: 1 file pulled, 0 skipped. 19.9 MB/s (431941 bytes in 0.021s)
+  D seq 3 True stable False
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (10918 bytes in 0.004s)
+/sdcard/map2a_map3_d_seq4.png: 1 file pulled, 0 skipped. 21.7 MB/s (432000 bytes in 0.019s)
+  D seq 4 True stable False
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (10918 bytes in 0.003s)
+/sdcard/map2a_map3_d_seq5.png: 1 file pulled, 0 skipped. 21.4 MB/s (432174 bytes in 0.019s)
+  D seq 5 True stable False
+=== F-EARLY. RECENTER WHILE PANNED (DRIVER_ASSIGNED) ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.7 MB/s (10918 bytes in 0.003s)
+/sdcard/map2a_map3_fe_pre_recenter.png: 1 file pulled, 0 skipped. 19.7 MB/s (432174 bytes in 0.021s)
+  TAP 'Recenter map'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.9 MB/s (10918 bytes in 0.003s)
+/sdcard/map2a_map3_fe_after_recenter.png: 1 file pulled, 0 skipped. 21.0 MB/s (433361 bytes in 0.020s)
+  F-early reframed True vsPre {'comparable': True, 'exactHashMatch': False, 'stableFraming': False, 'largeShift': True} vsPan {'comparable': True, 'exactHashMatch': False, 'stableFraming': False, 'largeShift': True}
+=== C2. RE-PAN AFTER EARLY RECENTER ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (10943 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (10943 bytes in 0.003s)
+/sdcard/map2a_map3_c2_after_pan.png: 1 file pulled, 0 skipped. 20.3 MB/s (421470 bytes in 0.020s)
+=== E. PHASES WHILE OWNED ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.9 MB/s (10914 bytes in 0.004s)
+/sdcard/map2a_map3_e_en_route.png: 1 file pulled, 0 skipped. 21.1 MB/s (424885 bytes in 0.019s)
+  E en_route DRIVER_EN_ROUTE stableVsPan False DRIVER_EN_ROUTE
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (11237 bytes in 0.003s)
+/sdcard/map2a_map3_e_arrived.png: 1 file pulled, 0 skipped. 20.5 MB/s (437096 bytes in 0.020s)
+  E arrived DRIVER_ARRIVED stableVsPan False DRIVER_ARRIVED
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (10624 bytes in 0.004s)
+/sdcard/map2a_map3_e_start.png: 1 file pulled, 0 skipped. 21.2 MB/s (402893 bytes in 0.018s)
+  E start RIDE_STARTED stableVsPan False RIDE_STARTED
+=== F. RECENTER ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (10624 bytes in 0.005s)
+  TAP 'Recenter map'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.8 MB/s (10624 bytes in 0.003s)
+/sdcard/map2a_map3_f_after_recenter.png: 1 file pulled, 0 skipped. 21.4 MB/s (402279 bytes in 0.018s)
+=== G. POST-RECENTER TICKS ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.8 MB/s (10624 bytes in 0.004s)
+/sdcard/map2a_map3_g_seq9.png: 1 file pulled, 0 skipped. 20.8 MB/s (402806 bytes in 0.019s)
+  G 9 True stableVsRecenter False
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (10624 bytes in 0.006s)
+/sdcard/map2a_map3_g_seq10.png: 1 file pulled, 0 skipped. 19.0 MB/s (403392 bytes in 0.020s)
+  G 10 True stableVsRecenter False
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.6 MB/s (10624 bytes in 0.003s)
+/sdcard/map2a_map3_g_seq11.png: 1 file pulled, 0 skipped. 21.4 MB/s (404090 bytes in 0.018s)
+  G 11 True stableVsRecenter False
+=== H. TERMINAL ===
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.6 MB/s (10624 bytes in 0.003s)
+  TAP 'Cancel ride\nCancel ride'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.8 MB/s (5029 bytes in 0.003s)
+  TAP 'Cancel ride\nCancel ride'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.6 MB/s (10181 bytes in 0.004s)
+/sdcard/map2a_map3_h_after.png: 1 file pulled, 0 skipped. 21.5 MB/s (424601 bytes in 0.019s)
+=== I. MAP-1 SMOKE ===
+  login as passenger (03012345678)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=59ms (0ms mobile, 0ms wifi, 59ms not connected)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (5283 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11597 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11597 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.5 MB/s (11597 bytes in 0.003s)
+  TAP 'Menu'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.4 MB/s (8184 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (8190 bytes in 0.003s)
+  TAP 'Log out'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.4 MB/s (6000 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.3 MB/s (6000 bytes in 0.002s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.5 MB/s (5998 bytes in 0.004s)
+  TAP 'Send verification code\nSend code'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.0 MB/s (6003 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 1.6 MB/s (5282 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.2 MB/s (11596 bytes in 0.003s)
+  MISS ('Verify & continue',)
+  MISS ('Verify code',)
+  MISS ('Verify',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.6 MB/s (11596 bytes in 0.003s)
+  TAP 'Where are you headed?\nSet pickup & destination'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.2 MB/s (8606 bytes in 0.004s)
+  TAP 'Use current location'
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.4 MB/s (10559 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.9 MB/s (10559 bytes in 0.003s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.2 MB/s (10559 bytes in 0.003s)
+  MISS ('Liberty Market',)
+  MISS ('Liberty',)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.7 MB/s (10559 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 2.5 MB/s (10559 bytes in 0.004s)
+/sdcard/m2a.xml: 1 file pulled, 0 skipped. 3.1 MB/s (10559 bytes in 0.003s)
+/sdcard/map2a_map1_smoke_review.png: 1 file pulled, 0 skipped. 22.4 MB/s (678351 bytes in 0.029s)
+DONE {"verdict": "RED", "failed": ["F_noImmediateFalseReown", "G_tickStableNoLoop", "I_map1Smoke"], "criticalFailed": ["G_tickStableNoLoop"], "rideId": "2ee3fa76-11d2-47af-9151-dcc9dea1980d"}

@@ -230,7 +230,7 @@ void main() {
       );
     }
 
-    test('stationary driver publishes at 60s cadence and keepalives GPS stalls',
+    test('stationary driver publishes at 30s cadence and keepalives GPS stalls',
         () {
       fakeAsync((async) {
         useAdaptive();
@@ -242,32 +242,18 @@ void main() {
         // the moving cadence.
         expect(remote.intervalMs, [10000]);
 
-        // GPS stalls (no fresh fixes) — the first publish declared a 10s
-        // horizon (no baseline → moving cadence), so a refresh is forced
-        // by ~t+10s to honor that commitment. The fix is still inside the
-        // 12s publishable window so it goes out as a regular publish that
-        // re-declares the stationary 60s interval.
+        // GPS stalls (no fresh fixes) — at the 30s stationary mark the
+        // keepalive re-asserts the last accurate position with its ORIGINAL
+        // timestamp (honest GPS age; presence freshness is server-side).
         final originalFixTs = remote.fixTimestamps.last;
-        for (var i = 0; i < 2; i++) {
+        for (var i = 0; i < 6; i++) {
           now = now.add(const Duration(seconds: 5));
           async.elapse(const Duration(seconds: 5));
         }
         async.flushMicrotasks();
         expect(remote.idleCalls, 2);
-        expect(remote.keepalives, [false, false]);
-        expect(remote.intervalMs.last, 60000);
-        expect(remote.fixTimestamps.last, originalFixTs);
-
-        // Next refresh at the declared 60s mark (t+70) — now outside the
-        // publishable window, so it goes out as a keepalive carrying the
-        // ORIGINAL fix timestamp (honest GPS age).
-        for (var i = 0; i < 12; i++) {
-          now = now.add(const Duration(seconds: 5));
-          async.elapse(const Duration(seconds: 5));
-        }
-        async.flushMicrotasks();
-        expect(remote.idleCalls, 3);
-        expect(remote.keepalives, [false, false, true]);
+        expect(remote.keepalives, [false, true]);
+        expect(remote.intervalMs.last, 30000);
         expect(remote.fixTimestamps.last, originalFixTs);
 
         // The keepalive window is bounded — once the fix ages past
@@ -278,37 +264,11 @@ void main() {
           async.elapse(const Duration(seconds: 5));
         }
         async.flushMicrotasks();
-        expect(remote.idleCalls, 3);
-        expect(remote.keepalives.where((k) => k).length, 1);
-      });
-    });
-
-    test('declared horizon is honored across moving→stationary transitions',
-        () {
-      fakeAsync((async) {
-        useAdaptive();
-        publisher.onAvailability(online: true);
-        source.emit(fix());
-        async.flushMicrotasks();
-        // Moving publish declares a 10s horizon.
-        expect(remote.intervalMs, [10000]);
-
-        // Driver stops — the state's effective interval becomes 60s, but
-        // the marker committed to 10s. A refresh must fire by ~t+10s so
-        // the marker never gaps; it re-declares the stationary cadence.
-        now = now.add(const Duration(seconds: 10));
-        source.emit(fix());
-        async.elapse(const Duration(seconds: 10));
-        async.flushMicrotasks();
-        expect(remote.idleCalls, 2);
-        expect(remote.intervalMs.last, 60000);
-
-        // Steady state resumes at the stationary 60s cadence.
-        now = now.add(const Duration(seconds: 60));
-        source.emit(fix());
-        async.elapse(const Duration(seconds: 60));
-        async.flushMicrotasks();
-        expect(remote.idleCalls, 3);
+        // ~4 keepalives total (30s,60s,90s marks) then silence — no publish
+        // beyond the 90s fix-age bound.
+        expect(remote.idleCalls, lessThanOrEqualTo(5));
+        expect(remote.keepalives.where((k) => k).length,
+            lessThanOrEqualTo(3));
       });
     });
 

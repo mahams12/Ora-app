@@ -2,7 +2,11 @@
 library;
 
 class LatLngPoint {
-  const LatLngPoint({required this.lat, required this.lng, this.address});
+  const LatLngPoint({
+    required this.lat,
+    required this.lng,
+    this.address,
+  });
 
   final double lat;
   final double lng;
@@ -96,7 +100,6 @@ class Ride {
     this.cancelledBy,
     this.cancellationReason,
     this.parcel,
-    this.courierVehicle,
     this.otpCodes,
     this.pickupPhotoUrl,
     this.deliveryFailedAt,
@@ -156,9 +159,6 @@ class Ride {
   /// [serviceType] == 'courier'). Raw server projection.
   final Map<String, Object?>? parcel;
 
-  /// Ora Courier — sender-requested vehicle class (null = any).
-  final String? courierVehicle;
-
   /// Ora Courier — confirmation codes, exposed to the passenger only.
   /// Keys: pickup, delivery, return, expiresAt, pickupUsedAt,
   /// deliveryUsedAt, returnUsedAt.
@@ -215,7 +215,10 @@ class Ride {
 
 /// Paginated ride history page from GET /v1/rides.
 class RideListPage {
-  const RideListPage({required this.rides, this.nextCursor});
+  const RideListPage({
+    required this.rides,
+    this.nextCursor,
+  });
 
   final List<Ride> rides;
   final String? nextCursor;
@@ -243,7 +246,6 @@ class OpenRide {
     this.distanceKm,
     this.estimatedDurationMin,
     this.parcel,
-    this.courierVehicle,
     this.stops,
     this.shopping,
   });
@@ -267,9 +269,6 @@ class OpenRide {
   /// Ora Courier — non-contact parcel summary on open discovery.
   final Map<String, Object?>? parcel;
 
-  /// Ora Courier — sender-requested vehicle class (null = any).
-  final String? courierVehicle;
-
   /// Ora Courier v2 — itinerary summary for driver offer evaluation.
   final List<RideStop>? stops;
   final Map<String, Object?>? shopping;
@@ -277,7 +276,10 @@ class OpenRide {
 
 /// Paginated open-ride discovery page from GET /v1/rides/open.
 class OpenRideListPage {
-  const OpenRideListPage({required this.rides, this.nextCursor});
+  const OpenRideListPage({
+    required this.rides,
+    this.nextCursor,
+  });
 
   final List<OpenRide> rides;
   final String? nextCursor;
@@ -307,7 +309,6 @@ class DriverInvite {
     this.offerId,
     this.distanceKm,
     this.parcel,
-    this.courierVehicle,
     this.stops,
     this.shopping,
   });
@@ -331,9 +332,6 @@ class DriverInvite {
   /// Ora Courier — driver-visible parcel summary (no contact info).
   final Map<String, Object?>? parcel;
 
-  /// Ora Courier — sender-requested vehicle class (null = any).
-  final String? courierVehicle;
-
   /// Ora Courier v2 — itinerary + shopping budget for invite evaluation.
   final List<RideStop>? stops;
   final Map<String, Object?>? shopping;
@@ -342,10 +340,12 @@ class DriverInvite {
 }
 
 class DriverInvitePage {
-  const DriverInvitePage({required this.items, required this.serverNowMs});
+  const DriverInvitePage({
+    required this.items,
+    required this.serverNowMs,
+  });
 
   final List<DriverInvite> items;
-
   /// Server wall-clock at response time — used to offset client clock skew
   /// so countdowns stay consistent across devices/restarts.
   final int serverNowMs;

@@ -15,7 +15,6 @@ class UserProfile {
     this.banned = false,
     this.profileComplete = false,
     this.avatarData,
-    this.vendorApplications = const {},
   });
 
   final String uid;
@@ -38,12 +37,6 @@ class UserProfile {
   final bool isActive;
   final bool banned;
 
-  /// Server-authoritative partner applications: vendor type ('cargo' |
-  /// 'rental' | 'service') → status ('pending' | 'approved' | 'rejected' |
-  /// 'suspended'). Absent key = never applied. Mirrors the driver gate —
-  /// posting dashboards require status == 'approved'.
-  final Map<String, String> vendorApplications;
-
   /// True when the backend user document exists AND minimum required fields
   /// for ride flows are populated.  Derived server-side; never inferred from
   /// local storage alone.
@@ -53,13 +46,4 @@ class UserProfile {
   /// Never set by the client; values come from GET /v1/auth/me.
   bool get isApprovedDriver =>
       role == 'driver' && driverStatus == 'approved';
-
-  /// Status for a partner application of [type] ('cargo' | 'rental' |
-  /// 'service'), or null when never applied.
-  String? vendorStatusFor(String type) => vendorApplications[type];
-
-  /// UI/router gate only — posting dashboards require an approved
-  /// application from GET /v1/auth/me.
-  bool isApprovedVendor(String type) =>
-      vendorApplications[type] == 'approved';
 }

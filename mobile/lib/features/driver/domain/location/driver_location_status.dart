@@ -18,8 +18,7 @@ String? driverLocationStatusLabel(DriverLocationStatusKind kind) {
     DriverLocationStatusKind.ready => 'Location is ready',
     DriverLocationStatusKind.poorAccuracy => 'Location accuracy is low',
     DriverLocationStatusKind.servicesDisabled => 'Location is turned off',
-    DriverLocationStatusKind.permissionNeeded =>
-      'Location permission is needed',
+    DriverLocationStatusKind.permissionNeeded => 'Location permission is needed',
     DriverLocationStatusKind.permissionBlocked =>
       'Location permission is needed',
     DriverLocationStatusKind.unavailable =>

@@ -13,14 +13,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NearbyDriversService } from '../src/drivers/nearby_service';
 import type { N3NearbyDiagnostics } from '../src/drivers/nearby_service';
-import { createFirestoreGeoClient } from '../src/geo/firestore_geo_client';
+import { createFirestoreGeoClient } from '../src/redis/firestore_geo_client';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   type DriverOnlineMarker,
-  type GeoStoreClient,
-} from '../src/geo/types';
+  type RedisGeoClient,
+} from '../src/redis/types';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '../../..');
@@ -46,7 +46,7 @@ type FsTiming = {
   busyQueries: number;
 };
 
-type GeoTiming = {
+type RedisTiming = {
   georadiusMs: number;
   mgetMs: number;
   georadiusOps: number;
@@ -129,8 +129,8 @@ function instrumentFirestore(db: Firestore): { db: Firestore; timing: FsTiming }
   return { db: wrapped, timing };
 }
 
-function instrumentGeo(base: GeoStoreClient): { client: GeoStoreClient; timing: GeoTiming } {
-  const timing: GeoTiming = {
+function instrumentRedis(base: RedisGeoClient): { client: RedisGeoClient; timing: RedisTiming } {
+  const timing: RedisTiming = {
     georadiusMs: 0,
     mgetMs: 0,
     georadiusOps: 0,
@@ -167,12 +167,12 @@ async function listBenchDriverIds(db: Firestore): Promise<string[]> {
   return snap.docs.map((d) => d.id).sort();
 }
 
-async function refreshMarkers(geoStore: GeoStoreClient, ids: string[]) {
+async function refreshMarkers(redis: RedisGeoClient, ids: string[]) {
   const now = Date.now();
   for (let i = 0; i < ids.length; i++) {
     const id = ids[i]!;
     const lng = PICKUP.lng + 0.00005 * (i + 1);
-    await geoStore.geoadd(GEO_DRIVERS_KEY, lng, PICKUP.lat, id);
+    await redis.geoadd(GEO_DRIVERS_KEY, lng, PICKUP.lat, id);
     const marker: DriverOnlineMarker = {
       driverId: id,
       lastLocationTs: now - 500,
@@ -182,7 +182,7 @@ async function refreshMarkers(geoStore: GeoStoreClient, ids: string[]) {
       locationSeq: 1,
       acceptedAt: new Date().toISOString(),
     };
-    await geoStore.set(driverOnlineKey(id), JSON.stringify(marker), DRIVER_ONLINE_TTL_SECONDS);
+    await redis.set(driverOnlineKey(id), JSON.stringify(marker), DRIVER_ONLINE_TTL_SECONDS);
   }
 }
 
@@ -198,7 +198,7 @@ async function main() {
     initializeApp({ credential: applicationDefault() });
   }
   const rawDb = getFirestore();
-  const geoBase = createFirestoreGeoClient(rawDb);
+  const redisBase = createFirestoreGeoClient(rawDb);
   if (!PREFIX) {
     console.error(JSON.stringify({ ok: false, error: 'BENCH_PREFIX missing' }));
     process.exit(2);
@@ -216,8 +216,8 @@ async function main() {
   }
 
   const { db, timing: fsTimingRef } = instrumentFirestore(rawDb);
-  const { client: geoStore, timing: geoTimingRef } = instrumentGeo(geoBase);
-  const svc = new NearbyDriversService(db, geoStore);
+  const { client: redis, timing: redisTimingRef } = instrumentRedis(redisBase);
+  const svc = new NearbyDriversService(db, redis);
 
   const report: Record<string, unknown> = {
     ok: true,
@@ -229,8 +229,8 @@ async function main() {
     cloudRunRevision: process.env.K_REVISION ?? null,
     callGraph: {
       sequence: [
-        'geoStore.georadius (1×, up to N3_GEO_COUNT=100 hits)',
-        'geoStore.mget (1×, one key per geo hit)',
+        'redis.georadius (1×, up to N3_REDIS_GEO_COUNT=100 hits)',
+        'redis.mget (1×, one key per geo hit)',
         'for each geo hit in order until limit eligible:',
         '  users/{driverId}.get (sequential await)',
         '  drivers/{driverId}.get (sequential await)',
@@ -244,7 +244,7 @@ async function main() {
   for (const scenario of SCENARIOS) {
     const runs: unknown[] = [];
     const totals: number[] = [];
-    const geoTotals: number[] = [];
+    const redisTotals: number[] = [];
     const fsTotals: number[] = [];
     const busyTotals: number[] = [];
 
@@ -257,14 +257,14 @@ async function main() {
         driversReads: 0,
         busyQueries: 0,
       });
-      Object.assign(geoTimingRef, {
+      Object.assign(redisTimingRef, {
         georadiusMs: 0,
         mgetMs: 0,
         georadiusOps: 0,
         mgetOps: 0,
       });
 
-      await refreshMarkers(geoStore, benchIds);
+      await refreshMarkers(redis, benchIds);
       let diagnostics: N3NearbyDiagnostics | undefined;
       const t0 = performance.now();
       await svc.findNearby({
@@ -280,13 +280,13 @@ async function main() {
         },
       });
       const totalMs = performance.now() - t0;
-      const geoMs = geoTimingRef.georadiusMs + geoTimingRef.mgetMs;
+      const redisMs = redisTimingRef.georadiusMs + redisTimingRef.mgetMs;
       const fsMs =
         fsTimingRef.usersMs + fsTimingRef.driversMs + fsTimingRef.busyQueryMs;
-      const appMs = Math.max(0, totalMs - geoMs - fsMs);
+      const appMs = Math.max(0, totalMs - redisMs - fsMs);
 
       totals.push(totalMs);
-      geoTotals.push(geoMs);
+      redisTotals.push(redisMs);
       fsTotals.push(fsMs);
       busyTotals.push(fsTimingRef.busyQueryMs);
 
@@ -294,7 +294,7 @@ async function main() {
         run: i + 1,
         totalMs: Math.round(totalMs),
         latencyBreakdownMs: {
-          geoStore: Math.round(geoMs),
+          redis: Math.round(redisMs),
           firestoreUsers: Math.round(fsTimingRef.usersMs),
           firestoreDrivers: Math.round(fsTimingRef.driversMs),
           firestoreBusyChecks: Math.round(fsTimingRef.busyQueryMs),
@@ -316,7 +316,7 @@ async function main() {
       summary: {
         runs: scenario.runs,
         totalMs: { p50: pct(totals, 0.5), p95: pct(totals, 0.95) },
-        geoMs: { p50: pct(geoTotals, 0.5), p95: pct(geoTotals, 0.95) },
+        redisMs: { p50: pct(redisTotals, 0.5), p95: pct(redisTotals, 0.95) },
         firestoreTotalMs: { p50: pct(fsTotals, 0.5), p95: pct(fsTotals, 0.95) },
         firestoreBusyMs: { p50: pct(busyTotals, 0.5), p95: pct(busyTotals, 0.95) },
         firestoreShareOfTotalP50:
@@ -327,7 +327,7 @@ async function main() {
     };
   }
 
-  await geoStore.quit?.();
+  await redis.quit?.();
   const reportJson = JSON.stringify(report, null, 2);
   const outDir =
     process.env.N3_BENCH_REPORT_DIR?.trim() ||

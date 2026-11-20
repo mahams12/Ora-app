@@ -1,0 +1,46 @@
+node:net:1918
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted /var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/tsx-501/14452.pipe
+    at Server.setupListenHandle [as _listen2] (node:net:1918:21)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2119:5)
+    at file:///Users/jazimsaeed/Ora-app/backend/auth-service/node_modules/tsx/dist/cli.mjs:53:31472
+    at new Promise (<anonymous>)
+    at createIpcServer (file:///Users/jazimsaeed/Ora-app/backend/auth-service/node_modules/tsx/dist/cli.mjs:53:31450)
+    at async file:///Users/jazimsaeed/Ora-app/backend/auth-service/node_modules/tsx/dist/cli.mjs:55:542 {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '/var/folders/vh/5msxgp4x0tlfw9jqpk2dysx80000gn/T/tsx-501/14452.pipe',
+  port: -1
+}
+
+Node.js v24.5.0
+Traceback (most recent call last):
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l1_staging_assign_ride.py", line 222, in <module>
+    main()
+    ~~~~^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l1_staging_assign_ride.py", line 128, in main
+    driver_uid, driver_token = uid_and_token(DRIVER_PHONE)
+                               ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/l1_staging_assign_ride.py", line 80, in uid_and_token
+    out = subprocess.check_output(
+          ~~~~~~~~~~~~~~~~~~~~~~~^
+        [str(BACKEND / "node_modules/.bin/tsx"), str(path)],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        text=True,
+        ^^^^^^^^^^
+    ).strip()
+    ^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/Users/jazimsaeed/Ora-app/backend/auth-service/node_modules/.bin/tsx', '/Users/jazimsaeed/Ora-app/backend/auth-service/.tmp_l1_token.mts']' returned non-zero exit status 1.

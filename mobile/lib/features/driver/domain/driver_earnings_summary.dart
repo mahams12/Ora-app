@@ -103,13 +103,13 @@ DateTime? driverEarningsCompletionTime(Ride ride) {
 }
 
 /// Aggregates verified completed-ride fares. [now] is injectable for tests.
-DriverEarningsSummary computeDriverEarnings(List<Ride> rides, {DateTime? now}) {
+DriverEarningsSummary computeDriverEarnings(
+  List<Ride> rides, {
+  DateTime? now,
+}) {
   final effectiveNow = (now ?? DateTime.now()).toLocal();
-  final dayStart = DateTime(
-    effectiveNow.year,
-    effectiveNow.month,
-    effectiveNow.day,
-  );
+  final dayStart =
+      DateTime(effectiveNow.year, effectiveNow.month, effectiveNow.day);
   final weekStart = effectiveNow.subtract(const Duration(days: 7));
 
   var completed = 0;

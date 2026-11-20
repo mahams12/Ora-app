@@ -24,8 +24,8 @@
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { assertScriptFirebaseTarget } from './lib/script_env';
-import { createFirestoreGeoClient } from '../src/geo/firestore_geo_client';
-import { GEO_DRIVERS_KEY, driverOnlineKey } from '../src/geo/types';
+import { createFirestoreGeoClient } from '../src/redis/firestore_geo_client';
+import { GEO_DRIVERS_KEY, driverOnlineKey } from '../src/redis/types';
 import { LocationDomainError } from '../src/location/types';
 
 const PREFIX = 'emcur_';
@@ -297,7 +297,7 @@ async function main() {
     // single `tx.get(ref)` before `tx.set` — 1 read + 1 write per packet,
     // vs the legacy path's two transactions (2 reads + 2 writes).
     const src = await import('node:fs').then((fs) =>
-      fs.readFileSync('src/geo/firestore_geo_client.ts', 'utf8'));
+      fs.readFileSync('src/redis/firestore_geo_client.ts', 'utf8'));
     const txStart = src.indexOf('return db.runTransaction');
     const txEnd = src.indexOf('tx.set(ref, write', txStart);
     const txBody = src.slice(txStart, txEnd);

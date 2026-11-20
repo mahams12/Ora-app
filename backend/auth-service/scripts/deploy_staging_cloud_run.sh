@@ -7,7 +7,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-PROJECT="${GCP_PROJECT_ID:-oraapp-a9be5}"
+PROJECT="${GCP_PROJECT_ID:-ora-app-d8112}"
 REGION="${GCP_REGION:-us-central1}"
 SERVICE="${CLOUD_RUN_SERVICE:-ora-auth-service-staging}"
 SA_EMAIL="${CLOUD_RUN_RUNTIME_SA:-firebase-adminsdk-fbsvc@${PROJECT}.iam.gserviceaccount.com}"
@@ -45,9 +45,7 @@ echo "== upsert Secret Manager (Maps + worker token; no values printed) =="
 chmod +x scripts/wire_staging_server_secrets.sh
 ./scripts/wire_staging_server_secrets.sh
 
-# Driver applications require admin approval (POST /v1/internal/drivers/:uid/status)
-# in every non-local environment — local emulator scripts are the only exception.
-ENV_VARS="FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID},REQUIRE_APP_CHECK=${REQUIRE_APP_CHECK},ORA_ENV=${ORA_ENV},NODE_ENV=${NODE_ENV},DRIVER_AUTO_APPROVE=false"
+ENV_VARS="FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID},REQUIRE_APP_CHECK=${REQUIRE_APP_CHECK},ORA_ENV=${ORA_ENV},NODE_ENV=${NODE_ENV}"
 # L2 Step 2 — optional RTDB URL (Admin SDK only; never ship to Flutter).
 if [[ -n "${FIREBASE_DATABASE_URL:-}" ]]; then
   ENV_VARS="${ENV_VARS},FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL}"

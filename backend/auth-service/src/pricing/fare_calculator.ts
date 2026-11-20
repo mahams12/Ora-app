@@ -16,7 +16,7 @@
  *   offerBoundMaxMinor = round(recommendedFareMinor × offerMaxRatio)
  *
  * MVP fixed inputs (freeze): demandMult=1.0, nightAdj=1.0, tolls=0, airportFee=0.
- * No Firestore / geo-store / HTTP / env access in this module.
+ * No Firestore / Redis / HTTP / env access in this module.
  */
 
 import {

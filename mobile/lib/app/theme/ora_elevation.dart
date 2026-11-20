@@ -12,30 +12,18 @@ class OraElevation {
 
   static List<BoxShadow> get cardShadow => const [
     BoxShadow(
-      color: Color(0x2EF88733),
-      blurRadius: 18,
+      color: OraColors.shadow,
+      blurRadius: 20,
       offset: Offset(0, 8),
-      spreadRadius: -7,
-    ),
-    BoxShadow(
-      color: Color(0x332A211D),
-      blurRadius: 30,
-      offset: Offset(0, 16),
-      spreadRadius: -12,
+      spreadRadius: -10,
     ),
   ];
 
   static List<BoxShadow> get raisedShadow => const [
     BoxShadow(
-      color: Color(0x38F88733),
-      blurRadius: 24,
-      offset: Offset(0, 10),
-      spreadRadius: -8,
-    ),
-    BoxShadow(
-      color: Color(0x402A211D),
-      blurRadius: 40,
-      offset: Offset(0, 20),
+      color: OraColors.shadow,
+      blurRadius: 28,
+      offset: Offset(0, 12),
       spreadRadius: -12,
     ),
   ];

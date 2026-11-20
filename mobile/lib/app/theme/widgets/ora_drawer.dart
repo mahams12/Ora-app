@@ -53,10 +53,7 @@ class OraDrawerShell extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [OraColors.navyElevated, OraColors.primaryMuted],
-                ),
-                border: Border(
-                  bottom: BorderSide(color: Color(0x66F88733), width: 1.2),
+                  colors: [OraColors.navy, OraColors.navyElevated],
                 ),
               ),
               child: Column(
@@ -166,44 +163,22 @@ class OraDrawerItem extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: danger
-                          ? const [Color(0xFFFF7A6B), Color(0xFFE04A3A)]
-                          : const [Color(0xFFFFA14A), Color(0xFFFF6A0D)],
+                if (bareIcon)
+                  SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: Icon(icon, color: iconColor, size: 20),
+                  )
+                else
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: iconBackground,
+                      borderRadius: BorderRadius.circular(OraRadius.sm),
                     ),
-                    border: Border.all(
-                      color: const Color(0xB3FFFFFF),
-                      width: 1.4,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: danger
-                            ? const Color(0x55E04A3A)
-                            : const Color(0x59FF6A0D),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                      const BoxShadow(
-                        color: Color(0x262A211D),
-                        blurRadius: 14,
-                        offset: Offset(0, 8),
-                        spreadRadius: -6,
-                      ),
-                    ],
+                    child: Icon(icon, color: iconColor, size: 18),
                   ),
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: bareIcon ? 22 : 19,
-                  ),
-                ),
                 const SizedBox(width: OraSpacing.sm),
                 Expanded(
                   child: Column(

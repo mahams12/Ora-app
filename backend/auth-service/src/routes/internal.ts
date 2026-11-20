@@ -17,29 +17,25 @@ import { DispatchFcmProjector } from '../delivery/dispatch_fcm_projector';
 import { RideStateFcmProjector } from '../delivery/ride_state_fcm_projector';
 import type { FcmSender } from '../delivery/fcm_sender';
 import { createNullFcmSender } from '../delivery/fcm_sender';
-import type { GeoStoreClient } from '../geo/types';
+import type { RedisGeoClient } from '../redis/types';
 import { ExpiresAtCleanupService } from '../maintenance/expires_at_cleanup_service';
-import type { DispatchTaskScheduler } from '../tasks/dispatch_tasks';
 
 export function createInternalRouter(
   db: Firestore,
-  geoStore: GeoStoreClient | null = null,
+  redis: RedisGeoClient | null = null,
   fcm: FcmSender | null = null,
   tripLocationRtdb: import('../rtdb/types').TripLocationRtdb | null = null,
   streamStore: import('../location/stream_store').LocationStreamStore | null = null,
-  options?: {
-    adaptiveFreshness?: boolean;
-    scheduler?: DispatchTaskScheduler;
-  },
+  options?: { adaptiveFreshness?: boolean },
 ): Router {
   const router = Router();
   const rides = new RideService(db, tripLocationRtdb, streamStore);
   const nearby = new NearbyDriversService(
     db,
-    geoStore,
+    redis,
     options?.adaptiveFreshness === true,
   );
-  const dispatch = new DispatchWaveService(db, nearby, options?.scheduler);
+  const dispatch = new DispatchWaveService(db, nearby);
   const fcmSender = fcm ?? createNullFcmSender();
   const dispatchFcm = new DispatchFcmProjector(db, fcmSender);
   const rideStateFcm = new RideStateFcmProjector(db, fcmSender);
@@ -84,43 +80,6 @@ export function createInternalRouter(
       logSafe('RIDE_EXPIRE_SWEEP', {
         operation: 'RIDE_EXPIRE_SWEEP',
         requestId: getRequestId(req),
-        durationMs: Date.now() - started,
-        errorCode: err instanceof RideDomainError ? err.code : 'INTERNAL',
-      });
-      sendRideDomainError(req, res, err);
-    }
-  });
-
-  /**
-   * Per-ride expiry — Cloud Tasks deadline wake-up target. Scheduled at
-   * ride.expiresAt; expireRide is transactional + idempotent so duplicate
-   * task deliveries are safe.
-   */
-  router.post('/rides/:rideId/expire', async (req, res) => {
-    const started = Date.now();
-    const rideId = String(req.params.rideId ?? '');
-    if (!rideId) {
-      sendApiError(req, res, 400, 'VALIDATION_ERROR', 'rideId is required.');
-      return;
-    }
-    try {
-      const result = await rides.expireRide({
-        rideId,
-        correlationId: getRequestId(req),
-      });
-      logSafe('RIDE_EXPIRE_TASK', {
-        operation: 'RIDE_EXPIRE_TASK',
-        requestId: getRequestId(req),
-        rideId,
-        outcome: result.outcome,
-        durationMs: Date.now() - started,
-      });
-      sendRideData(req, res, 200, result);
-    } catch (err) {
-      logSafe('RIDE_EXPIRE_TASK', {
-        operation: 'RIDE_EXPIRE_TASK',
-        requestId: getRequestId(req),
-        rideId,
         durationMs: Date.now() - started,
         errorCode: err instanceof RideDomainError ? err.code : 'INTERNAL',
       });
@@ -229,12 +188,12 @@ export function createInternalRouter(
   router.post('/geo/presence-sweep', async (req, res) => {
     const started = Date.now();
     try {
-      const removed = (await geoStore?.sweepExpired?.()) ?? 0;
+      const removed = (await redis?.sweepExpired?.()) ?? 0;
       logSafe('GEO_PRESENCE_SWEEP', {
         operation: 'GEO_PRESENCE_SWEEP',
         requestId: getRequestId(req),
         removed,
-        supported: typeof geoStore?.sweepExpired === 'function',
+        supported: typeof redis?.sweepExpired === 'function',
         durationMs: Date.now() - started,
       });
       sendRideData(req, res, 200, { removed });
@@ -263,20 +222,6 @@ export function createInternalRouter(
         rideId,
         correlationId: getRequestId(req),
       });
-      // Task-driven waves 2+ also produce wave_completed outbox events —
-      // sweep now or invite pushes would wait up to one sweeps-all period.
-      // Best-effort: a projector failure never fails the dispatch tick.
-      try {
-        await dispatchFcm.sweep({ correlationId: getRequestId(req) });
-      } catch (sweepErr) {
-        logSafe('N4_DISPATCH_TICK_FCM_SWEEP_FAILED', {
-          operation: 'N4_DISPATCH_TICK',
-          requestId: getRequestId(req),
-          rideId,
-          errorCode:
-            sweepErr instanceof RideDomainError ? sweepErr.code : 'INTERNAL',
-        });
-      }
       logSafe('N4_DISPATCH_TICK', {
         operation: 'N4_DISPATCH_TICK',
         requestId: getRequestId(req),
@@ -421,7 +366,7 @@ export function createInternalRouter(
         radiusKm: result.radiusKm,
         resultCount: result.candidates.length,
         geoHits: diagnostics?.geoHits ?? 0,
-        geoGetCount: diagnostics?.geoGetCount ?? 0,
+        redisGetCount: diagnostics?.redisGetCount ?? 0,
         firestoreUsersReads: diagnostics?.firestoreUsersReads ?? 0,
         firestoreDriversReads: diagnostics?.firestoreDriversReads ?? 0,
         firestoreUsersBatchRpcs: diagnostics?.firestoreUsersBatchRpcs ?? 0,
@@ -625,9 +570,9 @@ export function createInternalRouter(
     await run('rideStateFcm', () =>
       rideStateFcm.sweep({ correlationId: requestId, limit }),
     );
-    if (typeof geoStore?.sweepExpired === 'function') {
+    if (typeof redis?.sweepExpired === 'function') {
       await run('geoPresence', async () => ({
-        removed: await geoStore.sweepExpired!(),
+        removed: await redis.sweepExpired!(),
       }));
     }
     if (cleanup) {
@@ -690,78 +635,6 @@ export function createInternalRouter(
         durationMs: Date.now() - started,
         errorCode: err instanceof RideDomainError ? err.code : 'INTERNAL',
       });
-      sendRideDomainError(req, res, err);
-    }
-  });
-
-  /**
-   * Admin driver-approval transition (worker-only; internalWorkerToken /
-   * OIDC SA allowlist). With DRIVER_AUTO_APPROVE unset, applications land
-   * as driverStatus='pending' — this endpoint is the approval path.
-   * POST body: { status: 'approved' | 'rejected' | 'suspended' | 'pending' }
-   */
-  router.post('/drivers/:uid/status', async (req, res) => {
-    const VALID = new Set(['approved', 'rejected', 'suspended', 'pending']);
-    const uid = req.params.uid;
-    const status = (req.body as { status?: unknown })?.status;
-    if (typeof uid !== 'string' || uid.length === 0) {
-      sendApiError(req, res, 400, 'VALIDATION_ERROR', 'uid is required.');
-      return;
-    }
-    if (typeof status !== 'string' || !VALID.has(status)) {
-      sendApiError(
-        req,
-        res,
-        400,
-        'VALIDATION_ERROR',
-        'status must be one of approved|rejected|suspended|pending.',
-      );
-      return;
-    }
-    try {
-      const nowIso = new Date().toISOString();
-      const result = await db.runTransaction(async (tx) => {
-        const userRef = db.collection('users').doc(uid);
-        const driverRef = db.collection('drivers').doc(uid);
-        const [userSnap, driverSnap] = await Promise.all([
-          tx.get(userRef),
-          tx.get(driverRef),
-        ]);
-        if (!userSnap.exists || !driverSnap.exists) {
-          throw new RideDomainError(
-            'NOT_FOUND',
-            404,
-            'No driver application exists for this user.',
-          );
-        }
-        const userPatch: Record<string, unknown> = {
-          driverStatus: status,
-          driverApprovalSource: 'admin',
-          updatedAt: nowIso,
-        };
-        // Approval grants the driver role; non-approved states leave the
-        // stored role untouched — eligibility requires BOTH role=driver AND
-        // driverStatus=approved, so status alone fully gates access.
-        if (status === 'approved') userPatch.role = 'driver';
-        tx.update(userRef, userPatch);
-        const driverPatch: Record<string, unknown> = { updatedAt: nowIso };
-        if (status === 'approved') driverPatch.approvedAt = nowIso;
-        if (status === 'suspended') {
-          // Stop presence immediately — eligibility already gates invites.
-          driverPatch.availabilityState = 'offline';
-          driverPatch.isOnline = false;
-        }
-        tx.update(driverRef, driverPatch);
-        return { uid, driverStatus: status };
-      });
-      logSafe('DRIVER_STATUS_ADMIN', {
-        operation: 'DRIVER_STATUS_ADMIN',
-        requestId: getRequestId(req),
-        uid,
-        driverStatus: status,
-      });
-      sendRideData(req, res, 200, result);
-    } catch (err) {
       sendRideDomainError(req, res, err);
     }
   });

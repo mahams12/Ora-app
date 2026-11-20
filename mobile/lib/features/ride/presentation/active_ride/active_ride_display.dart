@@ -55,9 +55,10 @@ String activeRideMessage(String state) {
     'DELIVERY_FAILED' =>
       'The courier recorded a failed delivery attempt. You can arrange a '
           'return or contact support.',
-    'SEARCHING' ||
-    'OFFERS_AVAILABLE' => 'This ride is still in the offers marketplace.',
-    _ => 'Ora received an unrecognized ride state. Showing server data safely.',
+    'SEARCHING' || 'OFFERS_AVAILABLE' =>
+      'This ride is still in the offers marketplace.',
+    _ =>
+      'Ora received an unrecognized ride state. Showing server data safely.',
   };
 }
 
@@ -178,7 +179,10 @@ bool areOfferListsUiEquivalent(List<RideOffer> a, List<RideOffer> b) {
   return true;
 }
 
-bool _driverSnapshotUiEqual(Map<String, Object?>? a, Map<String, Object?>? b) {
+bool _driverSnapshotUiEqual(
+  Map<String, Object?>? a,
+  Map<String, Object?>? b,
+) {
   if (identical(a, b)) return true;
   if (a == null || b == null) return a == b;
   if (a.length != b.length) return false;

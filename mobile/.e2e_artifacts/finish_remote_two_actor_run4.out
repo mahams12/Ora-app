@@ -1,0 +1,84 @@
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.6 MB/s (11632 bytes in 0.003s)
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11632 bytes in 0.003s)
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.3 MB/s (9636 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.0 MB/s (11260 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.9 MB/s (11260 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.0 MB/s (9604 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.1 MB/s (9604 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.2 MB/s (10038 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.1 MB/s (9606 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.9 MB/s (7492 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 1.7 MB/s (6486 bytes in 0.004s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.2 MB/s (7645 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.3 MB/s (7645 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.0 MB/s (10074 bytes in 0.005s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.9 MB/s (10074 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.6 MB/s (6087 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.3 MB/s (6085 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.3 MB/s (11632 bytes in 0.003s)
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.9 MB/s (11632 bytes in 0.003s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.6 MB/s (6428 bytes in 0.002s)
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.5 MB/s (6428 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.6 MB/s (6428 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 3.2 MB/s (6082 bytes in 0.002s)
+UI hierchary dumped to: /sdcard/fin.xml
+/sdcard/fin.xml: 1 file pulled, 0 skipped. 2.4 MB/s (6082 bytes in 0.002s)
+{
+  "gates": {
+    "auth_emulator": "PASS",
+    "auth_samsung": "PASS",
+    "passenger_pricing": "PASS",
+    "ride_creation": "PASS",
+    "driver_discovery": "PASS",
+    "respond": "PASS",
+    "respond_ux": "PASS"
+  },
+  "started": "2026-09-29T09:36:25.447050+00:00",
+  "driver_ui_evidence": "fin_d_auth_0.xml",
+  "auth_me": {
+    "skipped": true,
+    "reason": "custom_token_failed"
+  },
+  "rideId": "1820535b-e702-4740-bca0-4f939730874d",
+  "backend_create": {
+    "pricingSnapshotId": "ps_eb8944e5-eae4-4e36-9aa3-d83616d7ebf1",
+    "passengerOfferMinor": 114000,
+    "requestVersion": 1
+  },
+  "error": "offer count 0",
+  "finished": "2026-09-29T09:39:16.042163+00:00",
+  "verdict": "NOT GREEN"
+}

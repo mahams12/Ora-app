@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Cloud test build — hosted Firebase (oraapp-a9be5) + Cloud Run staging API.
+# Cloud test build — hosted Firebase (ora-app-d8112) + Cloud Run staging API.
 # No emulator host => the app uses real Firebase Auth/Firestore/RTDB with the
 # project's google-services.json. Works from any network, no Mac dependency.
 #

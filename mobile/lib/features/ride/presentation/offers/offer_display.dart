@@ -63,7 +63,8 @@ class PassengerOfferParseResult {
   factory PassengerOfferParseResult.invalid({
     required PassengerOfferParseStatus status,
     required String message,
-  }) => PassengerOfferParseResult._(status: status, message: message);
+  }) =>
+      PassengerOfferParseResult._(status: status, message: message);
 }
 
 /// Validates draft rupees against server snapshot bounds (authoritative).

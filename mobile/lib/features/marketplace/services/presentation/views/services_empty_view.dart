@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../app/theme/ora_colors.dart';
 import '../../../shared/widgets/marketplace_empty_state.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../widgets/services_module_navigation.dart';
@@ -13,7 +14,7 @@ class ServicesEmptyView extends StatelessWidget {
   Widget build(BuildContext context) {
     final isBookings = destination == ServicesNavigationDestination.bookings;
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       appBar: AppBar(title: Text(isBookings ? 'Bookings' : 'Saved')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.services,

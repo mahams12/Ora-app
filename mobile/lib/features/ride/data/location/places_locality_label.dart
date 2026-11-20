@@ -109,8 +109,6 @@ String? _shortFormattedAddress(Object? formattedRaw) {
 
 bool _looksLikePlusCode(String part) {
   // Open Location Code / plus-code fragments e.g. "9688+HR"
-  return RegExp(
-    r'^[A-Z0-9]{4,}\+[A-Z0-9]+',
-    caseSensitive: false,
-  ).hasMatch(part);
+  return RegExp(r'^[A-Z0-9]{4,}\+[A-Z0-9]+', caseSensitive: false)
+      .hasMatch(part);
 }

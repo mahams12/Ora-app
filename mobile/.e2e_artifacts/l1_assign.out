@@ -1,0 +1,25 @@
+{
+  "ok": false,
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "8b52b15d-3872-4bc6-8169-d7cf273dccc6",
+    "createOffer": {
+      "status": 422,
+      "body": {
+        "code": "DRIVER_NOT_ELIGIBLE",
+        "message": "Driver already has an active assigned ride."
+      }
+    }
+  }
+}

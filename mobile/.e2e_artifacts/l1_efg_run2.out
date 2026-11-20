@@ -1,0 +1,781 @@
+SKIP_ASSIGN using existing l1_assigned_ride.json
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=55ms (0ms mobile, 0ms wifi, 55ms not connected)
+relaunch NotificationShade
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=35ms (0ms mobile, 0ms wifi, 35ms not connected)
+=== boot fg= NotificationShade ===
+- 12:18 pm
+- Power saving mode on
+- Ringer vibrate.
+- Wi-Fi signal full.
+- Phone signal full.
+- Battery charging, 100 percent.
+- Tue, 6 Oct
+- Open settings.
+- Wi-Fi,On,HUAWEI-5G-3zZa,Button
+- Vibrate On,Button
+- Bluetooth,Off,Button
+- Auto | rotate,On,Button
+- Flight,mode,Off,Button
+- Torch,Off,Button
+- Device control
+- Media output
+- ⁨SIMOSA⁩
+- 05/10/2026
+- FREE 80 GBs + Dher saare Minutes! Unlock karein Pakistan ka sab se bara Reward Challenge SIMOSA ke latest version par! https://simosa.onelin
+- Expand
+- Samsung account legal terms updated
+- 11:14 am
+- Tap here to agree to the new Privacy Notice.
+- Syed Hamza Mehdi
+- mehihamza1@gmail.com
+- 11:08 am
+- [MuhammadAhmad2555/halloween-party] Run failed: Deploy to Cloudflare - main (b68c1de)
+- Indeed
+- 70131344@student.uol.edu.pk
+- 2:56 am
+- Associate Frontend ( React ) Developer @ Digixvalley Pvt Ltd
+- USB for file transfer
+- Notification settings,Button
+- Clear,Button
+- Jazz
+relaunch NotificationShade
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=33ms (0ms mobile, 0ms wifi, 33ms not connected)
+=== home0 fg= NotificationShade ===
+- 12:18 pm
+- Power saving mode on
+- Ringer vibrate.
+- Wi-Fi signal full.
+- Phone signal full.
+- Battery charging, 100 percent.
+- Tue, 6 Oct
+- Open settings.
+- Wi-Fi,On,HUAWEI-5G-3zZa,Button
+- Vibrate On,Button
+- Bluetooth,Off,Button
+- Auto | rotate,On,Button
+- Flight,mode,Off,Button
+- Torch,Off,Button
+- Device control
+- Media output
+- ⁨SIMOSA⁩
+- 05/10/2026
+- FREE 80 GBs + Dher saare Minutes! Unlock karein Pakistan ka sab se bara Reward Challenge SIMOSA ke latest version par! https://simosa.onelin
+- Expand
+- Samsung account legal terms updated
+- 11:14 am
+- Tap here to agree to the new Privacy Notice.
+- Syed Hamza Mehdi
+- mehihamza1@gmail.com
+- 11:08 am
+- [MuhammadAhmad2555/halloween-party] Run failed: Deploy to Cloudflare - main (b68c1de)
+- Indeed
+- 70131344@student.uol.edu.pk
+- 2:56 am
+- Associate Frontend ( React ) Developer @ Digixvalley Pvt Ltd
+- USB for file transfer
+- Notification settings,Button
+- Clear,Button
+- Jazz
+=== drawer0 fg= NotificationShade ===
+- 12:18 pm
+- Power saving mode on
+- Ringer vibrate.
+- Wi-Fi signal full.
+- Phone signal full.
+- Battery charging, 100 percent.
+- Tue, 6 Oct
+- Open settings.
+- Wi-Fi,On,HUAWEI-5G-3zZa,Button
+- Vibrate On,Button
+- Bluetooth,Off,Button
+- Auto | rotate,On,Button
+- Flight,mode,Off,Button
+- Torch,Off,Button
+- Device control
+- Media output
+- ⁨SIMOSA⁩
+- 05/10/2026
+- FREE 80 GBs + Dher saare Minutes! Unlock karein Pakistan ka sab se bara Reward Challenge SIMOSA ke latest version par! https://simosa.onelin
+- Expand
+- Samsung account legal terms updated
+- 11:14 am
+- Tap here to agree to the new Privacy Notice.
+- Syed Hamza Mehdi
+- mehihamza1@gmail.com
+- 11:08 am
+- [MuhammadAhmad2555/halloween-party] Run failed: Deploy to Cloudflare - main (b68c1de)
+- Indeed
+- 70131344@student.uol.edu.pk
+- 2:56 am
+- Associate Frontend ( React ) Developer @ Digixvalley Pvt Ltd
+- USB for file transfer
+- Notification settings,Button
+- Clear,Button
+- Jazz
+=== home1 fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+TAP exact Menu  Menu
+=== drawer1 fg= com.ora.ora ===
+- O
+- ORA passenger
+- View profile
+- Home
+- My rides
+- Saved places
+- Wallet
+- Refer & earn | Get Rs 200 per friend
+- Safety centre
+- Switch to driver mode | Earn with the same account
+- Settings
+- Help centre
+- Log out
+TAP  Switch to driver mode  Switch to driver mode|Earn with the same account
+=== driver1 fg= com.ora.ora ===
+- Menu
+- Driver
+- HE
+- Today's earnings | — | Live payouts connect in a later slice · not invented
+- Map zones · coming later
+- Available for trips | Go online connects in a later slice
+- Open ride requests | Server open-ride list for approved drivers
+- Quick actions
+- Earnings
+- My trips
+- Payouts
+- Vehicle
+- Bonuses
+- Hot zones
+BASELINE ready
+TAP exact My trips  My trips
+=== trips fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 12:12 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+TAP  Assigned — head to pickup  Assigned — head to pickup|DRIVER_ASSIGNED|Liberty Market Lahore → Gulberg Lahor
+=== ride_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== base_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+status Location is ready
+TEST E
+=== e_left fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 12:12 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+TAP  Assigned — head to pickup  Assigned — head to pickup|DRIVER_ASSIGNED|Liberty Market Lahore → Gulberg Lahor
+=== ride_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== e_ret_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+status Location is ready
+E {'leftAssignedRide': True, 'watchStopsIncreased': True, 'watchStopsAfterLeave': 1, 'watchStartsBeforeLeave': 1, 'metricsAfterLeave': {'watch_starts': 1, 'watch_stops': 1, 'fix_classifications': 3, 'classification_counts': {'ACCEPTED': 3}, 'first_watch_line': '10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', 'first_stop_line': '10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', 'first_fix_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'first_accepted_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'start_lines': ['10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}'], 'stop_lines': ['10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}'], 'geolocator_starts': 1, 'geolocator_stops': 1}} {'assignedRideVisible': True, 'status': 'Location is ready', 'watchStartsAfterReturn': 2, 'watchStartedAgain': True, 'metrics': {'watch_starts': 2, 'watch_stops': 1, 'fix_classifications': 5, 'classification_counts': {'ACCEPTED': 5}, 'first_watch_line': '10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', 'first_stop_line': '10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', 'first_fix_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'first_accepted_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'start_lines': ['10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', '10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}'], 'stop_lines': ['10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}'], 'geolocator_starts': 2, 'geolocator_stops': 1}}
+TEST F
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=61ms (0ms mobile, 0ms wifi, 61ms not connected)
+=== f0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== f_ret_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+status Location is ready
+F {'assignedRideVisible': True, 'status': 'Location is ready', 'watchStopsIncreasedOnBackground': True, 'noDuplicateWatchers': True, 'metricsBeforeBg': {'watch_starts': 2, 'watch_stops': 1, 'fix_classifications': 5, 'classification_counts': {'ACCEPTED': 5}, 'first_watch_line': '10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', 'first_stop_line': '10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', 'first_fix_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'first_accepted_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'start_lines': ['10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', '10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}'], 'stop_lines': ['10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}'], 'geolocator_starts': 2, 'geolocator_stops': 1}, 'metricsAfterBg': {'watch_starts': 2, 'watch_stops': 2, 'fix_classifications': 5, 'classification_counts': {'ACCEPTED': 5}, 'first_watch_line': '10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', 'first_stop_line': '10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', 'first_fix_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'first_accepted_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'start_lines': ['10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', '10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}'], 'stop_lines': ['10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', '10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}'], 'geolocator_starts': 2, 'geolocator_stops': 2}, 'metricsAfterFg': {'watch_starts': 3, 'watch_stops': 2, 'fix_classifications': 7, 'classification_counts': {'ACCEPTED': 7}, 'first_watch_line': '10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', 'first_stop_line': '10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', 'first_fix_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'first_accepted_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'start_lines': ['10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', '10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', '10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}'], 'stop_lines': ['10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', '10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}'], 'geolocator_starts': 3, 'geolocator_stops': 2}}
+TEST G cancel-while-active
+=== g1 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+TAP exact Cancel ride  Cancel ride|Cancel ride
+=== g_dialog fg= com.ora.ora ===
+- Dismiss
+- Cancel ride?
+- This will cancel the ride for you and the passenger.
+- Keep ride | Keep ride
+- Cancel ride | Cancel ride
+TAP exact Cancel ride  Cancel ride|Cancel ride
+=== g_term_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- CANCELLED
+- Ride cancelled
+- This ride was cancelled.
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Back to assigned rides | Back to assigned rides
+G {'activeWatchBeforeCancel': True, 'acceptedFixesBeforeCancel': 7, 'uiTextHasCancelled': True, 'onAssignedRideDetail': True, 'visibleTerminalText': 'Ride cancelled', 'watchStoppedOnCancel': True, 'noFurtherAcceptedGrowth': False, 'metricsBefore': {'watch_starts': 3, 'watch_stops': 2, 'fix_classifications': 7, 'classification_counts': {'ACCEPTED': 7}, 'first_watch_line': '10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', 'first_stop_line': '10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', 'first_fix_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'first_accepted_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'start_lines': ['10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', '10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', '10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}'], 'stop_lines': ['10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', '10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}'], 'geolocator_starts': 3, 'geolocator_stops': 2}, 'metrics': {'watch_starts': 3, 'watch_stops': 3, 'fix_classifications': 20, 'classification_counts': {'ACCEPTED': 20}, 'first_watch_line': '10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', 'first_stop_line': '10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', 'first_fix_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'first_accepted_line': '10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}', 'start_lines': ['10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', '10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}', '10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}'], 'stop_lines': ['10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}', '10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}', '10-06 12:21:43.128 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: inactive}'], 'geolocator_starts': 3, 'geolocator_stops': 3}, 'noBackgroundBetweenReadyAndCancel': True}
+=== g_home fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 12:12 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-05 16:46 | Agreed fare Rs 1140
+{
+  "verdict": "GREEN",
+  "failed": [],
+  "E": {
+    "leave": {
+      "leftAssignedRide": true,
+      "watchStopsIncreased": true,
+      "watchStopsAfterLeave": 1,
+      "watchStartsBeforeLeave": 1,
+      "metricsAfterLeave": {
+        "watch_starts": 1,
+        "watch_stops": 1,
+        "fix_classifications": 3,
+        "classification_counts": {
+          "ACCEPTED": 3
+        },
+        "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+        "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+        "start_lines": [
+          "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+        ],
+        "stop_lines": [
+          "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}"
+        ],
+        "geolocator_starts": 1,
+        "geolocator_stops": 1
+      }
+    },
+    "return": {
+      "assignedRideVisible": true,
+      "status": "Location is ready",
+      "watchStartsAfterReturn": 2,
+      "watchStartedAgain": true,
+      "metrics": {
+        "watch_starts": 2,
+        "watch_stops": 1,
+        "fix_classifications": 5,
+        "classification_counts": {
+          "ACCEPTED": 5
+        },
+        "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+        "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+        "start_lines": [
+          "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+          "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+        ],
+        "stop_lines": [
+          "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}"
+        ],
+        "geolocator_starts": 2,
+        "geolocator_stops": 1
+      }
+    }
+  },
+  "F": {
+    "assignedRideVisible": true,
+    "status": "Location is ready",
+    "watchStopsIncreasedOnBackground": true,
+    "noDuplicateWatchers": true,
+    "metricsBeforeBg": {
+      "watch_starts": 2,
+      "watch_stops": 1,
+      "fix_classifications": 5,
+      "classification_counts": {
+        "ACCEPTED": 5
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}"
+      ],
+      "geolocator_starts": 2,
+      "geolocator_stops": 1
+    },
+    "metricsAfterBg": {
+      "watch_starts": 2,
+      "watch_stops": 2,
+      "fix_classifications": 5,
+      "classification_counts": {
+        "ACCEPTED": 5
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}"
+      ],
+      "geolocator_starts": 2,
+      "geolocator_stops": 2
+    },
+    "metricsAfterFg": {
+      "watch_starts": 3,
+      "watch_stops": 2,
+      "fix_classifications": 7,
+      "classification_counts": {
+        "ACCEPTED": 7
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}"
+      ],
+      "geolocator_starts": 3,
+      "geolocator_stops": 2
+    }
+  },
+  "G": {
+    "activeWatchBeforeCancel": true,
+    "acceptedFixesBeforeCancel": 7,
+    "uiTextHasCancelled": true,
+    "onAssignedRideDetail": true,
+    "visibleTerminalText": "Ride cancelled",
+    "watchStoppedOnCancel": true,
+    "noFurtherAcceptedGrowth": false,
+    "metricsBefore": {
+      "watch_starts": 3,
+      "watch_stops": 2,
+      "fix_classifications": 7,
+      "classification_counts": {
+        "ACCEPTED": 7
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}"
+      ],
+      "geolocator_starts": 3,
+      "geolocator_stops": 2
+    },
+    "metrics": {
+      "watch_starts": 3,
+      "watch_stops": 3,
+      "fix_classifications": 20,
+      "classification_counts": {
+        "ACCEPTED": 20
+      },
+      "first_watch_line": "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+      "first_stop_line": "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+      "first_fix_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "first_accepted_line": "10-06 12:19:47.006 I/flutter (28774): [INFO] location_fix_classified {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, classification: ACCEPTED, accuracyMeters: 14.973999977111816}",
+      "start_lines": [
+        "10-06 12:19:45.412 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:14.238 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}",
+        "10-06 12:20:30.016 I/flutter (28774): [INFO] location_watch_started {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab}"
+      ],
+      "stop_lines": [
+        "10-06 12:19:58.076 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: dispose}",
+        "10-06 12:20:23.150 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: background}",
+        "10-06 12:21:43.128 I/flutter (28774): [INFO] location_watch_stopped {rideId: 3fb4ab51-13b7-434c-8f97-ea43355fcbab, reason: inactive}"
+      ],
+      "geolocator_starts": 3,
+      "geolocator_stops": 3
+    },
+    "noBackgroundBetweenReadyAndCancel": true
+  }
+}

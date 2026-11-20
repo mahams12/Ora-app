@@ -1,21 +1,21 @@
 /**
- * N3 Nearby Driver — read-only performance baseline (local MemoryDb + MemoryGeoStore).
- * Does NOT change production code. Counts geo-store/Firestore ops via thin wrappers.
+ * N3 Nearby Driver — read-only performance baseline (local MemoryDb + MemoryRedis).
+ * Does NOT change production code. Counts Redis/Firestore ops via thin wrappers.
  *
  * Usage: npm run audit:n3-performance
  */
 import { performance } from 'node:perf_hooks';
 import { NearbyDriversService } from '../src/drivers/nearby_service';
 import { memoryDb } from '../src/__tests__/helpers/memory_db';
-import { createMemoryGeoStore } from '../src/geo/memory_geo_store';
+import { createMemoryRedis } from '../src/redis/memory_redis';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
-  N3_GEO_COUNT,
+  N3_REDIS_GEO_COUNT,
   driverOnlineKey,
   type DriverOnlineMarker,
-  type GeoStoreClient,
-} from '../src/geo/types';
+  type RedisGeoClient,
+} from '../src/redis/types';
 
 type FirestoreMetrics = {
   usersDocGet: number;
@@ -24,17 +24,17 @@ type FirestoreMetrics = {
   ridesDocsScanned: number;
 };
 
-type GeoMetrics = {
+type RedisMetrics = {
   georadius: number;
   get: number;
   geoCandidatesReturned: number;
 };
 
-function instrumentGeo(base: GeoStoreClient): {
-  client: GeoStoreClient;
-  metrics: GeoMetrics;
+function instrumentRedis(base: RedisGeoClient): {
+  client: RedisGeoClient;
+  metrics: RedisMetrics;
 } {
-  const metrics: GeoMetrics = {
+  const metrics: RedisMetrics = {
     georadius: 0,
     get: 0,
     geoCandidatesReturned: 0,
@@ -151,13 +151,13 @@ function seedApprovedOnline(
 }
 
 async function seedGeo(
-  geoStore: GeoStoreClient,
+  redis: RedisGeoClient,
   driverId: string,
   offsetIndex: number,
   marker?: Partial<DriverOnlineMarker>,
 ) {
   const lng = pickup.lng + 0.001 * (offsetIndex + 1);
-  await geoStore.geoadd(GEO_DRIVERS_KEY, lng, pickup.lat, driverId);
+  await redis.geoadd(GEO_DRIVERS_KEY, lng, pickup.lat, driverId);
   const full: DriverOnlineMarker = {
     driverId,
     lastLocationTs: now - 1000,
@@ -168,7 +168,7 @@ async function seedGeo(
     acceptedAt: new Date().toISOString(),
     ...marker,
   };
-  await geoStore.set(
+  await redis.set(
     driverOnlineKey(driverId),
     JSON.stringify(full),
     DRIVER_ONLINE_TTL_SECONDS,
@@ -179,8 +179,8 @@ type ScenarioResult = {
   name: string;
   limit: number;
   geoCandidates: number;
-  geoGeoradius: number;
-  geoGet: number;
+  redisGeoradius: number;
+  redisGet: number;
   firestoreUsers: number;
   firestoreDrivers: number;
   firestoreRidesQueries: number;
@@ -189,7 +189,7 @@ type ScenarioResult = {
   eligible: number;
   latencyMs: number;
   theoreticalWorstCase: {
-    geoGet: number;
+    redisGet: number;
     firestoreReads: number;
   };
 };
@@ -200,28 +200,28 @@ async function runScenario(input: {
   limit?: number;
   seed?: (
     db: MemDb,
-    geoStore: GeoStoreClient,
+    redis: RedisGeoClient,
     i: number,
     id: string,
   ) => void | Promise<void>;
 }): Promise<ScenarioResult> {
   const baseDb = memoryDb();
-  const baseGeo = createMemoryGeoStore();
+  const baseRedis = createMemoryRedis();
   const { db, metrics: fs } = instrumentMemoryDb(baseDb);
-  const { client: geoStore, metrics: rs } = instrumentGeo(baseGeo);
+  const { client: redis, metrics: rs } = instrumentRedis(baseRedis);
   const limit = input.limit ?? 100;
 
   for (let i = 0; i < input.driverCount; i++) {
     const id = `d-${input.name}-${i}`;
     if (input.seed) {
-      await input.seed(baseDb, baseGeo, i, id);
+      await input.seed(baseDb, baseRedis, i, id);
     } else {
       seedApprovedOnline(baseDb, id);
-      await seedGeo(baseGeo, id, i);
+      await seedGeo(baseRedis, id, i);
     }
   }
 
-  const svc = new NearbyDriversService(db as never, geoStore);
+  const svc = new NearbyDriversService(db as never, redis);
   const t0 = performance.now();
   const result = await svc.findNearby({
     query: { ...pickup, radiusKm: 25, limit },
@@ -236,8 +236,8 @@ async function runScenario(input: {
     name: input.name,
     limit,
     geoCandidates: rs.geoCandidatesReturned,
-    geoGeoradius: rs.georadius,
-    geoGet: rs.get,
+    redisGeoradius: rs.georadius,
+    redisGet: rs.get,
     firestoreUsers: fs.usersDocGet,
     firestoreDrivers: fs.driversDocGet,
     firestoreRidesQueries: fs.ridesQueryGet,
@@ -246,8 +246,8 @@ async function runScenario(input: {
     eligible: result.candidates.length,
     latencyMs,
     theoreticalWorstCase: {
-      geoGet: N3_GEO_COUNT,
-      firestoreReads: N3_GEO_COUNT * 3,
+      redisGet: N3_REDIS_GEO_COUNT,
+      firestoreReads: N3_REDIS_GEO_COUNT * 3,
     },
   };
 }
@@ -280,9 +280,9 @@ async function main(): Promise<void> {
       name: '100-geo-all-offline-fs',
       driverCount: 100,
       limit: 100,
-      seed: async (db, geoStore, i, id) => {
+      seed: async (db, redis, i, id) => {
         seedApprovedOnline(db, id, 'offline');
-        await seedGeo(geoStore, id, i);
+        await seedGeo(redis, id, i);
       },
     }),
   );
@@ -291,9 +291,9 @@ async function main(): Promise<void> {
       name: '100-geo-no-markers',
       driverCount: 100,
       limit: 100,
-      seed: async (db, geoStore, i, id) => {
+      seed: async (db, redis, i, id) => {
         seedApprovedOnline(db, id);
-        await geoStore.geoadd(
+        await redis.geoadd(
           GEO_DRIVERS_KEY,
           pickup.lng + 0.001 * (i + 1),
           pickup.lat,
@@ -310,11 +310,11 @@ async function main(): Promise<void> {
   const worst = scenarios.find((s) => s.name === '100-geo-all-offline-fs');
   if (worst) {
     const hitWorst =
-      worst.geoGet === 100 &&
+      worst.redisGet === 100 &&
       worst.firestoreTotalReads === 300 &&
-      worst.geoGeoradius === 1;
+      worst.redisGeoradius === 1;
     console.log(
-      `\nWorst-case estimate check (100 offline after geo-store pass): ${
+      `\nWorst-case estimate check (100 offline after Redis pass): ${
         hitWorst ? 'CONFIRMED' : 'MISMATCH'
       }`,
     );

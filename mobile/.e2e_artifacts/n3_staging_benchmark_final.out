@@ -1,0 +1,101 @@
+== N3 staging benchmark prefix=n3bench_20260929T102322Z ==
+== skip deploy (N3_BENCH_DEPLOY=0) ==
+== bundle N3 seed for Cloud Run Job image ==
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+▲ [WARNING] "import.meta" is not available with the "cjs" output format and will be empty [empty-import-meta]
+
+    scripts/seed_n3_staging_benchmark.ts:24:64:
+      24 │ ...ame !== 'undefined' ? __filename : fileURLToPath(import.meta.url),
+         ╵                                                     ~~~~~~~~~~~
+
+  You need to set the output format to "esm" for "import.meta" to work correctly.
+
+1 warning
+
+  scripts/seed_n3_staging_benchmark.bundle.cjs  324.6kb
+
+⚡ Done in 46ms
+== wire Memorystore Redis to Cloud Run (idempotent) ==
+Updated property [core/project].
+Created version [5] of the secret [ora-staging-redis-url].
+Updated IAM policy for secret [ora-staging-redis-url].
+Deploying...
+Creating Revision.........................................................................................done
+Routing traffic.....done
+Done.
+Service [ora-auth-service-staging] revision [ora-auth-service-staging-00011-sfx] has been deployed and is serving 100 percent of traffic.
+Service URL: https://ora-auth-service-staging-498169438285.us-central1.run.app
+OK wired Redis to Cloud Run service=ora-auth-service-staging connector=ora-staging-vpc secret=ora-staging-redis-url (host redacted)
+== seed 100 approved/online bench drivers (VPC Cloud Run Job) ==
+Updating Cloud Run job [ora-n3-staging-seed] in project [ora-app-d8112] region [us-central1]
+Updating job...
+Done.
+Job [ora-n3-staging-seed] has successfully been updated.
+
+To execute this job, use:
+gcloud run jobs execute ora-n3-staging-seed
+Creating execution...
+Provisioning resources.........................done
+Starting execution...................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................done
+Running execution...............................................................done
+Done.
+Execution [ora-n3-staging-seed-wv6nd] has successfully completed.
+
+View details about this execution by running:
+gcloud run jobs executions describe ora-n3-staging-seed-wv6nd
+
+Or visit https://console.cloud.google.com/run/jobs/executions/details/us-central1/ora-n3-staging-seed-wv6nd?project=498169438285
+OK seed job execution=ora-n3-staging-seed-wv6nd prefix=n3bench_20260929T102322Z mode=seed
+== bundle in-VPC benchmark runner ==
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+▲ [WARNING] "import.meta" is not available with the "cjs" output format and will be empty [empty-import-meta]
+
+    scripts/run_n3_staging_benchmark_vpc.ts:21:64:
+      21 │ ...ame !== 'undefined' ? __filename : fileURLToPath(import.meta.url),
+         ╵                                                     ~~~~~~~~~~~
+
+  You need to set the output format to "esm" for "import.meta" to work correctly.
+
+1 warning
+
+  scripts/run_n3_staging_benchmark_vpc.bundle.cjs  333.8kb
+
+⚡ Done in 48ms
+== deploy image with benchmark bundles (preserves Redis wiring) ==
+== gcloud project: ora-app-d8112 region: us-central1 service: ora-auth-service-staging ==
+Updated property [core/project].
+== enabling APIs (requires project Owner once) ==
+Operation "operations/acat.p2-498169438285-e847186f-f77a-4037-b1c9-ecacb6c52fb1" finished successfully.
+== deploy Cloud Run from source (Dockerfile) ==
+Building using Dockerfile and deploying container to Cloud Run service [ora-auth-service-staging] in project [ora-app-d8112] region [us-central1]
+Building and deploying...
+Validating configuration.........done
+Uploading sources...........................................done
+Building Container.............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................done
+Setting IAM Policy.............................done
+Creating Revision................................................................................................done
+Routing traffic.....done
+Done.
+Service [ora-auth-service-staging] revision [ora-auth-service-staging-00012-tsb] has been deployed and is serving 100 percent of traffic.
+Service URL: https://ora-auth-service-staging-498169438285.us-central1.run.app
+STAGING_API_BASE_URL=https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1
+HEALTHZ=https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/healthz/
+{"ok":true,"service":"ora-auth-service"}
+== run benchmark in VPC (10 / 30 / 100 × 5; same NearbyDriversService) ==
+Creating Cloud Run job [ora-n3-staging-benchmark] in project [ora-app-d8112] region [us-central1]
+Creating job...
+Done.
+Job [ora-n3-staging-benchmark] has successfully been created.
+
+To execute this job, use:
+gcloud run jobs execute ora-n3-staging-benchmark
+Creating execution...
+Provisioning resources....................................done
+Starting execution..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................done
+Running execution.......................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................failed
+Executing job failed
+ERROR: (gcloud.run.jobs.execute) The execution failed.
+View details about this execution by running:
+gcloud run jobs executions describe ora-n3-staging-benchmark-bkjbd
+
+Or visit https://console.cloud.google.com/run/jobs/executions/details/us-central1/ora-n3-staging-benchmark-bkjbd?project=498169438285

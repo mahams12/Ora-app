@@ -1,0 +1,429 @@
+{
+  "ok": true,
+  "rideId": "e8afdcb8-6152-40c4-b9ac-41e9f6785d7b",
+  "state": "DRIVER_ASSIGNED",
+  "steps": {
+    "base": "https://ora-auth-service-staging-2zmxvrrs7a-uc.a.run.app/v1",
+    "driverUid": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+    "passengerUid": "AQLQjCfBw3W17kfgzziM6po1Nh33",
+    "goOnline": {
+      "status": 200
+    },
+    "pricing": {
+      "status": 200
+    },
+    "createRide": {
+      "status": 201
+    },
+    "rideId": "e8afdcb8-6152-40c4-b9ac-41e9f6785d7b",
+    "createOffer": {
+      "status": 201,
+      "body": {
+        "offerId": "e8afdcb8-6152-40c4-b9ac-41e9f6785d7b_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "rideId": "e8afdcb8-6152-40c4-b9ac-41e9f6785d7b",
+        "driverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "amountMinor": 114000,
+        "currency": "PKR",
+        "type": "PASSENGER_PRICE_ACCEPTED",
+        "status": "PENDING",
+        "requestVersion": 1,
+        "expiresAt": "2026-10-06T11:02:19.859Z",
+        "driverSnapshot": {
+          "displayName": null,
+          "role": "driver"
+        },
+        "createdAt": "2026-10-06T10:59:19.859Z",
+        "selectedAt": null,
+        "withdrawnAt": null,
+        "rideState": "OFFERS_AVAILABLE",
+        "rideVersion": 2
+      }
+    },
+    "selectOffer": {
+      "status": 200,
+      "body": {
+        "rideId": "e8afdcb8-6152-40c4-b9ac-41e9f6785d7b",
+        "state": "DRIVER_ASSIGNED",
+        "version": 3,
+        "assignedDriverId": "SRjL7BJgCKTduhtpjtYMRZMq5fD2",
+        "agreedFareMinor": 114000,
+        "agreedOfferId": "e8afdcb8-6152-40c4-b9ac-41e9f6785d7b_SRjL7BJgCKTduhtpjtYMRZMq5fD2_v1",
+        "currency": "PKR"
+      }
+    }
+  }
+}
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=69ms (0ms mobile, 0ms wifi, 69ms not connected)
+  bash arg: -p
+  bash arg: com.ora.ora
+  bash arg: -c
+  bash arg: android.intent.category.LAUNCHER
+  bash arg: 1
+args: [-p, com.ora.ora, -c, android.intent.category.LAUNCHER, 1]
+ arg: "-p"
+ arg: "com.ora.ora"
+ arg: "-c"
+ arg: "android.intent.category.LAUNCHER"
+ arg: "1"
+data="com.ora.ora"
+data="android.intent.category.LAUNCHER"
+Events injected: 1
+## Network stats: elapsed time=59ms (0ms mobile, 0ms wifi, 59ms not connected)
+ASSIGN fresh proof ride
+=== boot fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+=== home0 fg= com.ora.ora ===
+- Menu
+- ORA
+- O
+- Where are you headed? | Set pickup & destination
+- COMING LATER | Intercity trips across Pakistan cities
+- Earn on ORA | Passenger & driver — switch anytime
+- Services
+- City rides | Zip to Premium
+- Intercity | City to city
+- Courier | Send anything same day
+- Move | Truck + helpers
+- Choose a ride | 6 options
+- Zip | Bike, fastest way | Fare on request
+- Trio | Rickshaw, 3 seats | Fare on request
+- Easy | Compact | Fare on request
+TAP exact Menu  Menu
+=== drawer0 fg= com.ora.ora ===
+- O
+- ORA passenger
+- View profile
+- Home
+- My rides
+- Saved places
+- Wallet
+- Refer & earn | Get Rs 200 per friend
+- Safety centre
+- Switch to driver mode | Earn with the same account
+- Settings
+- Help centre
+- Log out
+TAP  Switch to driver mode  Switch to driver mode|Earn with the same account
+=== driver0 fg= com.ora.ora ===
+- Menu
+- Driver
+- HE
+- Today's earnings | — | Live payouts connect in a later slice · not invented
+- Map zones · coming later
+- Available for trips | Go online connects in a later slice
+- Open ride requests | Server open-ride list for approved drivers
+- Quick actions
+- Earnings
+- My trips
+- Payouts
+- Vehicle
+- Bonuses
+- Hot zones
+OPEN assigned ride + wait GPS ready
+TAP exact My trips  My trips
+=== trips fg= com.ora.ora ===
+- Menu
+- My trips
+- ORA
+- Assigned rides
+- Jobs from Ora's servers for your approved driver account. This is assigned rides / history — not a marketplace browse.
+- Status
+- All | All
+- Completed | Completed
+- Cancelled | Cancelled
+- Service
+- Any | Any
+- Ride | Ride
+- Courier | Courier
+- Intercity | Intercity
+- Move | Move
+- Assigned — head to pickup | DRIVER_ASSIGNED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 15:59 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 12:12 | Agreed fare Rs 1140
+- Ride cancelled | CANCELLED | Liberty Market Lahore → Gulberg Lahore | Ride · easy · 2026-10-06 11:26 | Agreed fare Rs 1140
+TAP  Assigned — head to pickup  Assigned — head to pickup|DRIVER_ASSIGNED|Liberty Market Lahore → Gulberg Lahor
+=== ride_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== l2s4_ready_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+status Location is ready
+WAIT publish accepted
+RTDB verify
+BACKGROUND / FOREGROUND
+=== fg_ret_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+status Location is ready
+CANCEL + cleanup
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+=== g_wait_idle fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- DRIVER_ASSIGNED
+- Assigned — head to pickup
+- You are assigned to this trip. Mark en route when you leave for pickup.
+- Location is ready
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Updating ride…
+- Mark en route | Mark en route
+- Cancel ride | Cancel ride
+TAP exact Cancel ride  Cancel ride|Cancel ride
+=== g_dialog fg= com.ora.ora ===
+- Dismiss
+- Cancel ride?
+- This will cancel the ride for you and the passenger.
+- Keep ride | Keep ride
+- Cancel ride | Cancel ride
+TAP exact Cancel ride  Cancel ride|Cancel ride
+=== g_term_0 fg= com.ora.ora ===
+- Back
+- Assigned ride
+- Refresh
+- CANCELLED
+- Ride cancelled
+- This ride was cancelled.
+- Trip
+- Liberty Market Lahore → Gulberg Lahore
+- Category easy
+- Agreed fare Rs 1140
+- Back to assigned rides | Back to assigned rides
+{
+  "verdict": "GREEN",
+  "rideId": "e8afdcb8-6152-40c4-b9ac-41e9f6785d7b",
+  "failedChecks": [],
+  "publishAccepted": 1,
+  "rtdbSeq": 1
+}

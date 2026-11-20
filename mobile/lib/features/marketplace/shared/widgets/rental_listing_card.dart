@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -14,8 +12,6 @@ class RentalListingCardModel {
     required this.title,
     this.location,
     this.imageAsset,
-    this.imagePath,
-    this.image,
     this.rating,
     this.reviewCount,
     this.priceLabel,
@@ -28,14 +24,6 @@ class RentalListingCardModel {
   final String title;
   final String? location;
   final String? imageAsset;
-
-  /// Local file path for vendor-posted photos — takes precedence over
-  /// [imageAsset] since real listings ship device files, not assets.
-  final String? imagePath;
-
-  /// Decoded provider (e.g. `MemoryImage` from a listing data-URL) —
-  /// takes precedence over both path and asset when set.
-  final ImageProvider? image;
   final double? rating;
   final int? reviewCount;
   final String? priceLabel;
@@ -134,27 +122,7 @@ class RentalListingCard extends StatelessWidget {
                   fit: StackFit.expand,
                   clipBehavior: Clip.hardEdge,
                   children: [
-                    const Positioned.fill(
-                      child: ColoredBox(color: OraColors.primaryMuted),
-                    ),
-                    if (model.image != null)
-                      Image(
-                        image: model.image!,
-                        fit: BoxFit.cover,
-                        filterQuality: FilterQuality.medium,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const ColoredBox(color: OraColors.surfaceStrong),
-                      )
-                    else if (model.imagePath != null)
-                      Image.file(
-                        File(model.imagePath!),
-                        cacheWidth: 900,
-                        fit: BoxFit.cover,
-                        filterQuality: FilterQuality.medium,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const ColoredBox(color: OraColors.surfaceStrong),
-                      )
-                    else if (model.imageAsset != null)
+                    if (model.imageAsset != null)
                       Image.asset(
                         model.imageAsset!,
                         cacheWidth: 900,
@@ -190,7 +158,7 @@ class RentalListingCard extends StatelessWidget {
                               child: const Icon(
                                 Icons.home_work_outlined,
                                 size: 16,
-                                color: OraColors.gold,
+                                color: OraColors.navy,
                               ),
                             ),
                     ),
@@ -203,7 +171,7 @@ class RentalListingCard extends StatelessWidget {
                           onPressed: onBookmark,
                           style: IconButton.styleFrom(
                             backgroundColor: OraColors.onPhotoMuted,
-                            foregroundColor: OraColors.textPrimary,
+                            foregroundColor: OraColors.navy,
                           ),
                           icon: const Icon(Icons.favorite_border_rounded),
                         ),
@@ -307,30 +275,14 @@ class _HorizontalRentalListingCard extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      const Positioned.fill(
-                        child: ColoredBox(color: OraColors.primaryMuted),
-                      ),
-                      if (model.image != null)
-                        Image(
-                          image: model.image!,
-                          fit: BoxFit.cover,
-                          filterQuality: FilterQuality.medium,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const ColoredBox(color: OraColors.surfaceStrong),
-                        )
-                      else if (model.imagePath != null)
-                        Image.file(
-                          File(model.imagePath!),
-                          fit: BoxFit.cover,
-                          filterQuality: FilterQuality.medium,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const ColoredBox(color: OraColors.surfaceStrong),
-                        )
-                      else if (model.imageAsset != null)
-                        Image.asset(
-                          model.imageAsset!,
-                          fit: BoxFit.contain,
-                          filterQuality: FilterQuality.medium,
+                      if (model.imageAsset != null)
+                        Container(
+                          color: OraColors.navyElevated,
+                          child: Image.asset(
+                            model.imageAsset!,
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.medium,
+                          ),
                         )
                       else
                         const ColoredBox(color: OraColors.surfaceStrong),
@@ -350,14 +302,14 @@ class _HorizontalRentalListingCard extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: OraColors.ink.withValues(alpha: 0.85),
+                              color: OraColors.navy.withValues(alpha: 0.92),
                               borderRadius: BorderRadius.circular(
                                 OraRadius.pill,
                               ),
                             ),
                             child: Text(
                               '★ ${model.rating!.toStringAsFixed(1)}',
-                              style: OraTypography.caption(OraColors.gold400),
+                              style: OraTypography.caption(OraColors.goldSoft),
                             ),
                           ),
                         ),
@@ -448,7 +400,7 @@ class _HorizontalRentalListingCard extends StatelessWidget {
                               style: IconButton.styleFrom(
                                 minimumSize: const Size(44, 44),
                                 backgroundColor: OraColors.gold,
-                                foregroundColor: OraColors.onPhoto,
+                                foregroundColor: OraColors.navy,
                               ),
                               icon: const Icon(Icons.arrow_forward_rounded),
                             ),
@@ -516,9 +468,7 @@ class _VerifiedBadge extends StatelessWidget {
       child: Text(
         isVerified ? 'Verified host' : 'Not verified',
         maxLines: 1,
-        style: OraTypography.caption(
-          OraColors.textPrimary,
-        ).copyWith(fontSize: 9),
+        style: OraTypography.caption(OraColors.navy).copyWith(fontSize: 9),
       ),
     );
   }

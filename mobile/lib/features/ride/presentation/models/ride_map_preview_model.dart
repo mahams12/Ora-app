@@ -1,4 +1,4 @@
-import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../domain/models/resolved_passenger_location.dart';
 import '../../domain/ports/pricing_estimate_port.dart';
@@ -61,7 +61,9 @@ class RideMapPreviewModel {
     if (!hasTripMetrics) return '';
     final km = distanceKm!;
     final mins = durationMin!.round();
-    final kmText = km >= 10 ? km.toStringAsFixed(0) : km.toStringAsFixed(1);
+    final kmText = km >= 10
+        ? km.toStringAsFixed(0)
+        : km.toStringAsFixed(1);
     return '$kmText km • $mins min';
   }
 
@@ -100,9 +102,8 @@ class RideMapPreviewModel {
       pickup: pickup,
       destination: destination,
       encodedPolyline: encoded,
-      pricingSnapshotId: hasUsablePricing
-          ? pricingEstimate?.pricingSnapshotId
-          : null,
+      pricingSnapshotId:
+          hasUsablePricing ? pricingEstimate?.pricingSnapshotId : null,
     );
 
     final label = _statusLabel(
@@ -123,12 +124,10 @@ class RideMapPreviewModel {
       _ => RideMapPreviewStatus.ready,
     };
 
-    final double? distanceKm = hasUsablePricing
-        ? pricingEstimate?.distanceKm
-        : null;
-    final double? durationMin = hasUsablePricing
-        ? pricingEstimate?.durationMin
-        : null;
+    final double? distanceKm =
+        hasUsablePricing ? pricingEstimate?.distanceKm : null;
+    final double? durationMin =
+        hasUsablePricing ? pricingEstimate?.durationMin : null;
 
     return RideMapPreviewModel(
       routeIdentity: identity,

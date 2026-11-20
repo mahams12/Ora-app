@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-PROJECT="${GCP_PROJECT_ID:-oraapp-a9be5}"
+PROJECT="${GCP_PROJECT_ID:-ora-app-d8112}"
 SA_EMAIL="${CLOUD_RUN_RUNTIME_SA:-firebase-adminsdk-fbsvc@${PROJECT}.iam.gserviceaccount.com}"
 MAPS_SECRET_NAME="${PRODUCTION_MAPS_SECRET_NAME:-ora-production-google-maps-server-key}"
 WORKER_SECRET_NAME="${PRODUCTION_WORKER_SECRET_NAME:-ora-production-internal-worker-token}"

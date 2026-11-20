@@ -1,0 +1,29 @@
+Starting: Intent { cmp=com.ora.ora/.MainActivity }
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 1.9 MB/s (5287 bytes in 0.003s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 1.1 MB/s (5287 bytes in 0.005s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 2.8 MB/s (11597 bytes in 0.004s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 1.5 MB/s (10491 bytes in 0.007s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 1.3 MB/s (6051 bytes in 0.004s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 2.6 MB/s (8445 bytes in 0.003s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 0.9 MB/s (4408 bytes in 0.004s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 1.3 MB/s (4408 bytes in 0.003s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 1.4 MB/s (4408 bytes in 0.003s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 1.4 MB/s (4408 bytes in 0.003s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 1.7 MB/s (4408 bytes in 0.002s)
+/sdcard/rh.xml: 1 file pulled, 0 skipped. 1.1 MB/s (4408 bytes in 0.004s)
+=== RESPOND_HIT_TARGET_VERIFY 2026-09-29T06:01:25.656561+00:00 ===
+{
+  "marker": "=== RESPOND_HIT_TARGET_VERIFY 2026-09-29T06:01:25.656561+00:00 ===",
+  "device": "RF8R40ZQ1JH",
+  "old_bounds": [
+    53,
+    622,
+    1028,
+    1546
+  ],
+  "timestamp": "2026-09-29T06:01:25.657038+00:00",
+  "adb_reverse": "tcp:8081 -> tcp:8080",
+  "list_xml": "/Users/jazimsaeed/Ora-app/mobile/.e2e_artifacts/rh_open_final.xml",
+  "verdict": "BLOCKED",
+  "reason": "no_respond_or_open_ride_on_screen"
+}

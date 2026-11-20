@@ -22,7 +22,7 @@ class ServicesSearchResultsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final catalogue = ref.watch(catalogueProvider);
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: OraColors.background,
       appBar: AppBar(title: const Text('Service search')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.services,

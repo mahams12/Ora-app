@@ -7,7 +7,7 @@ ART="$MOBILE/.e2e_artifacts"
 REPORT="$ART/slice6_verification_run.json"
 KEY_PROPS="${ORA_ANDROID_KEY_PROPERTIES_FILE:-$MOBILE/android/key.properties}"
 APP_ID='1:498169438285:android:3b100b1c7a7248f1ddbc04'
-PROJECT=oraapp-a9be5
+PROJECT=ora-app-d8112
 
 if [[ ! -f "$KEY_PROPS" ]]; then
   python3 - <<PY

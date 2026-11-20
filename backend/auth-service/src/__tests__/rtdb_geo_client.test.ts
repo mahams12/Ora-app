@@ -7,8 +7,8 @@ import {
   driverOnlineKey,
   geoDriversCityKey,
   type DriverOnlineMarker,
-} from '../geo/types';
-import { GeoProjectionService } from '../geo/geo_projection';
+} from '../redis/types';
+import { RedisGeoProjectionService } from '../redis/geo_projection';
 
 const LAHORE = { lat: 31.52, lng: 74.35 };
 
@@ -47,7 +47,7 @@ function seedDriver(
   });
 }
 
-describe('RtdbGeoClient — geo-store-parity semantics', () => {
+describe('RtdbGeoClient — Redis-parity semantics', () => {
   it('projectLocation writes geo + marker in one node', async () => {
     const rtdb = memoryRtdb();
     const geo = createRtdbGeoClient(rtdb.ref('/'));
@@ -194,7 +194,7 @@ describe('RtdbGeoClient — geo-store-parity semantics', () => {
     expect(await geo.get(driverOnlineKey('d1'))).toBeNull();
   });
 
-  it('del clears marker fields but preserves geo membership (geo-store parity)', async () => {
+  it('del clears marker fields but preserves geo membership (Redis parity)', async () => {
     const rtdb = memoryRtdb();
     const geo = createRtdbGeoClient(rtdb.ref('/'));
     await seedDriver(geo, 'd1', LAHORE.lat, LAHORE.lng);
@@ -248,7 +248,7 @@ describe('RtdbGeoClient — geo-store-parity semantics', () => {
 describe('RtdbGeoClient — projection service integration', () => {
   function projectionFor(rtdb: ReturnType<typeof memoryRtdb>) {
     const geo = createRtdbGeoClient(rtdb.ref('/'));
-    return { geo, svc: new GeoProjectionService(geo) };
+    return { geo, svc: new RedisGeoProjectionService(geo) };
   }
 
   const base = {

@@ -20,10 +20,10 @@ class DriverMarkerInterpolator {
     double snapDistanceMeters = 150,
     double minMoveMeters = 1.5,
     DateTime Function()? now,
-  }) : _segmentDuration = segmentDuration,
-       _snapDistanceMeters = snapDistanceMeters,
-       _minMoveMeters = minMoveMeters,
-       _now = now ?? DateTime.now;
+  })  : _segmentDuration = segmentDuration,
+        _snapDistanceMeters = snapDistanceMeters,
+        _minMoveMeters = minMoveMeters,
+        _now = now ?? DateTime.now;
 
   final Duration _segmentDuration;
   final double _snapDistanceMeters;
@@ -141,8 +141,7 @@ class DriverMarkerInterpolator {
     final lat2 = b.lat * math.pi / 180;
     final dLat = (b.lat - a.lat) * math.pi / 180;
     final dLon = (b.lng - a.lng) * math.pi / 180;
-    final h =
-        math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final h = math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(lat1) *
             math.cos(lat2) *
             math.sin(dLon / 2) *

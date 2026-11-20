@@ -2,14 +2,14 @@ import { describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../app';
 import { memoryDb } from './helpers/memory_db';
-import { createFirestoreGeoClient } from '../geo/firestore_geo_client';
+import { createFirestoreGeoClient } from '../redis/firestore_geo_client';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   geoDriversCityKey,
   type DriverOnlineMarker,
-} from '../geo/types';
+} from '../redis/types';
 import { createEmptyN3NearbyDiagnostics } from '../drivers/nearby_service';
 
 const WORKER = 'test-worker-token-fsgeo-xxxx';
@@ -24,7 +24,7 @@ function appFor(db: ReturnType<typeof memoryDb>) {
     requireAppCheck: false,
     rateLimit: { windowMs: 60_000, max: 50_000 },
     internalWorkerToken: WORKER,
-    geoStore: createFirestoreGeoClient(db as never),
+    redis: createFirestoreGeoClient(db as never),
   });
 }
 
@@ -282,7 +282,7 @@ describe('FirestoreGeoClient — client semantics', () => {
     expect(seen).toBeNull();
   });
 
-  it('del removes marker but preserves geo membership (geo-store parity)', async () => {
+  it('del removes marker but preserves geo membership (Redis parity)', async () => {
     const db = memoryDb();
     const geo = createFirestoreGeoClient(db as never);
     await geo.projectLocation!({
@@ -297,7 +297,7 @@ describe('FirestoreGeoClient — client semantics', () => {
     expect(await geo.del(driverOnlineKey('d1'))).toBe(1);
     expect(await geo.get(driverOnlineKey('d1'))).toBeNull();
     // GEO membership survives DEL — driver only becomes ineligible via the
-    // missing marker (same observable behavior as the geo store).
+    // missing marker (same observable behavior as Redis).
     expect(await geo.geopos(GEO_DRIVERS_KEY, 'd1')).not.toBeNull();
   });
 
@@ -415,7 +415,7 @@ describe('FirestoreGeoClient — client semantics', () => {
       minLastLocationTs: Date.now() - 15_000,
     });
     expect(hits).toEqual([]);
-    // Membership still intact (geo-store parity) — doc exists, just no marker.
+    // Membership still intact (Redis parity) — doc exists, just no marker.
     expect(await geo.geopos(GEO_DRIVERS_KEY, 'd1')).not.toBeNull();
   });
 
@@ -541,75 +541,6 @@ describe('FirestoreGeoClient — client semantics', () => {
     });
     expect(hits.map((h) => h.member)).toEqual(['fresh-near']);
   });
-
-  it('progressive rings return identical results to a single-box scan', async () => {
-    const db = memoryDb();
-    const geoRings = createFirestoreGeoClient(db as never);
-    const geoFlat = createFirestoreGeoClient(db as never, {
-      progressiveRingsKm: [],
-    });
-    // Dense cluster inside 2km + a spread shell at 8–9km — the ring probe
-    // finds ≥count candidates early but must not displace true nearest-K.
-    const geo = geoRings;
-    for (let i = 0; i < 160; i++) {
-      const a = (i / 160) * Math.PI * 2;
-      const r = 0.005 + (i % 18) * 0.0008; // ~0.5–2.0km
-      await geo.geoadd(
-        GEO_DRIVERS_KEY,
-        74.35 + r * Math.cos(a),
-        31.52 + r * Math.sin(a),
-        `near${i}`,
-      );
-    }
-    for (let i = 0; i < 60; i++) {
-      const a = (i / 60) * Math.PI * 2;
-      const r = 0.08 + (i % 3) * 0.005; // ~8–9km
-      await geo.geoadd(
-        GEO_DRIVERS_KEY,
-        74.35 + r * Math.cos(a),
-        31.52 + r * Math.sin(a),
-        `far${i}`,
-      );
-    }
-    const args = {
-      key: GEO_DRIVERS_KEY,
-      longitude: 74.35,
-      latitude: 31.52,
-      radiusKm: 10,
-      count: 100,
-    } as const;
-    const ringsHits = await geoRings.georadius(args);
-    const flatHits = await geoFlat.georadius(args);
-    expect(ringsHits.map((h) => h.member)).toEqual(
-      flatHits.map((h) => h.member),
-    );
-    for (const h of ringsHits) {
-      expect(h.distanceKm).toBeLessThanOrEqual(10);
-    }
-  });
-
-  it('progressive rings expand correctly on sparse fleets', async () => {
-    const db = memoryDb();
-    const geo = createFirestoreGeoClient(db as never);
-    // Only 3 drivers, all outside the 2km and 5km rings → full-box fallback.
-    for (let i = 0; i < 3; i += 1) {
-      await geo.geoadd(
-        GEO_DRIVERS_KEY,
-        74.35 + 0.07 + i * 0.005,
-        31.52,
-        `d${i}`,
-      );
-    }
-    const hits = await geo.georadius({
-      key: GEO_DRIVERS_KEY,
-      longitude: 74.35,
-      latitude: 31.52,
-      radiusKm: 10,
-      count: 100,
-    });
-    expect(hits).toHaveLength(3);
-    expect(hits.map((h) => h.member)).toEqual(['d0', 'd1', 'd2']);
-  });
 });
 
 describe('N3 nearby via Firestore geo store (HTTP integration)', () => {
@@ -635,7 +566,7 @@ describe('N3 nearby via Firestore geo store (HTTP integration)', () => {
     });
     expect(result.candidates).toHaveLength(1);
     // Zero marker fetches: markerValue rode in on the bounding-box scan.
-    expect(diag.geoGetCount).toBe(0);
+    expect(diag.redisGetCount).toBe(0);
     expect(diag.geoHits).toBe(1);
   });
 

@@ -1,0 +1,55 @@
+ACTIVITY MANAGER ACTIVITIES (dumpsys activity activities)
+Display #0 (activities from top to bottom):
+  * Task{c663b5e #7 type=standard I=com.ora.ora/.MainActivity U=0 visible=true visibleRequested=true mode=fullscreen translucent=false sz=1}
+    mLastNonFullscreenBounds=Rect(329, 830 - 952, 2110)
+    isSleeping=false
+    topResumedActivity=ActivityRecord{136917010 u0 com.ora.ora/.MainActivity t7}
+    * Hist  #0: ActivityRecord{136917010 u0 com.ora.ora/.MainActivity t7}
+      packageName=com.ora.ora processName=com.ora.ora
+      launchedFromUid=2000 launchedFromPackage=com.android.shell launchedFromFeature=null userId=0
+      app=ProcessRecord{34c2446 1720:com.ora.ora/u0a213}
+      Intent { flg=0x10000000 xflg=0x5 cmp=com.ora.ora/.MainActivity }
+      rootOfTask=true task=Task{c663b5e #7 type=standard I=com.ora.ora/.MainActivity}
+      taskAffinity=null
+      mActivityComponent=com.ora.ora/.MainActivity
+      baseDir=/data/app/~~fbgZoydhG30zNRRp4ZEVJQ==/com.ora.ora-DxFFbwjovrIZl1xnaD-otg==/base.apk
+      dataDir=/data/user/0/com.ora.ora
+      stateNotNeeded=false componentSpecified=true mActivityType=standard
+      compat={480dpi} theme=0x7f0d0000
+      mLastReportedConfigurations:
+        mGlobalConfig={1.0 310mcc260mnc [en_US] ldltr sw427dp w427dp h952dp 480dpi nrml long port finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 1280, 2856) mAppBounds=Rect(0, 0 - 1280, 2856) mMaxBounds=Rect(0, 0 - 1280, 2856) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.3 s.47 fontWeightAdjustment=0}
+        mOverrideConfig={1.0 310mcc260mnc [en_US] ldltr sw427dp w427dp h952dp 480dpi nrml long port finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 1280, 2856) mAppBounds=Rect(0, 0 - 1280, 2856) mMaxBounds=Rect(0, 0 - 1280, 2856) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} as.3 s.3 fontWeightAdjustment=0}
+      mLastReportedActivityWindowInfo=ActivityWindowInfo{isEmbedded=false, taskBounds=Rect(0, 0 - 1280, 2856), taskFragmentBounds=Rect(0, 0 - 1280, 2856)}
+      CurrentConfiguration={1.0 310mcc260mnc [en_US] ldltr sw427dp w427dp h952dp 480dpi nrml long port finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 1280, 2856) mAppBounds=Rect(0, 0 - 1280, 2856) mMaxBounds=Rect(0, 0 - 1280, 2856) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} as.3 s.4 fontWeightAdjustment=0}
+      RequestedOverrideConfiguration={0.0 ?mcc0mnc ?localeList ?layoutDir ?swdp ?wdp ?hdp ?density ?lsize ?long ?ldr ?wideColorGamut ?orien ?uimode ?night ?touch ?keyb/?/? ?nav/? winConfig={ mBounds=Rect(0, 0 - 0, 0) mAppBounds=null mMaxBounds=Rect(0, 0 - 0, 0) mDisplayRotation=undefined mWindowingMode=undefined mActivityType=standard mAlwaysOnTop=undefined mRotation=undefined} as.3 ?fontWeightAdjustment}
+      taskDescription: label="null" icon=null iconResource=/0 iconFilename=null primaryColor=ffe6e6e6
+        backgroundColor=ffffffff statusBarColor=ff000000 navigationBarColor=808080
+       backgroundColorFloating=ffffffff
+      launchFailed=false launchCount=1 lastLaunchTime=-3m28s529ms
+      mHaveState=false mIcicle=null
+      state=RESUMED delayedResume=false finishing=false
+      keysPaused=false inHistory=true idle=true
+      occludesParent=true mNoDisplay=false immersive=false launchMode=1
+      mActivityType=standard
+      windows=[Window{3959733 u0 com.ora.ora/com.ora.ora.MainActivity}, Window{5bf4310 u0 Splash Screen com.ora.ora}]
+      windowType=2
+      mOccludesParent=true
+      overrideOrientation=SCREEN_ORIENTATION_UNSPECIFIED
+      requestedOrientation=SCREEN_ORIENTATION_UNSPECIFIED
+      mVisibleRequested=true mVisible=true mClientVisible=true reportedDrawn=false reportedVisible=false
+      mNumInterestingWindows=1 mNumDrawnWindows=0 allDrawn=false)
+      startingData=SplashScreenStartingData{d4175c3 removeAfterTransaction= 0} firstWindowDrawn=false
+      startingWindow=Window{5bf4310 u0 Splash Screen com.ora.ora} startingSurface=com.android.server.wm.StartingSurfaceController$StartingSurface@e92be40 startingDisplayed=true startingMoved=false mVisibleSetFromTransferredStartingWindow=false
+      resizeMode=RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION
+      mLastReportedMultiWindowMode=false mLastReportedPictureInPictureMode=false
+      supportsSizeChanges=SIZE_CHANGES_UNSUPPORTED_METADATA
+      configChanges=0x40003fb7
+      neverSandboxDisplayApis=false
+      alwaysSandboxDisplayApis=false
+      isTransparentPolicyRunning=false
+      areBoundsLetterboxed=false
+      isLetterboxRunning=false
+
+  * Task{2ff8913 #1 type=home U=0 visible=false visibleRequested=false mode=fullscreen translucent=true sz=1}
+    * Task{b26bd49 #5 type=home I=com.google.android.apps.nexuslauncher/.NexusLauncherActivity U=0 rootTaskId=1 visible=false visibleRequested=false mode=fullscreen translucent=true sz=2}
+      mLastPausedActivity: ActivityRecord{65278180 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t5}

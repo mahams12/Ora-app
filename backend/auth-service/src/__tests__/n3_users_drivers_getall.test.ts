@@ -8,13 +8,13 @@ import {
   uniqueGeoMemberIdsInOrder,
 } from '../drivers/nearby_service';
 import { memoryDb } from './helpers/memory_db';
-import { createMemoryGeoStore } from '../geo/memory_geo_store';
+import { createMemoryRedis } from '../redis/memory_redis';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   type DriverOnlineMarker,
-} from '../geo/types';
+} from '../redis/types';
 
 const pickup = { lat: 31.52, lng: 74.35 };
 const now = Date.now();
@@ -34,12 +34,12 @@ function seedApprovedOnline(db: ReturnType<typeof memoryDb>, uid: string) {
 }
 
 async function seedGeo(
-  geoStore: ReturnType<typeof createMemoryGeoStore>,
+  redis: ReturnType<typeof createMemoryRedis>,
   driverId: string,
   lngOffset: number,
   marker: Partial<DriverOnlineMarker> & { lastLocationTs: number },
 ) {
-  await geoStore.geoadd(GEO_DRIVERS_KEY, pickup.lng + lngOffset, pickup.lat, driverId);
+  await redis.geoadd(GEO_DRIVERS_KEY, pickup.lng + lngOffset, pickup.lat, driverId);
   const full: DriverOnlineMarker = {
     driverId,
     accuracy: 8,
@@ -49,7 +49,7 @@ async function seedGeo(
     acceptedAt: new Date().toISOString(),
     ...marker,
   };
-  await geoStore.set(
+  await redis.set(
     driverOnlineKey(driverId),
     JSON.stringify(full),
     DRIVER_ONLINE_TTL_SECONDS,
@@ -91,13 +91,13 @@ describe('N3 users+drivers getAll batch prefetch', () => {
   it('≤100 GEO IDs → one users getAll and one drivers getAll', async () => {
     const base = memoryDb();
     const { db, usersGetAllCalls, driversGetAllCalls } = wrapDbWithGetAllSpy(base);
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     for (let i = 0; i < 15; i++) {
       const id = `d${i}`;
       seedApprovedOnline(db, id);
-      await seedGeo(geoStore, id, 0.001 * (i + 1), { lastLocationTs: now - 1000 });
+      await seedGeo(redis, id, 0.001 * (i + 1), { lastLocationTs: now - 1000 });
     }
-    const svc = new NearbyDriversService(db as never, geoStore);
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     await svc.findNearby({
       query: { ...pickup, limit: 10 },
@@ -116,13 +116,13 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('missing user → user_missing', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     db.seed('drivers', 'd1', {
       driverId: 'd1',
       availabilityState: 'online',
     });
-    await seedGeo(geoStore, 'd1', 0.01, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     const result = await svc.findNearby({
       query: { ...pickup },
@@ -137,7 +137,7 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('missing driver → driver_missing', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     db.seed('users', 'd1', {
       uid: 'd1',
       role: 'driver',
@@ -145,8 +145,8 @@ describe('N3 users+drivers getAll batch prefetch', () => {
       isActive: true,
       banned: false,
     });
-    await seedGeo(geoStore, 'd1', 0.01, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     await svc.findNearby({
       query: { ...pickup },
@@ -160,7 +160,7 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('banned user rejected', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     db.seed('users', 'd1', {
       uid: 'd1',
       role: 'driver',
@@ -169,8 +169,8 @@ describe('N3 users+drivers getAll batch prefetch', () => {
       banned: true,
     });
     db.seed('drivers', 'd1', { driverId: 'd1', availabilityState: 'online' });
-    await seedGeo(geoStore, 'd1', 0.01, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     await svc.findNearby({
       query: { ...pickup },
@@ -184,7 +184,7 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('inactive user rejected', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     db.seed('users', 'd1', {
       uid: 'd1',
       role: 'driver',
@@ -193,8 +193,8 @@ describe('N3 users+drivers getAll batch prefetch', () => {
       banned: false,
     });
     db.seed('drivers', 'd1', { driverId: 'd1', availabilityState: 'online' });
-    await seedGeo(geoStore, 'd1', 0.01, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     await svc.findNearby({
       query: { ...pickup },
@@ -208,7 +208,7 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('wrong role rejected as user_not_approved', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     db.seed('users', 'd1', {
       uid: 'd1',
       role: 'passenger',
@@ -217,8 +217,8 @@ describe('N3 users+drivers getAll batch prefetch', () => {
       banned: false,
     });
     db.seed('drivers', 'd1', { driverId: 'd1', availabilityState: 'online' });
-    await seedGeo(geoStore, 'd1', 0.01, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     await svc.findNearby({
       query: { ...pickup },
@@ -232,7 +232,7 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('unapproved driver rejected', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     db.seed('users', 'd1', {
       uid: 'd1',
       role: 'driver',
@@ -241,8 +241,8 @@ describe('N3 users+drivers getAll batch prefetch', () => {
       banned: false,
     });
     db.seed('drivers', 'd1', { driverId: 'd1', availabilityState: 'online' });
-    await seedGeo(geoStore, 'd1', 0.01, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     await svc.findNearby({
       query: { ...pickup },
@@ -256,7 +256,7 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('offline driver rejected', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     db.seed('users', 'd1', {
       uid: 'd1',
       role: 'driver',
@@ -265,8 +265,8 @@ describe('N3 users+drivers getAll batch prefetch', () => {
       banned: false,
     });
     db.seed('drivers', 'd1', { driverId: 'd1', availabilityState: 'offline' });
-    await seedGeo(geoStore, 'd1', 0.01, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     await svc.findNearby({
       query: { ...pickup },
@@ -280,10 +280,10 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('eligible driver survives', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1');
-    await seedGeo(geoStore, 'd1', 0.01, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     const result = await svc.findNearby({ query: { ...pickup }, nowMs: now });
     expect(result.candidates).toHaveLength(1);
     expect(result.candidates[0]!.driverId).toBe('d1');
@@ -291,14 +291,14 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('GEO ordering preserved for survivors', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     for (const id of ['far', 'near', 'mid']) {
       seedApprovedOnline(db, id);
     }
-    await seedGeo(geoStore, 'far', 0.05, { lastLocationTs: now - 1000 });
-    await seedGeo(geoStore, 'near', 0.001, { lastLocationTs: now - 1000 });
-    await seedGeo(geoStore, 'mid', 0.02, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'far', 0.05, { lastLocationTs: now - 1000 });
+    await seedGeo(redis, 'near', 0.001, { lastLocationTs: now - 1000 });
+    await seedGeo(redis, 'mid', 0.02, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     const result = await svc.findNearby({
       query: { ...pickup, limit: 10 },
       nowMs: now,
@@ -308,18 +308,18 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('busy Set still rejects busy drivers', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'busy');
     seedApprovedOnline(db, 'free');
-    await seedGeo(geoStore, 'busy', 0.01, { lastLocationTs: now - 1000 });
-    await seedGeo(geoStore, 'free', 0.02, { lastLocationTs: now - 1000 });
+    await seedGeo(redis, 'busy', 0.01, { lastLocationTs: now - 1000 });
+    await seedGeo(redis, 'free', 0.02, { lastLocationTs: now - 1000 });
     db.seed('rides', 'r1', {
       rideId: 'r1',
       assignedDriverId: 'busy',
       state: N3_BUSY_RIDE_STATES[0],
       passengerId: 'p1',
     });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     const result = await svc.findNearby({
       query: { ...pickup, limit: 10 },
@@ -336,10 +336,10 @@ describe('N3 users+drivers getAll batch prefetch', () => {
     const base = memoryDb();
     const getAllSpy = vi.fn(base.getAll.bind(base));
     const db = { ...base, getAll: getAllSpy };
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     seedApprovedOnline(db, 'd1');
-    await seedGeo(geoStore, 'd1', 0.01, { lastLocationTs: now - 1000 });
-    const svc = new NearbyDriversService(db as never, geoStore);
+    await seedGeo(redis, 'd1', 0.01, { lastLocationTs: now - 1000 });
+    const svc = new NearbyDriversService(db as never, redis);
     const ok = await svc.isStillEligibleForInvite('d1', { nowMs: now });
     expect(ok).toBe(true);
     expect(getAllSpy).not.toHaveBeenCalled();
@@ -347,12 +347,12 @@ describe('N3 users+drivers getAll batch prefetch', () => {
 
   it('diagnostics separate batch RPC count from logical document reads', async () => {
     const db = memoryDb();
-    const geoStore = createMemoryGeoStore();
+    const redis = createMemoryRedis();
     for (let i = 0; i < 3; i++) {
       seedApprovedOnline(db, `d${i}`);
-      await seedGeo(geoStore, `d${i}`, 0.001 * (i + 1), { lastLocationTs: now - 1000 });
+      await seedGeo(redis, `d${i}`, 0.001 * (i + 1), { lastLocationTs: now - 1000 });
     }
-    const svc = new NearbyDriversService(db as never, geoStore);
+    const svc = new NearbyDriversService(db as never, redis);
     let diag = createEmptyN3NearbyDiagnostics();
     await svc.findNearby({
       query: { ...pickup, limit: 2 },

@@ -9,8 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
   freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
   go_router: ^14.6.2
   dio: ^5.7.0
   uuid: ^4.5.1
@@ -22,6 +25,7 @@ dependencies:
   flutter_local_notifications: ^19.0.0
   flutter_secure_storage: ^10.3.1
   geolocator: ^14.0.2
+  google_maps_flutter: ^2.12.3
   maplibre_gl: ^0.27.1
   geocoding: ^5.0.0
   image_picker: ^1.2.2
@@ -33,6 +37,8 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.13
   freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.6.3
   mocktail: ^1.0.4
   integration_test:
     sdk: flutter
@@ -42,10 +48,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/brand/
-    - assets/branding/services/city_rides.webp
-    - assets/branding/services/intercity.webp
-    - assets/branding/services/courier.webp
-    - assets/branding/services/move.webp
+    - assets/branding/services/city_rides.jpg
+    - assets/branding/services/intercity.jpg
+    - assets/branding/services/courier.jpg
+    - assets/branding/services/move.jpg
     - assets/marketplace/modules/
     - assets/marketplace/catalogue_v1.json
     - assets/marketplace/logistics/
@@ -57,9 +63,6 @@ flutter:
     - assets/marketplace/services/subs/
     - assets/branding/ride_card/
     - assets/branding/ride_card/icons/
-    - assets/driver_tiles/
-    - assets/logistics/
-    - assets/vendor/
     # Ride Request half-screen MapLibre preview (Ora dark style + markers).
     - assets/maps/preview/
     # Disposable MapLibre PoC only — safe to delete with the PoC feature.

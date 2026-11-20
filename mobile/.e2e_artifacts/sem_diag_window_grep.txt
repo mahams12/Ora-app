@@ -1,0 +1,40 @@
+20:    mHasSurface=true isReadyForDisplay()=true mWindowRemovalAllowed=false
+24:      mSurface=Surface(name=ScreenDecorOverlayBottom)/@0x77d13b3
+25:      Surface: shown=true      mDrawState=HAS_DRAWN       mLastHidden=false
+28:    isVisible=true
+49:    mHasSurface=true isReadyForDisplay()=true mWindowRemovalAllowed=false
+53:      mSurface=Surface(name=ScreenDecorOverlay)/@0xbb41d70
+54:      Surface: shown=true      mDrawState=HAS_DRAWN       mLastHidden=false
+57:    isVisible=true
+75:    mHasSurface=false isReadyForDisplay()=false mWindowRemovalAllowed=false
+83:    isVisible=false
+158:    mHasSurface=true isReadyForDisplay()=true mWindowRemovalAllowed=false
+162:      mLeash=Surface(name=Surface(name=8a210ec Taskbar)/@0x5a425f4 - animation-leash of insets_animation)/@0x263ec35 mAnimationType=insets_animation
+164:        ControlAdapter mCapturedLeash=Surface(name=Surface(name=8a210ec Taskbar)/@0x5a425f4 - animation-leash of insets_animation)/@0x263ec35
+166:      mSurface=Surface(name=Taskbar)/@0x34d1aa5
+167:      Surface: shown=true      mDrawState=HAS_DRAWN       mLastHidden=false
+170:    isVisible=true
+190:    mHasSurface=false isReadyForDisplay()=false mWindowRemovalAllowed=false
+198:    isVisible=false
+261:    mHasSurface=true isReadyForDisplay()=true mWindowRemovalAllowed=false
+265:      mLeash=Surface(name=Surface(name=3323321 StatusBar)/@0xaf0ea3 - animation-leash of insets_animation)/@0xc81e8ca mAnimationType=insets_animation
+267:        ControlAdapter mCapturedLeash=Surface(name=Surface(name=3323321 StatusBar)/@0xaf0ea3 - animation-leash of insets_animation)/@0xc81e8ca
+269:      mSurface=Surface(name=StatusBar)/@0x6ed462b
+270:      Surface: shown=true      mDrawState=HAS_DRAWN       mLastHidden=false
+273:    isVisible=true
+291:    mHasSurface=false isReadyForDisplay()=false mWindowRemovalAllowed=false
+299:    isVisible=false
+322:    mHasSurface=false isReadyForDisplay()=false mWindowRemovalAllowed=false
+326:      mLeash=Surface(name=Surface(name=5eb8e6d InputMethod)/@0x211333 - animation-leash of insets_animation)/@0xe79da3b mAnimationType=insets_animation
+328:        ControlAdapter mCapturedLeash=Surface(name=Surface(name=5eb8e6d InputMethod)/@0x211333 - animation-leash of insets_animation)/@0xe79da3b
+334:    isVisible=false
+337:  Window #8 Window{5bf4310 u0 Splash Screen com.ora.ora}:
+339:    mOwnerUid=10186 showForAllUsers=true package=com.ora.ora appop=NONE
+348:    mBaseLayer=21000 mSubLayer=0    mToken=ActivityRecord{136917010 u0 com.ora.ora/.MainActivity t7}
+349:    mActivityRecord=ActivityRecord{136917010 u0 com.ora.ora/.MainActivity t7}
+356:    mHasSurface=true isReadyForDisplay()=true mWindowRemovalAllowed=false
+359:    WindowStateAnimator{742446c Splash Screen com.ora.ora}:
+360:      mSurface=Surface(name=Splash Screen com.ora.ora)/@0x499bc21
+361:      Surface: shown=true      mDrawState=HAS_DRAWN       mLastHidden=false
+364:    isVisible=true
+367:  Window #9 Window{3959733 u0 com.ora.ora/com.ora.ora.MainActivity}:

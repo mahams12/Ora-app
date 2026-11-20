@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-PROJECT="${GCP_PROJECT_ID:-oraapp-a9be5}"
+PROJECT="${GCP_PROJECT_ID:-ora-app-d8112}"
 REGION="${GCP_REGION:-us-central1}"
 SERVICE="${PRODUCTION_CLOUD_RUN_SERVICE:-ora-auth-service}"
 SA_EMAIL="${CLOUD_RUN_RUNTIME_SA:-firebase-adminsdk-fbsvc@${PROJECT}.iam.gserviceaccount.com}"
@@ -38,10 +38,6 @@ chmod +x scripts/wire_production_server_secrets.sh
 ./scripts/wire_production_server_secrets.sh
 
 ENV_VARS="FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID},REQUIRE_APP_CHECK=true,ORA_ENV=production,NODE_ENV=production"
-# Cost-optimization flags — adaptive presence freshness + merged idle cursor +
-# trip-marker throttle. These cut per-packet Firestore ops ~6x; deploys must
-# never silently run the expensive fixed-cadence path.
-ENV_VARS="${ENV_VARS},LOCATION_ADAPTIVE_FRESHNESS=true,LOCATION_IDLE_MERGED_CURSOR=true,LOCATION_TRIP_GEO_MIN_INTERVAL_MS=45000,DRIVER_AUTO_APPROVE=false"
 # L2 Step 2 — optional RTDB URL (Admin SDK only; never ship to Flutter).
 if [[ -n "${FIREBASE_DATABASE_URL:-}" ]]; then
   ENV_VARS="${ENV_VARS},FIREBASE_DATABASE_URL=${FIREBASE_DATABASE_URL}"

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -68,7 +68,14 @@ final rideRequestCapabilitiesProvider = Provider<RideRequestCapabilities>(
   (ref) => const RideRequestCapabilities(),
 );
 
-enum RideRequestPhase { compose, review, submitting, created, error, blocked }
+enum RideRequestPhase {
+  compose,
+  review,
+  submitting,
+  created,
+  error,
+  blocked,
+}
 
 enum RideRequestBlockReason {
   incomplete,
@@ -77,7 +84,8 @@ enum RideRequestBlockReason {
   parcelIncomplete,
 }
 
-/// Service kinds this UI exposes. Backend validates `ride|courier|intercity|move`.
+/// Service kinds this UI exposes. Backend validates `ride|courier|intercity|move`;
+/// `move` stays "coming later" (different product semantics).
 const kRideRequestServiceTypes = <String>{
   'ride',
   'intercity',
@@ -85,38 +93,12 @@ const kRideRequestServiceTypes = <String>{
   'buy_deliver',
 };
 
-/// `move` is seedable via deep link only (logistics vehicle picker →
-/// ?service=move) and stays out of the passenger service chips.
-const kRideRequestSeedableServiceTypes = <String>{
-  ...kRideRequestServiceTypes,
-  'move',
-};
-
-/// Ora Courier — vehicle classes a sender may request (inDrive-style).
-/// Backend validates the same set; keep in sync with COURIER_VEHICLES.
-const kCourierVehicleOptions = ['bike', 'car', 'rickshaw'];
-
-String courierVehicleLabel(String vehicle) => switch (vehicle) {
-  'bike' => 'Bike',
-  'car' => 'Car',
-  'rickshaw' => 'Rickshaw',
-  _ => 'Any vehicle',
-};
-
-IconData courierVehicleIcon(String vehicle) => switch (vehicle) {
-  'bike' => Icons.two_wheeler_outlined,
-  'car' => Icons.directions_car_outlined,
-  'rickshaw' => Icons.electric_rickshaw_outlined,
-  _ => Icons.local_shipping_outlined,
-};
-
 String rideRequestServiceTypeLabel(String serviceType) => switch (serviceType) {
-  'intercity' => 'Intercity',
-  'courier' => 'Send parcel',
-  'buy_deliver' => 'Buy & Deliver',
-  'move' => 'Move cargo',
-  _ => 'City ride',
-};
+      'intercity' => 'Intercity',
+      'courier' => 'Send parcel',
+      'buy_deliver' => 'Buy & Deliver',
+      _ => 'City ride',
+    };
 
 enum LocationField { pickup, destination }
 
@@ -153,7 +135,6 @@ class RideRequestUiState {
     this.passengerOfferDraftText = '',
     this.passengerOfferError,
     this.parcel = const ParcelDraft(),
-    this.courierVehicle = 'bike',
     this.stops = const [],
     this.shoppingBudgetText = '',
     this.attestationAccepted = false,
@@ -217,10 +198,6 @@ class RideRequestUiState {
   /// [serviceType] == 'courier').
   final ParcelDraft parcel;
 
-  /// Ora Courier — sender-requested vehicle class (`bike|car|rickshaw`).
-  /// Dispatch only invites matching drivers; backend re-validates at offer.
-  final String courierVehicle;
-
   /// Ora Courier v2 — intermediate waypoints between pickup and
   /// destination (PICKUP/DROPOFF for courier, SHOP for buy_deliver).
   final List<DeliveryStopDraft> stops;
@@ -272,7 +249,8 @@ class RideRequestUiState {
   }
 
   /// Stop/shopping completeness gate used by canSubmitRideRequest.
-  bool get hasValidDeliveryItinerary => allStopsValid && hasValidShopping;
+  bool get hasValidDeliveryItinerary =>
+      allStopsValid && hasValidShopping;
 
   bool get hasPickupText => pickupText.trim().isNotEmpty;
   bool get hasDestinationText => destinationText.trim().isNotEmpty;
@@ -281,7 +259,8 @@ class RideRequestUiState {
   bool get hasConfirmedDestination => confirmedDestination != null;
 
   /// Review requires passenger-confirmed coordinates (not free text alone).
-  bool get canAdvanceToReview => hasConfirmedPickup && hasConfirmedDestination;
+  bool get canAdvanceToReview =>
+      hasConfirmedPickup && hasConfirmedDestination;
 
   bool get hasUsablePricing {
     final estimate = pricingEstimate;
@@ -347,7 +326,6 @@ class RideRequestUiState {
     String? passengerOfferDraftText,
     String? passengerOfferError,
     ParcelDraft? parcel,
-    String? courierVehicle,
     List<DeliveryStopDraft>? stops,
     String? shoppingBudgetText,
     bool? attestationAccepted,
@@ -423,9 +401,8 @@ class RideRequestUiState {
       pricingStatus: clearPricing
           ? PricingStatus.idle
           : (pricingStatus ?? this.pricingStatus),
-      pricingEstimate: clearPricing
-          ? null
-          : (pricingEstimate ?? this.pricingEstimate),
+      pricingEstimate:
+          clearPricing ? null : (pricingEstimate ?? this.pricingEstimate),
       pricingFailureKind: clearPricing
           ? null
           : (pricingFailureKind ?? this.pricingFailureKind),
@@ -442,7 +419,6 @@ class RideRequestUiState {
           ? null
           : (passengerOfferError ?? this.passengerOfferError),
       parcel: parcel ?? this.parcel,
-      courierVehicle: courierVehicle ?? this.courierVehicle,
       stops: stops ?? this.stops,
       shoppingBudgetText: shoppingBudgetText ?? this.shoppingBudgetText,
       attestationAccepted: attestationAccepted ?? this.attestationAccepted,
@@ -545,8 +521,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     _draftRestoreDone = true;
 
     final s = state;
-    final pristine =
-        s.phase == RideRequestPhase.compose &&
+    final pristine = s.phase == RideRequestPhase.compose &&
         s.pickupText.isEmpty &&
         s.destinationText.isEmpty &&
         s.proposedPickup == null &&
@@ -582,11 +557,12 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
 
     // Category/serviceType from the draft only when nothing else set them
     // (a route deep-link seed that already landed wins).
-    if (s.categoryId == 'easy' && rideCategoryById(draft.categoryId) != null) {
+    if (s.categoryId == 'easy' &&
+        rideCategoryById(draft.categoryId) != null) {
       next = next.copyWith(categoryId: draft.categoryId);
     }
     if (s.serviceType == 'ride' &&
-        kRideRequestSeedableServiceTypes.contains(draft.serviceType)) {
+        kRideRequestServiceTypes.contains(draft.serviceType)) {
       next = next.copyWith(serviceType: draft.serviceType);
     }
 
@@ -640,8 +616,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     if (uid == null) return;
     final s = state;
 
-    final hasContent =
-        s.pickupText.trim().isNotEmpty ||
+    final hasContent = s.pickupText.trim().isNotEmpty ||
         s.destinationText.trim().isNotEmpty ||
         s.proposedPickup != null ||
         s.confirmedPickup != null ||
@@ -735,7 +710,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   void seedServiceType(String? serviceType) {
     if (serviceType == null) return;
     final normalized = serviceType.trim().toLowerCase();
-    if (!kRideRequestSeedableServiceTypes.contains(normalized)) return;
+    if (!kRideRequestServiceTypes.contains(normalized)) return;
     if (normalized == state.serviceType) return;
     state = state.copyWith(serviceType: normalized);
   }
@@ -763,15 +738,6 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   /// Buy & Deliver prices on the same delivery category.
   String get _effectiveCategoryId =>
       state.isDelivery ? 'courier' : state.categoryId;
-
-  /// Ora Courier — sender picks which vehicle class should carry the
-  /// parcel (bike | car | rickshaw). Dispatch + offer gates enforce it.
-  void selectCourierVehicle(String vehicle) {
-    final normalized = vehicle.trim().toLowerCase();
-    if (!kCourierVehicleOptions.contains(normalized)) return;
-    if (normalized == state.courierVehicle) return;
-    state = state.copyWith(courierVehicle: normalized);
-  }
 
   /// Ora Courier — parcel form edits; validity is enforced at submit.
   void updateParcel(ParcelDraft parcel) {
@@ -820,7 +786,11 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     _invalidatePricing();
     final next = [...state.stops];
     next[index] = draft;
-    state = state.copyWith(stops: next, clearBlock: true, clearError: true);
+    state = state.copyWith(
+      stops: next,
+      clearBlock: true,
+      clearError: true,
+    );
     _syncBuyDeliverPickup();
     _scheduleDraftPersist();
     unawaited(requestPricingEstimate());
@@ -830,7 +800,11 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     if (index < 0 || index >= state.stops.length) return;
     _invalidatePricing();
     final next = [...state.stops]..removeAt(index);
-    state = state.copyWith(stops: next, clearBlock: true, clearError: true);
+    state = state.copyWith(
+      stops: next,
+      clearBlock: true,
+      clearError: true,
+    );
     _syncBuyDeliverPickup();
     _scheduleDraftPersist();
     unawaited(requestPricingEstimate());
@@ -851,7 +825,10 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     }
     if (first == null) {
       if (state.confirmedPickup != null || state.pickupText.isNotEmpty) {
-        state = state.copyWith(clearConfirmedPickup: true, pickupText: '');
+        state = state.copyWith(
+          clearConfirmedPickup: true,
+          pickupText: '',
+        );
       }
       return;
     }
@@ -861,7 +838,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
         lat: shop.lat!,
         lng: shop.lng!,
         source: PassengerLocationSource.place,
-        address: shop.locationText.isNotEmpty ? shop.locationText : null,
+        address:
+            shop.locationText.isNotEmpty ? shop.locationText : null,
         displayName: shop.label.isNotEmpty ? shop.label : null,
       ),
       pickupText: shop.locationText.isNotEmpty
@@ -901,7 +879,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
         ...state.stops,
         DeliveryStopDraft(
           type: 'DROPOFF',
-          locationText: destination.address ?? state.destinationText,
+          locationText:
+              destination.address ?? state.destinationText,
           lat: destination.lat,
           lng: destination.lng,
           label: 'Destination',
@@ -940,7 +919,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
         maxStops: (cfg['maxStops'] as num?)?.toInt() ?? state.maxStops,
         maxShoppingBudgetMinor:
             (cfg['maxShoppingBudgetMinor'] as num?)?.toInt() ??
-            state.maxShoppingBudgetMinor,
+                state.maxShoppingBudgetMinor,
         deliveryConfigLoaded: true,
       );
     } catch (_) {
@@ -1018,7 +997,10 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   ) async {
     final isPickup = field == LocationField.pickup;
     if (isPickup) {
-      state = state.copyWith(pickupBusy: true, clearPickupLookupError: true);
+      state = state.copyWith(
+        pickupBusy: true,
+        clearPickupLookupError: true,
+      );
     } else {
       state = state.copyWith(
         destinationBusy: true,
@@ -1029,7 +1011,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     try {
       final suggestions = await _placeSearch.autocomplete(
         query: query,
-        sessionToken: isPickup ? _pickupSessionToken : _destinationSessionToken,
+        sessionToken:
+            isPickup ? _pickupSessionToken : _destinationSessionToken,
       );
       if (!_isSearchCurrent(field, generation)) return;
       if (isPickup) {
@@ -1081,9 +1064,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     required PlaceSuggestion suggestion,
   }) async {
     final isPickup = field == LocationField.pickup;
-    final generation = isPickup
-        ? ++_pickupResolveGen
-        : ++_destinationResolveGen;
+    final generation =
+        isPickup ? ++_pickupResolveGen : ++_destinationResolveGen;
     // Selecting a suggestion supersedes in-flight autocomplete.
     if (isPickup) {
       _pickupDebounce?.cancel();
@@ -1122,7 +1104,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     try {
       final resolved = await _placeSearch.resolvePlace(
         placeId: suggestion.placeId,
-        sessionToken: isPickup ? _pickupSessionToken : _destinationSessionToken,
+        sessionToken:
+            isPickup ? _pickupSessionToken : _destinationSessionToken,
       );
       if (!_isResolveCurrent(field, generation)) return;
 
@@ -1282,8 +1265,14 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       return;
     }
     final generation = ++_pickupResolveGen;
-    state = state.copyWith(pickupBusy: true, clearPickupLookupError: true);
-    final resolved = await _resolvePointName(proposed, source: proposed.source);
+    state = state.copyWith(
+      pickupBusy: true,
+      clearPickupLookupError: true,
+    );
+    final resolved = await _resolvePointName(
+      proposed,
+      source: proposed.source,
+    );
     if (!_isResolveCurrent(LocationField.pickup, generation)) return;
     state = state.copyWith(
       proposedPickup: resolved.named ? resolved.loc : proposed,
@@ -1310,13 +1299,15 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       destinationBusy: true,
       clearDestinationLookupError: true,
     );
-    final resolved = await _resolvePointName(proposed, source: proposed.source);
+    final resolved = await _resolvePointName(
+      proposed,
+      source: proposed.source,
+    );
     if (!_isResolveCurrent(LocationField.destination, generation)) return;
     state = state.copyWith(
       proposedDestination: resolved.named ? resolved.loc : proposed,
-      destinationText: resolved.named
-          ? resolved.loc.displayLabel
-          : state.destinationText,
+      destinationText:
+          resolved.named ? resolved.loc.displayLabel : state.destinationText,
       destinationBusy: false,
       destinationNameUnresolved: !resolved.named,
     );
@@ -1349,9 +1340,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       return;
     }
     final isPickup = field == LocationField.pickup;
-    final generation = isPickup
-        ? ++_pickupResolveGen
-        : ++_destinationResolveGen;
+    final generation =
+        isPickup ? ++_pickupResolveGen : ++_destinationResolveGen;
     if (isPickup) {
       _pickupDebounce?.cancel();
       _pickupSearchGen++;
@@ -1673,7 +1663,10 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     if (previous != null &&
         previous >= estimate.offerBoundMinMinor &&
         previous <= estimate.offerBoundMaxMinor) {
-      return (offerMinor: previous, draft: offerRupeesFieldText(previous));
+      return (
+        offerMinor: previous,
+        draft: offerRupeesFieldText(previous),
+      );
     }
     return (
       offerMinor: estimate.recommendedFareMinor,
@@ -1729,9 +1722,12 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     final pickup = state.confirmedPickup!;
     final destination = state.confirmedDestination!;
 
-    final itinerary = state.isDelivery ? _fullItinerary() : null;
-    final stopsSignature =
-        itinerary?.map((s) => '${s.lat},${s.lng}').join('|') ?? '';
+    final itinerary =
+        state.isDelivery ? _fullItinerary() : null;
+    final stopsSignature = itinerary
+            ?.map((s) => '${s.lat},${s.lng}')
+            .join('|') ??
+        '';
     if (!force &&
         state.hasUsablePricing &&
         state.pricingEstimate?.category == _effectiveCategoryId &&
@@ -1791,8 +1787,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       state = _withPricingSurface(
         pricingStatus: status,
         pricingFailureKind: error.kind,
-        pricingFailureMessage:
-            error.message ??
+        pricingFailureMessage: error.message ??
             'Pricing isn\'t available right now. Please try again later.',
       );
     } catch (_) {
@@ -1863,7 +1858,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
         'Location isn\'t available yet. Ora will not invent pickup or '
             'destination coordinates.',
       RideRequestBlockReason.parcelIncomplete =>
-        state.parcel.firstError ?? 'Complete the parcel details to continue.',
+        state.parcel.firstError ??
+            'Complete the parcel details to continue.',
     };
   }
 
@@ -1886,7 +1882,8 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
       return switch (error.kind) {
         PlaceSearchFailureKind.notConfigured =>
           'Location lookup isn\'t available right now. Try again.',
-        PlaceSearchFailureKind.network || PlaceSearchFailureKind.unavailable =>
+        PlaceSearchFailureKind.network ||
+        PlaceSearchFailureKind.unavailable =>
           'Location lookup isn\'t available right now. Try again.',
         PlaceSearchFailureKind.empty =>
           'No places found. Try a different search.',
@@ -1957,8 +1954,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     final destination = caps.resolvedDestination!;
     final snapshotId = caps.pricingSnapshotId!;
     // Prefer the validated draft amount over any stale capability fallback.
-    final offerMinor =
-        (!_usesInjectedPricing && state.passengerOfferMinor != null)
+    final offerMinor = (!_usesInjectedPricing && state.passengerOfferMinor != null)
         ? state.passengerOfferMinor!
         : caps.passengerOfferMinor!;
     final city = state.citySlug!;
@@ -1994,12 +1990,12 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
           // Ora Courier — the parcel manifest is required for courier
           // bookings and forbidden on every other service type.
           if (state.isCourier) 'parcel': state.parcel.toApiMap(),
-          // Ora Courier — sender-requested vehicle class (bike/car/rickshaw).
-          if (state.isCourier) 'courierVehicle': state.courierVehicle,
           // Ora Courier v2 — ordered itinerary (pickup + intermediates +
           // destination). All new courier/B&D bookings are code-free v2.
           if (state.isDelivery && _fullItinerary() != null)
-            'stops': _fullItinerary()!.map((s) => s.toApiMap()).toList(),
+            'stops': _fullItinerary()!
+                .map((s) => s.toApiMap())
+                .toList(),
           // buy_deliver — booking-level shopping budget + attestation.
           if (state.isBuyDeliver)
             'shopping': <String, Object?>{
@@ -2021,8 +2017,7 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
     } catch (error, stack) {
       final failure = _failures.fromException(error, stack);
       final message = failure.userMessage;
-      final expired =
-          message.toLowerCase().contains('expir') ||
+      final expired = message.toLowerCase().contains('expir') ||
           message.toUpperCase().contains('PRICING_SNAPSHOT_EXPIRED');
       if (expired && !_usesInjectedPricing) {
         _invalidatePricing();
@@ -2055,11 +2050,14 @@ class RideRequestViewModel extends AutoDisposeNotifier<RideRequestUiState> {
   }
 
   void retryAfterError() {
-    state = state.copyWith(phase: RideRequestPhase.review, clearError: true);
+    state = state.copyWith(
+      phase: RideRequestPhase.review,
+      clearError: true,
+    );
   }
 }
 
 final rideRequestViewModelProvider =
     NotifierProvider.autoDispose<RideRequestViewModel, RideRequestUiState>(
-      RideRequestViewModel.new,
-    );
+  RideRequestViewModel.new,
+);

@@ -6,7 +6,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-PROJECT="${GCP_PROJECT_ID:-oraapp-a9be5}"
+PROJECT="${GCP_PROJECT_ID:-ora-app-d8112}"
 REGION="${GCP_REGION:-us-central1}"
 JOB="${N3_SEED_JOB:-ora-n3-staging-seed}"
 SA_EMAIL="${CLOUD_RUN_RUNTIME_SA:-firebase-adminsdk-fbsvc@${PROJECT}.iam.gserviceaccount.com}"
