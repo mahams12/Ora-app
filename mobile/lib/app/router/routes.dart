@@ -100,9 +100,6 @@ class AppRoutes {
   /// Driver assigned-job detail. Use [driverRidePath].
   static const driverRide = '/driver/rides/:rideId';
 
-  /// Direct offer by known rideId (lab/direct — not marketplace).
-  static const driverDirectOffer = '/driver/offer';
-
   /// Driver vendor wallet — points balance, top-up and withdrawals.
   static const driverWallet = '/driver/wallet';
 

@@ -204,7 +204,7 @@ void main() {
               AppRoutes.driverHome,
               AppRoutes.driverRides,
               AppRoutes.driverRide,
-              AppRoutes.driverDirectOffer,
+              AppRoutes.driverWallet,
             ])
               GoRoute(
                 path: path,
