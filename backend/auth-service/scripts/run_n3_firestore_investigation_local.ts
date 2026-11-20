@@ -1,6 +1,6 @@
 /**
- * N3 Firestore investigation — real staging Firestore + in-process Redis markers.
- * Uses live bench driver docs (_n3BenchPrefix); Redis GEO/MGET is local (known ~2% on staging).
+ * N3 Firestore investigation — real staging Firestore + in-process geo markers.
+ * Uses live bench driver docs (_n3BenchPrefix); geo MGET is local (known ~2% on staging).
  * Read-only: does not mutate Firestore.
  */
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
@@ -11,14 +11,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NearbyDriversService } from '../src/drivers/nearby_service';
 import type { N3NearbyDiagnostics } from '../src/drivers/nearby_service';
-import { createMemoryRedis } from '../src/redis/memory_redis';
+import { createMemoryGeoStore } from '../src/geo/memory_geo_store';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   type DriverOnlineMarker,
-  type RedisGeoClient,
-} from '../src/redis/types';
+  type GeoStoreClient,
+} from '../src/geo/types';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.join(here, '../../..');
@@ -121,7 +121,7 @@ function instrumentFirestore(db: Firestore): { db: Firestore; timing: FsTiming }
   return { db: wrapped, timing };
 }
 
-function instrumentRedis(base: RedisGeoClient): { client: RedisGeoClient; timing: { ms: number } } {
+function instrumentGeo(base: GeoStoreClient): { client: GeoStoreClient; timing: { ms: number } } {
   const timing = { ms: 0 };
   return {
     timing,
@@ -146,12 +146,12 @@ function instrumentRedis(base: RedisGeoClient): { client: RedisGeoClient; timing
   };
 }
 
-async function seedRedisForBench(redis: RedisGeoClient, ids: string[]) {
+async function seedGeoForBench(geoStore: GeoStoreClient, ids: string[]) {
   const now = Date.now();
   for (let i = 0; i < ids.length; i++) {
     const id = ids[i]!;
     const lng = PICKUP.lng + 0.00005 * (i + 1);
-    await redis.geoadd(GEO_DRIVERS_KEY, lng, PICKUP.lat, id);
+    await geoStore.geoadd(GEO_DRIVERS_KEY, lng, PICKUP.lat, id);
     const marker: DriverOnlineMarker = {
       driverId: id,
       lastLocationTs: now - 500,
@@ -161,7 +161,7 @@ async function seedRedisForBench(redis: RedisGeoClient, ids: string[]) {
       locationSeq: 1,
       acceptedAt: new Date().toISOString(),
     };
-    await redis.set(driverOnlineKey(id), JSON.stringify(marker), DRIVER_ONLINE_TTL_SECONDS);
+    await geoStore.set(driverOnlineKey(id), JSON.stringify(marker), DRIVER_ONLINE_TTL_SECONDS);
   }
 }
 
@@ -193,23 +193,23 @@ async function main() {
   }
 
   const { db, timing: fsT } = instrumentFirestore(rawDb);
-  const baseRedis = createMemoryRedis();
-  const { client: redis, timing: redisT } = instrumentRedis(baseRedis);
-  await seedRedisForBench(baseRedis, benchIds);
-  const svc = new NearbyDriversService(db, redis);
+  const baseGeo = createMemoryGeoStore();
+  const { client: geoStore, timing: geoT } = instrumentGeo(baseGeo);
+  await seedGeoForBench(baseGeo, benchIds);
+  const svc = new NearbyDriversService(db, geoStore);
 
   const report: Record<string, unknown> = {
     ok: true,
-    mode: 'real_firestore_local_redis',
+    mode: 'real_firestore_local_geo',
     note:
-      'Firestore latency is production staging; Redis is in-process (staging Redis ~2% per MGET benchmark).',
+      'Firestore latency is production staging; geo store is in-process.',
     benchPrefix: PREFIX,
     benchDriverCount: benchIds.length,
     pickup: PICKUP,
     callGraph: {
       steps: [
-        '1× redis.georadius (≤100 members)',
-        '1× redis.mget',
+        '1× geoStore.georadius (≤100 members)',
+        '1× geoStore.mget',
         'sequential per geo hit until limit: users.get → drivers.get → rides busy query',
       ],
       sequentialFirestore: true,
@@ -224,7 +224,7 @@ async function main() {
     const busyTotals: number[] = [];
 
     for (let i = 0; i < scenario.runs; i++) {
-      await seedRedisForBench(baseRedis, benchIds);
+      await seedGeoForBench(baseGeo, benchIds);
       Object.assign(fsT, {
         usersMs: 0,
         driversMs: 0,
@@ -233,7 +233,7 @@ async function main() {
         driversReads: 0,
         busyQueries: 0,
       });
-      redisT.ms = 0;
+      geoT.ms = 0;
       let diagnostics: N3NearbyDiagnostics | undefined;
       const t0 = performance.now();
       await svc.findNearby({
@@ -258,12 +258,12 @@ async function main() {
         run: i + 1,
         totalMs: Math.round(totalMs),
         latencyBreakdownMs: {
-          redis: Math.round(redisT.ms),
+          geoStore: Math.round(geoT.ms),
           firestoreUsers: Math.round(fsT.usersMs),
           firestoreDrivers: Math.round(fsT.driversMs),
           firestoreBusyChecks: Math.round(fsT.busyQueryMs),
           firestoreTotal: Math.round(fsMs),
-          applicationProcessing: Math.round(Math.max(0, totalMs - fsMs - redisT.ms)),
+          applicationProcessing: Math.round(Math.max(0, totalMs - fsMs - geoT.ms)),
         },
         diagnostics,
       });

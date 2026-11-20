@@ -5,12 +5,12 @@ import { createApp } from './app';
 import { assertFirebaseTargetConfig } from './config/firebase_target_guards';
 import { driverAutoApproveFromEnv } from './config/driver_auto_approve';
 import { assertProductionSecurityConfig } from './config/production_guards';
-import { createFirestoreGeoClient } from './redis/firestore_geo_client';
+import { createFirestoreGeoClient } from './geo/firestore_geo_client';
 import { createRtdbGeoClient } from './rtdb/rtdb_geo_client';
 import { createRtdbLocationStreamStore } from './rtdb/rtdb_stream_store';
 import type { LocationStreamStore } from './location/stream_store';
-import { RedisGeoProjectionService } from './redis/geo_projection';
-import type { RedisGeoClient } from './redis/types';
+import { GeoProjectionService } from './geo/geo_projection';
+import type { GeoStoreClient } from './geo/types';
 import {
   createFirebaseFcmSender,
   createNullFcmSender,
@@ -68,7 +68,7 @@ async function main() {
   // GEO store: Firestore-native index (default) or RTDB geohash index behind
   // GEO_BACKEND flag. Firestore remains the rollback-safe default.
   const geoBackend = (process.env.GEO_BACKEND ?? 'firestore').trim().toLowerCase();
-  let redisClient: RedisGeoClient;
+  let geoStoreClient: GeoStoreClient;
   if (geoBackend === 'rtdb') {
     if (!process.env.FIREBASE_DATABASE_URL?.trim()) {
       throw new Error(
@@ -76,9 +76,9 @@ async function main() {
       );
     }
     const { getDatabase } = await import('firebase-admin/database');
-    redisClient = createRtdbGeoClient(getDatabase().ref('/'));
+    geoStoreClient = createRtdbGeoClient(getDatabase().ref('/'));
   } else if (geoBackend === 'firestore') {
-    redisClient = createFirestoreGeoClient(db);
+    geoStoreClient = createFirestoreGeoClient(db);
   } else {
     throw new Error(
       `REFUSING_START: unknown GEO_BACKEND '${geoBackend}' (expected firestore|rtdb).`,
@@ -97,8 +97,19 @@ async function main() {
     Number(process.env.PRICING_RULES_CACHE_TTL_MS ?? '0') || 0,
   );
 
-  const geoProjection = new RedisGeoProjectionService(redisClient, {
+  // LOCATION_TRIP_GEO_MIN_INTERVAL_MS: throttle on geoDrivers marker
+  // writes for trip-mode packets (marker warmth only — live tracking uses
+  // the RTDB projection). Defaults to 45s; set 0 to disable.
+  const tripMarkerMinIntervalMs = Math.max(
+    0,
+    Number(
+      process.env.LOCATION_TRIP_GEO_MIN_INTERVAL_MS ?? '45000',
+    ) || 0,
+  );
+
+  const geoProjection = new GeoProjectionService(geoStoreClient, {
     adaptiveFreshness,
+    tripMarkerMinIntervalMs,
   });
   logSafe('geo_init', {
     configured: true,
@@ -162,7 +173,7 @@ async function main() {
     requireAppCheck,
     geoProjection,
     tripLocationRtdb,
-    redis: redisClient,
+    geoStore: geoStoreClient,
     streamStore,
     fcmSender,
     routingProvider,

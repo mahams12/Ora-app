@@ -1,4 +1,4 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 
 /// Pure camera policy for MAP-2B active-ride map (not MAP-1).
 ///
@@ -100,12 +100,8 @@ class ActiveRideMapCameraPolicy {
         pickup: pickup,
         destination: destination,
       );
-      if (tertiary != null &&
-          _tripleSpanReadable(driver, primary, tertiary)) {
-        return _fitPoints(
-          [driver, primary, tertiary],
-          padding: padding,
-        );
+      if (tertiary != null && _tripleSpanReadable(driver, primary, tertiary)) {
+        return _fitPoints([driver, primary, tertiary], padding: padding);
       }
       return _fitPair(driver, primary, padding: padding);
     }
@@ -157,9 +153,11 @@ class ActiveRideMapCameraPolicy {
   static bool _tripleSpanReadable(LatLng a, LatLng b, LatLng c) {
     final lats = [a.latitude, b.latitude, c.latitude];
     final lngs = [a.longitude, b.longitude, c.longitude];
-    final latSpan = lats.reduce((x, y) => x > y ? x : y) -
+    final latSpan =
+        lats.reduce((x, y) => x > y ? x : y) -
         lats.reduce((x, y) => x < y ? x : y);
-    final lngSpan = lngs.reduce((x, y) => x > y ? x : y) -
+    final lngSpan =
+        lngs.reduce((x, y) => x > y ? x : y) -
         lngs.reduce((x, y) => x < y ? x : y);
     return latSpan <= maxIncludeThirdSpanDegrees &&
         lngSpan <= maxIncludeThirdSpanDegrees;
@@ -200,7 +198,10 @@ class ActiveRideMapCameraPolicy {
         southwest: LatLng(minLat, minLng),
         northeast: LatLng(maxLat, maxLng),
       ),
-      padding,
+      left: padding,
+      top: padding,
+      right: padding,
+      bottom: padding,
     );
   }
 }

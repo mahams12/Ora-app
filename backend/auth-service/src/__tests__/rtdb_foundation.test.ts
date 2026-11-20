@@ -27,18 +27,18 @@ describe('L2 Step 2 — RTDB config / Admin options', () => {
 
   it('1b. includes databaseURL only when FIREBASE_DATABASE_URL is set', () => {
     expect(
-      resolveFirebaseAdminAppOptions({ FIREBASE_PROJECT_ID: 'ora-app-d8112' }),
-    ).toEqual({ projectId: 'ora-app-d8112' });
+      resolveFirebaseAdminAppOptions({ FIREBASE_PROJECT_ID: 'oraapp-a9be5' }),
+    ).toEqual({ projectId: 'oraapp-a9be5' });
     expect(
       resolveFirebaseAdminAppOptions({
-        FIREBASE_PROJECT_ID: 'ora-app-d8112',
+        FIREBASE_PROJECT_ID: 'oraapp-a9be5',
         FIREBASE_DATABASE_URL:
-          'https://ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app',
+          'https://oraapp-a9be5-default-rtdb.asia-southeast1.firebasedatabase.app',
       }),
     ).toEqual({
-      projectId: 'ora-app-d8112',
+      projectId: 'oraapp-a9be5',
       databaseURL:
-        'https://ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app',
+        'https://oraapp-a9be5-default-rtdb.asia-southeast1.firebasedatabase.app',
     });
   });
 
@@ -53,7 +53,7 @@ describe('L2 Step 2 — RTDB config / Admin options', () => {
       createTripLocationRtdbFromEnv(
         {
           FIREBASE_DATABASE_URL:
-            'https://ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app',
+            'https://oraapp-a9be5-default-rtdb.asia-southeast1.firebasedatabase.app',
         },
         [],
       ),

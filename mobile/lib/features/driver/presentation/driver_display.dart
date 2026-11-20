@@ -67,8 +67,7 @@ String driverJobMessage(
         'RETURNING' =>
           'You are returning the parcel to the sender. Confirm the handover '
               'in the app — no code is needed.',
-        'RETURNED' =>
-          'The parcel was returned to the sender and confirmed.',
+        'RETURNED' => 'The parcel was returned to the sender and confirmed.',
         'DELIVERY_FAILED' =>
           'A stop was marked failed. You can retry the delivery from the '
               'checklist.',
@@ -101,8 +100,7 @@ String driverJobMessage(
       'RETURNING' =>
         'You are returning the parcel to the sender. The sender\'s return '
             'code confirms handover.',
-      'RETURNED' =>
-        'The parcel was returned to the sender and confirmed.',
+      'RETURNED' => 'The parcel was returned to the sender and confirmed.',
       'DELIVERY_FAILED' =>
         'Delivery could not be completed. The reason is recorded.',
       'SEARCHING' || 'OFFERS_AVAILABLE' =>
@@ -156,17 +154,13 @@ bool isDriverJobTerminalState(String state) {
       s == 'DELIVERY_FAILED';
 }
 
-bool driverCanEnRoute(String state) =>
-    state.toUpperCase() == 'DRIVER_ASSIGNED';
+bool driverCanEnRoute(String state) => state.toUpperCase() == 'DRIVER_ASSIGNED';
 
-bool driverCanArrive(String state) =>
-    state.toUpperCase() == 'DRIVER_EN_ROUTE';
+bool driverCanArrive(String state) => state.toUpperCase() == 'DRIVER_EN_ROUTE';
 
-bool driverCanStart(String state) =>
-    state.toUpperCase() == 'DRIVER_ARRIVED';
+bool driverCanStart(String state) => state.toUpperCase() == 'DRIVER_ARRIVED';
 
-bool driverCanComplete(String state) =>
-    state.toUpperCase() == 'RIDE_STARTED';
+bool driverCanComplete(String state) => state.toUpperCase() == 'RIDE_STARTED';
 
 /// Driver may cancel post-assign through RIDE_STARTED (server-enforced).
 /// For courier the server refuses cancellation once the parcel is picked up —

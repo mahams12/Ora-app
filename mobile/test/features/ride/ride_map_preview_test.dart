@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maplibre_gl/maplibre_gl.dart' as ml;
 import 'package:ora/features/maps/preview/map_preview_camera_policy.dart';
 import 'package:ora/features/ride/domain/models/resolved_passenger_location.dart';
 import 'package:ora/features/ride/domain/ports/pricing_estimate_port.dart';
 import 'package:ora/features/ride/presentation/models/ride_map_preview_model.dart';
 import 'package:ora/features/ride/presentation/utils/encoded_polyline_decoder.dart';
-import 'package:ora/features/ride/presentation/utils/ride_map_camera_policy.dart';
 import 'package:ora/features/ride/presentation/widgets/ride_map_preview.dart';
 
 void main() {
@@ -42,45 +40,6 @@ void main() {
       expect(EncodedPolylineDecoder.decode(''), isEmpty);
       expect(EncodedPolylineDecoder.decode('   '), isEmpty);
       expect(EncodedPolylineDecoder.decode('!!!'), isEmpty);
-    });
-  });
-
-  group('RideMapCameraPolicy', () {
-    test('fits bounds for distant points', () {
-      const a = LatLng(31.52, 74.35);
-      const b = LatLng(31.51, 74.34);
-      expect(RideMapCameraPolicy.areExtremelyClose(a, b), isFalse);
-      final update = RideMapCameraPolicy.cameraUpdate(
-        pickup: a,
-        destination: b,
-      );
-      expect(update, isNotNull);
-    });
-
-    test('close coordinates use fallback zoom path', () {
-      const a = LatLng(31.5200, 74.3587);
-      const b = LatLng(31.52005, 74.35872);
-      expect(RideMapCameraPolicy.areExtremelyClose(a, b), isTrue);
-      final update = RideMapCameraPolicy.cameraUpdate(
-        pickup: a,
-        destination: b,
-      );
-      expect(update, isNotNull);
-    });
-
-    test('single point centers', () {
-      final update = RideMapCameraPolicy.cameraUpdate(
-        pickup: const LatLng(31.52, 74.35),
-        destination: null,
-      );
-      expect(update, isNotNull);
-    });
-
-    test('no points returns null', () {
-      expect(
-        RideMapCameraPolicy.cameraUpdate(pickup: null, destination: null),
-        isNull,
-      );
     });
   });
 

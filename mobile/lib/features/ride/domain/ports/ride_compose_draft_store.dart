@@ -8,7 +8,10 @@ abstract interface class RideComposeDraftStore {
   /// Null when no draft exists, the payload is corrupt, or it is stale.
   Future<RideComposeDraft?> loadDraft({required String uid});
 
-  Future<void> writeDraft({required String uid, required RideComposeDraft draft});
+  Future<void> writeDraft({
+    required String uid,
+    required RideComposeDraft draft,
+  });
 
   Future<void> clearDraft({required String uid});
 }

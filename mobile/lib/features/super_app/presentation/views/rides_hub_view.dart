@@ -26,7 +26,7 @@ class RidesHubView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final padding = Responsive.horizontalPadding(context);
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Rides'), leading: const BackButton()),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.rides,
@@ -90,10 +90,26 @@ class RidesHubView extends ConsumerWidget {
                               );
                           unawaited(context.push<void>(route));
                         },
-                        onCourier: () => unawaited(
-                          showServiceComingLaterSheet(context, 'Courier'),
-                        ),
-                        courierStatusLabel: 'Coming later',
+                        onCourier: () {
+                          final route = AppRoutes.rideRequestUri(
+                            service: 'courier',
+                          );
+                          ref
+                              .read(recentActivityProvider.notifier)
+                              .record(
+                                RecentActivity(
+                                  kind: RecentActivityKind.ride,
+                                  id: 'courier',
+                                  title: 'Courier',
+                                  subtitle: 'Send a parcel',
+                                  imageAsset:
+                                      AppConstants.serviceCourierAsset,
+                                  route: route,
+                                  atMs: DateTime.now().millisecondsSinceEpoch,
+                                ),
+                              );
+                          unawaited(context.push<void>(route));
+                        },
                       ),
                       const SizedBox(height: OraSpacing.lg),
                       const OraSectionHeader(title: 'Choose a ride'),
@@ -152,6 +168,24 @@ class RidesHubView extends ConsumerWidget {
                                 ),
                               );
                           unawaited(context.push<void>(route));
+                        } else if (action is RideCourierAction) {
+                          final route = AppRoutes.rideRequestUri(
+                            service: 'courier',
+                          );
+                          ref
+                              .read(recentActivityProvider.notifier)
+                              .record(
+                                RecentActivity(
+                                  kind: RecentActivityKind.ride,
+                                  id: 'courier',
+                                  title: option.name,
+                                  subtitle: 'Send a parcel',
+                                  imageAsset: option.image,
+                                  route: route,
+                                  atMs: DateTime.now().millisecondsSinceEpoch,
+                                ),
+                              );
+                          unawaited(context.push<void>(route));
                         } else {
                           unawaited(
                             showServiceComingLaterSheet(context, option.name),
@@ -183,7 +217,7 @@ class _RidesHero extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Image.asset(
-              'assets/marketplace/modules/rides.webp',
+              'assets/brand/mod_rides.webp',
               cacheWidth: 720,
               fit: BoxFit.cover,
             ),
@@ -192,7 +226,7 @@ class _RidesHero extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [Colors.transparent, OraColors.photoScrimStrong],
+                  colors: [Colors.transparent, Color(0x73000000)],
                 ),
               ),
             ),

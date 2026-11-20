@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../../../../app/theme/ora_colors.dart';
@@ -10,6 +12,8 @@ class RentalPropertyDetailModel {
   RentalPropertyDetailModel({
     required this.title,
     List<String> galleryAssetPaths = const [],
+    List<String> galleryFilePaths = const [],
+    List<ImageProvider> galleryImages = const [],
     this.description,
     this.address,
     List<String> amenities = const [],
@@ -22,12 +26,22 @@ class RentalPropertyDetailModel {
     this.reviewCount,
     List<RentalPropertyReview> reviews = const [],
   }) : galleryAssetPaths = List.unmodifiable(galleryAssetPaths),
+       galleryFilePaths = List.unmodifiable(galleryFilePaths),
+       galleryImages = List.unmodifiable(galleryImages),
        amenities = List.unmodifiable(amenities),
        rules = List.unmodifiable(rules),
        reviews = List.unmodifiable(reviews);
 
   final String title;
   final List<String> galleryAssetPaths;
+
+  /// Vendor-posted photo files — appended after [galleryAssetPaths] in
+  /// the gallery since real listings ship device files, not assets.
+  final List<String> galleryFilePaths;
+
+  /// Decoded listing photos (data-URL → `MemoryImage`) — rendered first
+  /// in the gallery for API-backed listings.
+  final List<ImageProvider> galleryImages;
   final String? description;
   final String? address;
   final List<String> amenities;
@@ -72,15 +86,23 @@ class RentalPropertyDetailView extends StatelessWidget {
     required this.model,
     super.key,
     this.previewBannerLabel,
+    this.onRequest,
+    this.onContact,
   });
 
   final RentalPropertyDetailModel model;
   final String? previewBannerLabel;
 
+  /// When set, the Request button opens the real booking flow.
+  final VoidCallback? onRequest;
+
+  /// When set, the Contact button is enabled.
+  final VoidCallback? onContact;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(model.title, maxLines: 1, overflow: TextOverflow.ellipsis),
       ),
@@ -225,21 +247,26 @@ class RentalPropertyDetailView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Available once hosts are verified',
-              style: OraTypography.caption(OraColors.textMuted),
-            ),
-            const SizedBox(height: OraSpacing.xs),
-            const Row(
+            if (onRequest == null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: OraSpacing.xs),
+                child: Text(
+                  'Available once hosts are verified',
+                  style: OraTypography.caption(OraColors.textMuted),
+                ),
+              ),
+            Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: null,
-                    child: Text('Contact'),
+                    onPressed: onContact,
+                    child: const Text('Contact'),
                   ),
                 ),
-                SizedBox(width: OraSpacing.sm),
-                Expanded(child: OraButton(label: 'Request', onPressed: null)),
+                const SizedBox(width: OraSpacing.sm),
+                Expanded(
+                  child: OraButton(label: 'Request', onPressed: onRequest),
+                ),
               ],
             ),
           ],
@@ -249,7 +276,11 @@ class RentalPropertyDetailView extends StatelessWidget {
   }
 
   Widget _gallery() {
-    if (model.galleryAssetPaths.isEmpty) {
+    final galleryCount =
+        model.galleryImages.length +
+        model.galleryAssetPaths.length +
+        model.galleryFilePaths.length;
+    if (galleryCount == 0) {
       return Container(
         height: 220,
         color: OraColors.navyElevated,
@@ -271,16 +302,39 @@ class RentalPropertyDetailView extends StatelessWidget {
     return SizedBox(
       height: 220,
       child: PageView.builder(
-        itemCount: model.galleryAssetPaths.length,
+        itemCount: galleryCount,
         itemBuilder: (context, index) => Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(
-              model.galleryAssetPaths[index],
-              cacheWidth: 900,
-              fit: BoxFit.cover,
-              filterQuality: FilterQuality.medium,
-            ),
+            if (index < model.galleryImages.length)
+              Image(
+                image: model.galleryImages[index],
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.medium,
+                errorBuilder: (context, error, stackTrace) =>
+                    const ColoredBox(color: OraColors.navyElevated),
+              )
+            else if (index <
+                model.galleryImages.length + model.galleryAssetPaths.length)
+              Image.asset(
+                model.galleryAssetPaths[index - model.galleryImages.length],
+                cacheWidth: 900,
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.medium,
+              )
+            else
+              Image.file(
+                File(
+                  model.galleryFilePaths[index -
+                      model.galleryImages.length -
+                      model.galleryAssetPaths.length],
+                ),
+                cacheWidth: 900,
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.medium,
+                errorBuilder: (context, error, stackTrace) =>
+                    const ColoredBox(color: OraColors.navyElevated),
+              ),
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -303,7 +357,7 @@ class RentalPropertyDetailView extends StatelessWidget {
                 child: const Icon(
                   Icons.home_work_outlined,
                   size: 16,
-                  color: OraColors.navy,
+                  color: OraColors.gold,
                 ),
               ),
             ),
@@ -377,7 +431,9 @@ class _GalleryStatus extends StatelessWidget {
       ),
       child: Text(
         isVerified ? 'Verified host' : 'Not verified',
-        style: OraTypography.caption(OraColors.navy).copyWith(fontSize: 9),
+        style: OraTypography.caption(
+          OraColors.textPrimary,
+        ).copyWith(fontSize: 9),
       ),
     );
   }

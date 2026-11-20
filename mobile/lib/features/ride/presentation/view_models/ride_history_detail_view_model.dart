@@ -97,5 +97,5 @@ class RideHistoryDetailViewModel
 
 final rideHistoryDetailViewModelProvider = NotifierProvider.autoDispose
     .family<RideHistoryDetailViewModel, RideHistoryDetailUiState, String>(
-  RideHistoryDetailViewModel.new,
-);
+      RideHistoryDetailViewModel.new,
+    );

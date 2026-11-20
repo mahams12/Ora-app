@@ -5,14 +5,14 @@ import { describe, it, expect } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../app';
 import { memoryDb } from './helpers/memory_db';
-import { createMemoryRedis } from '../redis/memory_redis';
+import { createMemoryGeoStore } from '../geo/memory_geo_store';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   type DriverOnlineMarker,
-  type RedisGeoClient,
-} from '../redis/types';
+  type GeoStoreClient,
+} from '../geo/types';
 import {
   N4_MAX_TOTAL_INVITES,
   N4_WAVE_CADENCE_MS,
@@ -33,7 +33,7 @@ function authStub() {
 
 function appFor(
   db: ReturnType<typeof memoryDb>,
-  redis: RedisGeoClient | null,
+  geoStore: GeoStoreClient | null,
 ) {
   return createApp({
     auth: authStub(),
@@ -41,7 +41,7 @@ function appFor(
     requireAppCheck: false,
     rateLimit: { windowMs: 60_000, max: 50_000 },
     internalWorkerToken: WORKER,
-    redis,
+    geoStore,
   });
 }
 
@@ -67,13 +67,13 @@ function seedApprovedOnline(
 }
 
 async function seedGeo(
-  redis: ReturnType<typeof createMemoryRedis>,
+  geoStore: ReturnType<typeof createMemoryGeoStore>,
   driverId: string,
   lng: number,
   lat: number,
   marker: Partial<DriverOnlineMarker> & { lastLocationTs: number },
 ) {
-  await redis.geoadd(GEO_DRIVERS_KEY, lng, lat, driverId);
+  await geoStore.geoadd(GEO_DRIVERS_KEY, lng, lat, driverId);
   const full: DriverOnlineMarker = {
     driverId,
     accuracy: 8,
@@ -83,7 +83,7 @@ async function seedGeo(
     acceptedAt: new Date().toISOString(),
     ...marker,
   };
-  await redis.set(
+  await geoStore.set(
     driverOnlineKey(driverId),
     JSON.stringify(full),
     DRIVER_ONLINE_TTL_SECONDS,
@@ -93,7 +93,7 @@ async function seedGeo(
 /** Place drivers at increasing distance east of pickup (~0.1° ≈ 11km at equator; use smaller steps). */
 async function seedDriversNearPickup(
   db: ReturnType<typeof memoryDb>,
-  redis: ReturnType<typeof createMemoryRedis>,
+  geoStore: ReturnType<typeof createMemoryGeoStore>,
   count: number,
   nowMs: number,
   prefix = 'd',
@@ -104,7 +104,7 @@ async function seedDriversNearPickup(
     ids.push(id);
     seedApprovedOnline(db, id, i % 2 === 0 ? 'lahore' : null);
     // ~0.001° lat ≈ 111m — keep all well within 10km
-    await seedGeo(redis, id, PICKUP.lng + i * 0.001, PICKUP.lat, {
+    await seedGeo(geoStore, id, PICKUP.lng + i * 0.001, PICKUP.lat, {
       lastLocationTs: nowMs,
       accuracy: 5,
     });
@@ -171,12 +171,12 @@ async function tick(
 describe('N4 dispatch wave MVP', () => {
   it('wave 1 invites up to 5 candidates by distance ASC using pickup lat/lng (no city)', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    const ids = await seedDriversNearPickup(db, redis, 8, now);
+    const ids = await seedDriversNearPickup(db, geoStore, 8, now);
     seedDispatchableRide(db, 'r1');
     // city metadata intentionally missing on ride
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const res = await tick(app, 'r1');
     expect(res.body.data.outcome).toBe('wave_completed');
@@ -218,11 +218,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('wave 2 invites up to 10 NEW candidates; wave 3 up to 15 NEW; never exceeds 30', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    const ids = await seedDriversNearPickup(db, redis, 40, now);
+    const ids = await seedDriversNearPickup(db, geoStore, 40, now);
     seedDispatchableRide(db, 'r2');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const w1 = await tick(app, 'r2');
     expect(w1.body.data.invitedCount).toBe(N4_WAVE_SIZES[0]);
@@ -281,7 +281,7 @@ describe('N4 dispatch wave MVP', () => {
 
   it('expands search radius per wave: 10 → 15 → 25 km, nearest first', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
     // At lat 31.52, 0.01° lng ≈ 0.95 km.
     // d-near ~1.9km (wave 1), d-mid ~12.3km (wave 2 only), d-far ~19.9km (wave 3 only),
@@ -293,13 +293,13 @@ describe('N4 dispatch wave MVP', () => {
       ['d-too-far', 0.30],
     ] as const) {
       seedApprovedOnline(db, id, null);
-      await seedGeo(redis, id, PICKUP.lng + lngOffset, PICKUP.lat, {
+      await seedGeo(geoStore, id, PICKUP.lng + lngOffset, PICKUP.lat, {
         lastLocationTs: now,
         accuracy: 5,
       });
     }
     seedDispatchableRide(db, 'r-exp');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const w1 = await tick(app, 'r-exp');
     expect(w1.body.data.outcome).toBe('wave_completed');
@@ -339,7 +339,7 @@ describe('N4 dispatch wave MVP', () => {
 
   it('radius expansion is nearest-first: closer driver invited before farther', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
     // Two drivers inside wave-2 radius (15km): nearer one wins order.
     for (const [id, lngOffset] of [
@@ -347,13 +347,13 @@ describe('N4 dispatch wave MVP', () => {
       ['d-near2', 0.11],
     ] as const) {
       seedApprovedOnline(db, id, null);
-      await seedGeo(redis, id, PICKUP.lng + lngOffset, PICKUP.lat, {
+      await seedGeo(geoStore, id, PICKUP.lng + lngOffset, PICKUP.lat, {
         lastLocationTs: now,
         accuracy: 5,
       });
     }
     seedDispatchableRide(db, 'r-order');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const w1 = await tick(app, 'r-order');
     expect(w1.body.data.driverIds).toEqual([]); // both > 10km
@@ -374,12 +374,12 @@ describe('N4 dispatch wave MVP', () => {
 
   it('deduplicates drivers that reappear across N3 responses', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
     // Only 5 drivers total — wave 1 takes all; wave 2 must invite 0 new
-    const ids = await seedDriversNearPickup(db, redis, 5, now);
+    const ids = await seedDriversNearPickup(db, geoStore, 5, now);
     seedDispatchableRide(db, 'r3');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const w1 = await tick(app, 'r3');
     expect(w1.body.data.driverIds).toEqual(ids);
@@ -398,11 +398,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('repeated worker tick is idempotent (create-once wave doc)', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 5, now);
+    await seedDriversNearPickup(db, geoStore, 5, now);
     seedDispatchableRide(db, 'r4');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const first = await tick(app, 'r4');
     expect(first.body.data.outcome).toBe('wave_completed');
@@ -428,11 +428,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('assigned ride stops further dispatch', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 10, now);
+    await seedDriversNearPickup(db, geoStore, 10, now);
     seedDispatchableRide(db, 'r5');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     await tick(app, 'r5');
     db.seed('rides', 'r5', {
@@ -450,11 +450,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('cancelled ride stops further dispatch', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 10, now);
+    await seedDriversNearPickup(db, geoStore, 10, now);
     seedDispatchableRide(db, 'r6');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     await tick(app, 'r6');
     db.seed('rides', 'r6', {
@@ -471,13 +471,13 @@ describe('N4 dispatch wave MVP', () => {
 
   it('expired ride stops further dispatch', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 10, now);
+    await seedDriversNearPickup(db, geoStore, 10, now);
     seedDispatchableRide(db, 'r7', {
       expiresAt: new Date(now - 1000).toISOString(),
     });
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const res = await tick(app, 'r7');
     expect(res.body.data.outcome).toBe('stopped');
@@ -486,16 +486,16 @@ describe('N4 dispatch wave MVP', () => {
 
   it('skips candidate that becomes ineligible between N3 and invite', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    const ids = await seedDriversNearPickup(db, redis, 6, now);
+    const ids = await seedDriversNearPickup(db, geoStore, 6, now);
     seedDispatchableRide(db, 'r8');
 
     const { DispatchWaveService } = await import(
       '../rides/dispatch_wave_service'
     );
     const { NearbyDriversService } = await import('../drivers/nearby_service');
-    const nearby = new NearbyDriversService(db as never, redis);
+    const nearby = new NearbyDriversService(db as never, geoStore);
     const originalRevalidate = nearby.isStillEligibleForInvite.bind(nearby);
     let revalidateCalls = 0;
     nearby.isStillEligibleForInvite = async (driverId, opts) => {
@@ -519,11 +519,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('aborts wave commit on requestVersion mismatch (concurrency)', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 5, now);
+    await seedDriversNearPickup(db, geoStore, 5, now);
     seedDispatchableRide(db, 'r9');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     // Intercept: first call findNearby, then bump requestVersion before tick's txn.
     // Simpler: run tick after bumping version mid-flight via service-level test.
@@ -532,7 +532,7 @@ describe('N4 dispatch wave MVP', () => {
       '../rides/dispatch_wave_service'
     );
     const { NearbyDriversService } = await import('../drivers/nearby_service');
-    const nearby = new NearbyDriversService(db as never, redis);
+    const nearby = new NearbyDriversService(db as never, geoStore);
     const original = nearby.findNearby.bind(nearby);
     nearby.findNearby = async (input) => {
       const result = await original(input);
@@ -556,11 +556,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('does not require city; uses pickup coordinates for N3', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 3, now);
+    await seedDriversNearPickup(db, geoStore, 3, now);
     seedDispatchableRide(db, 'r10'); // no city field
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const res = await tick(app, 'r10');
     expect(res.body.data.outcome).toBe('wave_completed');
@@ -573,11 +573,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('does not auto-assign or fabricate/auto-accept offers', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 5, now);
+    await seedDriversNearPickup(db, geoStore, 5, now);
     seedDispatchableRide(db, 'r11');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     await tick(app, 'r11');
     const ride = db.getDoc('rides', 'r11')!;
@@ -594,9 +594,9 @@ describe('N4 dispatch wave MVP', () => {
 
   it('worker endpoint requires X-Ora-Worker-Token', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     seedDispatchableRide(db, 'r12');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     await request(app)
       .post('/v1/internal/rides/r12/dispatch-tick')
@@ -614,11 +614,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('handles N3 under-fill safely without assuming 30 candidates', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 2, now);
+    await seedDriversNearPickup(db, geoStore, 2, now);
     seedDispatchableRide(db, 'r13');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const w1 = await tick(app, 'r13');
     expect(w1.body.data.outcome).toBe('wave_completed');
@@ -644,11 +644,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('respects 5-second cadence (not_due before dispatchNextAt)', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 10, now);
+    await seedDriversNearPickup(db, geoStore, 10, now);
     seedDispatchableRide(db, 'r14');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     await tick(app, 'r14');
     const ride = db.getDoc('rides', 'r14')!;
@@ -664,11 +664,11 @@ describe('N4 dispatch wave MVP', () => {
 
   it('dispatch-sweep processes due rides', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 5, now);
+    await seedDriversNearPickup(db, geoStore, 5, now);
     seedDispatchableRide(db, 'r15');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const res = await request(app)
       .post('/v1/internal/rides/dispatch-sweep?limit=10')
@@ -682,13 +682,13 @@ describe('N4 dispatch wave MVP', () => {
 
   it('requestVersion is stable across all waves — open-ride offers still succeed', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
-    await seedDriversNearPickup(db, redis, 5, now);
+    await seedDriversNearPickup(db, geoStore, 5, now);
     seedDispatchableRide(db, 'r16');
     // Caller is 'unused' (authStub) — make it an approved online driver.
     seedApprovedOnline(db, 'unused', 'lahore');
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     for (let wave = 1; wave <= 3; wave += 1) {
       db.seed('rides', 'r16', {
@@ -716,12 +716,12 @@ describe('N4 dispatch wave MVP', () => {
 
   it('rejects driver offers after the ride offer window expires (STATE_CONFLICT)', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     seedApprovedOnline(db, 'unused', 'lahore');
     seedDispatchableRide(db, 'r17', {
       expiresAt: new Date(Date.now() - 1000).toISOString(),
     });
-    const app = appFor(db, redis);
+    const app = appFor(db, geoStore);
 
     const res = await request(app)
       .post('/v1/rides/r17/offers')

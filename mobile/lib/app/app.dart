@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import 'di/providers.dart';
 import 'router/app_router.dart';
+import 'theme/ora_colors.dart';
 import 'theme/ora_theme.dart';
 
 class OraApp extends ConsumerStatefulWidget {
@@ -42,7 +43,12 @@ class _OraAppState extends ConsumerState<OraApp> {
       routerConfig: router,
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
-        child: child ?? const SizedBox.shrink(),
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: OraColors.backgroundGradient,
+          ),
+          child: child ?? const SizedBox.shrink(),
+        ),
       ),
     );
   }

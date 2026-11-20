@@ -1,5 +1,5 @@
 import { LocationDomainError, type ParsedLocationUpdate } from './types';
-import { clampPublishIntervalMs } from '../redis/types';
+import { clampPublishIntervalMs } from '../geo/types';
 import { logSafe } from '../http/errors';
 
 const MAX_ACCURACY_M = 50;

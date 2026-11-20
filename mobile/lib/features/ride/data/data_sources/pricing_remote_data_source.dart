@@ -36,10 +36,7 @@ class PricingRemoteDataSource implements PricingEstimatePort {
     } on DioException catch (e) {
       throw _mapDio(e);
     } on FormatException catch (e) {
-      throw PricingClientException(
-        PricingFailureKind.unknown,
-        e.message,
-      );
+      throw PricingClientException(PricingFailureKind.unknown, e.message);
     }
   }
 
@@ -58,7 +55,8 @@ class PricingRemoteDataSource implements PricingEstimatePort {
       }
     }
 
-    if (code == 'ROUTE_UNAVAILABLE' || status == 422 && code == 'ROUTE_UNAVAILABLE') {
+    if (code == 'ROUTE_UNAVAILABLE' ||
+        status == 422 && code == 'ROUTE_UNAVAILABLE') {
       return PricingClientException(
         PricingFailureKind.routeUnavailable,
         message ?? 'Unable to determine a route for those points.',
@@ -69,7 +67,8 @@ class PricingRemoteDataSource implements PricingEstimatePort {
         status == 503) {
       return PricingClientException(
         PricingFailureKind.pricingUnavailable,
-        message ?? 'Pricing isn\'t available right now. Please try again later.',
+        message ??
+            'Pricing isn\'t available right now. Please try again later.',
       );
     }
     if (error.type == DioExceptionType.connectionTimeout ||

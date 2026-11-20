@@ -33,7 +33,7 @@ class PresencePublishPolicy {
   const PresencePublishPolicy({
     this.adaptive = false,
     this.movingInterval = kPresencePublishInterval,
-    this.stationaryInterval = const Duration(seconds: 30),
+    this.stationaryInterval = const Duration(seconds: 60),
     this.inviteBoostInterval = const Duration(seconds: 8),
     this.inviteBoostWindow = const Duration(seconds: 45),
     this.stationaryMovementMeters = 50,
@@ -45,18 +45,21 @@ class PresencePublishPolicy {
   });
 
   /// Recommended production policy — mirrors ORA_COST_OPTIMIZATION_PLAN.md.
+  /// Stationary 60s (was 30s): halves presence writes; stays within the
+  /// server clamp (60s) and the 120s eligibility fix-age cap, so a dead
+  /// GPS still drops the driver from matching.
   const PresencePublishPolicy.adaptive()
-      : adaptive = true,
-        movingInterval = kPresencePublishInterval,
-        stationaryInterval = const Duration(seconds: 30),
-        inviteBoostInterval = const Duration(seconds: 8),
-        inviteBoostWindow = const Duration(seconds: 45),
-        stationaryMovementMeters = 50,
-        movingSpeedKmh = 8,
-        keepaliveEnabled = true,
-        keepaliveMaxFixAge = const Duration(seconds: 90),
-        pauseDuringTrip = true,
-        heartbeatTick = const Duration(seconds: 5);
+    : adaptive = true,
+      movingInterval = kPresencePublishInterval,
+      stationaryInterval = const Duration(seconds: 60),
+      inviteBoostInterval = const Duration(seconds: 8),
+      inviteBoostWindow = const Duration(seconds: 45),
+      stationaryMovementMeters = 50,
+      movingSpeedKmh = 8,
+      keepaliveEnabled = true,
+      keepaliveMaxFixAge = const Duration(seconds: 90),
+      pauseDuringTrip = true,
+      heartbeatTick = const Duration(seconds: 5);
 
   final bool adaptive;
   final Duration movingInterval;
@@ -84,6 +87,13 @@ class PresencePublishPolicy {
   final Duration heartbeatTick;
 }
 
+/// Margin below the last declared publishIntervalMs at which a refresh is
+/// forced. publishIntervalMs is a hard commitment: the marker's freshUntilMs
+/// horizon assumes another packet within that window, so a state transition
+/// (moving → stationary) must never let the declared horizon lapse without
+/// a publish — otherwise the driver silently drops out of matching.
+const int _declaredHorizonMarginMs = 2000;
+
 /// Session-owned idle presence publisher.
 ///
 /// While the driver is online, signed in, and the app is foregrounded, this
@@ -92,7 +102,7 @@ class PresencePublishPolicy {
 /// matching and N4 dispatch between trips.
 ///
 /// Adaptive mode (PresencePublishPolicy.adaptive): the cadence follows the
-/// driver state — stationary 30s, moving 10s, pending-invite boost 8s —
+/// driver state — stationary 60s, moving 10s, pending-invite boost 8s —
 /// and every publish declares its interval to the server so the marker
 /// freshness window tracks it. GPS stall falls back to a keepalive publish
 /// (same last accurate coords, fresh timestamp) so an online driver with a
@@ -116,15 +126,15 @@ class DriverPresencePublisher {
     DateTime Function()? now,
     String Function()? newStreamId,
     this.onLatestFix,
-  })  : _remote = remote,
-        _source = source,
-        _logger = logger,
-        _interval = interval,
-        _fixFreshness = fixFreshness,
-        _maxAccuracyMeters = maxAccuracyMeters,
-        _policy = policy,
-        _now = now ?? DateTime.now,
-        _newStreamId = newStreamId ?? (() => const Uuid().v4());
+  }) : _remote = remote,
+       _source = source,
+       _logger = logger,
+       _interval = interval,
+       _fixFreshness = fixFreshness,
+       _maxAccuracyMeters = maxAccuracyMeters,
+       _policy = policy,
+       _now = now ?? DateTime.now,
+       _newStreamId = newStreamId ?? (() => const Uuid().v4());
 
   final DriverLocationRemoteDataSource _remote;
   final DriverLocationSource _source;
@@ -154,6 +164,7 @@ class DriverPresencePublisher {
   DriverLocationFix? _lastAcceptedFix;
   DriverLocationFix? _pendingWhileInFlight;
   DateTime? _lastPublishAt;
+  int? _lastDeclaredIntervalMs;
   DateTime? _inviteBoostUntil;
   DateTime? _backoffUntil;
   Duration _backoffStep = const Duration(seconds: 2);
@@ -230,6 +241,7 @@ class DriverPresencePublisher {
     _lastPublishedFix = null;
     _lastAcceptedFix = null;
     _lastPublishAt = null;
+    _lastDeclaredIntervalMs = null;
     _backoffUntil = null;
     _backoffStep = const Duration(seconds: 2);
     _pendingWhileInFlight = null;
@@ -267,6 +279,7 @@ class DriverPresencePublisher {
     _lastPublishedFix = null;
     _lastAcceptedFix = null;
     _backoffUntil = null;
+    _lastDeclaredIntervalMs = null;
     if (reason != 'unwanted' || _online) {
       _log('presence_stopped', {'reason': reason});
     }
@@ -303,13 +316,25 @@ class DriverPresencePublisher {
     if (boostUntil != null && _now().isBefore(boostUntil)) {
       return _policy.inviteBoostInterval;
     }
-    return _isMoving(fix)
-        ? _policy.movingInterval
-        : _policy.stationaryInterval;
+    return _isMoving(fix) ? _policy.movingInterval : _policy.stationaryInterval;
   }
 
   bool _suppressedByTrip() {
     return _policy.adaptive && _policy.pauseDuringTrip && _tripPublishing;
+  }
+
+  /// Whether a publish is due — either the state's effective interval has
+  /// elapsed OR the previously declared publishIntervalMs horizon is about
+  /// to lapse. The latter prevents marker gaps when a state transition
+  /// (e.g. moving → stationary) lengthens the effective interval beyond
+  /// what the last marker committed to.
+  bool _dueForPublish(DriverLocationFix fix) {
+    final last = _lastPublishAt;
+    if (last == null) return true;
+    final elapsedMs = _now().difference(last).inMilliseconds;
+    if (elapsedMs >= _effectiveInterval(fix).inMilliseconds) return true;
+    final declared = _lastDeclaredIntervalMs;
+    return declared != null && elapsedMs >= declared - _declaredHorizonMarginMs;
   }
 
   bool _backingOff() {
@@ -323,11 +348,7 @@ class DriverPresencePublisher {
       _pendingWhileInFlight = fix;
       return;
     }
-    final last = _lastPublishAt;
-    if (last != null &&
-        _now().difference(last) < _effectiveInterval(fix)) {
-      return;
-    }
+    if (!_dueForPublish(fix)) return;
     if (!_publishable(fix)) return;
     unawaited(_publish(fix));
   }
@@ -338,9 +359,7 @@ class DriverPresencePublisher {
     }
     final fix = _latestFix;
     if (fix == null) return;
-    final last = _lastPublishAt;
-    final interval = _effectiveInterval(fix);
-    if (last != null && _now().difference(last) < interval) return;
+    if (!_dueForPublish(fix)) return;
     if (_publishable(fix)) {
       unawaited(_publish(fix));
       return;
@@ -352,9 +371,7 @@ class DriverPresencePublisher {
     // can never masquerade as a fresh fix at invite time.
     // Fail-closed for legacy mode and for keepalive age overflow.
     if (!_policy.keepaliveEnabled) return;
-    final keepaliveSource = _accuracyOk(fix)
-        ? fix
-        : _lastAcceptedFix;
+    final keepaliveSource = _accuracyOk(fix) ? fix : _lastAcceptedFix;
     if (keepaliveSource == null) return;
     final fixAge = _now().difference(keepaliveSource.timestamp);
     if (fixAge > _policy.keepaliveMaxFixAge) return;
@@ -369,6 +386,7 @@ class DriverPresencePublisher {
         : null;
     _inFlight = true;
     _lastPublishAt = _now();
+    _lastDeclaredIntervalMs = intervalMs;
     _lastPublishedFix = fix;
     final seq = _nextSeq++;
     final token = _cancelToken ?? CancelToken();
@@ -441,7 +459,8 @@ class DriverPresencePublisher {
     final lat2 = b.latitude * math.pi / 180;
     final dLat = (b.latitude - a.latitude) * math.pi / 180;
     final dLon = (b.longitude - a.longitude) * math.pi / 180;
-    final h = math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final h =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(lat1) *
             math.cos(lat2) *
             math.sin(dLon / 2) *

@@ -7,8 +7,8 @@
  */
 import { describe, it, expect } from 'vitest';
 import { memoryDb } from './helpers/memory_db';
-import { createMemoryRedis } from '../redis/memory_redis';
-import { createFirestoreGeoClient } from '../redis/firestore_geo_client';
+import { createMemoryGeoStore } from '../geo/memory_geo_store';
+import { createFirestoreGeoClient } from '../geo/firestore_geo_client';
 import { NearbyDriversService } from '../drivers/nearby_service';
 import { DispatchWaveService } from '../rides/dispatch_wave_service';
 import {
@@ -16,7 +16,7 @@ import {
   GEO_DRIVERS_KEY,
   driverOnlineKey,
   type DriverOnlineMarker,
-} from '../redis/types';
+} from '../geo/types';
 import { waveDocId } from '../rides/dispatch_types';
 
 const PICKUP = { lat: 31.52, lng: 74.35 };
@@ -43,13 +43,13 @@ function seedApprovedOnline(
 }
 
 async function seedGeoMarker(
-  redis: ReturnType<typeof createMemoryRedis>,
+  geoStore: ReturnType<typeof createMemoryGeoStore>,
   driverId: string,
   nowMs: number,
   marker: Partial<DriverOnlineMarker> = {},
   i = 0,
 ) {
-  await redis.geoadd(
+  await geoStore.geoadd(
     GEO_DRIVERS_KEY,
     PICKUP.lng + i * 0.001,
     PICKUP.lat,
@@ -65,7 +65,7 @@ async function seedGeoMarker(
     acceptedAt: new Date(nowMs).toISOString(),
     ...marker,
   };
-  await redis.set(
+  await geoStore.set(
     driverOnlineKey(driverId),
     JSON.stringify(full),
     DRIVER_ONLINE_TTL_SECONDS,
@@ -120,7 +120,7 @@ function seedRide(
 describe('loadInviteRevalidationContext — parity with per-driver path', () => {
   it('batched context returns identical eligibility for every rejection class', async () => {
     const db = memoryDb();
-    const redis = createFirestoreGeoClient(db as never);
+    const geoStore = createFirestoreGeoClient(db as never);
     const now = Date.now();
 
     // Eligible control.
@@ -149,7 +149,7 @@ describe('loadInviteRevalidationContext — parity with per-driver path', () => 
       'busy',
       'nomarker',
     ].entries()) {
-      await redis.geoadd(GEO_DRIVERS_KEY, PICKUP.lng + i * 0.001, PICKUP.lat, id);
+      await geoStore.geoadd(GEO_DRIVERS_KEY, PICKUP.lng + i * 0.001, PICKUP.lat, id);
     }
     const markerFor = (id: string) =>
       JSON.stringify({
@@ -162,7 +162,7 @@ describe('loadInviteRevalidationContext — parity with per-driver path', () => 
         acceptedAt: new Date(now).toISOString(),
       } satisfies DriverOnlineMarker);
     for (const id of ['ok', 'stale', 'banned', 'inactive', 'offline', 'busy']) {
-      await redis.set(driverOnlineKey(id), markerFor(id), 300);
+      await geoStore.set(driverOnlineKey(id), markerFor(id), 300);
     }
     db.seed('rides', 'ride-busy', {
       rideId: 'ride-busy',
@@ -170,7 +170,7 @@ describe('loadInviteRevalidationContext — parity with per-driver path', () => 
       state: 'DRIVER_EN_ROUTE',
     });
 
-    const svc = new NearbyDriversService(db as never, redis);
+    const svc = new NearbyDriversService(db as never, geoStore);
     const ids = ['ok', 'stale', 'banned', 'inactive', 'offline', 'busy', 'nomarker', 'ghost'];
     const ctx = await svc.loadInviteRevalidationContext(ids, {
       requestId: 'test-ctx',
@@ -197,11 +197,11 @@ describe('loadInviteRevalidationContext — parity with per-driver path', () => 
 
   it('context covers only requested ids — unknown driver fails closed', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
     seedApprovedOnline(db, 'd1');
-    await seedGeoMarker(redis, 'd1', now);
-    const svc = new NearbyDriversService(db as never, redis);
+    await seedGeoMarker(geoStore, 'd1', now);
+    const svc = new NearbyDriversService(db as never, geoStore);
     const ctx = await svc.loadInviteRevalidationContext(['d1']);
     // d2 was never part of the snapshot → not eligible (same as missing marker).
     expect(
@@ -216,7 +216,7 @@ describe('loadInviteRevalidationContext — parity with per-driver path', () => 
 describe('dispatch — chunked invite revalidation', () => {
   it('loads revalidation contexts lazily in nearest-first chunks', async () => {
     const db = memoryDb();
-    const redis = createMemoryRedis();
+    const geoStore = createMemoryGeoStore();
     const now = Date.now();
 
     const ids: string[] = [];
@@ -224,11 +224,11 @@ describe('dispatch — chunked invite revalidation', () => {
       const id = `d${i}`;
       ids.push(id);
       seedApprovedOnline(db, id);
-      await seedGeoMarker(redis, id, now, {}, i);
+      await seedGeoMarker(geoStore, id, now, {}, i);
     }
     seedRide(db, 'r-chunk');
 
-    const nearby = new NearbyDriversService(db as never, redis);
+    const nearby = new NearbyDriversService(db as never, geoStore);
     const dispatch = new DispatchWaveService(db as never, nearby);
 
     // After findNearby returns, invalidate the markers of the nearest 25
@@ -238,7 +238,7 @@ describe('dispatch — chunked invite revalidation', () => {
     nearby.findNearby = async (input) => {
       const result = await originalFind(input);
       for (const id of ids.slice(0, 25)) {
-        await redis.del(driverOnlineKey(id));
+        await geoStore.del(driverOnlineKey(id));
       }
       return result;
     };

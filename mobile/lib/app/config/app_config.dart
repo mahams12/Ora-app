@@ -14,13 +14,13 @@ class AppConfig {
   });
 
   factory AppConfig.development() => const AppConfig(
-        environment: AppEnvironment.development,
-        apiBaseUrl: 'https://api-dev.ora.app/v1',
-        appCheckEnabled: false,
-        clientVersion: '1.0.0',
-        googlePlacesApiKey: '',
-        firebaseDatabaseUrl: '',
-      );
+    environment: AppEnvironment.development,
+    apiBaseUrl: 'https://api-dev.ora.app/v1',
+    appCheckEnabled: false,
+    clientVersion: '1.0.0',
+    googlePlacesApiKey: '',
+    firebaseDatabaseUrl: '',
+  );
 
   factory AppConfig.fromEnvironment(AppEnvironment environment) {
     // Optional override for local auth-service / staging tunnels.
@@ -52,9 +52,7 @@ class AppConfig {
     };
 
     // Fail-closed: production/release must never ship with App Check disabled.
-    if (kReleaseMode &&
-        environment.isProduction &&
-        !appCheckEnabled) {
+    if (kReleaseMode && environment.isProduction && !appCheckEnabled) {
       throw StateError(
         'REFUSING_START: production release requires App Check '
         '(unset ORA_APP_CHECK=false).',
@@ -83,8 +81,8 @@ class AppConfig {
     final firebaseDatabaseUrl = databaseUrlDefine.trim().isNotEmpty
         ? databaseUrlDefine.trim()
         : (environment.isDevelopment
-            ? ''
-            : 'https://ora-app-d8112-default-rtdb.asia-southeast1.firebasedatabase.app');
+              ? ''
+              : 'https://oraapp-a9be5-default-rtdb.asia-southeast1.firebasedatabase.app');
 
     return AppConfig(
       environment: environment,

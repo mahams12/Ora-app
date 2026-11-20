@@ -6,12 +6,7 @@ import '../../../ride/domain/entities/ride.dart';
 import '../../../ride/domain/use_cases/ride_use_cases.dart';
 import '../../../ride/presentation/history/ride_history_display.dart';
 
-enum DriverAssignedRidesPhase {
-  initialLoading,
-  ready,
-  empty,
-  fatalError,
-}
+enum DriverAssignedRidesPhase { initialLoading, ready, empty, fatalError }
 
 class DriverAssignedRidesUiState {
   const DriverAssignedRidesUiState({
@@ -64,8 +59,7 @@ class DriverAssignedRidesUiState {
       rides: rides ?? this.rides,
       nextCursor: clearNextCursor ? null : (nextCursor ?? this.nextCursor),
       status: status ?? this.status,
-      serviceType:
-          clearServiceType ? null : (serviceType ?? this.serviceType),
+      serviceType: clearServiceType ? null : (serviceType ?? this.serviceType),
       isRefreshing: isRefreshing ?? this.isRefreshing,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
@@ -133,10 +127,7 @@ class DriverAssignedRidesViewModel
 
     _loadMoreInFlight = true;
     final seq = ++_requestSeq;
-    state = state.copyWith(
-      isLoadingMore: true,
-      clearPaginationError: true,
-    );
+    state = state.copyWith(isLoadingMore: true, clearPaginationError: true);
     try {
       await _fetchPage(
         seq: seq,
@@ -162,8 +153,7 @@ class DriverAssignedRidesViewModel
 
   Future<void> setServiceType(String? serviceType) async {
     final normalized = serviceType?.toLowerCase();
-    if (normalized != null &&
-        !rideHistoryServiceTypes.contains(normalized)) {
+    if (normalized != null && !rideHistoryServiceTypes.contains(normalized)) {
       return;
     }
     final current = state.serviceType;
@@ -254,7 +244,8 @@ class DriverAssignedRidesViewModel
   }
 }
 
-final driverAssignedRidesViewModelProvider = NotifierProvider.autoDispose<
-    DriverAssignedRidesViewModel, DriverAssignedRidesUiState>(
-  DriverAssignedRidesViewModel.new,
-);
+final driverAssignedRidesViewModelProvider =
+    NotifierProvider.autoDispose<
+      DriverAssignedRidesViewModel,
+      DriverAssignedRidesUiState
+    >(DriverAssignedRidesViewModel.new);

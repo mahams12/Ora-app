@@ -33,6 +33,7 @@ Document ID: `{uid}` (Firebase Auth UID)
 | preferredLanguage | string | [C] | "en" \| "ur" |
 | notificationsEnabled | boolean | [C] | |
 | emergencyContactsCount | number | [R] | Count only; contacts encrypted separately |
+| vendorApplications | map | [R] | `{service|rental|cargo → {status, submittedAt, reviewedAt}}`; server-managed via `POST /v1/auth/vendor-application` + admin action |
 
 **Indexes:**
 - `phoneNumber` (unique lookup)
@@ -602,3 +603,48 @@ Document ID: `{referralCode}`
 | maxUses | number | Default unlimited |
 | expiresAt | timestamp? | |
 | createdAt | timestamp | |
+---
+
+## Collection: `marketplaceListings` **[S]** — IMPLEMENTED (local verified)
+
+Document ID: `{listingId}`
+
+| Field | Type | Notes |
+|---|---|---|
+| listingId | string | |
+| vendorId | string | Owner UID; ownership enforced server-side |
+| type | string | `service` \| `rental` \| `cargo` |
+| categoryId | string | Validated against `catalogue_v1.json` taxonomy |
+| subcategoryId | string | Validated within category |
+| title | string | Bounded length |
+| description | string | Bounded length |
+| price | number | Whole-rupee integer, bounded |
+| priceUnit | string | Per-type set (e.g. service: Per Service/Visit/Hour/Day/Job) |
+| location | string | |
+| contactNumber | string | |
+| details | map | Bounded per-vertical extras (≤ size budget) |
+| photos | string[] | JPEG data URLs, ≤6, total-size budgeted (Firestore doc limit) |
+| status | string | `draft` \| `published` \| `paused` \| `deleted` |
+| createdAt | timestamp | |
+| updatedAt | timestamp | |
+
+Indexes (in `firestore.indexes.json`): discovery queries on `(type, status, categoryId)`, `(type, status, categoryId, subcategoryId)` ordered by `createdAt desc`; vendor inbox `(vendorId, status)` / `(vendorId, type, status)`.
+
+## Collection: `marketplaceBookings` **[S]** — IMPLEMENTED (local verified)
+
+Document ID: `{bookingId}`
+
+| Field | Type | Notes |
+|---|---|---|
+| bookingId | string | |
+| listingId | string | |
+| vendorId | string | Denormalized from listing |
+| customerId | string | |
+| type | string | `service` \| `rental` \| `cargo` |
+| status | string | `requested` \| `quoted` \| `confirmed` \| `in_progress` \| `completed` \| `rejected` \| `cancelled` |
+| request | map | `contactName` (2–80), `contactPhone` (5–24), bounded per-type `details` |
+| quote | map? | `{amount, note}` set by vendor `quote` action |
+| statusHistory | array | `{status, at, actor}` appended transactionally per transition |
+| createdAt / updatedAt | timestamp | |
+
+Guards enforced server-side (transactions): duplicate active booking per customer+listing → 409; rental confirmed-date overlap → 409; illegal transitions → 409; suspended vendor → 403; cross-party access → 404.

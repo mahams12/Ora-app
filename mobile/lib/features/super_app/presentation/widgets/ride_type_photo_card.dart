@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../app/theme/ora_colors.dart';
-import '../../../../app/theme/ora_motion.dart';
+import '../../../../app/theme/ora_elevation.dart';
 import '../../../../app/theme/ora_radius.dart';
 import '../../../../app/theme/ora_typography.dart';
+import '../../../../app/theme/widgets/ora_floaty.dart';
 import '../../domain/ride_type_catalogue.dart';
 
 class RideTypePhotoCard extends StatefulWidget {
@@ -22,8 +23,6 @@ class RideTypePhotoCard extends StatefulWidget {
 }
 
 class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
-  var _pressed = false;
-
   @override
   Widget build(BuildContext context) {
     final option = widget.option;
@@ -33,20 +32,20 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
           '${option.name}, ${option.blurb}'
           '${option.comingLater ? ', coming later' : ''}',
       onTap: widget.onTap,
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) => setState(() => _pressed = false),
-        onTapCancel: () => setState(() => _pressed = false),
-        child: AnimatedScale(
-          scale: _pressed ? 0.97 : 1,
-          duration: OraMotion.press,
-          curve: OraMotion.standard,
+      child: OraFloaty(
+        child: OraTapScale(
+          child: ExcludeSemantics(
+          child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: OraColors.surfaceElevated,
+            borderRadius: BorderRadius.circular(OraRadius.card),
+            boxShadow: OraElevation.cardShadow,
+          ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(OraRadius.card),
             child: Material(
-              color: OraColors.surfaceElevated,
+              color: Colors.transparent,
               child: InkWell(
-                excludeFromSemantics: true,
                 onTap: () {
                   HapticFeedback.selectionClick();
                   widget.onTap();
@@ -54,32 +53,25 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    const ColoredBox(color: OraColors.navyElevated),
-                    Image.asset(
-                      option.image,
-                      cacheWidth: 480,
-                      fit: BoxFit.contain,
-                      filterQuality: FilterQuality.medium,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const ColoredBox(
-                            color: OraColors.surfaceElevated,
-                            child: Center(
-                              child: Icon(
-                                Icons.image_not_supported_outlined,
-                                color: OraColors.textMuted,
-                              ),
-                            ),
-                          ),
+                    const Positioned.fill(
+                      child: ColoredBox(color: OraColors.surfaceElevated),
                     ),
-                    const DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            OraColors.photoScrimStrong,
-                          ],
+                    Positioned.fill(
+                      bottom: 46,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
+                        child: Image.asset(
+                          option.image,
+                          cacheWidth: 480,
+                          fit: BoxFit.contain,
+                          filterQuality: FilterQuality.medium,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Center(
+                                child: Icon(
+                                  Icons.image_not_supported_outlined,
+                                  color: OraColors.textMuted,
+                                ),
+                              ),
                         ),
                       ),
                     ),
@@ -94,7 +86,7 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: OraColors.onPhoto.withValues(alpha: 0.94),
+                            color: OraColors.primary,
                             borderRadius: BorderRadius.circular(OraRadius.pill),
                           ),
                           child: Text(
@@ -102,15 +94,15 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: OraTypography.caption(
-                              OraColors.navy,
+                              OraColors.onPhoto,
                             ).copyWith(fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),
                     Positioned(
-                      left: 10,
-                      right: 10,
-                      bottom: 9,
+                      left: 12,
+                      right: 12,
+                      bottom: 8,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -120,7 +112,7 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: OraTypography.bodyEmphasis(
-                              OraColors.onPhoto,
+                              OraColors.textPrimary,
                             ),
                           ),
                           Text(
@@ -128,7 +120,7 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: OraTypography.caption(
-                              OraColors.onPhotoMuted,
+                              OraColors.textMuted,
                             ),
                           ),
                         ],
@@ -137,6 +129,8 @@ class _RideTypePhotoCardState extends State<RideTypePhotoCard> {
                   ],
                 ),
               ),
+            ),
+            ),
             ),
           ),
         ),

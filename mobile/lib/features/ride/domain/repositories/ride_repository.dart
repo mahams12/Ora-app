@@ -25,16 +25,10 @@ abstract interface class RideRepository {
   /// Accept an invitation — server creates a PASSENGER_PRICE_ACCEPTED offer
   /// at the passenger's offered amount. Returns the offer id. Server-side
   /// idempotent; safe to retry.
-  Future<String> acceptInvite({
-    required String rideId,
-    required String waveId,
-  });
+  Future<String> acceptInvite({required String rideId, required String waveId});
 
   /// Decline an invitation — durable server-side record, idempotent.
-  Future<void> declineInvite({
-    required String rideId,
-    required String waveId,
-  });
+  Future<void> declineInvite({required String rideId, required String waveId});
 
   /// Slice M — approved-driver open-ride discovery (GET /v1/rides/open).
   Future<OpenRideListPage> listOpenRides({

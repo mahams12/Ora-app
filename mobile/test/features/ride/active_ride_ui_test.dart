@@ -229,7 +229,7 @@ void main() {
         const ActiveRideView(rideId: 'ride-1'),
         overrides: [
           ...overrides(),
-          // Force soft map shell (no platform GoogleMap).
+          // Force soft map shell (no platform MapLibre view).
         ],
       ),
     );

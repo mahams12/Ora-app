@@ -10,9 +10,9 @@ class RideRepositoryImpl implements RideRepository {
     required RideRemoteDataSource remote,
     required ApiClient apiClient,
     required IdempotencyNonceStore nonceStore,
-  })  : _remote = remote,
-        _apiClient = apiClient,
-        _nonceStore = nonceStore;
+  }) : _remote = remote,
+       _apiClient = apiClient,
+       _nonceStore = nonceStore;
 
   final RideRemoteDataSource _remote;
   final ApiClient _apiClient;
@@ -48,10 +48,7 @@ class RideRepositoryImpl implements RideRepository {
 
   @override
   Future<Ride> getRide(String rideId) {
-    return _remote.getRide(
-      rideId: rideId,
-      context: _apiClient.newContext(),
-    );
+    return _remote.getRide(rideId: rideId, context: _apiClient.newContext());
   }
 
   @override
@@ -92,10 +89,7 @@ class RideRepositoryImpl implements RideRepository {
   }
 
   @override
-  Future<void> declineInvite({
-    required String rideId,
-    required String waveId,
-  }) {
+  Future<void> declineInvite({required String rideId, required String waveId}) {
     return _remote.declineInvite(
       rideId: rideId,
       waveId: waveId,
@@ -121,10 +115,7 @@ class RideRepositoryImpl implements RideRepository {
 
   @override
   Future<List<RideOffer>> listOffers(String rideId) {
-    return _remote.listOffers(
-      rideId: rideId,
-      context: _apiClient.newContext(),
-    );
+    return _remote.listOffers(rideId: rideId, context: _apiClient.newContext());
   }
 
   @override
@@ -175,9 +166,7 @@ class RideRepositoryImpl implements RideRepository {
       run: (nonce) => _remote.selectOffer(
         rideId: rideId,
         offerId: offerId,
-        body: {
-          if (expectedVersion != null) 'expectedVersion': expectedVersion,
-        },
+        body: {if (expectedVersion != null) 'expectedVersion': expectedVersion},
         context: _apiClient.newContext(idempotencyKey: nonce),
       ),
     );
@@ -194,17 +183,15 @@ class RideRepositoryImpl implements RideRepository {
       isTerminalSuccess: (ride) => ride.state == 'CANCELLED',
       run: (nonce) => _remote.cancelRide(
         rideId: rideId,
-        body: {
-          if (reason != null) 'reason': reason,
-        },
+        body: {if (reason != null) 'reason': reason},
         context: _apiClient.newContext(idempotencyKey: nonce),
       ),
     );
   }
 
   Map<String, Object?> _versionBody(int? expectedVersion) => {
-        if (expectedVersion != null) 'expectedVersion': expectedVersion,
-      };
+    if (expectedVersion != null) 'expectedVersion': expectedVersion,
+  };
 
   @override
   Future<Ride> markEnRoute({
@@ -275,10 +262,7 @@ class RideRepositoryImpl implements RideRepository {
       isTerminalSuccess: (ride) => ride.state == 'RIDE_COMPLETED',
       run: (nonce) => _remote.completeRide(
         rideId: rideId,
-        body: {
-          ..._versionBody(expectedVersion),
-          if (otp != null) 'otp': otp,
-        },
+        body: {..._versionBody(expectedVersion), if (otp != null) 'otp': otp},
         context: _apiClient.newContext(idempotencyKey: nonce),
       ),
     );
@@ -296,10 +280,7 @@ class RideRepositoryImpl implements RideRepository {
       isTerminalSuccess: (ride) => ride.state == 'DELIVERY_FAILED',
       run: (nonce) => _remote.failDelivery(
         rideId: rideId,
-        body: {
-          ..._versionBody(expectedVersion),
-          'reason': reason,
-        },
+        body: {..._versionBody(expectedVersion), 'reason': reason},
         context: _apiClient.newContext(idempotencyKey: nonce),
       ),
     );
@@ -351,10 +332,7 @@ class RideRepositoryImpl implements RideRepository {
       isTerminalSuccess: (ride) => ride.state == 'RETURNED',
       run: (nonce) => _remote.completeReturn(
         rideId: rideId,
-        body: {
-          ..._versionBody(expectedVersion),
-          if (otp != null) 'otp': otp,
-        },
+        body: {..._versionBody(expectedVersion), if (otp != null) 'otp': otp},
         context: _apiClient.newContext(idempotencyKey: nonce),
       ),
     );

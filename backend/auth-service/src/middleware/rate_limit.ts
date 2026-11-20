@@ -3,7 +3,7 @@
  *
  * LOCAL ONLY — NOT PRODUCTION READY for multi-instance Cloud Run.
  * Future production mechanism (do not implement in Phase 2B):
- * Redis / Memorystore token-bucket or Cloud Armor edge limits keyed by
+ * geo-store-agnostic (in-process now; future Memorystore option rejected) token-bucket or Cloud Armor edge limits keyed by
  * verified Firebase uid (+ IP where appropriate).
  *
  * Keys MUST be derived from verified Firebase identity (and optionally IP),

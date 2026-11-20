@@ -79,6 +79,14 @@ abstract interface class AuthRepository {
   /// AppFailure.forbidden for DRIVER_SUSPENDED.
   Future<UserProfile> switchMode({required String mode});
 
+  /// Submits a partner application (`POST /v1/auth/vendor-application`).
+  /// [type] is 'cargo' | 'rental' | 'service'. Returns the updated profile —
+  /// the server always answers with status 'pending' on a new application.
+  Future<UserProfile> submitVendorApplication({
+    required String type,
+    Map<String, dynamic>? details,
+  });
+
   /// Submits the first-time driver application (`POST /v1/drivers/onboarding`).
   /// Returns the raw response (`data.driverStatus`).
   Future<Map<String, dynamic>> submitDriverOnboarding({

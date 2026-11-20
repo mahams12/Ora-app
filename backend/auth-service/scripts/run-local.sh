@@ -3,7 +3,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${SCRIPT_DIR}/.."
 export PORT="${PORT:-8080}"
-export FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-ora-app-d8112}"
+export FIREBASE_PROJECT_ID="${FIREBASE_PROJECT_ID:-oraapp-a9be5}"
 export GOOGLE_APPLICATION_CREDENTIALS="${GOOGLE_APPLICATION_CREDENTIALS:-${PWD}/secrets/service-account.json}"
 export REQUIRE_APP_CHECK="${REQUIRE_APP_CHECK:-false}"
 export ORA_ENV="${ORA_ENV:-development}"

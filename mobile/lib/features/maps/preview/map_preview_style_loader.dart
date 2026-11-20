@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
+import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 
@@ -51,7 +50,7 @@ class MapPreviewStyleLoader {
     final apiKey = MapPreviewConfig.mapTilerApiKey;
     try {
       await setHttpHeaders({
-        'user-agent': MapPreviewConfig.mapTilerUserAgent,
+        HttpHeaders.userAgentHeader: MapPreviewConfig.mapTilerUserAgent,
       });
 
       final preflight =
@@ -81,7 +80,7 @@ class MapPreviewStyleLoader {
   static Future<MapPreviewStyleLoadResult> _loadOpenFreeMap() async {
     try {
       await setHttpHeaders({
-        'user-agent': MapPreviewConfig.mapTilerUserAgent,
+        HttpHeaders.userAgentHeader: MapPreviewConfig.mapTilerUserAgent,
       });
 
       final preflight =
@@ -114,19 +113,18 @@ class MapPreviewStyleLoader {
   static Future<({bool ok, String message})> _preflight(
     String url,
   ) async {
-    final dio = Dio();
+    final client = HttpClient();
     try {
-      final res = await dio.get<void>(
-        url,
-        options: Options(
-          headers: {
-            'accept': 'application/json',
-            'user-agent': MapPreviewConfig.mapTilerUserAgent,
-          },
-          receiveTimeout: const Duration(seconds: 12),
-          validateStatus: (_) => true,
-        ),
+      client.userAgent = MapPreviewConfig.mapTilerUserAgent;
+      final uri = Uri.parse(url);
+      final req = await client.getUrl(uri);
+      req.headers.set(HttpHeaders.acceptHeader, 'application/json');
+      req.headers.set(
+        HttpHeaders.userAgentHeader,
+        MapPreviewConfig.mapTilerUserAgent,
       );
+      final res = await req.close().timeout(const Duration(seconds: 12));
+      await res.drain<void>();
       if (res.statusCode == 200) {
         return (ok: true, message: '');
       }
@@ -146,7 +144,7 @@ class MapPreviewStyleLoader {
         message: 'Map preview unavailable · network error',
       );
     } finally {
-      dio.close();
+      client.close(force: true);
     }
   }
 }

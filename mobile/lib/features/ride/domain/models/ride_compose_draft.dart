@@ -37,22 +37,24 @@ class RideComposeDraft {
   static const Duration maxAge = Duration(hours: 24);
 
   bool isStaleAt(DateTime now) {
-    final saved =
-        DateTime.fromMillisecondsSinceEpoch(savedAtMillis, isUtc: true);
+    final saved = DateTime.fromMillisecondsSinceEpoch(
+      savedAtMillis,
+      isUtc: true,
+    );
     return now.toUtc().difference(saved) > maxAge;
   }
 
   Map<String, Object?> toJson() => {
-        'v': 1,
-        'savedAt': savedAtMillis,
-        'categoryId': categoryId,
-        'serviceType': serviceType,
-        'pickup': pickup?.toJson(),
-        'destination': destination?.toJson(),
-        'pickupText': pickupText,
-        'destinationText': destinationText,
-        'offerDraft': passengerOfferDraftText,
-      };
+    'v': 1,
+    'savedAt': savedAtMillis,
+    'categoryId': categoryId,
+    'serviceType': serviceType,
+    'pickup': pickup?.toJson(),
+    'destination': destination?.toJson(),
+    'pickupText': pickupText,
+    'destinationText': destinationText,
+    'offerDraft': passengerOfferDraftText,
+  };
 
   /// Corrupt/partial payloads decode to null — callers treat as "no draft".
   static RideComposeDraft? tryFromJson(Object? raw) {
@@ -60,9 +62,7 @@ class RideComposeDraft {
     final savedAt = raw['savedAt'];
     final categoryId = raw['categoryId'];
     final serviceType = raw['serviceType'];
-    if (savedAt is! int ||
-        categoryId is! String ||
-        serviceType is! String) {
+    if (savedAt is! int || categoryId is! String || serviceType is! String) {
       return null;
     }
     return RideComposeDraft(
@@ -71,12 +71,15 @@ class RideComposeDraft {
       serviceType: serviceType,
       pickup: RideComposeDraftPoint.tryFromJson(raw['pickup']),
       destination: RideComposeDraftPoint.tryFromJson(raw['destination']),
-      pickupText: raw['pickupText'] is String ? raw['pickupText'] as String : '',
+      pickupText: raw['pickupText'] is String
+          ? raw['pickupText'] as String
+          : '',
       destinationText: raw['destinationText'] is String
           ? raw['destinationText'] as String
           : '',
-      passengerOfferDraftText:
-          raw['offerDraft'] is String ? raw['offerDraft'] as String : '',
+      passengerOfferDraftText: raw['offerDraft'] is String
+          ? raw['offerDraft'] as String
+          : '',
     );
   }
 }
@@ -104,24 +107,24 @@ class RideComposeDraftPoint {
   final String? displayName;
 
   ResolvedPassengerLocation toLocation() => ResolvedPassengerLocation(
-        lat: lat,
-        lng: lng,
-        source: source,
-        address: address,
-        placeId: placeId,
-        displayName: displayName,
-        // GPS accuracy is a live-fix property — never persisted/restored.
-      );
+    lat: lat,
+    lng: lng,
+    source: source,
+    address: address,
+    placeId: placeId,
+    displayName: displayName,
+    // GPS accuracy is a live-fix property — never persisted/restored.
+  );
 
   Map<String, Object?> toJson() => {
-        'lat': lat,
-        'lng': lng,
-        'source': source.name,
-        'confirmed': confirmed,
-        'address': address,
-        'placeId': placeId,
-        'displayName': displayName,
-      };
+    'lat': lat,
+    'lng': lng,
+    'source': source.name,
+    'confirmed': confirmed,
+    'address': address,
+    'placeId': placeId,
+    'displayName': displayName,
+  };
 
   static RideComposeDraftPoint? tryFromJson(Object? raw) {
     if (raw is! Map) return null;
@@ -144,8 +147,9 @@ class RideComposeDraftPoint {
       confirmed: confirmed == true,
       address: raw['address'] is String ? raw['address'] as String : null,
       placeId: raw['placeId'] is String ? raw['placeId'] as String : null,
-      displayName:
-          raw['displayName'] is String ? raw['displayName'] as String : null,
+      displayName: raw['displayName'] is String
+          ? raw['displayName'] as String
+          : null,
     );
   }
 }

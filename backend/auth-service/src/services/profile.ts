@@ -1,4 +1,4 @@
-import type { UserProfile } from '../types';
+import type { UserProfile, VendorStatus, VendorType } from '../types';
 import { DisplayNameValidationError } from './display_name';
 
 /**
@@ -63,6 +63,8 @@ export function toPublicProfile(doc: Record<string, unknown>, uid: string): User
   // Legacy docs predate activeMode — they behaved as passenger.
   const activeMode = doc.activeMode === 'driver' ? 'driver' : 'passenger';
 
+  const vendorApplications = parseVendorApplications(doc.vendorApplications);
+
   return {
     uid,
     phoneNumber: typeof doc.phoneNumber === 'string' ? doc.phoneNumber : '',
@@ -79,5 +81,42 @@ export function toPublicProfile(doc: Record<string, unknown>, uid: string): User
       banned,
       displayName,
     }),
+    ...(vendorApplications ? { vendorApplications } : {}),
   };
+}
+
+const VENDOR_TYPES = new Set<VendorType>(['cargo', 'rental', 'service']);
+const VENDOR_STATUSES = new Set<VendorStatus>([
+  'pending',
+  'approved',
+  'rejected',
+  'suspended',
+]);
+
+function parseVendorApplications(
+  raw: unknown,
+): UserProfile['vendorApplications'] {
+  if (raw == null || typeof raw !== 'object' || Array.isArray(raw)) {
+    return undefined;
+  }
+  const out: NonNullable<UserProfile['vendorApplications']> = {};
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (!VENDOR_TYPES.has(key as VendorType)) continue;
+    if (value == null || typeof value !== 'object') continue;
+    const app = value as Record<string, unknown>;
+    if (
+      typeof app.status !== 'string' ||
+      !VENDOR_STATUSES.has(app.status as VendorStatus)
+    ) {
+      continue;
+    }
+    out[key as VendorType] = {
+      status: app.status as VendorStatus,
+      submittedAt: typeof app.submittedAt === 'string' ? app.submittedAt : '',
+      ...(typeof app.reviewedAt === 'string'
+        ? { reviewedAt: app.reviewedAt }
+        : {}),
+    };
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
 }

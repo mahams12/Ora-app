@@ -134,10 +134,7 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
             description: message,
           ),
           const SizedBox(height: OraSpacing.lg),
-          OraButton(
-            label: 'OK',
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+          OraButton(label: 'OK', onPressed: () => Navigator.of(context).pop()),
         ],
       ),
     );
@@ -171,8 +168,7 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
     if (request == null || !mounted) return;
     final places = ref.read(passengerPlacesProvider.notifier);
     final error = switch (request.action) {
-      'rename' =>
-        await places.renamePlace(id: place.id, name: request.name),
+      'rename' => await places.renamePlace(id: place.id, name: request.name),
       'remove' => await places.removePlace(place.id),
       _ => null,
     };
@@ -210,12 +206,14 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
           _destinationController.text != next.destinationText) {
         _destinationController.value = TextEditingValue(
           text: next.destinationText,
-          selection:
-              TextSelection.collapsed(offset: next.destinationText.length),
+          selection: TextSelection.collapsed(
+            offset: next.destinationText.length,
+          ),
         );
       }
 
-      final destinationProposalReady = next.phase == RideRequestPhase.compose &&
+      final destinationProposalReady =
+          next.phase == RideRequestPhase.compose &&
           next.proposedDestination != null &&
           !next.hasConfirmedDestination &&
           (prev?.proposedDestination == null ||
@@ -253,7 +251,7 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
         }
       },
       child: Scaffold(
-        backgroundColor: OraColors.background,
+        backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           top: false,
@@ -301,8 +299,10 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                   if (!_mapExpanded)
                     Expanded(
                       child: Transform.translate(
-                        offset:
-                            const Offset(0, -RideRequestMapLayout.sheetOverlap),
+                        offset: const Offset(
+                          0,
+                          -RideRequestMapLayout.sheetOverlap,
+                        ),
                         child: Container(
                           width: double.infinity,
                           decoration: const BoxDecoration(
@@ -319,108 +319,97 @@ class _RideRequestViewState extends ConsumerState<RideRequestView> {
                                   ),
                                 )
                               : state.phase == RideRequestPhase.error
-                                  ? OraErrorState(
-                                      title: 'Request failed',
-                                      message: state.errorMessage ??
-                                          'Something went wrong. Please try again.',
-                                      onRetry: vm.retryAfterError,
-                                    )
-                                  : state.phase == RideRequestPhase.review
-                                      ? _ReviewPane(
-                                          state: state,
-                                          padding: padding,
-                                          canSubmit: vm.canSubmitRideRequest,
-                                          onSelectCategory: vm.selectCategory,
-                                          onSelectServiceType:
-                                              vm.selectServiceType,
-                                          onUpdateParcel: vm.updateParcel,
-                                          onEditLocations: vm.goToCompose,
-                                          onSubmit: vm.submit,
-                                          onRetryPricing: vm.retryPricing,
-                                          onSelectCity: vm.setCitySlug,
-                                          onOfferDraftChanged:
-                                              vm.setPassengerOfferDraft,
-                                          onPaymentChange: () =>
-                                              _showGateSheet(
-                                            'Payments',
-                                            'Wallet and online payment are not '
-                                                'available in this build. Cash remains '
-                                                'the only honest option.',
-                                          ),
-                                        )
-                                      : _ComposePane(
-                                          state: state,
-                                          vm: vm,
-                                          padding: padding,
-                                          scrollController:
-                                              _composeScrollController,
-                                          destinationProposalKey:
-                                              _destinationProposalKey,
-                                          pickupController: _pickupController,
-                                          destinationController:
-                                              _destinationController,
-                                          onPickupChanged: vm.setPickupText,
-                                          onDestinationChanged:
-                                              vm.setDestinationText,
-                                          onSelectServiceType:
-                                              vm.selectServiceType,
-                                          onUpdateParcel: vm.updateParcel,
-                                          onUseCurrentLocation:
-                                              vm.useCurrentLocationForPickup,
-                                          onSelectPickupSuggestion: (s) =>
-                                              vm.selectPlaceSuggestion(
-                                            field: LocationField.pickup,
-                                            suggestion: s,
-                                          ),
-                                          onSelectDestinationSuggestion: (s) =>
-                                              vm.selectPlaceSuggestion(
-                                            field: LocationField.destination,
-                                            suggestion: s,
-                                          ),
-                                          onConfirmPickup: vm.confirmPickup,
-                                          onRetryPickupName:
-                                              vm.retryPickupNameLookup,
-                                          onAdjustPickupOnMap: () {
-                                            vm.startPinAdjust(
-                                              LocationField.pickup,
-                                            );
-                                            _expandMap();
-                                          },
-                                          onConfirmDestination:
-                                              vm.confirmDestination,
-                                          onRetryDestinationName:
-                                              vm.retryDestinationNameLookup,
-                                          onAdjustDestinationOnMap: () {
-                                            vm.startPinAdjust(
-                                              LocationField.destination,
-                                            );
-                                            _expandMap();
-                                          },
-                                          onContinue: vm.goToReview,
-                                          savedPlaces: placesState.places,
-                                          recents: placesState.recents,
-                                          onSelectSavedPickup: (p) =>
-                                              vm.applySavedPlace(
-                                            field: LocationField.pickup,
-                                            place: p,
-                                          ),
-                                          onSelectSavedDestination: (p) =>
-                                              vm.applySavedPlace(
-                                            field: LocationField.destination,
-                                            place: p,
-                                          ),
-                                          onSelectRecent:
-                                              vm.applyRecentDestination,
-                                          onManageSaved: (p) =>
-                                              _manageSavedPlace(p),
-                                          onSavePickup: () => _saveFieldPlace(
-                                            LocationField.pickup,
-                                          ),
-                                          onSaveDestination: () =>
-                                              _saveFieldPlace(
-                                            LocationField.destination,
-                                          ),
-                                        ),
+                              ? OraErrorState(
+                                  title: 'Request failed',
+                                  message:
+                                      state.errorMessage ??
+                                      'Something went wrong. Please try again.',
+                                  onRetry: vm.retryAfterError,
+                                )
+                              : state.phase == RideRequestPhase.review
+                              ? _ReviewPane(
+                                  state: state,
+                                  padding: padding,
+                                  canSubmit: vm.canSubmitRideRequest,
+                                  onSelectCategory: vm.selectCategory,
+                                  onSelectServiceType: vm.selectServiceType,
+                                  onUpdateParcel: vm.updateParcel,
+                                  onSelectCourierVehicle:
+                                      vm.selectCourierVehicle,
+                                  onEditLocations: vm.goToCompose,
+                                  onSubmit: vm.submit,
+                                  onRetryPricing: vm.retryPricing,
+                                  onSelectCity: vm.setCitySlug,
+                                  onOfferDraftChanged:
+                                      vm.setPassengerOfferDraft,
+                                  onPaymentChange: () => _showGateSheet(
+                                    'Payments',
+                                    'Wallet and online payment are not '
+                                        'available in this build. Cash remains '
+                                        'the only honest option.',
+                                  ),
+                                )
+                              : _ComposePane(
+                                  state: state,
+                                  vm: vm,
+                                  padding: padding,
+                                  scrollController: _composeScrollController,
+                                  destinationProposalKey:
+                                      _destinationProposalKey,
+                                  pickupController: _pickupController,
+                                  destinationController: _destinationController,
+                                  onPickupChanged: vm.setPickupText,
+                                  onDestinationChanged: vm.setDestinationText,
+                                  onSelectServiceType: vm.selectServiceType,
+                                  onUpdateParcel: vm.updateParcel,
+                                  onUseCurrentLocation:
+                                      vm.useCurrentLocationForPickup,
+                                  onSelectPickupSuggestion: (s) =>
+                                      vm.selectPlaceSuggestion(
+                                        field: LocationField.pickup,
+                                        suggestion: s,
+                                      ),
+                                  onSelectDestinationSuggestion: (s) =>
+                                      vm.selectPlaceSuggestion(
+                                        field: LocationField.destination,
+                                        suggestion: s,
+                                      ),
+                                  onConfirmPickup: vm.confirmPickup,
+                                  onRetryPickupName: vm.retryPickupNameLookup,
+                                  onAdjustPickupOnMap: () {
+                                    vm.startPinAdjust(LocationField.pickup);
+                                    _expandMap();
+                                  },
+                                  onConfirmDestination: vm.confirmDestination,
+                                  onRetryDestinationName:
+                                      vm.retryDestinationNameLookup,
+                                  onAdjustDestinationOnMap: () {
+                                    vm.startPinAdjust(
+                                      LocationField.destination,
+                                    );
+                                    _expandMap();
+                                  },
+                                  onContinue: vm.goToReview,
+                                  savedPlaces: placesState.places,
+                                  recents: placesState.recents,
+                                  onSelectSavedPickup: (p) =>
+                                      vm.applySavedPlace(
+                                        field: LocationField.pickup,
+                                        place: p,
+                                      ),
+                                  onSelectSavedDestination: (p) =>
+                                      vm.applySavedPlace(
+                                        field: LocationField.destination,
+                                        place: p,
+                                      ),
+                                  onSelectRecent: vm.applyRecentDestination,
+                                  onManageSaved: (p) => _manageSavedPlace(p),
+                                  onSavePickup: () =>
+                                      _saveFieldPlace(LocationField.pickup),
+                                  onSaveDestination: () => _saveFieldPlace(
+                                    LocationField.destination,
+                                  ),
+                                ),
                         ),
                       ),
                     ),
@@ -585,9 +574,7 @@ class _ComposePane extends StatelessWidget {
                         // origin is the first shop entered below.
                         if (state.isBuyDeliver)
                           const Padding(
-                            padding: EdgeInsets.only(
-                              bottom: OraSpacing.sm,
-                            ),
+                            padding: EdgeInsets.only(bottom: OraSpacing.sm),
                             child: OraListRow(
                               title: 'Pickup is your first shop',
                               subtitle:
@@ -624,13 +611,17 @@ class _ComposePane extends StatelessWidget {
                         ],
                         if (!state.isBuyDeliver && state.pickupBusy)
                           const Padding(
-                            padding: EdgeInsets.symmetric(vertical: OraSpacing.xs),
+                            padding: EdgeInsets.symmetric(
+                              vertical: OraSpacing.xs,
+                            ),
                             child: LinearProgressIndicator(minHeight: 2),
                           ),
                         if (!state.isBuyDeliver &&
                             state.pickupLookupError != null)
                           Padding(
-                            padding: const EdgeInsets.only(bottom: OraSpacing.xs),
+                            padding: const EdgeInsets.only(
+                              bottom: OraSpacing.xs,
+                            ),
                             child: Text(
                               state.pickupLookupError!,
                               style: OraTypography.caption(OraColors.danger),
@@ -669,8 +660,7 @@ class _ComposePane extends StatelessWidget {
                           // best-effort via the device geocoder.
                           OraListRow(
                             title: 'Set pickup on map',
-                            subtitle:
-                                'Tap the map to drop the pickup pin',
+                            subtitle: 'Tap the map to drop the pickup pin',
                             leading: const Icon(
                               Icons.edit_location_alt_outlined,
                               color: OraColors.tealBright,
@@ -704,7 +694,9 @@ class _ComposePane extends StatelessWidget {
                         ),
                         if (state.destinationBusy)
                           const Padding(
-                            padding: EdgeInsets.symmetric(vertical: OraSpacing.xs),
+                            padding: EdgeInsets.symmetric(
+                              vertical: OraSpacing.xs,
+                            ),
                             child: LinearProgressIndicator(minHeight: 2),
                           ),
                         if (state.destinationLookupError != null)
@@ -753,8 +745,7 @@ class _ComposePane extends StatelessWidget {
                           // geocoder (unresolved stays visibly unresolved).
                           OraListRow(
                             title: 'Set destination on map',
-                            subtitle:
-                                'Tap the map to drop the destination pin',
+                            subtitle: 'Tap the map to drop the destination pin',
                             leading: const Icon(
                               Icons.edit_location_alt_outlined,
                               color: OraColors.primary,
@@ -787,13 +778,13 @@ class _ComposePane extends StatelessWidget {
               _StatusChip(
                 label: state.isBuyDeliver
                     ? (state.hasConfirmedPickup
-                        ? 'Pickup starts at first shop'
-                        : 'Add a shop to set pickup')
+                          ? 'Pickup starts at first shop'
+                          : 'Add a shop to set pickup')
                     : state.hasConfirmedPickup
-                        ? 'Pickup confirmed'
-                        : state.proposedPickup != null
-                            ? 'Pickup selected · confirm needed'
-                            : 'Pickup needed',
+                    ? 'Pickup confirmed'
+                    : state.proposedPickup != null
+                    ? 'Pickup selected · confirm needed'
+                    : 'Pickup needed',
                 ok: state.hasConfirmedPickup,
               ),
               const SizedBox(height: OraSpacing.xs),
@@ -801,17 +792,20 @@ class _ComposePane extends StatelessWidget {
                 label: state.hasConfirmedDestination
                     ? 'Destination confirmed'
                     : state.proposedDestination != null
-                        ? 'Destination selected · confirm needed'
-                        : 'Destination needed',
+                    ? 'Destination selected · confirm needed'
+                    : 'Destination needed',
                 ok: state.hasConfirmedDestination,
               ),
-              // Ora Courier — parcel manifest form (courier only).
+              // Ora Courier — sender picks the vehicle class that should
+              // carry the parcel (inDrive-style), then the parcel manifest.
               if (state.isCourier) ...[
                 const SizedBox(height: OraSpacing.lg),
-                _ParcelSection(
-                  parcel: state.parcel,
-                  onChanged: onUpdateParcel,
+                _CourierVehicleSelector(
+                  selected: state.courierVehicle,
+                  onSelect: vm.selectCourierVehicle,
                 ),
+                const SizedBox(height: OraSpacing.lg),
+                _ParcelSection(parcel: state.parcel, onChanged: onUpdateParcel),
               ],
               // Ora Courier v2 — intermediate stops + B&D shopping.
               if (state.isDelivery) ...[
@@ -909,11 +903,11 @@ class _ProposalCard extends StatelessWidget {
               Text(
                 location.source == PassengerLocationSource.mapPin
                     ? 'Couldn\'t fetch a place name — the pinned point is '
-                        'still used. Tap "Adjust on map" to move it, or '
-                        'search above.'
+                          'still used. Tap "Adjust on map" to move it, or '
+                          'search above.'
                     : 'Couldn\'t fetch a place name — your exact position is '
-                        'still used. Tap "Adjust on map" to move the pin, or '
-                        'search above.',
+                          'still used. Tap "Adjust on map" to move the pin, or '
+                          'search above.',
                 style: OraTypography.caption(OraColors.textMuted),
               ),
               if (onRetryName != null)
@@ -938,8 +932,10 @@ class _ProposalCard extends StatelessWidget {
                   if (onAdjustOnMap != null)
                     TextButton.icon(
                       onPressed: onAdjustOnMap,
-                      icon: const Icon(Icons.edit_location_alt_outlined,
-                          size: 18),
+                      icon: const Icon(
+                        Icons.edit_location_alt_outlined,
+                        size: 18,
+                      ),
                       label: const Text('Adjust on map'),
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
@@ -952,8 +948,7 @@ class _ProposalCard extends StatelessWidget {
                   if (onSave != null)
                     TextButton.icon(
                       onPressed: onSave,
-                      icon:
-                          const Icon(Icons.bookmark_add_outlined, size: 18),
+                      icon: const Icon(Icons.bookmark_add_outlined, size: 18),
                       label: const Text('Save place'),
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
@@ -978,6 +973,7 @@ class _ReviewPane extends StatelessWidget {
     required this.onSelectCategory,
     required this.onSelectServiceType,
     required this.onUpdateParcel,
+    required this.onSelectCourierVehicle,
     required this.onEditLocations,
     required this.onSubmit,
     required this.onRetryPricing,
@@ -992,6 +988,7 @@ class _ReviewPane extends StatelessWidget {
   final ValueChanged<String> onSelectCategory;
   final ValueChanged<String> onSelectServiceType;
   final ValueChanged<ParcelDraft> onUpdateParcel;
+  final ValueChanged<String> onSelectCourierVehicle;
   final VoidCallback onEditLocations;
   final VoidCallback onSubmit;
   final VoidCallback onRetryPricing;
@@ -1046,8 +1043,8 @@ class _ReviewPane extends StatelessWidget {
                 title: state.isBuyDeliver
                     ? 'Buy & Deliver'
                     : state.isCourier
-                        ? 'Parcel delivery'
-                        : 'Select a ride',
+                    ? 'Parcel delivery'
+                    : 'Select a ride',
                 action: Text(
                   state.isDelivery
                       ? 'Same-day delivery'
@@ -1092,18 +1089,17 @@ class _ReviewPane extends StatelessWidget {
                 onOfferDraftChanged: onOfferDraftChanged,
               ),
               const SizedBox(height: OraSpacing.md),
-              _CityRow(
-                citySlug: state.citySlug,
-                onSelectCity: onSelectCity,
-              ),
-              // Ora Courier — parcel manifest is part of the booking. The
-              // ride-category selector is hidden: courier has one vehicle
-              // class ('courier'); parcel size drives the offer instead.
+              _CityRow(citySlug: state.citySlug, onSelectCity: onSelectCity),
+              // Ora Courier — parcel manifest + requested vehicle class are
+              // part of the booking. The ride-category selector stays hidden
+              // (single 'courier' pricing class); vehicle is courierVehicle.
               if (state.isCourier) ...[
                 const SizedBox(height: OraSpacing.md),
                 _ParcelSummaryCard(
                   parcel: state.parcel,
+                  courierVehicle: state.courierVehicle,
                   onChanged: onUpdateParcel,
+                  onSelectVehicle: onSelectCourierVehicle,
                 ),
               ],
               // Ora Courier v2 — ordered itinerary + B&D shopping summary.
@@ -1160,8 +1156,8 @@ class _ReviewPane extends StatelessWidget {
             label: state.isBuyDeliver
                 ? 'Request Buy & Deliver'
                 : state.isCourier
-                    ? 'Request courier'
-                    : 'Request ${cat.name}',
+                ? 'Request courier'
+                : 'Request ${cat.name}',
             onPressed: canSubmit ? onSubmit : null,
           ),
         ),
@@ -1171,10 +1167,7 @@ class _ReviewPane extends StatelessWidget {
 }
 
 class _CityRow extends StatelessWidget {
-  const _CityRow({
-    required this.citySlug,
-    required this.onSelectCity,
-  });
+  const _CityRow({required this.citySlug, required this.onSelectCity});
 
   final String? citySlug;
   final ValueChanged<String> onSelectCity;
@@ -1187,15 +1180,9 @@ class _CityRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            'City',
-            style: OraTypography.label(OraColors.textSecondary),
-          ),
+          Text('City', style: OraTypography.label(OraColors.textSecondary)),
           const SizedBox(height: OraSpacing.xs),
-          Text(
-            label,
-            style: OraTypography.bodyEmphasis(OraColors.textPrimary),
-          ),
+          Text(label, style: OraTypography.bodyEmphasis(OraColors.textPrimary)),
           if (citySlug == null) ...[
             const SizedBox(height: OraSpacing.xxs),
             Text(
@@ -1284,10 +1271,7 @@ class _PricingCard extends StatelessWidget {
               style: OraTypography.label(OraColors.textSecondary),
             ),
             const SizedBox(height: OraSpacing.xxs),
-            Text(
-              fare,
-              style: OraTypography.headline(OraColors.textPrimary),
-            ),
+            Text(fare, style: OraTypography.headline(OraColors.textPrimary)),
             const SizedBox(height: OraSpacing.xxs),
             Text(
               'Guidance only — set your offer below.',
@@ -1316,7 +1300,8 @@ class _PricingCard extends StatelessWidget {
       );
     }
 
-    final message = state.pricingDisplayError ??
+    final message =
+        state.pricingDisplayError ??
         'Pricing isn\'t available right now. Please try again later.';
     return OraCard(
       padding: const EdgeInsets.all(OraSpacing.md),
@@ -1328,15 +1313,9 @@ class _PricingCard extends StatelessWidget {
             style: OraTypography.label(OraColors.textSecondary),
           ),
           const SizedBox(height: OraSpacing.xs),
-          Text(
-            message,
-            style: OraTypography.body(OraColors.danger),
-          ),
+          Text(message, style: OraTypography.body(OraColors.danger)),
           const SizedBox(height: OraSpacing.sm),
-          OraButton(
-            label: 'Retry pricing',
-            onPressed: onRetry,
-          ),
+          OraButton(label: 'Retry pricing', onPressed: onRetry),
         ],
       ),
     );
@@ -1486,6 +1465,59 @@ class _ServiceTypeSelector extends StatelessWidget {
 
 // ── Ora Courier ─────────────────────────────────────────────────────────────
 
+/// Ora Courier — sender-requested vehicle class (inDrive-style bike/car/
+/// rickshaw chips). Shown above the parcel manifest in the compose pane.
+class _CourierVehicleSelector extends StatelessWidget {
+  const _CourierVehicleSelector({
+    required this.selected,
+    required this.onSelect,
+  });
+
+  final String selected;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return OraCard(
+      padding: const EdgeInsets.all(OraSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Vehicle for delivery',
+            style: OraTypography.title(OraColors.textPrimary),
+          ),
+          const SizedBox(height: OraSpacing.xxs),
+          Text(
+            'Only drivers with a matching vehicle are notified.',
+            style: OraTypography.caption(OraColors.textMuted),
+          ),
+          const SizedBox(height: OraSpacing.sm),
+          Wrap(
+            spacing: OraSpacing.xs,
+            runSpacing: OraSpacing.xs,
+            children: [
+              for (final v in kCourierVehicleOptions)
+                OraChip(
+                  label: courierVehicleLabel(v),
+                  leading: Icon(
+                    courierVehicleIcon(v),
+                    size: 16,
+                    color: selected == v
+                        ? OraColors.primary
+                        : OraColors.textSecondary,
+                  ),
+                  selected: selected == v,
+                  onTap: () => onSelect(v),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Courier parcel manifest form — shown in the compose pane when
 /// serviceType == 'courier'. Server re-validates every field on create.
 class _ParcelSection extends StatelessWidget {
@@ -1566,10 +1598,7 @@ class _ParcelSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: OraSpacing.sm),
-          Text(
-            'Size',
-            style: OraTypography.label(OraColors.textSecondary),
-          ),
+          Text('Size', style: OraTypography.label(OraColors.textSecondary)),
           const SizedBox(height: OraSpacing.xs),
           Wrap(
             spacing: OraSpacing.xs,
@@ -1598,8 +1627,7 @@ class _ParcelSection extends StatelessWidget {
                     decimal: true,
                   ),
                   textInputAction: TextInputAction.next,
-                  onChanged: (v) =>
-                      onChanged(parcel.copyWith(weightText: v)),
+                  onChanged: (v) => onChanged(parcel.copyWith(weightText: v)),
                 ),
               ),
               const SizedBox(width: OraSpacing.sm),
@@ -1610,8 +1638,7 @@ class _ParcelSection extends StatelessWidget {
                   initialValue: parcel.quantityText,
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
-                  onChanged: (v) =>
-                      onChanged(parcel.copyWith(quantityText: v)),
+                  onChanged: (v) => onChanged(parcel.copyWith(quantityText: v)),
                 ),
               ),
             ],
@@ -1647,9 +1674,16 @@ class _ParcelSection extends StatelessWidget {
 /// Courier parcel summary — shown on the review pane in place of the
 /// ride-category selector. Inline size correction stays possible.
 class _ParcelSummaryCard extends StatelessWidget {
-  const _ParcelSummaryCard({required this.parcel, required this.onChanged});
+  const _ParcelSummaryCard({
+    required this.parcel,
+    required this.courierVehicle,
+    required this.onChanged,
+    required this.onSelectVehicle,
+  });
 
   final ParcelDraft parcel;
+  final String courierVehicle;
+  final ValueChanged<String> onSelectVehicle;
   final ValueChanged<ParcelDraft> onChanged;
 
   @override
@@ -1659,10 +1693,7 @@ class _ParcelSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Parcel',
-            style: OraTypography.label(OraColors.textSecondary),
-          ),
+          Text('Parcel', style: OraTypography.label(OraColors.textSecondary)),
           const SizedBox(height: OraSpacing.xs),
           if (parcel.isValid)
             Text(
@@ -1691,6 +1722,27 @@ class _ParcelSummaryCard extends StatelessWidget {
                   label: s.toLowerCase(),
                   selected: parcel.size == s,
                   onTap: () => onChanged(parcel.copyWith(size: s)),
+                ),
+            ],
+          ),
+          const SizedBox(height: OraSpacing.xs),
+          Text('Vehicle', style: OraTypography.label(OraColors.textSecondary)),
+          const SizedBox(height: OraSpacing.xxs),
+          Wrap(
+            spacing: OraSpacing.xs,
+            children: [
+              for (final v in kCourierVehicleOptions)
+                OraChip(
+                  label: courierVehicleLabel(v),
+                  leading: Icon(
+                    courierVehicleIcon(v),
+                    size: 16,
+                    color: courierVehicle == v
+                        ? OraColors.primary
+                        : OraColors.textSecondary,
+                  ),
+                  selected: courierVehicle == v,
+                  onTap: () => onSelectVehicle(v),
                 ),
             ],
           ),
@@ -1746,16 +1798,16 @@ class _DeliveryStopsSection extends StatelessWidget {
   }
 
   IconData _iconFor(String type) => switch (type) {
-        'SHOP' => Icons.storefront_outlined,
-        'DROPOFF' => Icons.flag_outlined,
-        _ => Icons.inventory_2_outlined,
-      };
+    'SHOP' => Icons.storefront_outlined,
+    'DROPOFF' => Icons.flag_outlined,
+    _ => Icons.inventory_2_outlined,
+  };
 
   String _labelFor(String type) => switch (type) {
-        'SHOP' => 'Shop',
-        'DROPOFF' => 'Drop-off',
-        _ => 'Pickup',
-      };
+    'SHOP' => 'Shop',
+    'DROPOFF' => 'Drop-off',
+    _ => 'Pickup',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -1773,10 +1825,10 @@ class _DeliveryStopsSection extends StatelessWidget {
           Text(
             state.isBuyDeliver
                 ? 'Add the shops the driver should visit, in order. '
-                    'You approve the itemized prices before anything is bought.'
+                      'You approve the itemized prices before anything is bought.'
                 : 'Add up to ${state.maxStops - 2} extra pickups or drop-offs '
-                    'between your start and destination. The driver completes '
-                    'them in order — no codes needed.',
+                      'between your start and destination. The driver completes '
+                      'them in order — no codes needed.',
             style: OraTypography.caption(OraColors.textMuted),
           ),
           const SizedBox(height: OraSpacing.sm),
@@ -1856,11 +1908,7 @@ class _DeliveryStopsSection extends StatelessWidget {
 /// same Places search the pickup/destination fields use — coordinates are
 /// authoritative; the label is display-only.
 class _StopEditorSheet extends StatefulWidget {
-  const _StopEditorSheet({
-    required this.vm,
-    required this.type,
-    this.initial,
-  });
+  const _StopEditorSheet({required this.vm, required this.type, this.initial});
 
   final RideRequestViewModel vm;
 
@@ -1893,8 +1941,7 @@ class _StopEditorSheetState extends State<_StopEditorSheet> {
     final initial = widget.initial;
     _search = TextEditingController(text: initial?.locationText ?? '');
     _label = TextEditingController(text: initial?.label ?? '');
-    _instructions =
-        TextEditingController(text: initial?.instructions ?? '');
+    _instructions = TextEditingController(text: initial?.instructions ?? '');
     _budget = TextEditingController(
       text: initial?.shopBudgetMinor != null
           ? '${initial!.shopBudgetMinor! ~/ 100}'
@@ -1978,10 +2025,9 @@ class _StopEditorSheetState extends State<_StopEditorSheet> {
       label: _label.text.trim(),
       instructions: _instructions.text.trim(),
       items: _items,
-      shopBudgetMinor:
-          _isShop && budgetRupees != null && budgetRupees > 0
-              ? budgetRupees * 100
-              : null,
+      shopBudgetMinor: _isShop && budgetRupees != null && budgetRupees > 0
+          ? budgetRupees * 100
+          : null,
     );
   }
 
@@ -2067,9 +2113,9 @@ class _StopEditorSheetState extends State<_StopEditorSheet> {
                   onChanged: (item) => setState(() => _items[i] = item),
                   onRemove: _items.length > 1
                       ? () => setState(() {
-                            _items.removeAt(i);
-                            _itemKeys.removeAt(i);
-                          })
+                          _items.removeAt(i);
+                          _itemKeys.removeAt(i);
+                        })
                       : null,
                 ),
               Align(
@@ -2294,10 +2340,10 @@ class _ItinerarySummaryCard extends StatelessWidget {
       return const SizedBox.shrink();
     }
     IconData iconFor(String type) => switch (type) {
-          'SHOP' => Icons.storefront_outlined,
-          'DROPOFF' => Icons.flag_outlined,
-          _ => Icons.inventory_2_outlined,
-        };
+      'SHOP' => Icons.storefront_outlined,
+      'DROPOFF' => Icons.flag_outlined,
+      _ => Icons.inventory_2_outlined,
+    };
     return OraCard(
       padding: const EdgeInsets.all(OraSpacing.md),
       child: Column(
@@ -2313,11 +2359,7 @@ class _ItinerarySummaryCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: Row(
                 children: [
-                  Icon(
-                    iconFor(s.type),
-                    size: 16,
-                    color: OraColors.tealBright,
-                  ),
+                  Icon(iconFor(s.type), size: 16, color: OraColors.tealBright),
                   const SizedBox(width: OraSpacing.xs),
                   Expanded(
                     child: Text(
@@ -2398,10 +2440,7 @@ class _MoneyRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: OraTypography.body(OraColors.textSecondary)),
-          Text(
-            value,
-            style: OraTypography.bodyEmphasis(OraColors.textPrimary),
-          ),
+          Text(value, style: OraTypography.bodyEmphasis(OraColors.textPrimary)),
         ],
       ),
     );

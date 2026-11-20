@@ -31,7 +31,7 @@ export function isRtdbConfigured(env: NodeJS.ProcessEnv = process.env): boolean 
 
 /**
  * Build TripLocationRtdb from the default Admin app when FIREBASE_DATABASE_URL is set.
- * Returns NullTripLocationRtdb otherwise (same optional pattern as Redis).
+ * Returns NullTripLocationRtdb otherwise (same optional pattern as the geo store).
  *
  * Call only after initializeApp (with databaseURL when configured).
  */

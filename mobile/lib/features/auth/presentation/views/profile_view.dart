@@ -129,9 +129,9 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     final name = _nameController.text.trim();
 
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: OraColors.background,
+        backgroundColor: Colors.transparent,
         foregroundColor: OraColors.textPrimary,
         title: Text(
           'Profile',

@@ -485,7 +485,6 @@ class _FakeSearchPort implements PlaceSearchPort {
     this.resolveResult,
     this.resolveError,
     this.reverseResult,
-    this.reverseError,
   });
   final bool hang;
   final List<PlaceSuggestion>? autocompleteResult;
@@ -493,7 +492,6 @@ class _FakeSearchPort implements PlaceSearchPort {
   final ResolvedPassengerLocation? resolveResult;
   final Object? resolveError;
   final ResolvedPassengerLocation? reverseResult;
-  final Object? reverseError;
 
   Future<T> _run<T>(T? result, Object? error) {
     if (hang) return Completer<T>().future; // never completes
@@ -520,7 +518,7 @@ class _FakeSearchPort implements PlaceSearchPort {
     required double lat,
     required double lng,
   }) =>
-      _run(reverseResult, reverseError);
+      _run(reverseResult, null);
 }
 
 class _FailingPricing implements PricingEstimatePort {

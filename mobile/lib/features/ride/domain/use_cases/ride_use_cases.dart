@@ -9,8 +9,7 @@ class CreateRideUseCase {
   Future<Ride> call({
     required Map<String, Object?> body,
     required String operationKey,
-  }) =>
-      _repository.createRide(body: body, operationKey: operationKey);
+  }) => _repository.createRide(body: body, operationKey: operationKey);
 }
 
 class GetRideUseCase {
@@ -32,14 +31,13 @@ class ListRidesUseCase {
     String? status,
     String? serviceType,
     String? as,
-  }) =>
-      _repository.listRides(
-        limit: limit,
-        cursor: cursor,
-        status: status,
-        serviceType: serviceType,
-        as: as,
-      );
+  }) => _repository.listRides(
+    limit: limit,
+    cursor: cursor,
+    status: status,
+    serviceType: serviceType,
+    as: as,
+  );
 }
 
 class ListOpenRidesUseCase {
@@ -52,13 +50,12 @@ class ListOpenRidesUseCase {
     String? cursor,
     String? serviceType,
     String? category,
-  }) =>
-      _repository.listOpenRides(
-        limit: limit,
-        cursor: cursor,
-        serviceType: serviceType,
-        category: category,
-      );
+  }) => _repository.listOpenRides(
+    limit: limit,
+    cursor: cursor,
+    serviceType: serviceType,
+    category: category,
+  );
 }
 
 class ListInvitedRidesUseCase {
@@ -92,8 +89,7 @@ class ListOffersUseCase {
 
   final RideRepository _repository;
 
-  Future<List<RideOffer>> call(String rideId) =>
-      _repository.listOffers(rideId);
+  Future<List<RideOffer>> call(String rideId) => _repository.listOffers(rideId);
 }
 
 class CreateOfferUseCase {
@@ -105,12 +101,11 @@ class CreateOfferUseCase {
     required String rideId,
     required Map<String, Object?> body,
     required String operationKey,
-  }) =>
-      _repository.createOffer(
-        rideId: rideId,
-        body: body,
-        operationKey: operationKey,
-      );
+  }) => _repository.createOffer(
+    rideId: rideId,
+    body: body,
+    operationKey: operationKey,
+  );
 }
 
 class WithdrawOfferUseCase {
@@ -122,12 +117,11 @@ class WithdrawOfferUseCase {
     required String rideId,
     required String offerId,
     required String operationKey,
-  }) =>
-      _repository.withdrawOffer(
-        rideId: rideId,
-        offerId: offerId,
-        operationKey: operationKey,
-      );
+  }) => _repository.withdrawOffer(
+    rideId: rideId,
+    offerId: offerId,
+    operationKey: operationKey,
+  );
 }
 
 class SelectOfferUseCase {
@@ -140,13 +134,12 @@ class SelectOfferUseCase {
     required String offerId,
     int? expectedVersion,
     required String operationKey,
-  }) =>
-      _repository.selectOffer(
-        rideId: rideId,
-        offerId: offerId,
-        expectedVersion: expectedVersion,
-        operationKey: operationKey,
-      );
+  }) => _repository.selectOffer(
+    rideId: rideId,
+    offerId: offerId,
+    expectedVersion: expectedVersion,
+    operationKey: operationKey,
+  );
 }
 
 class CancelRideUseCase {
@@ -158,12 +151,11 @@ class CancelRideUseCase {
     required String rideId,
     String? reason,
     required String operationKey,
-  }) =>
-      _repository.cancelRide(
-        rideId: rideId,
-        reason: reason,
-        operationKey: operationKey,
-      );
+  }) => _repository.cancelRide(
+    rideId: rideId,
+    reason: reason,
+    operationKey: operationKey,
+  );
 }
 
 class MarkEnRouteUseCase {
@@ -175,12 +167,11 @@ class MarkEnRouteUseCase {
     required String rideId,
     int? expectedVersion,
     required String operationKey,
-  }) =>
-      _repository.markEnRoute(
-        rideId: rideId,
-        expectedVersion: expectedVersion,
-        operationKey: operationKey,
-      );
+  }) => _repository.markEnRoute(
+    rideId: rideId,
+    expectedVersion: expectedVersion,
+    operationKey: operationKey,
+  );
 }
 
 class MarkArrivedUseCase {
@@ -192,12 +183,11 @@ class MarkArrivedUseCase {
     required String rideId,
     int? expectedVersion,
     required String operationKey,
-  }) =>
-      _repository.markArrived(
-        rideId: rideId,
-        expectedVersion: expectedVersion,
-        operationKey: operationKey,
-      );
+  }) => _repository.markArrived(
+    rideId: rideId,
+    expectedVersion: expectedVersion,
+    operationKey: operationKey,
+  );
 }
 
 class StartRideUseCase {
@@ -211,14 +201,13 @@ class StartRideUseCase {
     String? otp,
     String? pickupPhotoUrl,
     required String operationKey,
-  }) =>
-      _repository.startRide(
-        rideId: rideId,
-        expectedVersion: expectedVersion,
-        otp: otp,
-        pickupPhotoUrl: pickupPhotoUrl,
-        operationKey: operationKey,
-      );
+  }) => _repository.startRide(
+    rideId: rideId,
+    expectedVersion: expectedVersion,
+    otp: otp,
+    pickupPhotoUrl: pickupPhotoUrl,
+    operationKey: operationKey,
+  );
 }
 
 class CompleteRideUseCase {
@@ -231,13 +220,12 @@ class CompleteRideUseCase {
     int? expectedVersion,
     String? otp,
     required String operationKey,
-  }) =>
-      _repository.completeRide(
-        rideId: rideId,
-        expectedVersion: expectedVersion,
-        otp: otp,
-        operationKey: operationKey,
-      );
+  }) => _repository.completeRide(
+    rideId: rideId,
+    expectedVersion: expectedVersion,
+    otp: otp,
+    operationKey: operationKey,
+  );
 }
 
 /// Ora Courier — report a failed delivery attempt.
@@ -251,13 +239,12 @@ class FailDeliveryUseCase {
     int? expectedVersion,
     required String reason,
     required String operationKey,
-  }) =>
-      _repository.failDelivery(
-        rideId: rideId,
-        expectedVersion: expectedVersion,
-        reason: reason,
-        operationKey: operationKey,
-      );
+  }) => _repository.failDelivery(
+    rideId: rideId,
+    expectedVersion: expectedVersion,
+    reason: reason,
+    operationKey: operationKey,
+  );
 }
 
 /// Ora Courier — retry delivery after a failed attempt.
@@ -270,12 +257,11 @@ class RetryDeliveryUseCase {
     required String rideId,
     int? expectedVersion,
     required String operationKey,
-  }) =>
-      _repository.retryDelivery(
-        rideId: rideId,
-        expectedVersion: expectedVersion,
-        operationKey: operationKey,
-      );
+  }) => _repository.retryDelivery(
+    rideId: rideId,
+    expectedVersion: expectedVersion,
+    operationKey: operationKey,
+  );
 }
 
 /// Ora Courier — start returning the parcel to the sender.
@@ -288,12 +274,11 @@ class StartReturnUseCase {
     required String rideId,
     int? expectedVersion,
     required String operationKey,
-  }) =>
-      _repository.startReturn(
-        rideId: rideId,
-        expectedVersion: expectedVersion,
-        operationKey: operationKey,
-      );
+  }) => _repository.startReturn(
+    rideId: rideId,
+    expectedVersion: expectedVersion,
+    operationKey: operationKey,
+  );
 }
 
 /// Ora Courier — sender confirms parcel return (return code).
@@ -307,13 +292,12 @@ class CompleteReturnUseCase {
     int? expectedVersion,
     String? otp,
     required String operationKey,
-  }) =>
-      _repository.completeReturn(
-        rideId: rideId,
-        expectedVersion: expectedVersion,
-        otp: otp,
-        operationKey: operationKey,
-      );
+  }) => _repository.completeReturn(
+    rideId: rideId,
+    expectedVersion: expectedVersion,
+    otp: otp,
+    operationKey: operationKey,
+  );
 }
 
 class CloseRideUseCase {
@@ -325,12 +309,11 @@ class CloseRideUseCase {
     required String rideId,
     int? expectedVersion,
     required String operationKey,
-  }) =>
-      _repository.closeRide(
-        rideId: rideId,
-        expectedVersion: expectedVersion,
-        operationKey: operationKey,
-      );
+  }) => _repository.closeRide(
+    rideId: rideId,
+    expectedVersion: expectedVersion,
+    operationKey: operationKey,
+  );
 }
 
 class SubmitRatingUseCase {
@@ -342,12 +325,11 @@ class SubmitRatingUseCase {
     required String rideId,
     required int stars,
     required String operationKey,
-  }) =>
-      _repository.submitRating(
-        rideId: rideId,
-        stars: stars,
-        operationKey: operationKey,
-      );
+  }) => _repository.submitRating(
+    rideId: rideId,
+    stars: stars,
+    operationKey: operationKey,
+  );
 }
 
 class GetMyRatingUseCase {

@@ -7,6 +7,7 @@ export 'ora_dialog.dart';
 export 'ora_drawer.dart';
 export 'ora_empty_state.dart';
 export 'ora_error_state.dart';
+export 'ora_floaty.dart';
 export 'ora_list_row.dart';
 export 'ora_loading_indicator.dart';
 export 'ora_section_header.dart';

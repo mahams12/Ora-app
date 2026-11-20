@@ -182,8 +182,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Where are you headed?'), findsNothing);
-    expect(find.text('Explore ORA'), findsOneWidget);
-    expect(find.text('Travel beyond the city'), findsOneWidget);
+    expect(find.text('Your World.\nOne App.'), findsOneWidget);
     expect(find.text('Choose a ride'), findsNothing);
     expect(find.text('Logistics'), findsWidgets);
     expect(find.text('Services'), findsWidgets);
@@ -198,12 +197,9 @@ void main() {
     expect(find.text('Saved places'), findsNothing);
     expect(find.text('Wallet'), findsNothing);
     expect(find.text('Safety centre'), findsNothing);
-    await _scrollDrawerTo(tester, find.text('Switch to driver mode'));
-    expect(find.text('Switch to driver mode'), findsOneWidget);
-    expect(find.text('Register your vehicle'), findsOneWidget);
-    await _scrollDrawerTo(tester, find.text('Switch to vendor mode'));
-    expect(find.text('Switch to driver mode'), findsOneWidget);
-    expect(find.text('Switch to vendor mode'), findsOneWidget);
+    await _scrollDrawerTo(tester, find.text('Earn on ORA'));
+    expect(find.text('Earn on ORA'), findsOneWidget);
+    expect(find.text('Drive, deliver, host or serve'), findsOneWidget);
     await _scrollDrawerTo(tester, find.text('Log out'));
     expect(find.text('Log out'), findsOneWidget);
     expect(find.textContaining('api'), findsNothing);
@@ -277,9 +273,11 @@ void main() {
       );
       await tester.pumpAndSettle();
       await _openDrawer(tester);
-      final item = find.text('Switch to driver mode');
+      final item = find.text('Earn on ORA');
       await _scrollDrawerTo(tester, item);
       await tester.tap(item);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Switch to Driver'));
       await tester.pumpAndSettle();
 
       switch (status) {
@@ -312,9 +310,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.ensureVisible(find.text('Travel beyond the city'));
+    await tester.ensureVisible(find.text('Your World.\nOne App.'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Travel beyond the city'));
+    await tester.tap(find.text('Your World.\nOne App.'));
     await tester.pumpAndSettle();
 
     expect(find.byType(RideRequestView), findsOneWidget);
@@ -333,7 +331,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Rides').first);
+    await tester.tap(find.text('Rides').last);
     await tester.pumpAndSettle();
     await tester.drag(
       find.byType(CustomScrollView).last,
@@ -352,32 +350,24 @@ void main() {
     );
   });
 
-  testWidgets('vendor drawer entry shows the coming-soon sheet', (
+  testWidgets('Earn on ORA entry shows the four earning options', (
     tester,
   ) async {
     await tester.pumpWidget(_wrapShell(overrides: _baseOverrides()));
     await tester.pumpAndSettle();
 
     await _openDrawer(tester);
-    await _scrollDrawerTo(tester, find.text('Switch to vendor mode'));
-    expect(find.text('Switch to driver mode'), findsOneWidget);
-    expect(find.text('Switch to vendor mode'), findsOneWidget);
-    expect(find.text('Vendor web portal'), findsOneWidget);
+    await _scrollDrawerTo(tester, find.text('Earn on ORA'));
+    expect(find.text('Earn on ORA'), findsOneWidget);
     expect(find.text('Saved places'), findsNothing);
     expect(find.text('Wallet'), findsNothing);
     expect(find.text('Safety centre'), findsNothing);
-    await tester.tap(find.text('Switch to vendor mode'));
+    await tester.tap(find.text('Earn on ORA'));
     await tester.pumpAndSettle();
-    expect(find.text('COMING SOON'), findsOneWidget);
-    expect(find.text('Vendor portal'), findsOneWidget);
-    expect(
-      find.text(
-        'Vendors will manage listings and bookings from the ORA vendor web '
-        'app. Coming soon.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Got it'), findsOneWidget);
+    expect(find.text('Switch to Driver'), findsOneWidget);
+    expect(find.text('Switch to Logistics'), findsOneWidget);
+    expect(find.text('Switch to Rental'), findsOneWidget);
+    expect(find.text('Switch to Services'), findsOneWidget);
   });
 
   testWidgets('no overflow on compact phone with large text', (tester) async {

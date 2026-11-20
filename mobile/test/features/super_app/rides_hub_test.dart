@@ -82,39 +82,28 @@ void main() {
     expect(find.text('/rides/request?service=intercity'), findsOneWidget);
   });
 
-  testWidgets('Courier stays coming later and Move opens Logistics', (
-    tester,
-  ) async {
+  testWidgets('Courier tile opens the courier ride request', (tester) async {
     final router = _router();
     addTearDown(router.dispose);
 
     await tester.pumpWidget(_app(router));
     await tester.pumpAndSettle();
 
-    expect(find.text('Coming later'), findsOneWidget);
-
-    await tester.tap(find.text('Courier'));
-    await tester.pumpAndSettle();
-    expect(find.text('Courier'), findsWidgets);
-    expect(
-      find.text(
-        'Courier is planned for Ora but is not wired to the backend '
-        'in this build. Nothing is faked.',
-      ),
-      findsOneWidget,
-    );
-    expect(find.text('Got it'), findsOneWidget);
-    await tester.tap(find.text('Got it'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('Move'));
-    await tester.pumpAndSettle();
-    expect(find.text('/logistics'), findsOneWidget);
     expect(find.text('Coming later'), findsNothing);
+
+    await tester.tap(find.text('Courier').first);
+    await tester.pumpAndSettle();
+    expect(find.text('/rides/request?service=courier'), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Move'), findsNothing);
+    expect(find.text('Logistics'), findsWidgets);
   });
 
   test('ride type catalogue keeps typed actions and category IDs', () {
-    expect(kRideTypeCatalogue, hasLength(13));
+    expect(kRideTypeCatalogue, hasLength(14));
     expect(kRideTypeCatalogue.map((option) => option.name), [
       'Bike',
       'Rickshaw',
@@ -128,6 +117,7 @@ void main() {
       'Van',
       'Bus',
       'Intercity',
+      'Courier',
       'Women-Only Rides',
     ]);
     final categoryIds = kRideCategoryOptions.map((option) => option.id).toSet();
@@ -142,6 +132,10 @@ void main() {
           .singleWhere((option) => option.id == 'intercity')
           .action,
       isA<RideIntercityAction>(),
+    );
+    expect(
+      kRideTypeCatalogue.singleWhere((option) => option.id == 'courier').action,
+      isA<RideCourierAction>(),
     );
   });
 
@@ -169,6 +163,7 @@ void main() {
       'Van',
       'Bus',
       'Intercity',
+      'Courier',
       'Women-Only Rides',
     ];
     final seenRideTypes = <String>{};

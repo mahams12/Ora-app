@@ -1,8 +1,8 @@
 import type { Firestore } from 'firebase-admin/firestore';
 import type { AuthenticatedCaller } from '../types';
-import { loadActor } from '../rides/eligibility';
+import { isDeliveryEligible, loadActor } from '../rides/eligibility';
 import { RideDomainError } from '../rides/types';
-import type { RedisGeoProjectionService } from '../redis/geo_projection';
+import type { GeoProjectionService } from '../geo/geo_projection';
 import type { TripLocationRtdb } from '../rtdb/types';
 import { NullTripLocationRtdb } from '../rtdb/admin_trip_location_rtdb';
 import { projectAcceptedTripLocationLatest } from '../rtdb/ride_location_lifecycle';
@@ -146,7 +146,7 @@ export interface LocationUpdateServiceOptions {
  * N2A — validate location update + durable locationStreams cursor.
  * L2 Step 1 — trip mode requires assigned driver + publishable ride state.
  * L2 Step 3 — after durable accept, best-effort RTDB tripLocations/{rideId}/latest.
- * N2C — optional Redis GEO projection after accept (non-authoritative).
+ * N2C — optional geo-store projection after accept (non-authoritative).
  */
 export class LocationUpdateService {
   private readonly tripLocationRtdb: TripLocationRtdb;
@@ -156,7 +156,7 @@ export class LocationUpdateService {
 
   constructor(
     private readonly db: Firestore,
-    private readonly geoProjection: RedisGeoProjectionService | null = null,
+    private readonly geoProjection: GeoProjectionService | null = null,
     tripLocationRtdb: TripLocationRtdb | null = null,
     options: LocationUpdateServiceOptions = {},
   ) {
@@ -258,7 +258,7 @@ export class LocationUpdateService {
       });
     }
 
-    // N2C: best-effort Redis projection — never fail the accepted N2A update
+    // N2C: best-effort geo-store projection — never fail the accepted N2A update
     // (except merged-cursor SEQUENCE_VIOLATION, which IS the accept contract).
     if (this.geoProjection) {
       await this.geoProjection.projectAcceptedLocation({
@@ -270,6 +270,7 @@ export class LocationUpdateService {
         locationSeq: parsed.locationSeq,
         lastLocationTs: parsed.timestampMs,
         acceptedAt,
+        mode,
         homeCity: driverDoc?.homeCity,
         requestId: input.requestId,
         publishIntervalMs: parsed.publishIntervalMs,
@@ -314,11 +315,11 @@ export class LocationUpdateService {
       }
       throw err;
     }
-    if (actor.role !== 'driver' || actor.driverStatus !== 'approved') {
+    if (!isDeliveryEligible(actor)) {
       throw new LocationDomainError(
         'DRIVER_NOT_APPROVED',
         403,
-        'Driver must be approved to update location.',
+        'Driver or logistics partner must be approved to update location.',
       );
     }
 

@@ -15,9 +15,7 @@ class DriverAvailabilitySnapshot {
 
 /// HTTP adapter for the driver availability endpoints (N1).
 abstract class DriverAvailabilityRemoteDataSource {
-  Future<DriverAvailabilitySnapshot> getAvailability({
-    RequestContext? context,
-  });
+  Future<DriverAvailabilitySnapshot> getAvailability({RequestContext? context});
 
   Future<DriverAvailabilitySnapshot> goOnline({RequestContext? context});
 
@@ -54,7 +52,9 @@ class ApiDriverAvailabilityRemoteDataSource
   }
 
   @override
-  Future<DriverAvailabilitySnapshot> goOffline({RequestContext? context}) async {
+  Future<DriverAvailabilitySnapshot> goOffline({
+    RequestContext? context,
+  }) async {
     final response = await _apiClient.post<Map<String, dynamic>>(
       '/drivers/go-offline',
       data: const <String, Object?>{},

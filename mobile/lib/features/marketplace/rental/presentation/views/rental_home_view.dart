@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,10 +9,11 @@ import '../../../../../app/theme/ora_spacing.dart';
 import '../../../../../app/theme/ora_typography.dart';
 import '../../../../../app/theme/widgets/ora_section_header.dart';
 import '../../../../../core/utils/responsive.dart';
-import '../../../../super_app/presentation/widgets/service_coming_later_sheet.dart';
 import '../../../../super_app/presentation/widgets/ora_module_bottom_bar.dart';
 import '../../../catalogue/catalogue_models.dart';
 import '../../../catalogue/catalogue_provider.dart';
+import '../../../data/marketplace_models.dart';
+import '../../../data/marketplace_providers.dart';
 import '../../domain/rental_catalogue_search.dart';
 import '../../../shared/demo/demo_listings.dart';
 import '../../../shared/widgets/illustrated_category_card.dart';
@@ -66,7 +65,7 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
     final catalogue = ref.watch(catalogueProvider);
     final demoEnabled = ref.watch(demoListingsEnabledProvider);
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: const Text('Rental')),
       bottomNavigationBar: const OraModuleBottomBar(
         selected: OraModuleDestination.rental,
@@ -87,9 +86,22 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
           final nearCategory = selectedCategories.isEmpty
               ? null
               : selectedCategories.first;
+          // Vendor-posted properties surface first, ahead of demo samples.
+          final selectedCategoryIds = {
+            for (final c in selectedCategories) c.id,
+          };
+          final published = ref.watch(
+            publishedListingsProvider(const PublishedQuery(type: 'rental')),
+          );
+          final vendorListings = [
+            for (final listing
+                in published.value ?? const <MarketplaceListing>[])
+              if (selectedCategoryIds.contains(listing.categoryId)) listing,
+          ].take(6).toList();
           final nearYouListings = demoEnabled && nearCategory != null
               ? demoRentalListings(nearCategory).take(3).toList()
               : const <DemoRentalListing>[];
+          final nearYouCount = vendorListings.length + nearYouListings.length;
           final searchResults = _query.trim().isEmpty
               ? const <RentalSearchMatch>[]
               : RentalCatalogueSearch.search(categories, _query);
@@ -258,7 +270,7 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
                         }, childCount: selectedCategories.length),
                       ),
                     ),
-                  if (demoEnabled && nearCategory != null)
+                  if (nearYouCount > 0)
                     SliverPadding(
                       padding: EdgeInsets.fromLTRB(
                         padding,
@@ -282,11 +294,40 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
                               child: ListView.separated(
                                 padding: EdgeInsets.only(right: padding),
                                 scrollDirection: Axis.horizontal,
-                                itemCount: nearYouListings.length,
+                                itemCount: nearYouCount,
                                 separatorBuilder: (_, __) =>
                                     const SizedBox(width: OraSpacing.sm),
                                 itemBuilder: (context, index) {
-                                  final listing = nearYouListings[index];
+                                  if (index < vendorListings.length) {
+                                    final vendor = vendorListings[index];
+                                    return RentalListingCard(
+                                      width: 300,
+                                      height: 200,
+                                      model: RentalListingCardModel(
+                                        title: vendor.title,
+                                        location: vendor.location,
+                                        image: vendor.coverImage,
+                                        priceLabel: vendor.priceLabel,
+                                        availability: vendor.amenities
+                                            .take(3)
+                                            .join(' · '),
+                                        amenities: vendor.amenities,
+                                        tag: vendor.subcategoryName.isEmpty
+                                            ? null
+                                            : vendor.subcategoryName,
+                                        isVerified: true,
+                                      ),
+                                      onTap: () => context.push(
+                                        AppRoutes.rentalCategoryPath(
+                                          vendor.categoryId,
+                                          subcategoryId: vendor.subcategoryId,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  final listing =
+                                      nearYouListings[index -
+                                          vendorListings.length];
                                   return RentalListingCard(
                                     width: 300,
                                     height: 200,
@@ -315,26 +356,6 @@ class _RentalHomeViewState extends ConsumerState<RentalHomeView> {
                         ),
                       ),
                     ),
-                  SliverPadding(
-                    padding: EdgeInsets.fromLTRB(
-                      padding,
-                      OraSpacing.lg,
-                      padding,
-                      OraSpacing.xs,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: OutlinedButton.icon(
-                        onPressed: () => unawaited(
-                          showServiceComingLaterSheet(
-                            context,
-                            'List your property',
-                          ),
-                        ),
-                        icon: const Icon(Icons.add_home_work_outlined),
-                        label: const Text('List your property'),
-                      ),
-                    ),
-                  ),
                   if (_filters.cityArea.isNotEmpty ||
                       _filters.minimumPrice.isNotEmpty ||
                       _filters.maximumPrice.isNotEmpty ||
@@ -374,8 +395,11 @@ class _RentalHero extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
+            const Positioned.fill(
+              child: ColoredBox(color: OraColors.primaryMuted),
+            ),
             Image.asset(
-              'assets/marketplace/modules/rental.webp',
+              'assets/brand/mod_rental.webp',
               cacheWidth: 720,
               fit: BoxFit.cover,
             ),
@@ -384,7 +408,7 @@ class _RentalHero extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: [Colors.transparent, OraColors.photoScrimStrong],
+                  colors: [Colors.transparent, Color(0x73000000)],
                 ),
               ),
             ),

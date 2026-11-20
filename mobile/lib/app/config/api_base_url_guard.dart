@@ -23,7 +23,8 @@ String resolveApiBaseUrl({
     throw ArgumentError('API base URL is not a valid absolute URL.');
   }
 
-  final requiresHttps = environment.isProduction ||
+  final requiresHttps =
+      environment.isProduction ||
       isReleaseMode ||
       (environment == AppEnvironment.staging && !allowInsecureHttp);
 
@@ -45,9 +46,7 @@ String resolveApiBaseUrl({
       ? uri.path.substring(0, uri.path.length - 1)
       : uri.path;
   if (!path.endsWith('/v1')) {
-    throw ArgumentError(
-      'API base URL must end in /v1 (got "$trimmed").',
-    );
+    throw ArgumentError('API base URL must end in /v1 (got "$trimmed").');
   }
 
   return trimmed.endsWith('/')

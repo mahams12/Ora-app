@@ -36,13 +36,7 @@ class ActiveRidePollingPolicy {
   }
 }
 
-enum ActiveRidePhase {
-  initialLoading,
-  active,
-  mutating,
-  ended,
-  fatalError,
-}
+enum ActiveRidePhase { initialLoading, active, mutating, ended, fatalError }
 
 class ActiveRideUiState {
   const ActiveRideUiState({
@@ -114,8 +108,7 @@ class ActiveRideUiState {
       isActing: isActing ?? this.isActing,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       infoMessage: clearInfo ? null : (infoMessage ?? this.infoMessage),
-      connectivityDegraded:
-          connectivityDegraded ?? this.connectivityDegraded,
+      connectivityDegraded: connectivityDegraded ?? this.connectivityDegraded,
     );
   }
 }
@@ -336,16 +329,15 @@ class ActiveRideViewModel
         ? ActiveRidePhase.ended
         : (mutating ? ActiveRidePhase.mutating : ActiveRidePhase.active);
 
-    final flagsUnchanged = !state.isRefreshing &&
+    final flagsUnchanged =
+        !state.isRefreshing &&
         state.phase == nextPhase &&
-        (mutating
-            ? true
-            : (!state.isCancelling && !state.isClosing)) &&
+        (mutating ? true : (!state.isCancelling && !state.isClosing)) &&
         (softError
             ? true
             : (!state.connectivityDegraded &&
-                state.errorMessage == null &&
-                state.infoMessage == null));
+                  state.errorMessage == null &&
+                  state.infoMessage == null));
 
     if (rideUnchanged && flagsUnchanged && !terminal) {
       _ensureClock();
@@ -431,7 +423,7 @@ class ActiveRideViewModel
     }
     final needsClock =
         state.ride?.state.toUpperCase() == 'DRIVER_ARRIVED' &&
-            state.ride?.arrivedAt != null;
+        state.ride?.arrivedAt != null;
     if (!needsClock) {
       _clockTimer?.cancel();
       _clockTimer = null;
@@ -497,8 +489,8 @@ class ActiveRideViewModel
       if (_alive && gen == _mutationGen && state.isCancelling) {
         state = state.copyWith(
           isCancelling: false,
-          phase: state.ride != null &&
-                  isActiveRideTerminalState(state.ride!.state)
+          phase:
+              state.ride != null && isActiveRideTerminalState(state.ride!.state)
               ? ActiveRidePhase.ended
               : ActiveRidePhase.active,
         );
@@ -550,8 +542,8 @@ class ActiveRideViewModel
       if (_alive && gen == _mutationGen && state.isClosing) {
         state = state.copyWith(
           isClosing: false,
-          phase: state.ride != null &&
-                  isActiveRideTerminalState(state.ride!.state)
+          phase:
+              state.ride != null && isActiveRideTerminalState(state.ride!.state)
               ? ActiveRidePhase.ended
               : ActiveRidePhase.active,
         );
@@ -607,8 +599,8 @@ class ActiveRideViewModel
       if (_alive && gen == _mutationGen && state.isActing) {
         state = state.copyWith(
           isActing: false,
-          phase: state.ride != null &&
-                  isActiveRideTerminalState(state.ride!.state)
+          phase:
+              state.ride != null && isActiveRideTerminalState(state.ride!.state)
               ? ActiveRidePhase.ended
               : ActiveRidePhase.active,
         );
@@ -670,7 +662,8 @@ class ActiveRideViewModel
       orElse: () => null,
     );
 
-    final definitive = code == 'VERSION_CONFLICT' ||
+    final definitive =
+        code == 'VERSION_CONFLICT' ||
         code == 'STATE_CONFLICT' ||
         code == 'ALREADY_ASSIGNED' ||
         code == 'IDEMPOTENCY_KEY_REUSED';
@@ -739,5 +732,5 @@ final activeRidePollingPolicyProvider = Provider<ActiveRidePollingPolicy>(
 
 final activeRideViewModelProvider = NotifierProvider.autoDispose
     .family<ActiveRideViewModel, ActiveRideUiState, String>(
-  ActiveRideViewModel.new,
-);
+      ActiveRideViewModel.new,
+    );

@@ -26,6 +26,10 @@ class OraTheme {
       surface: OraColors.surface,
       onSurface: OraColors.textPrimary,
       outline: OraColors.border,
+      // Tonal fills (IconButton.filledTonal, tonal chips) read as bright
+      // orange instead of the muted brown secondary tint.
+      secondaryContainer: OraColors.gold,
+      onSecondaryContainer: OraColors.primaryForeground,
     );
 
     final textTheme = OraTypography.textTheme(brightness);
@@ -34,17 +38,25 @@ class OraTheme {
       useMaterial3: true,
       brightness: brightness,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: OraColors.background,
+      scaffoldBackgroundColor: Colors.transparent,
       fontFamily: OraTypography.bodyFamily,
       textTheme: textTheme,
       primaryTextTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: OraColors.surface,
-        foregroundColor: colorScheme.onSurface,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        elevation: 0,
+        backgroundColor: OraColors.goldSharp,
+        foregroundColor: OraColors.primaryForeground,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        elevation: 3,
+        shadowColor: const Color(0x55C25E10),
+        surfaceTintColor: Colors.transparent,
         centerTitle: false,
-        titleTextStyle: textTheme.titleLarge,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          color: OraColors.primaryForeground,
+        ),
+        iconTheme: const IconThemeData(color: OraColors.primaryForeground),
+        actionsIconTheme: const IconThemeData(
+          color: OraColors.primaryForeground,
+        ),
       ),
       cardTheme: CardThemeData(
         color: OraColors.surface,
@@ -63,9 +75,14 @@ class OraTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: OraColors.surfaceElevated,
-        selectedColor: OraColors.primaryMuted,
+        selectedColor: OraColors.gold,
+        checkmarkColor: OraColors.primaryForeground,
         disabledColor: OraColors.disabled,
         labelStyle: textTheme.labelMedium,
+        secondaryLabelStyle: textTheme.labelMedium?.copyWith(
+          color: OraColors.primaryForeground,
+          fontWeight: FontWeight.w700,
+        ),
         padding: const EdgeInsets.symmetric(
           horizontal: OraSpacing.sm,
           vertical: OraSpacing.xs,
@@ -89,9 +106,9 @@ class OraTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(48, 48),
-          foregroundColor: OraColors.textSecondary,
-          textStyle: OraTypography.button(OraColors.textSecondary),
-          side: BorderSide(color: colorScheme.outline),
+          foregroundColor: OraColors.goldDeep,
+          textStyle: OraTypography.button(OraColors.goldDeep),
+          side: const BorderSide(color: OraColors.gold, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(OraRadius.button),
           ),
@@ -100,8 +117,8 @@ class OraTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           minimumSize: const Size(48, 48),
-          foregroundColor: OraColors.textSecondary,
-          textStyle: OraTypography.button(OraColors.textSecondary),
+          foregroundColor: OraColors.goldDeep,
+          textStyle: OraTypography.button(OraColors.goldDeep),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -172,6 +189,60 @@ class OraTheme {
       drawerTheme: const DrawerThemeData(
         backgroundColor: OraColors.surface,
         surfaceTintColor: Colors.transparent,
+      ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: _OraPageTransitions(
+            FadeUpwardsPageTransitionsBuilder(),
+          ),
+          TargetPlatform.fuchsia: _OraPageTransitions(
+            FadeUpwardsPageTransitionsBuilder(),
+          ),
+          TargetPlatform.linux: _OraPageTransitions(
+            FadeUpwardsPageTransitionsBuilder(),
+          ),
+          TargetPlatform.windows: _OraPageTransitions(
+            FadeUpwardsPageTransitionsBuilder(),
+          ),
+          TargetPlatform.iOS: _OraPageTransitions(
+            CupertinoPageTransitionsBuilder(),
+          ),
+          TargetPlatform.macOS: _OraPageTransitions(
+            CupertinoPageTransitionsBuilder(),
+          ),
+        },
+      ),
+    );
+  }
+}
+
+/// Paints the shared background gradient inside every pushed page so routes
+/// stay fully opaque while entering and exiting. Scaffolds are transparent by
+/// design; without this, the outgoing screen ghosts through the incoming one
+/// during transitions (double-exposure flash on back/pop/tab switches).
+class _OraPageTransitions extends PageTransitionsBuilder {
+  const _OraPageTransitions(this._delegate);
+
+  final PageTransitionsBuilder _delegate;
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return _delegate.buildTransitions(
+      route,
+      context,
+      animation,
+      secondaryAnimation,
+      DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: OraColors.backgroundGradient,
+        ),
+        child: child,
       ),
     );
   }

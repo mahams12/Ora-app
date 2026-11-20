@@ -156,38 +156,41 @@ class TripLocationSession
       isListening: true,
       isUnavailable: false,
       watchGeneration: generation,
-      statusMessage:
-          state.latest == null ? 'Waiting for driver location…' : state.statusMessage,
+      statusMessage: state.latest == null
+          ? 'Waiting for driver location…'
+          : state.statusMessage,
       clearStatusMessage: state.latest != null && state.statusMessage == null,
     );
 
     try {
-      _sub = _port.watchLatest(rideId).listen(
-        _onLatest,
-        onError: (_) {
-          if (!_alive) return;
-          _watchHeld = false;
-          _sub = null;
-          state = state.copyWith(
-            isListening: false,
-            isUnavailable: true,
-            statusMessage: 'Live location unavailable',
+      _sub = _port
+          .watchLatest(rideId)
+          .listen(
+            _onLatest,
+            onError: (_) {
+              if (!_alive) return;
+              _watchHeld = false;
+              _sub = null;
+              state = state.copyWith(
+                isListening: false,
+                isUnavailable: true,
+                statusMessage: 'Live location unavailable',
+              );
+            },
+            onDone: () {
+              if (!_alive) return;
+              _watchHeld = false;
+              _sub = null;
+              state = state.copyWith(
+                isListening: false,
+                isUnavailable: true,
+                statusMessage: state.latest == null
+                    ? 'Live location unavailable'
+                    : 'Location updating…',
+              );
+            },
+            cancelOnError: false,
           );
-        },
-        onDone: () {
-          if (!_alive) return;
-          _watchHeld = false;
-          _sub = null;
-          state = state.copyWith(
-            isListening: false,
-            isUnavailable: true,
-            statusMessage: state.latest == null
-                ? 'Live location unavailable'
-                : 'Location updating…',
-          );
-        },
-        cancelOnError: false,
-      );
     } catch (_) {
       _watchHeld = false;
       _sub = null;

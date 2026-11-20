@@ -1,6 +1,15 @@
 export type DriverStatus = 'none' | 'pending' | 'approved' | 'suspended';
 export type UserRole = 'passenger' | 'driver' | 'admin';
 
+/** Partner/vendor roles that post listings. Each is applied + approved independently. */
+export type VendorType = 'cargo' | 'rental' | 'service';
+export type VendorStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
+export interface VendorApplication {
+  status: VendorStatus;
+  submittedAt: string;
+  reviewedAt?: string;
+}
+
 /**
  * The mode the account is currently operating in (Switch to Driver feature).
  * Distinct from `role`: `role === 'driver'` is a capability granted at
@@ -22,6 +31,8 @@ export interface UserProfile {
   profileComplete: boolean;
   /** Base64 JPEG data URL (data:image/jpeg;base64,…). Null when unset. */
   avatarData?: string | null;
+  /** Per-type partner applications. Absent key = never applied. */
+  vendorApplications?: Partial<Record<VendorType, VendorApplication>>;
 }
 
 export interface AuthenticatedCaller {

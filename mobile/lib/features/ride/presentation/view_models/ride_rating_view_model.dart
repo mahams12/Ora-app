@@ -42,8 +42,7 @@ class RideRatingUiState {
       selectedStars <= 5;
 
   bool get isReadOnly =>
-      phase == RideRatingPhase.alreadyRated ||
-      phase == RideRatingPhase.success;
+      phase == RideRatingPhase.alreadyRated || phase == RideRatingPhase.success;
 
   int get displayStars {
     if (submittedRating != null) return submittedRating!.stars;
@@ -63,8 +62,9 @@ class RideRatingUiState {
       phase: phase ?? this.phase,
       rideState: rideState ?? this.rideState,
       selectedStars: selectedStars ?? this.selectedStars,
-      submittedRating:
-          clearSubmitted ? null : (submittedRating ?? this.submittedRating),
+      submittedRating: clearSubmitted
+          ? null
+          : (submittedRating ?? this.submittedRating),
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
@@ -220,10 +220,7 @@ class RideRatingViewModel
     final gen = ++_submitGen;
     final opKey = _submitOpKey!;
 
-    state = state.copyWith(
-      phase: RideRatingPhase.submitting,
-      clearError: true,
-    );
+    state = state.copyWith(phase: RideRatingPhase.submitting, clearError: true);
 
     try {
       final rating = await _submitRating(
@@ -310,5 +307,5 @@ class RideRatingViewModel
 
 final rideRatingViewModelProvider = NotifierProvider.autoDispose
     .family<RideRatingViewModel, RideRatingUiState, String>(
-  RideRatingViewModel.new,
-);
+      RideRatingViewModel.new,
+    );

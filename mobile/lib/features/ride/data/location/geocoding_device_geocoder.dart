@@ -33,13 +33,11 @@ class GeocodingDeviceGeocoder implements DeviceGeocoderPort {
   // Lazy: geo.Geocoding() touches the platform channel at construction —
   // building it eagerly would crash unit tests (no plugin instance) and any
   // container that wires this port but never calls it.
-  GeocodingDeviceGeocoder({geo.Geocoding? geocoding})
-      : _injected = geocoding;
+  GeocodingDeviceGeocoder({geo.Geocoding? geocoding}) : _injected = geocoding;
 
   final geo.Geocoding? _injected;
   geo.Geocoding? _resolved;
-  geo.Geocoding get _geocoding =>
-      _resolved ??= _injected ?? geo.Geocoding();
+  geo.Geocoding get _geocoding => _resolved ??= _injected ?? geo.Geocoding();
 
   @override
   Future<String?> localityLabel({

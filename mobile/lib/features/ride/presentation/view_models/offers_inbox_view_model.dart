@@ -114,8 +114,9 @@ class OffersInboxUiState {
       offers: offers ?? this.offers,
       isRefreshing: isRefreshing ?? this.isRefreshing,
       isPolling: isPolling ?? this.isPolling,
-      selectingOfferId:
-          clearSelecting ? null : (selectingOfferId ?? this.selectingOfferId),
+      selectingOfferId: clearSelecting
+          ? null
+          : (selectingOfferId ?? this.selectingOfferId),
       assignment: clearAssignment ? null : (assignment ?? this.assignment),
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       infoMessage: clearInfo ? null : (infoMessage ?? this.infoMessage),
@@ -376,7 +377,8 @@ class OffersInboxViewModel
       clearSelecting: true,
       clearError: true,
       clearInfo: true,
-      assignment: state.assignment ??
+      assignment:
+          state.assignment ??
           RideAssignment(
             rideId: ride.rideId,
             state: ride.state,
@@ -548,7 +550,8 @@ class OffersInboxViewModel
       orElse: () => null,
     );
 
-    final definitive = code == 'VERSION_CONFLICT' ||
+    final definitive =
+        code == 'VERSION_CONFLICT' ||
         code == 'ALREADY_ASSIGNED' ||
         code == 'STATE_CONFLICT' ||
         code == 'IDEMPOTENCY_KEY_REUSED';
@@ -608,5 +611,5 @@ final offerPollingPolicyProvider = Provider<OfferPollingPolicy>(
 
 final offersInboxViewModelProvider = NotifierProvider.autoDispose
     .family<OffersInboxViewModel, OffersInboxUiState, String>(
-  OffersInboxViewModel.new,
-);
+      OffersInboxViewModel.new,
+    );

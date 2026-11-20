@@ -10,24 +10,22 @@ import 'places_locality_label.dart';
 /// Requires `--dart-define=ORA_GOOGLE_PLACES_API_KEY=...` (Places API enabled).
 /// Prefer API-restricted key; Android package restriction applies to native SDKs.
 class GooglePlacesHttpSearch implements PlaceSearchPort {
-  GooglePlacesHttpSearch({
-    required String apiKey,
-    Dio? dio,
-    Uuid? uuid,
-  })  : _apiKey = apiKey.trim(),
-        _dio = dio ??
-            Dio(
-              BaseOptions(
-                baseUrl: 'https://places.googleapis.com/',
-                connectTimeout: const Duration(seconds: 12),
-                receiveTimeout: const Duration(seconds: 12),
-                headers: const {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                },
-              ),
+  GooglePlacesHttpSearch({required String apiKey, Dio? dio, Uuid? uuid})
+    : _apiKey = apiKey.trim(),
+      _dio =
+          dio ??
+          Dio(
+            BaseOptions(
+              baseUrl: 'https://places.googleapis.com/',
+              connectTimeout: const Duration(seconds: 12),
+              receiveTimeout: const Duration(seconds: 12),
+              headers: const {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
             ),
-        _uuid = uuid ?? const Uuid();
+          ),
+      _uuid = uuid ?? const Uuid();
 
   final String _apiKey;
   final Dio _dio;
@@ -117,10 +115,7 @@ class GooglePlacesHttpSearch implements PlaceSearchPort {
     } on PlaceSearchException {
       rethrow;
     } on DioException catch (e) {
-      throw PlaceSearchException(
-        PlaceSearchFailureKind.network,
-        e.message,
-      );
+      throw PlaceSearchException(PlaceSearchFailureKind.network, e.message);
     } catch (_) {
       throw const PlaceSearchException(
         PlaceSearchFailureKind.unavailable,
@@ -148,7 +143,9 @@ class GooglePlacesHttpSearch implements PlaceSearchPort {
       // separate enablement and returns REQUEST_DENIED on Places-only keys.
       // Sparse areas: one wider-radius retry before reporting empty.
       var data = await _searchNearby(lat, lng, radius: 500.0);
-      if (data == null || data['places'] is! List || (data['places'] as List).isEmpty) {
+      if (data == null ||
+          data['places'] is! List ||
+          (data['places'] as List).isEmpty) {
         data = await _searchNearby(lat, lng, radius: 2000.0);
       }
       if (data == null) {
@@ -218,10 +215,7 @@ class GooglePlacesHttpSearch implements PlaceSearchPort {
         'languageCode': 'en',
         'locationRestriction': <String, Object?>{
           'circle': <String, Object?>{
-            'center': <String, Object?>{
-              'latitude': lat,
-              'longitude': lng,
-            },
+            'center': <String, Object?>{'latitude': lat, 'longitude': lng},
             'radius': radius,
           },
         },
@@ -258,14 +252,11 @@ class GooglePlacesHttpSearch implements PlaceSearchPort {
       final path = id.startsWith('places/') ? 'v1/$id' : 'v1/places/$id';
       final response = await _dio.get<Map<String, dynamic>>(
         path,
-        queryParameters: <String, Object?>{
-          'sessionToken': sessionToken,
-        },
+        queryParameters: <String, Object?>{'sessionToken': sessionToken},
         options: Options(
           headers: <String, String>{
             'X-Goog-Api-Key': _apiKey,
-            'X-Goog-FieldMask':
-                'id,formattedAddress,location,displayName',
+            'X-Goog-FieldMask': 'id,formattedAddress,location,displayName',
           },
         ),
       );
@@ -319,10 +310,7 @@ class GooglePlacesHttpSearch implements PlaceSearchPort {
     } on PlaceSearchException {
       rethrow;
     } on DioException catch (e) {
-      throw PlaceSearchException(
-        PlaceSearchFailureKind.network,
-        e.message,
-      );
+      throw PlaceSearchException(PlaceSearchFailureKind.network, e.message);
     } catch (e) {
       if (e is PlaceSearchException) rethrow;
       throw const PlaceSearchException(

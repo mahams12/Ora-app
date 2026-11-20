@@ -18,11 +18,11 @@ Read this first in any new Cursor/engineering session. Then follow links to phas
 | Concern | Actual |
 | ------- | ------ |
 | Product | **Ora** — P2P offered-fare ride-hailing (passenger + driver in one Flutter app) |
-| Backend | `backend/auth-service/` — Express modular monolith (auth + rides + drivers + location + Redis GEO) |
+| Backend | `backend/auth-service/` — Express modular monolith (auth + rides + drivers + location + geo) |
 | Mobile | `mobile/` — Flutter (Riverpod, go_router, Firebase Auth / App Check) |
 | Identity | Firebase Auth ID tokens verified by Admin SDK |
 | Durable SoT | **Firestore** (`firestore.rules`, `firestore.indexes.json`, emulator port **8181**) |
-| Redis | **Optional** via `REDIS_URL` — N2C GEO projection only (`ioredis`) |
+| Geo store | **Firestore-only** `geoDrivers` via `src/geo/` (`GEO_BACKEND=firestore`); **no Redis package, connection, or `REDIS_URL` anywhere in the codebase** (removed 2026-10-21; rename completed 2026-11-18). Live Redis resources still exist in the old billing-closed project — see `docs/audits/ORA_GCP_RESOURCE_DELETION_PROOF.md` |
 | RTDB | **Implemented** — `src/rtdb/` (`admin_trip_location_rtdb.ts`, `memory_trip_location_rtdb.ts`); `firebase_database` client SDK in `mobile/pubspec.yaml`; tripLocations projection + ACL physically verified (L2 reports) |
 | Outbox | Firestore `outboxEvents` + **FCM dispatch projector** (`src/delivery/dispatch_fcm_projector.ts`) — PENDING-first scan, leftover-budget CLAIMED reclaim (fix verified 2026-10-14) |
 
@@ -38,6 +38,8 @@ Read this first in any new Cursor/engineering session. Then follow links to phas
 | API surface | [`docs/architecture/API_CONTRACT_INDEX.md`](architecture/API_CONTRACT_INDEX.md) |
 | ADRs | [`docs/architecture/DECISION_INDEX.md`](architecture/DECISION_INDEX.md) |
 | Engineering rules | [`docs/ENGINEERING_RULES.md`](ENGINEERING_RULES.md) |
+| Architecture cost audit (2026-11) | [`docs/audits/ORA_ARCHITECTURE_COST_AUDIT.md`](audits/ORA_ARCHITECTURE_COST_AUDIT.md) — cost-first audit + live GCP inventory + geo benchmark; adaptive flags wired+verified; H3 rejected; ~$0 idle cost |
+| 2026-11-18 stabilization fixes | Redis-free codebase rename (`src/geo`), wallet/fee mutual exclusion (`SUPERSEDED_BY_COMMISSION`), `DRIVER_AUTO_APPROVE` default OFF + `POST /v1/internal/drivers/:uid/status` admin path, project-ID default fixes, index dedup, test-fork bound — all locally verified (784/784 unit, 52/52 emulator E2E) |
 
 ---
 
@@ -97,10 +99,136 @@ Plan: [`implementation/marketplace/ORA_MARKETPLACE_AUDIT_AND_PLAN.md`](implement
 | Step | Scope | Status |
 | ---- | ----- | ------ |
 | 1 | Four-module home + Rides hub | IMPLEMENTED (frontend only, PR #2) |
-| 2 | Logistics, Services and Rental catalogues (no backend submissions or fake listings) | IMPLEMENTED (frontend only, redesign branch) |
-| 3+ | Vendor registration, admin, Storage, marketplace booking backend | NOT STARTED — needs approval (Storage requires Blaze) |
+| 2 | Logistics, Services and Rental catalogues | IMPLEMENTED |
+| 3 | Vendor registration + admin approval (per-role: service/rental/cargo) | IMPLEMENTED — local verified |
+| 4 | Listing CRUD APIs (all three verticals, Firestore-backed) | IMPLEMENTED — local verified |
+| 5 | Booking/quotation workflow APIs | IMPLEMENTED — local verified |
+| 6 | Mobile: vendor dashboards, posting forms, customer discovery, booking UIs | IMPLEMENTED — local verified |
+| 7 | Photo uploads | data-URL payloads only; GCS Storage deferred (needs Blaze) |
 
-The home and module screens use the Ora navy/gold/teal theme, Sora/Inter typography and locally bundled CC0/PDM photos. Logistics quotations remain disabled; production provider/listing/operator lists show honest empty states. The shared module bar routes to Rides, Logistics, Rental and Services; Wallet opens the existing unavailable sheet. No marketplace backend routes, Firestore collections, rules or indexes were added. Ride matching, geo projection, pricing and passenger/driver workflows are untouched by this work.
+### Vendor application gate
+
+`users/{uid}.vendorApplications` is a server-managed map `{service|rental|cargo → {status, submittedAt, reviewedAt}}`. `POST /v1/auth/vendor-application` submits an application (idempotent, validated). Status flow: none → pending → approved / rejected; suspended blocks all vendor actions server-side. Admin approval is currently via `SEED_ACTION=vendor-status` in `scripts/seed_device_test_accounts.ts` (no admin UI). Mobile gates every `/vendor*`, `/rental-vendor*`, `/logistics-vendor*` route on approval; unregistered users see only the registration flow, pending users see "under review", approved users land on their role's dashboard only. Verified by `scripts/verify_vendor_gate.ts` (10/10 checks).
+
+### Marketplace backend
+
+`src/marketplace/` (`listings.ts`, `bookings.ts`, `routes.ts`, `types.ts`, generated `catalogue_v1.ts` from `mobile/assets/marketplace/catalogue_v1.json`):
+
+- `POST/GET/PATCH/DELETE /v1/vendor/listings` — role-approved vendors only, ownership enforced, catalogue-validated category/subcategory, per-type price units, photos as bounded JPEG data URLs (≤6, size-budgeted).
+- `GET /v1/marketplace/listings[/:id]` — customer discovery, published-only.
+- `POST/GET /v1/marketplace/bookings[/:id]` — booking lifecycle `requested → quoted → confirmed → in_progress → completed`, plus `rejected`/`cancelled`. Vendor actions `quote|accept|reject|cancel|start|complete`; customer actions `accept|cancel`. Duplicate-active-booking guard (409), rental date-overlap check at confirm time (409), invalid transitions (409), suspended-vendor enforcement, per-request status history.
+
+Firestore collections: `marketplaceListings`, `marketplaceBookings` (indexes added to `firestore.indexes.json`). Scoped JSON body parser raised for marketplace mounts only (photo data URLs); global 32KB limit unchanged.
+
+### Mobile marketplace
+
+Unified `MarketplaceListing`/`MarketplaceBooking` models (`mobile/lib/features/marketplace/data/`). All three vendor posting forms submit real API requests (create + edit via route extra); dashboards show live listings + booking inboxes. Customer surfaces (services/rental/logistics category views, home rows, detail views) query `publishedListingsProvider`; demo fixtures remain behind `demoListingsEnabledProvider` and are sample-only. Booking request sheet for service/rental; logistics quote form submits real requests with operator picker. Vendor action sheets (quote/accept/reject/start/complete/cancel) and customer booking history + accept-quote/cancel wired.
+
+### Verification (local emulators only, zero cloud calls)
+
+- `scripts/test_marketplace_e2e.ts` — **45/45 checks** against live emulator stack: per-role gating, multi-role vendors, listing CRUD/discovery/ownership/pause, full booking lifecycles (service accept→start→complete, cargo quote→customer-accept, rental overlap 409), idempotent replay, duplicate guard, invalid transitions, suspended-vendor blocks, inbox isolation.
+- `scripts/test_marketplace_fidelity.ts` — **42/42 checks**: zero data substitution verified at raw-Firestore-doc level. All 11 listing fields (incl. unicode titles, Urdu/emoji/special-char descriptions, photo order, per-vertical `details` maps) round-trip exactly through create → Firestore → discovery → detail → edit → booking → quote → inbox. Two vendors in the same category confirmed isolated (no cross-vendor field bleed). Booking docs snapshot `listingId`, `listingTitle`, `vendorId`, `customerId`, and the quoted `amount`/`note`; confirmed bookings preserve the same references. Listings survive backend-process restart (Firestore is SoT).
+- `src/__tests__/marketplace.test.ts` — 19 backend tests pass.
+- Flutter: `flutter analyze` clean; marketplace suite 20/20; full suite 878 tests pass.
+- Frontend↔backend contract audited: `MarketplaceListing.fromJson` maps backend fields 1:1; per-vertical display keys (`subcategoryName`, `amenities`/`features`, `availableFrom/To`, `vehicleTypeName`, `capacity`, `serviceArea`, `availability`, `whatsappNumber`) are written by the vendor forms into `details` and read back verbatim — no client-side substitution. Demo fixtures require `--dart-define=ORA_DEMO_LISTINGS` (defaults off).
+
+### Known gaps — NOT production-ready
+
+- Not deployed anywhere; no production traffic validated. App Check enforcement, photo upload to Storage, admin approval UI, and push notifications for booking events are unimplemented.
+- Listing photos live inside Firestore docs (data URLs) — fine locally, but a real Storage upload path is needed before launch.
+- `vendorApplications` approval is seed-script-driven; there is no admin console.
+
+Ride matching, geo projection, pricing, cash payments and passenger/driver workflows are untouched by this work. The driver wallet now exists (see Shared Partner Wallet below) but is local-only.
+
+---
+
+## Shared Partner Wallet & Commission (local, verified)
+
+inDrive-style prepaid points wallet shared by all four partner roles.
+**One wallet per UID** — `driverStatus`/`vendorApplications` approvals map to
+roles on the same account; a multi-role partner sees one balance on every
+dashboard. Customers never need a wallet.
+
+### Collections (all server-only — `firestore.rules` denies client writes)
+
+- `walletAccounts/{uid}` — `balanceMinor` (paisa), version; lazily created.
+- `walletLedgerEntries/{entryId}` — append-only; `type` ∈ TOPUP_CREDIT /
+  COMMISSION_DEBIT / WITHDRAWAL_DEBIT / ADJUSTMENT; carries `sourceType`
+  (ride|booking), `sourceId`, `role`, `grossMinor`, `commissionBps`,
+  `pointsDelta`, `balanceAfterMinor`, `idempotencyKey`. Deterministic entry
+  id `commission-{ride|booking}-{id}` makes deduction exactly-once.
+- `walletTopups/{topupId}` — PENDING → CREDITED/PAID/REJECTED; idempotent
+  per (uid, Idempotency-Key). Client POSTs create PENDING only — points
+  never credit from a client call.
+- `walletConfig/global` — `minorPerPoint` (default 100 → 1 pt = Rs 1),
+  `commissionBps` per role (default 1000 = 10%), `lowBalanceWarnMinor`.
+
+### HTTP surface
+
+- `GET /v1/wallet` — account + points + config + roles + `lowBalance` +
+  `acceptBlocked` (403 NOT_A_PARTNER for non-partners).
+- `GET /v1/wallet/transactions`, `GET /v1/wallet/topups`.
+- `POST /v1/wallet/topups` — `{kind: credit|debit, points, method,
+  reference?}` → 201 PENDING. Methods: easypaisa/jazzcash/bank_transfer/other.
+- `POST /v1/internal/wallet/topups/:id/resolve` — worker-token only
+  (`X-Ora-Worker-Token`); `approve` posts the ledger entry + moves balance
+  atomically; replay-safe; withdrawal approve enforces sufficient balance
+  (409 INSUFFICIENT_BALANCE). Stands in for the PSP webhook until real
+  payment integration is approved.
+
+### Commission (locked rules)
+
+10% of the completed gross, per-role bps configurable; floor rounding in
+minor units. Charged **inside the same Firestore transaction** that marks
+the work completed — `progressAssignedRide` (settleInTx hook, agreed fare)
+and marketplace `vendorTransition(action:'complete')` (amount priority:
+request.finalAmount → quote → request.amount → listing price). Never on
+post/accept/start. Booking/ride docs record `commission{points,bps,
+ledgerEntryId}`.
+
+### Insufficient balance
+
+Completion is never blocked; the balance may go **negative**. While
+negative, the partner cannot accept new work — `acceptInvite` and
+marketplace `accept` return **402 WALLET_BALANCE_LOW**. Recharge restores
+eligibility. (Note: `POST /rides/:id/offers` counteroffers are not gated —
+a posted offer doesn't guarantee assignment; gating is at accept time.)
+
+### Mobile
+
+`lib/features/wallet/partner_wallet.dart` — `PartnerWalletApi`,
+`partnerWalletProvider` (account + ledger + topups), actions provider.
+Shared `DriverWalletView`/`DriverAddPointsView` mounted under every role
+shell: `/driver/wallet`, `/logistics-vendor/wallet`, `/rental-vendor/wallet`,
+`/vendor/wallet` (+ add-points). Dashboard entries: driver bottom-nav,
+drawer + profile row, logistics wallet tab, services/rental home Wallet
+buttons. UI shows balance, Add Points, Withdraw (PENDING debit), real
+per-role commission rates, Recent Transactions, Recharge History with
+status pills, low-balance / accept-blocked warnings, pull-to-refresh.
+The UI never credits points locally — submit → PENDING → "points credit
+once payment is verified".
+
+### Verification (2026-11-18)
+
+- `src/__tests__/wallet.test.ts` — 14 tests: partner gating, shared
+  multi-role balance, PENDING top-up + idempotent approve/reject, client
+  self-resolve forbidden, commission at completion only, exactly-once
+  ledger, quote/finalAmount/config-override amounts, negative balance →
+  402 accept block → recharge restore, ride-completion commission,
+  withdrawal insufficient-balance.
+- Full backend suite: **770 tests / 49 files pass**, zero regressions.
+- `flutter analyze` clean on all touched files; drive harness shots saved
+  for wallet in driver + logistics shells.
+
+### Remaining gaps
+
+- Top-up verification is an internal admin/worker call — no real PSP
+  webhook, no billing, nothing deployed (intentional pending approval).
+- Customer-side completion confirm/dispute timeout is not automated;
+  settlement currently keys on partner "complete" (+ marketplace payment
+  confirm flags in request).
+- Withdrawal payout execution is manual/ops-side.
+- No admin console for config/top-up review yet.
 
 ---
 
@@ -715,7 +843,60 @@ Device-side findings / limitations:
   counteroffer amount entry, cancellation mid-trip, multi-driver
   contention, app termination during an ACTIVE trip.
 
+43. **Deep cleanup + GCP deletion-proof + handoff (CLEANUP-2026-11-18):** (a) **Live GCP inventory via Cloud Asset Inventory both projects** — new `oraapp-a9be5`: ZERO redis/vpcaccess/compute/Run/Scheduler/Tasks/secrets (verified absent); stale leftovers `ora-test-deadman` + `ora-tasks-invoker` SAs **deleted + verified**, `ora-test-worker-token` already absent. Old `ora-app-d8112`: full inventory documented — `ora-production-n3-redis` (SUSPENDED), `ora-staging-vpc`, `*-redis-url` secrets, peering chain still exist; **deletion BLOCKED BY `BILLING_DISABLED`** (redis/secretmanager request-denied, vpcaccess op `aba4178b` failed code 7). No official no-billing deletion path exists — dormant at $0 while billing closed; NOT deleted, do not claim otherwise. Evidence: `docs/audits/ORA_GCP_RESOURCE_DELETION_PROOF.md`. (b) **Repo cleanup:** 1,929 generated test artifacts (~300MB) removed from git (`.e2e_artifacts`, `test_outputs` — now gitignored; proof reports/scripts kept); `uuid` + `cupertino_icons` deps removed (zero imports); 18 scripts + root `package.json` repointed `ora-app-d8112`→`oraapp-a9be5`; all 21 pubspec assets verified present; fonts/brand/marketplace assets active. (c) **Broken launchd agent `com.ora.auth-service.dev`** (crash-loop: old `~/Ora-app` path + node missing from launchd PATH) — repointed to this repo, PATH fixed, agent unloaded. (d) **Docs:** new `docs/README.md` authoritative index; `redis-schema.md` bannered SUPERSEDED; new `docs/ORA_BACKEND_HANDOFF.md`. (e) **Post-cleanup regression:** backend **784/784**, Flutter **876/876** + analyze 4 pre-existing infos, emulator E2E **52/52**, adaptive presence **18/18**, driver admin **8/8**, marketplace **45/45 + 42/42**, vendor gate **10/10**, Firestore rules **43/43**, RTDB rules **11/11**, tsc clean. Git checkpoint `checkpoint-pre-cleanup` + 4 cleanup batches committed.
+
+44. **Real cloud E2E on `oraapp-a9be5` — PASSED + torn down (CLOUD-E2E-2026-11-20):** Temporary env deployed per spec: Cloud Run `ora-auth-test` (min=0/max=2, 512Mi, no VPC, `REQUIRE_APP_CHECK=false` temp-only, `GEO_BACKEND=firestore`), Tasks queue `ora-dispatch-t1` (5rps/5conc — `ora-dispatch` name tombstoned from prior delete), Scheduler `ora-worker-sweeps` (OIDC, */5), secrets `ora-test-worker-token`. Rules deployed: Firestore ruleset `0357f215…` + RTDB rules (REST; firebase CLI is on a different account); 10 missing marketplace composite indexes created → all 29 READY. **Verified on real infra:** Auth custom-token→ID-token exchange; go-online ×2; device-token registration; location → `geoDrivers` (5 docs); estimate (971ms); ride create (1.4s); **wave-1 dispatch 2 drivers @10km, 20s TTL**; invite accept → offer → passenger select → DRIVER_ASSIGNED; lifecycle en-route→arrive→start→complete; **RTDB `tripLocations` projection live**; **wallet commission verified — `walletLedgerEntries/commission-ride-{rideId}` COMMISSION_DEBIT −2000 minor (10% of 20000)**; busy-driver exclusion proven (stale-ASSIGNED driver skipped — correct); sweep endpoint runs all legs, worker-token gate 403/403 unauth/wrong. Synthetic `cloud-e2e` data only; 3 stale synthetic rides closed. Latency: estimate ~0.97s, create ~1.4s, accept ~1.1s, select ~1.4s (cold-start inclusive, asia-south1). **NOT VERIFIED:** real-device FCM delivery (synthetic token used), App Check attestation (disabled for temp env), wave-2/3 deadline wakeups (ride assigned in wave 1 — no task consumed), Cloud Tasks retry path, marketplace legs (unit+emulator-verified), load >2 drivers. **Teardown verified via live APIs:** 0 Run services/jobs, 0 queues, 0 scheduler jobs, 0 secrets, 0 AR images; temp SA `ora-tasks-invoker` + temp adminsdk key `038ee3f2` deleted; `.tmp` creds removed. Kept intentionally: Firestore/RTDB rules + 29 indexes (required migration infra), synthetic test data (free-tier, purge via console if desired). Billing: no export yet (24h lag); expected < $0.10.
+
+45. **Verification-gap closure pass (2026-11-20, post-CLOUD-E2E):** Synthetic-data cleanup executed with verified ownership: dry-run linked 96 Firestore docs to the 4 E2E UIDs (`+92300555xxxx`) + 4 E2E rideIds; full snapshots preserved in `docs/audits/evidence/CLOUD_E2E-2026-11-20_synthetic_data_deleted.json` before deletion; deleted 96 docs + 4 Auth users + RTDB `tripLocations/*` + `rideAccess/{rideId}` — live-verified 0 remaining, Auth 12→8 users. **Not deleted:** ~206 users / ~110 rides / `acc_*` accounts / `pricingRules` — pre-existing dev data predating the E2E (Oct-14+ outbox, `local-e2e-1` pricing rules), ownership not synthetic-verified → kept, flagged for user review. New `scripts/deploy_firebase_infra.sh` deploys rules+indexes via gcloud REST (verified live: ruleset `8ed50d12` released, RTDB rules PUT, 29 indexes idempotent→READY) — removes the firebase-CLI account dependency. Re-verified post-cleanup: dispatch suite 52/52 (wave-2/3 expansion 10→15→25km, radius nearest-first, invite expiry, requestVersion concurrency, worker-token gate), marketplace 45/45 + fidelity 42/42. Billing: account `016C7D-C92091-001EB0` open USD; per-SKU costs only via console/BigQuery export (not API-visible) — E2E spend expected <$0.10, **not yet confirmed by bill**. Still NOT VERIFIED (needs CLOUD GO #2 + device): real Tasks wave-2/3 wakeups/retry, real-device FCM, App Check attestation, cloud marketplace, >2-driver concurrency.
+
 ---
+
+46. **Flutter frontend dead-code cleanup + transition-ghost fix (2026-11-21):**
+   Import-graph audit of all 315 `lib/*.dart` files against every
+   lib/test/integration_test reference. **Bug fix:** transparent scaffolds
+   (global `backgroundGradient` painted behind the router) let the outgoing
+   page ghost through the incoming one during route transitions — new
+   `pageTransitionsTheme` in `ora_theme.dart` wraps every page in the same
+   gradient via `_OraPageTransitions` (delegates to FadeUpwards on
+   Android/desktop, Cupertino on iOS/macOS) so routes are opaque during
+   transitions; identical steady-state visuals, zero behavior change.
+   **Deleted (proven zero-referenced):**
+   - 12 dead barrels: `app/router/router.dart`, `core/errors/errors.dart`,
+     `core/logging/logging.dart`, `core/network/network.dart`,
+     `core/storage/storage.dart`, feature index files
+     `driver/driver.dart`, `logistics_vendor/logistics_vendor.dart`,
+     `maps/maps.dart`, `payments/payments.dart` (empty), `ride/ride.dart`,
+     `safety/safety.dart` (empty), `vendor/vendor.dart`.
+   - 4 superseded widgets: `driver_home_map.dart` (322L old map),
+     `ride_card_route_preview.dart`, `ride_location_placeholder.dart`
+     (self-marked "Deprecated"), `saved_places_section.dart`.
+   - `passenger_unavailable_view.dart` (replaced by
+     `UnavailableFeatureSheet`; removed from 2 architecture-test file
+     lists), `ride_map_camera_policy.dart` (exact duplicate of live
+     `MapPreviewCameraPolicy`; its test group removed from
+     `ride_map_preview_test.dart`).
+   - Placeholder scaffolding: `core/location/location_service.dart`,
+     `core/maps/maps_service.dart`, `core/utils/view_state.dart` +
+     `.freezed.dart` (generic VM union never adopted).
+   - Route const `driverDirectOffer` (view removed earlier; 3 guard-test
+     refs repointed to `driverWallet`).
+   - 8 assets: `driver_tiles/{wallet_art,add_points_art,bookings_3d,
+     my_rides_3d}.png` (superseded by `assets/vendor/*_top.png`),
+     `branding/ride_card/icons/{avatar_flat,plate_frame,plate_sample}.png`,
+     `vendor/vendor_hero.png`.
+   - 4 pubspec deps with zero codegen usage: `json_annotation`,
+     `riverpod_annotation`, `json_serializable`, `riverpod_generator`.
+   **Kept (verified live or planned):** `theme.dart` barrel (19 test
+   imports), 67 `services/subs/*.webp` catalogue images (marketplace
+   expansion), MapLibre PoC + its assets (drawer-linked dev tool),
+   `.freezed.dart` parts of live files, fonts (pubspec-declared),
+   `driverDirectOfferViewModel` (live editable-offer logic behind the
+   open-request sheet).
+   **Verification:** `dart analyze lib/ test/ integration_test/` clean;
+   `flutter test` **870/870 pass**; `flutter drive` on Android emulator —
+   all integration tests pass, 32 screenshots regenerated, full
+   driver/logistics/vendor/rental/passenger navigation regression green.
+   Frontend is clean and ready for final cloud E2E.
 
 ## How to update this file
 

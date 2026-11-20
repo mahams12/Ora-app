@@ -6,16 +6,26 @@ import '../../features/auth/presentation/views/otp_entry_view.dart';
 import '../../features/auth/presentation/views/phone_entry_view.dart';
 import '../../features/auth/presentation/views/profile_view.dart';
 import '../../features/auth/presentation/views/splash_view.dart';
+import '../../features/driver/presentation/views/driver_add_points_view.dart';
 import '../../features/driver/presentation/views/driver_assigned_ride_view.dart';
 import '../../features/driver/presentation/views/driver_registration_view.dart';
 import '../../features/driver/presentation/views/driver_shell_view.dart';
+import '../../features/driver/presentation/views/driver_wallet_view.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/maps/poc/maplibre_poc_view.dart';
 import '../../features/passenger/presentation/views/home_shell_view.dart';
-import '../../features/marketplace/logistics/presentation/views/logistics_category_view.dart';
+import '../../features/registration/views/cargo_registration_view.dart';
+import '../../features/registration/views/rental_registration_view.dart';
+import '../../features/registration/views/service_vendor_registration_view.dart';
+import '../../features/logistics_vendor/presentation/views/logistics_shell_view.dart';
+import '../../features/rental_vendor/presentation/views/rental_post_property_view.dart';
+import '../../features/rental_vendor/presentation/views/rental_vendor_home_view.dart';
+import '../../features/vendor/presentation/views/vendor_home_view.dart';
+import '../../features/vendor/presentation/views/vendor_post_service_view.dart';
+import '../../features/marketplace/data/marketplace_models.dart';
+import '../../features/marketplace/presentation/views/my_bookings_view.dart';
+import '../../features/marketplace/presentation/views/vendor_bookings_view.dart';
 import '../../features/marketplace/logistics/presentation/views/logistics_home_view.dart';
-import '../../features/marketplace/logistics/presentation/views/logistics_search_results_view.dart';
-import '../../features/marketplace/logistics/presentation/views/quote_request_form.dart';
 import '../../features/marketplace/rental/presentation/views/rental_category_view.dart';
 import '../../features/marketplace/rental/presentation/views/rental_home_view.dart';
 import '../../features/marketplace/services/presentation/views/service_providers_view.dart';
@@ -88,31 +98,125 @@ GoRouter createAppRouter({
         builder: (context, state) => const DriverRegistrationView(),
       ),
       GoRoute(
+        path: AppRoutes.cargoRegistration,
+        name: 'cargo-registration',
+        builder: (context, state) => const CargoRegistrationView(),
+      ),
+      GoRoute(
+        path: AppRoutes.rentalRegistration,
+        name: 'rental-registration',
+        builder: (context, state) => const RentalRegistrationView(),
+      ),
+      GoRoute(
+        path: AppRoutes.serviceVendorRegistration,
+        name: 'service-vendor-registration',
+        builder: (context, state) => const ServiceVendorRegistrationView(),
+      ),
+      GoRoute(
+        path: AppRoutes.vendorPostService,
+        name: 'vendor-post-service',
+        builder: (context, state) =>
+            VendorPostServiceView(existing: state.extra as MarketplaceListing?),
+      ),
+      GoRoute(
+        path: AppRoutes.vendorHome,
+        name: 'vendor-home',
+        builder: (context, state) => const VendorHomeView(),
+      ),
+      GoRoute(
+        path: AppRoutes.vendorBookingsService,
+        name: 'vendor-bookings-service',
+        builder: (context, state) => const VendorBookingsView(type: 'service'),
+      ),
+      GoRoute(
+        path: AppRoutes.vendorWallet,
+        name: 'vendor-wallet',
+        builder: (context, state) => const DriverWalletView(
+          homeRoute: AppRoutes.vendorHome,
+          addPointsRoute: AppRoutes.vendorWalletAddPoints,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.vendorWalletAddPoints,
+        name: 'vendor-wallet-add-points',
+        builder: (context, state) => const DriverAddPointsView(
+          walletRoute: AppRoutes.vendorWallet,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.vendorBookingsRental,
+        name: 'vendor-bookings-rental',
+        builder: (context, state) => const VendorBookingsView(type: 'rental'),
+      ),
+      GoRoute(
+        path: AppRoutes.myBookings,
+        name: 'my-bookings',
+        builder: (context, state) => const MyBookingsView(),
+      ),
+      GoRoute(
+        path: AppRoutes.logisticsVendorHome,
+        name: 'logistics-vendor-home',
+        builder: (context, state) => const LogisticsShellView(),
+      ),
+      GoRoute(
+        path: AppRoutes.logisticsDelivery,
+        name: 'logistics-delivery',
+        builder: (context, state) {
+          final rideId = state.pathParameters['rideId'] ?? '';
+          return DriverAssignedRideView(
+            rideId: rideId,
+            title: 'Active Delivery',
+            subtitle: 'Manage your current delivery',
+            homeRoute: AppRoutes.logisticsVendorHome,
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.logisticsVendorWallet,
+        name: 'logistics-vendor-wallet',
+        builder: (context, state) => const DriverWalletView(
+          homeRoute: AppRoutes.logisticsVendorHome,
+          addPointsRoute: AppRoutes.logisticsVendorWalletAddPoints,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.logisticsVendorWalletAddPoints,
+        name: 'logistics-vendor-wallet-add-points',
+        builder: (context, state) => const DriverAddPointsView(
+          walletRoute: AppRoutes.logisticsVendorWallet,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.rentalVendorHome,
+        name: 'rental-vendor-home',
+        builder: (context, state) => const RentalVendorHomeView(),
+      ),
+      GoRoute(
+        path: AppRoutes.rentalVendorPost,
+        name: 'rental-vendor-post',
+        builder: (context, state) => RentalPostPropertyView(
+          existing: state.extra as MarketplaceListing?,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.rentalVendorWallet,
+        name: 'rental-vendor-wallet',
+        builder: (context, state) => const DriverWalletView(
+          homeRoute: AppRoutes.rentalVendorHome,
+          addPointsRoute: AppRoutes.rentalVendorWalletAddPoints,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.rentalVendorWalletAddPoints,
+        name: 'rental-vendor-wallet-add-points',
+        builder: (context, state) => const DriverAddPointsView(
+          walletRoute: AppRoutes.rentalVendorWallet,
+        ),
+      ),
+      GoRoute(
         path: AppRoutes.ridesHub,
         name: 'rides-hub',
         builder: (context, state) => const RidesHubView(),
-      ),
-      GoRoute(
-        path: AppRoutes.logisticsSearch,
-        name: 'logistics-search',
-        builder: (context, state) => LogisticsSearchResultsView(
-          query: state.uri.queryParameters['q'] ?? '',
-        ),
-      ),
-      GoRoute(
-        path: AppRoutes.logisticsQuote,
-        name: 'logistics-quote',
-        builder: (context, state) => QuoteRequestForm(
-          categoryId: state.pathParameters['categoryId'] ?? '',
-          typeId: state.pathParameters['typeId'] ?? '',
-        ),
-      ),
-      GoRoute(
-        path: AppRoutes.logisticsCategory,
-        name: 'logistics-category',
-        builder: (context, state) => LogisticsCategoryView(
-          categoryId: state.pathParameters['categoryId'] ?? '',
-        ),
       ),
       GoRoute(
         path: AppRoutes.logistics,
@@ -255,10 +359,14 @@ GoRouter createAppRouter({
         },
       ),
       GoRoute(
-        path: AppRoutes.driverDirectOffer,
-        name: 'driver-direct-offer',
-        builder: (context, state) =>
-            const DriverShellView(initialTab: DriverShellPage.offer),
+        path: AppRoutes.driverWallet,
+        name: 'driver-wallet',
+        builder: (context, state) => const DriverWalletView(),
+      ),
+      GoRoute(
+        path: AppRoutes.driverWalletAddPoints,
+        name: 'driver-wallet-add-points',
+        builder: (context, state) => const DriverAddPointsView(),
       ),
     ],
     errorBuilder: (context, state) =>

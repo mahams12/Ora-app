@@ -9,18 +9,29 @@ class OraColors {
 
   // ── Brand primitives (prototype) ───────────────────────────────────────────
 
-  static const navy = Color(0xFFFBEBDD);
-  static const navyElevated = Color(0xFFFFF6EC);
-  static const canvas = Color(0xFFFBEBDD);
+  static const navy = Color(0xFFF2E3DD);
+  static const navyElevated = Color(0xFFFBEAD8);
+  static const canvas = Color(0xFFF2E3DD);
+
+  /// Warm light-orange → pastel-gray-orange gradient used behind every
+  /// screen (scaffolds render transparent so this shows through).
+  static const canvasDeep = Color(0xFFE9C2AD);
+  static const backgroundGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFFF9EDE6), Color(0xFFF3E2D8), Color(0xFFE7C8B6)],
+    stops: [0.0, 0.45, 1.0],
+  );
 
   static const gold = Color(0xFFF88733);
   static const goldMuted = Color(0x33F88733);
   static const goldSoft = Color(0xFFA67D68);
   static const goldDeep = Color(0xFFE16F22);
+  static const goldSharp = Color(0xFFFF6A0D);
 
   static const teal = Color(0xFFA67D68);
   static const tealMuted = Color(0x33E9C2AD);
-  static const tealBright = Color(0xFFA67D68);
+  static const tealBright = Color(0xFFE16F22);
   static const tealDeep = Color(0xFF8A624E);
 
   static const info = Color(0xFFA67D68);
@@ -30,8 +41,8 @@ class OraColors {
   static const accentCoral = Color(0xFFF88733);
 
   static const ink = Color(0xFF2A211D);
-  static const slate = Color(0xFFA67D68);
-  static const slateMuted = Color(0xFFA67D68);
+  static const slate = Color(0xFF8A6A56);
+  static const slateMuted = Color(0xFF96705C);
   static const line = Color(0xFFE9C2AD);
   static const starEmpty = Color(0xFFE9C2AD);
 
@@ -69,7 +80,7 @@ class OraColors {
 
   static const background = canvas;
   static const surface = Color(0xFFFFFFFF);
-  static const surfaceElevated = Color(0xFFFFF6EC);
+  static const surfaceElevated = Color(0xFFFBEAD8);
   static const surfaceStrong = Color(0xFFFFFFFF);
 
   static const textPrimary = ink;
@@ -92,7 +103,7 @@ class OraColors {
   static const surfaceDark = canvas;
   static const error = danger;
   static const textPrimaryLight = Color(0xFF2A211D);
-  static const textSecondaryLight = Color(0xFFA67D68);
+  static const textSecondaryLight = Color(0xFF8A6A56);
   static const textPrimaryDark = ink;
-  static const textSecondaryDark = Color(0xFFA67D68);
+  static const textSecondaryDark = Color(0xFF8A6A56);
 }

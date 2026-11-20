@@ -2,11 +2,7 @@
 /// The first/last waypoints are the existing pickup/destination fields;
 /// these drafts only model stops inserted in between.
 class ShopItemDraft {
-  const ShopItemDraft({
-    this.name = '',
-    this.quantity = 1,
-    this.note = '',
-  });
+  const ShopItemDraft({this.name = '', this.quantity = 1, this.note = ''});
 
   final String name;
   final int quantity;
@@ -22,10 +18,10 @@ class ShopItemDraft {
       );
 
   Map<String, Object?> toApiMap() => <String, Object?>{
-        'name': name.trim(),
-        'qty': quantity,
-        if (note.trim().isNotEmpty) 'note': note.trim(),
-      };
+    'name': name.trim(),
+    'qty': quantity,
+    if (note.trim().isNotEmpty) 'note': note.trim(),
+  };
 }
 
 /// PICKUP | SHOP | DROPOFF — types allowed depend on the service type:
@@ -70,33 +66,29 @@ class DeliveryStopDraft {
     List<ShopItemDraft>? items,
     int? shopBudgetMinor,
     bool clearBudget = false,
-  }) =>
-      DeliveryStopDraft(
-        type: type ?? this.type,
-        locationText: locationText ?? this.locationText,
-        lat: lat ?? this.lat,
-        lng: lng ?? this.lng,
-        label: label ?? this.label,
-        instructions: instructions ?? this.instructions,
-        items: items ?? this.items,
-        shopBudgetMinor:
-            clearBudget ? null : (shopBudgetMinor ?? this.shopBudgetMinor),
-      );
+  }) => DeliveryStopDraft(
+    type: type ?? this.type,
+    locationText: locationText ?? this.locationText,
+    lat: lat ?? this.lat,
+    lng: lng ?? this.lng,
+    label: label ?? this.label,
+    instructions: instructions ?? this.instructions,
+    items: items ?? this.items,
+    shopBudgetMinor: clearBudget
+        ? null
+        : (shopBudgetMinor ?? this.shopBudgetMinor),
+  );
 
   /// Backend wire shape — `type`/`location` are required; item fields only
   /// appear on SHOP stops (server rejects them elsewhere).
   Map<String, Object?> toApiMap() => <String, Object?>{
-        'type': type,
-        'location': <String, Object?>{'lat': lat, 'lng': lng},
-        if (label.trim().isNotEmpty) 'label': label.trim(),
-        if (instructions.trim().isNotEmpty)
-          'instructions': instructions.trim(),
-        if (type == 'SHOP')
-          'items': items
-              .where((i) => i.isValid)
-              .map((i) => i.toApiMap())
-              .toList(),
-        if (type == 'SHOP' && shopBudgetMinor != null)
-          'shopBudgetMinor': shopBudgetMinor,
-      };
+    'type': type,
+    'location': <String, Object?>{'lat': lat, 'lng': lng},
+    if (label.trim().isNotEmpty) 'label': label.trim(),
+    if (instructions.trim().isNotEmpty) 'instructions': instructions.trim(),
+    if (type == 'SHOP')
+      'items': items.where((i) => i.isValid).map((i) => i.toApiMap()).toList(),
+    if (type == 'SHOP' && shopBudgetMinor != null)
+      'shopBudgetMinor': shopBudgetMinor,
+  };
 }

@@ -263,7 +263,7 @@ void main() {
               AppRoutes.driverHome,
               AppRoutes.driverRides,
               AppRoutes.driverRide,
-              AppRoutes.driverDirectOffer,
+              AppRoutes.driverWallet,
             ])
               GoRoute(
                 path: path,
@@ -1256,20 +1256,26 @@ void main() {
 
       await tester.tap(find.textContaining('Pickup A'));
       await tester.pumpAndSettle();
-      expect(find.text('Submit offer'), findsNWidgets(2));
+      expect(find.text('New Ride Request'), findsOneWidget);
 
-      Navigator.of(tester.element(find.text('Submit offer').first))
+      Navigator.of(tester.element(find.text('New Ride Request').first))
           .pop();
       await tester.pumpAndSettle();
 
       await _tapAccept(tester);
       await tester.pumpAndSettle();
 
-      expect(find.text('Accept passenger price'), findsOneWidget);
-      expect(find.text('Your offer'), findsOneWidget);
+      expect(find.text('New Ride Request'), findsOneWidget);
+      expect(find.bySemanticsLabel('Counter Offer'), findsOneWidget);
       expect(find.textContaining('minor units'), findsNothing);
-      expect(find.textContaining('Passenger offer: Rs 250'), findsOneWidget);
-      expect(find.text('Submit offer'), findsNWidgets(2));
+      expect(find.text('Passenger Offer'), findsOneWidget);
+      expect(find.text('Rs 250'), findsWidgets);
+      // Amount field stays hidden until the driver picks Counter Offer.
+      expect(find.text('Your offer'), findsNothing);
+      await tester.tap(find.bySemanticsLabel('Counter Offer'));
+      await tester.pumpAndSettle();
+      expect(find.text('Your offer'), findsOneWidget);
+      expect(find.text('Submit counteroffer'), findsOneWidget);
     });
 
     testWidgets('offer sheet shows PKR rupees and submits minor units',
@@ -1305,11 +1311,15 @@ void main() {
       await _tapAccept(tester);
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('Passenger offer: Rs 310'), findsOneWidget);
+      expect(find.text('Passenger Offer'), findsOneWidget);
+      expect(find.text('Rs 310'), findsWidgets);
+
+      await tester.tap(find.bySemanticsLabel('Counter Offer'));
+      await tester.pumpAndSettle();
       expect(find.text('310'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), '350');
-      await tester.tap(find.text('Submit offer').last);
+      await tester.tap(find.text('Submit counteroffer'));
       await tester.pumpAndSettle();
 
       final body = verify(
@@ -1320,7 +1330,7 @@ void main() {
         ),
       ).captured.single as Map<String, Object?>;
       expect(body['amountMinor'], 35000);
-      expect(body['type'], 'PASSENGER_PRICE_ACCEPTED');
+      expect(body['type'], 'DRIVER_COUNTEROFFER');
     });
 
     testWidgets('Accept semantics bounds match button not full card',
@@ -1388,11 +1398,10 @@ void main() {
 
       await _tapAccept(tester, finder: find.text('Accept').first);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Submit offer').last);
+      await tester.tap(find.text('Accept').last);
       await tester.pump();
       await tester.pump();
 
-      expect(find.text('Accept passenger price'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsWidgets);
 
       final semanticsHandle = tester.ensureSemantics();
@@ -1400,10 +1409,10 @@ void main() {
       final secondAccept = tester.getSemantics(find.text('Accept').last);
       expect(secondAccept.flagsCollection.isEnabled, isFalse);
 
-      final sheetCount = find.text('Submit offer').evaluate().length;
+      final sheetCount = find.text('New Ride Request').evaluate().length;
       await tester.tap(find.text('Accept').last, warnIfMissed: false);
       await tester.pump();
-      expect(find.text('Submit offer'), findsNWidgets(sheetCount));
+      expect(find.text('New Ride Request'), findsNWidgets(sheetCount));
 
       gate.complete(_offer());
       await tester.pump();

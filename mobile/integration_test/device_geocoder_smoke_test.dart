@@ -13,10 +13,7 @@ void main() {
     (tester) async {
       final geocoder = GeocodingDeviceGeocoder();
       // Report raw support/lookup state for the artifact — do not fabricate.
-      final label = await geocoder.localityLabel(
-        lat: 31.46,
-        lng: 74.26,
-      );
+      final label = await geocoder.localityLabel(lat: 31.46, lng: 74.26);
       // ignore: avoid_print
       print('DEVICE_GEOCODER_RESULT=${label ?? "null"}');
       // The call must not throw; a label is ideal but null is an honest

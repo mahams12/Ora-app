@@ -16,11 +16,7 @@ import '../../domain/location/driver_location_lifecycle.dart';
 /// (the driver IS the source of truth; round-tripping RTDB would add latency
 /// for zero accuracy gain).
 class DriverJobMap extends ConsumerStatefulWidget {
-  const DriverJobMap({
-    super.key,
-    required this.ride,
-    this.height = 200,
-  });
+  const DriverJobMap({super.key, required this.ride, this.height = 200});
 
   final Ride ride;
   final double height;

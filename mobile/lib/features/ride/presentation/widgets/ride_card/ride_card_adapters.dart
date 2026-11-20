@@ -37,8 +37,9 @@ class RideCardAdapters {
         'OFFERS_AVAILABLE' => 'Offers',
         _ => openRideStateLabel(ride.state),
       },
-      statusKind:
-          active ? RideCardStatusKind.active : RideCardStatusKind.neutral,
+      statusKind: active
+          ? RideCardStatusKind.active
+          : RideCardStatusKind.neutral,
       pickupLabel: rideCardLocationLabel(ride.pickup),
       destinationLabel: rideCardLocationLabel(ride.destination),
       pickupLat: ride.pickup.lat,
@@ -105,16 +106,19 @@ class RideCardAdapters {
     final category = _category(invite.category);
     final progress = windowTotal.inMilliseconds <= 0
         ? 0.0
-        : (remaining.inMilliseconds / windowTotal.inMilliseconds)
-            .clamp(0.0, 1.0);
+        : (remaining.inMilliseconds / windowTotal.inMilliseconds).clamp(
+            0.0,
+            1.0,
+          );
 
     return RideCardModel(
       rideId: invite.rideId,
       variant: RideCardVariant.openRequest,
       tone: actionable ? RideCardTone.active : RideCardTone.standard,
       statusLabel: actionable ? 'Invitation' : 'Expired',
-      statusKind:
-          actionable ? RideCardStatusKind.active : RideCardStatusKind.neutral,
+      statusKind: actionable
+          ? RideCardStatusKind.active
+          : RideCardStatusKind.neutral,
       pickupLabel: rideCardLocationLabel(invite.pickup),
       destinationLabel: rideCardLocationLabel(invite.destination),
       pickupLat: invite.pickup.lat,
@@ -123,8 +127,10 @@ class RideCardAdapters {
       destinationLng: invite.destination.lng,
       participant: null,
       // passengerOfferMinor is the gross fare offered — not driver payout.
-      fareLabel:
-          formatOfferAmountMinor(invite.passengerOfferMinor, invite.currency),
+      fareLabel: formatOfferAmountMinor(
+        invite.passengerOfferMinor,
+        invite.currency,
+      ),
       fareCaption: 'Trip fare',
       distanceLabel: distance,
       // Ora Courier — invite surfaces the parcel summary in the service
@@ -134,8 +140,9 @@ class RideCardAdapters {
       categoryLabel: category.$1,
       categoryTone: category.$2,
       carAsset: _carAssetFor(invite.rideId),
-      expiresLabel:
-          actionable ? 'Respond within ${secondsLeft}s' : 'Offer expired',
+      expiresLabel: actionable
+          ? 'Respond within ${secondsLeft}s'
+          : 'Offer expired',
       showRoutePreview: true,
       showMapThumb: true,
       showCarAccent: true,
@@ -166,10 +173,7 @@ class RideCardAdapters {
   }
 
   /// Driver job / my-rides card — empty passenger/vehicle slots when unknown.
-  static RideCardModel fromDriverJob(
-    Ride ride, {
-    VoidCallback? onTap,
-  }) {
+  static RideCardModel fromDriverJob(Ride ride, {VoidCallback? onTap}) {
     final fare = formatMinorFare(ride.agreedFareMinor, ride.agreedFareCurrency);
     final active = !isDriverJobTerminalState(ride.state);
     final kind = _statusKind(ride.state);
@@ -197,14 +201,16 @@ class RideCardAdapters {
       fareCaption: kind == RideCardStatusKind.danger
           ? 'Cancelled'
           : active
-              ? 'Agreed fare'
-              : 'Trip fare',
+          ? 'Agreed fare'
+          : 'Trip fare',
       distanceLabel: distance,
       // Duration is not on Ride DTO — leave null (grid shows "—").
       durationLabel: null,
       paymentLabel: _paymentLabel(ride.paymentMethod),
       timestampLabel: active
-          ? _startedRelative(ride.startedAt ?? ride.assignedAt ?? ride.createdAt)
+          ? _startedRelative(
+              ride.startedAt ?? ride.assignedAt ?? ride.createdAt,
+            )
           : formatHistoryTimestamp(ride.createdAt),
       carAsset: _carAssetFor(ride.rideId),
       showRoutePreview: true,
@@ -216,15 +222,13 @@ class RideCardAdapters {
   }
 
   /// Passenger history — empty driver/vehicle slots when unknown.
-  static RideCardModel fromPassengerHistory(
-    Ride ride, {
-    VoidCallback? onTap,
-  }) {
+  static RideCardModel fromPassengerHistory(Ride ride, {VoidCallback? onTap}) {
     final fare = formatMinorFare(
       ride.agreedFareMinor ?? ride.passengerOfferMinor,
       ride.agreedFareCurrency,
     );
-    final active = !isHistoryTerminalState(ride.state) &&
+    final active =
+        !isHistoryTerminalState(ride.state) &&
         ride.state.toUpperCase() != 'RIDE_CLOSED';
     final kind = _statusKind(ride.state);
     final distance = _formatDistanceFromPoints(ride.pickup, ride.destination);
@@ -247,8 +251,8 @@ class RideCardAdapters {
       fareCaption: kind == RideCardStatusKind.danger
           ? 'Cancelled'
           : kind == RideCardStatusKind.success
-              ? _settlementCaption(ride)
-              : null,
+          ? _settlementCaption(ride)
+          : null,
       distanceLabel: distance,
       durationLabel: null,
       paymentLabel: _paymentLabel(ride.paymentMethod),
@@ -279,8 +283,9 @@ class RideCardAdapters {
       variant: RideCardVariant.offer,
       tone: pending ? RideCardTone.active : RideCardTone.standard,
       statusLabel: offer.status.toUpperCase(),
-      statusKind:
-          pending ? RideCardStatusKind.active : RideCardStatusKind.neutral,
+      statusKind: pending
+          ? RideCardStatusKind.active
+          : RideCardStatusKind.neutral,
       pickupLabel: '',
       destinationLabel: '',
       showRoutePreview: false,
@@ -289,10 +294,7 @@ class RideCardAdapters {
       carAsset: _carAssetFor(offer.offerId),
       participant: snapshotName == null
           ? null
-          : RideCardParticipant(
-              roleLabel: 'Driver',
-              displayName: snapshotName,
-            ),
+          : RideCardParticipant(roleLabel: 'Driver', displayName: snapshotName),
       fareLabel: amount,
       fareCaption: 'Driver offer',
       serviceLabel: offer.type.trim().isEmpty ? null : offer.type.trim(),
@@ -301,10 +303,7 @@ class RideCardAdapters {
           : 'Expires ${_shortIso(offer.expiresAt)}',
       actions: [
         if (isSelecting)
-          const RideCardActionSpec(
-            label: 'Selecting…',
-            isLoading: true,
-          )
+          const RideCardActionSpec(label: 'Selecting…', isLoading: true)
         else if (selectable)
           RideCardActionSpec(
             label: 'Select',
@@ -313,7 +312,8 @@ class RideCardAdapters {
             isPrimary: true,
           ),
       ],
-      semanticsLabel: '${snapshotName ?? 'Driver offer'}, $amount, ${offer.status}',
+      semanticsLabel:
+          '${snapshotName ?? 'Driver offer'}, $amount, ${offer.status}',
     );
   }
 
@@ -349,6 +349,14 @@ class RideCardAdapters {
     return parts;
   }
 
+  /// Ora Courier — sender-requested vehicle class, phrased so a driver
+  /// instantly sees whether their vehicle qualifies ("needs bike").
+  static List<String> _courierVehicleParts(String? vehicle) {
+    final v = vehicle?.trim().toLowerCase();
+    if (v == null || v.isEmpty) return const [];
+    return <String>['needs $v'];
+  }
+
   static String? _openRideServiceLabel(OpenRide ride) {
     final base = ride.serviceType.trim().isEmpty
         ? null
@@ -356,6 +364,7 @@ class RideCardAdapters {
     final parts = <String>[
       if (base != null) base,
       ..._v2Parts(stops: ride.stops, shopping: ride.shopping),
+      ..._courierVehicleParts(ride.courierVehicle),
       if (ride.parcel != null) ..._courierParcelParts(ride.parcel!),
     ];
     return parts.isEmpty ? base : parts.join(' · ');
@@ -368,6 +377,7 @@ class RideCardAdapters {
     final parts = <String>[
       if (base != null) base,
       ..._v2Parts(stops: invite.stops, shopping: invite.shopping),
+      ..._courierVehicleParts(invite.courierVehicle),
       if (invite.parcel != null) ..._courierParcelParts(invite.parcel!),
     ];
     return parts.isEmpty ? base : parts.join(' · ');
@@ -446,7 +456,8 @@ class RideCardAdapters {
     const earthKm = 6371.0;
     final dLat = _degToRad(lat2 - lat1);
     final dLng = _degToRad(lng2 - lng1);
-    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final a =
+        math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(_degToRad(lat1)) *
             math.cos(_degToRad(lat2)) *
             math.sin(dLng / 2) *
@@ -530,8 +541,7 @@ class RideCardAdapters {
       'RIDE_STARTED' ||
       'DRIVER_EN_ROUTE' ||
       'DRIVER_ARRIVED' ||
-      'DRIVER_ASSIGNED' =>
-        RideCardStatusKind.active,
+      'DRIVER_ASSIGNED' => RideCardStatusKind.active,
       'SEARCHING' || 'OFFERS_AVAILABLE' => RideCardStatusKind.active,
       _ => RideCardStatusKind.neutral,
     };

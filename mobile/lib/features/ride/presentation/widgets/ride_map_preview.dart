@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 import 'package:maplibre_gl/maplibre_gl.dart';
 
 import '../../../../app/theme/ora_colors.dart';
@@ -178,11 +177,6 @@ class _RideMapPreviewState extends State<RideMapPreview> {
     await _applyOverlays();
   }
 
-  LatLng? _toMl(gmaps.LatLng? p) {
-    if (p == null) return null;
-    return LatLng(p.latitude, p.longitude);
-  }
-
   List<LatLng> _routeGeometry() {
     return widget.model.polylinePoints
         .map((p) => LatLng(p.latitude, p.longitude))
@@ -229,8 +223,8 @@ class _RideMapPreviewState extends State<RideMapPreview> {
         );
       }
 
-      final pickup = _toMl(widget.model.pickup);
-      final destination = _toMl(widget.model.destination);
+      final pickup = widget.model.pickup;
+      final destination = widget.model.destination;
       if (pickup != null) {
         await c.addSymbol(
           SymbolOptions(
@@ -278,8 +272,8 @@ class _RideMapPreviewState extends State<RideMapPreview> {
     final controller = _controller;
     if (controller == null || !_styleReady) return;
 
-    final pickup = _toMl(widget.model.pickup);
-    final destination = _toMl(widget.model.destination);
+    final pickup = widget.model.pickup;
+    final destination = widget.model.destination;
     final update = MapPreviewCameraPolicy.cameraUpdate(
       pickup: pickup,
       destination: destination,
@@ -349,8 +343,8 @@ class _RideMapPreviewState extends State<RideMapPreview> {
     final c = _controller;
     if (c == null || !mounted) return;
     try {
-      final pickup = _toMl(widget.model.pickup);
-      final destination = _toMl(widget.model.destination);
+      final pickup = widget.model.pickup;
+      final destination = widget.model.destination;
       Offset? pickupOff;
       Offset? destOff;
       if (pickup != null) {
@@ -695,8 +689,8 @@ class _RideMapPreviewState extends State<RideMapPreview> {
   }
 
   CameraPosition _initialCamera() {
-    final pickup = _toMl(widget.model.pickup);
-    final destination = _toMl(widget.model.destination);
+    final pickup = widget.model.pickup;
+    final destination = widget.model.destination;
     final tilt = _effectiveThreeD
         ? MapPreviewConfig.threeDTilt
         : MapPreviewConfig.flatTilt;

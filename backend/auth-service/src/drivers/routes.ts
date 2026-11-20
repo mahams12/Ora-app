@@ -11,7 +11,7 @@ import { DeviceTokenService } from '../delivery/device_token_service';
 
 export function createDriversRouter(
   db: Firestore,
-  geoProjection?: import('../redis/geo_projection').RedisGeoProjectionService | null,
+  geoProjection?: import('../geo/geo_projection').GeoProjectionService | null,
   onAvailabilityTransition?: (
     driverId: string,
     state: import('./types').AvailabilityState,

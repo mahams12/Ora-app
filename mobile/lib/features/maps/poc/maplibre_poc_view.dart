@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,7 +48,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
     try {
       // Inject UA before any MapLibre network I/O (global; PoC-only).
       await setHttpHeaders({
-        'user-agent': MapLibrePoCConfig.mapTilerUserAgent,
+        HttpHeaders.userAgentHeader: MapLibrePoCConfig.mapTilerUserAgent,
       });
       _metrics.mark('maplibre_http_headers_set');
 
@@ -90,22 +90,19 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
   Future<({bool ok, String message, String metricCode})> _preflightMapTiler(
     String apiKey,
   ) async {
-    final dio = Dio();
+    final client = HttpClient();
     try {
       // Match native tile UA so preflight and MapLibre hit the same key rule.
-      final res = await dio.get<String>(
-        MapLibrePoCConfig.tilesPreflightUrl(apiKey),
-        options: Options(
-          headers: {
-            'accept': 'application/json',
-            'user-agent': MapLibrePoCConfig.mapTilerUserAgent,
-          },
-          responseType: ResponseType.plain,
-          receiveTimeout: const Duration(seconds: 12),
-          validateStatus: (_) => true,
-        ),
+      client.userAgent = MapLibrePoCConfig.mapTilerUserAgent;
+      final uri = Uri.parse(MapLibrePoCConfig.tilesPreflightUrl(apiKey));
+      final req = await client.getUrl(uri);
+      req.headers.set(HttpHeaders.acceptHeader, 'application/json');
+      req.headers.set(
+        HttpHeaders.userAgentHeader,
+        MapLibrePoCConfig.mapTilerUserAgent,
       );
-      final body = res.data ?? '';
+      final res = await req.close().timeout(const Duration(seconds: 12));
+      final body = await res.transform(utf8.decoder).join();
       if (res.statusCode == 200) {
         return (ok: true, message: '', metricCode: 'maptiler_ok');
       }
@@ -132,7 +129,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
         metricCode: 'maptiler_preflight_network_error',
       );
     } finally {
-      dio.close();
+      client.close(force: true);
     }
   }
 
@@ -141,7 +138,7 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
     _metrics.onMapCreated();
     // Per-map headers as belt-and-suspenders with global setHttpHeaders.
     await controller.setCustomHeaders(
-      {'user-agent': MapLibrePoCConfig.mapTilerUserAgent},
+      {HttpHeaders.userAgentHeader: MapLibrePoCConfig.mapTilerUserAgent},
       const [r'https://api\.maptiler\.com/.*'],
     );
   }
@@ -291,9 +288,9 @@ class _MapLibrePoCViewState extends State<MapLibrePoCView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: OraColors.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: OraColors.navy,
+        backgroundColor: Colors.transparent,
         foregroundColor: OraColors.textPrimary,
         title: const Text('MapLibre PoC'),
         actions: [

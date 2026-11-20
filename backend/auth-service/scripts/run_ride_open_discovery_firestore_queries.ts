@@ -135,7 +135,7 @@ async function main(): Promise<void> {
   const app = initializeApp(
     getApps().length
       ? undefined
-      : { projectId: process.env.GCLOUD_PROJECT || 'ora-app-d8112' },
+      : { projectId: process.env.GCLOUD_PROJECT || 'oraapp-a9be5' },
   );
   const db = getFirestore(app);
 

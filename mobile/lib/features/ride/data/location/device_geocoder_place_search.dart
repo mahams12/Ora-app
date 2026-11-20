@@ -23,8 +23,7 @@ class DeviceGeocoderPlaceSearch implements PlaceSearchPort {
 
   final geo.Geocoding? _injected;
   geo.Geocoding? _resolved;
-  geo.Geocoding get _geocoding =>
-      _resolved ??= _injected ?? geo.Geocoding();
+  geo.Geocoding get _geocoding => _resolved ??= _injected ?? geo.Geocoding();
 
   static const _idPrefix = 'geo:';
   static const _maxSuggestions = 3;
@@ -51,11 +50,13 @@ class DeviceGeocoderPlaceSearch implements PlaceSearchPort {
         if (lat.abs() > 90 || lng.abs() > 180) continue;
         final id = '$_idPrefix$lat:$lng:$q';
         if (out.any((s) => s.placeId == id)) continue;
-        out.add(PlaceSuggestion(
-          placeId: id,
-          primaryText: q,
-          secondaryText: 'Approximate match · device geocoder',
-        ));
+        out.add(
+          PlaceSuggestion(
+            placeId: id,
+            primaryText: q,
+            secondaryText: 'Approximate match · device geocoder',
+          ),
+        );
         if (out.length >= _maxSuggestions) break;
       }
       return out;
@@ -83,8 +84,7 @@ class DeviceGeocoderPlaceSearch implements PlaceSearchPort {
     }
     final rest = id.substring(_idPrefix.length);
     final firstColon = rest.indexOf(':');
-    final secondColon =
-        firstColon < 0 ? -1 : rest.indexOf(':', firstColon + 1);
+    final secondColon = firstColon < 0 ? -1 : rest.indexOf(':', firstColon + 1);
     final lat = firstColon < 0
         ? null
         : double.tryParse(rest.substring(0, firstColon));
