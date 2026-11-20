@@ -190,6 +190,60 @@ class OraTheme {
         backgroundColor: OraColors.surface,
         surfaceTintColor: Colors.transparent,
       ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: _OraPageTransitions(
+            FadeUpwardsPageTransitionsBuilder(),
+          ),
+          TargetPlatform.fuchsia: _OraPageTransitions(
+            FadeUpwardsPageTransitionsBuilder(),
+          ),
+          TargetPlatform.linux: _OraPageTransitions(
+            FadeUpwardsPageTransitionsBuilder(),
+          ),
+          TargetPlatform.windows: _OraPageTransitions(
+            FadeUpwardsPageTransitionsBuilder(),
+          ),
+          TargetPlatform.iOS: _OraPageTransitions(
+            CupertinoPageTransitionsBuilder(),
+          ),
+          TargetPlatform.macOS: _OraPageTransitions(
+            CupertinoPageTransitionsBuilder(),
+          ),
+        },
+      ),
+    );
+  }
+}
+
+/// Paints the shared background gradient inside every pushed page so routes
+/// stay fully opaque while entering and exiting. Scaffolds are transparent by
+/// design; without this, the outgoing screen ghosts through the incoming one
+/// during transitions (double-exposure flash on back/pop/tab switches).
+class _OraPageTransitions extends PageTransitionsBuilder {
+  const _OraPageTransitions(this._delegate);
+
+  final PageTransitionsBuilder _delegate;
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return _delegate.buildTransitions(
+      route,
+      context,
+      animation,
+      secondaryAnimation,
+      DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: OraColors.backgroundGradient,
+        ),
+        child: child,
+      ),
     );
   }
 }

@@ -198,10 +198,17 @@ async function main() {
 
   // ── 8. Driver 1 accepts → ASSIGNED ────────────────────────────────
   const waveId = waves.docs.map((d) => d.id).sort().pop();
-  const acc = await api(dToks[0], 'POST',
+  const invitedIds: string[] = waves.docs
+    .filter((d) => d.id === waveId)
+    .flatMap((d) => (d.data().driverIds as string[]) ?? []);
+  const accIdx = Math.max(
+    0,
+    dUsers.findIndex((u) => invitedIds.includes(u.uid)),
+  );
+  const acc = await api(dToks[accIdx], 'POST',
     `/rides/${rideId}/invites/${waveId}/accept`,
     { offeredFareMinor: snap.recommendedFareMinor ?? 50000 });
-  log(`driver1 accept: ${acc.status} (${acc.ms}ms)`, JSON.stringify(acc.json ?? {}).slice(0, 250));
+  log(`driver${accIdx + 1} accept (invited uid ${dUsers[accIdx].uid}): ${acc.status} (${acc.ms}ms)`, JSON.stringify(acc.json ?? {}).slice(0, 250));
 
   const rideDoc = await db.collection('rides').doc(rideId).get();
   const rd = rideDoc.data() ?? {};
@@ -216,7 +223,7 @@ async function main() {
   log(`ride state=${rd2.state} assigned=${rd2.assignedDriverId}`);
 
   // ── 9. Trip-mode location → RTDB projection ───────────────────────
-  const trip = await api(dToks[0], 'POST', '/location/update', {
+  const trip = await api(dToks[accIdx], 'POST', '/location/update', {
     locationStreamId: `e2e-trip-${rideId}`,
     locationSeq: 1, rideId,
     lat: PICKUP.lat, lng: PICKUP.lng,
