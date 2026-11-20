@@ -33,7 +33,7 @@ import 'package:ora/features/rental_vendor/presentation/views/rental_vendor_home
 import 'package:ora/features/vendor/presentation/views/vendor_home_view.dart';
 import 'package:ora/features/vendor/presentation/views/vendor_post_service_view.dart';
 
-import 'driver_demo_seed.dart';
+import 'package:ora/demo/driver_seed.dart';
 
 final _demoDate = DateTime(2026, 3, 1);
 

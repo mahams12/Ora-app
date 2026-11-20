@@ -13,7 +13,7 @@ import 'package:ora/app/theme/ora_theme.dart';
 import 'package:ora/features/auth/presentation/view_models/session_user_profile.dart';
 import 'package:ora/features/driver/presentation/views/driver_shell_view.dart';
 
-import 'driver_demo_seed.dart';
+import 'package:ora/demo/driver_seed.dart';
 
 void main() {
   final container = ProviderContainer(overrides: driverDemoOverrides());

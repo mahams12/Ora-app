@@ -9,11 +9,19 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// DEMO/REVIEW build — `ORA_DEMO_BUILD=true flutter build apk --release
+// -t lib/main_demo.dart` produces a side-loadable "ORA Demo" APK with a
+// distinct applicationId (installable next to the real app) signed with the
+// debug key. The demo entrypoint never initializes Firebase, so the gms
+// plugin is skipped and google-services.json is not required. Normal
+// builds are byte-for-byte unaffected.
+val oraDemoBuild = System.getenv("ORA_DEMO_BUILD")?.trim() == "true"
+
 // google-services.json is gitignored client config — never committed. The gms
 // plugin only generates Firebase resources, so debug builds (e.g. CI) compile
 // without it; release builds still fail closed in afterEvaluate below.
 val googleServicesFile = file("google-services.json")
-if (googleServicesFile.exists()) {
+if (googleServicesFile.exists() && !oraDemoBuild) {
     apply(plugin = "com.google.gms.google-services")
 }
 
@@ -48,13 +56,18 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.ora.ora"
+        applicationId = if (oraDemoBuild) "com.ora.ora.demo" else "com.ora.ora"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionName = flutter.versionName + if (oraDemoBuild) "-demo" else ""
+        resValue(
+            "string",
+            "app_name",
+            if (oraDemoBuild) "ORA Demo" else "ORA",
+        )
 
     }
 
@@ -77,7 +90,11 @@ android {
 
     buildTypes {
         release {
-            if (keystorePropertiesFile.exists()) {
+            if (oraDemoBuild) {
+                // Review artifact — signed with the debug key, never the
+                // production upload keystore.
+                signingConfig = signingConfigs.getByName("debug")
+            } else if (keystorePropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
@@ -107,6 +124,9 @@ afterEvaluate {
                 name.startsWith("install"))
     }.configureEach {
         doFirst {
+            if (oraDemoBuild) {
+                return@doFirst
+            }
             if (!keystorePropertiesFile.exists()) {
                 throw GradleException(releaseKeystoreMessage)
             }
