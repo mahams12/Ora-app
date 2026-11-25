@@ -290,6 +290,10 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
             leadingIcon: context.canPop() ? Icons.arrow_back_rounded : null,
             leadingTooltip: 'Back',
             onLeading: context.canPop() ? () => context.pop() : null,
+            trailingIcon: Icons.chat_bubble_outline_rounded,
+            trailingTooltip: 'Chat with passenger',
+            onTrailing: () =>
+                context.push(AppRoutes.driverRideChatPath(rideId)),
           ),
           Expanded(
             child: switch (phase) {

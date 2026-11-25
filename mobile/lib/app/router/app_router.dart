@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/views/otp_entry_view.dart';
+import '../../features/chat/presentation/ride_chat_view.dart';
 import '../../features/auth/presentation/views/phone_entry_view.dart';
 import '../../features/auth/presentation/views/profile_view.dart';
 import '../../features/auth/presentation/views/splash_view.dart';
@@ -367,6 +368,20 @@ GoRouter createAppRouter({
         path: AppRoutes.driverWalletAddPoints,
         name: 'driver-wallet-add-points',
         builder: (context, state) => const DriverAddPointsView(),
+      ),
+      GoRoute(
+        path: AppRoutes.rideChat,
+        builder: (context, state) => RideChatView(
+          rideId: state.pathParameters['rideId']!,
+          otherPartyLabel: 'Driver',
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.driverRideChat,
+        builder: (context, state) => RideChatView(
+          rideId: state.pathParameters['rideId']!,
+          otherPartyLabel: 'Passenger',
+        ),
       ),
     ],
     errorBuilder: (context, state) =>
