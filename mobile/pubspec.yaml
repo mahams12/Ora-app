@@ -26,6 +26,10 @@ dependencies:
   geocoding: ^5.0.0
   image_picker: ^1.2.2
   image: ^4.12.0
+  cupertino_icons: ^1.0.8
+  riverpod_annotation: ^2.6.1
+  json_annotation: ^4.9.0
+  google_maps_flutter: ^2.12.3
 
 dev_dependencies:
   flutter_test:
@@ -33,6 +37,8 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   build_runner: ^2.4.13
   freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.6.3
   mocktail: ^1.0.4
   integration_test:
     sdk: flutter
