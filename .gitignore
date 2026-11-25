@@ -78,3 +78,6 @@ database-debug.log
 **/.e2e_artifacts/**
 mobile/test_outputs/
 *.pid
+
+# Device-test screenshot/log output
+test/device/logs/
