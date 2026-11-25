@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_ui/material_ui.dart' as mui;
 
 import 'di/providers.dart';
 import 'router/app_router.dart';
@@ -42,13 +41,6 @@ class _OraAppState extends ConsumerState<OraApp> {
       darkTheme: OraTheme.dark(),
       themeMode: ThemeMode.light,
       routerConfig: router,
-      // flutter_chat_ui v2 builds on package:material_ui; its delegate must
-      // sit alongside Flutter's defaults (en_US only, matching the app).
-      localizationsDelegates: const [
-        mui.DefaultMaterialLocalizations.delegate,
-        DefaultMaterialLocalizations.delegate,
-        DefaultWidgetsLocalizations.delegate,
-      ],
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: DecoratedBox(

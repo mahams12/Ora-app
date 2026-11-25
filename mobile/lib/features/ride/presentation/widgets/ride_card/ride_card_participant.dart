@@ -20,9 +20,7 @@ class RideCardParticipantRow extends StatelessWidget {
     this.compact = false,
     this.showRatingSlot = true,
     this.showPhoneSlot = false,
-    this.showChatSlot = false,
     this.onCall,
-    this.onChat,
   });
 
   final RideCardParticipant? participant;
@@ -30,9 +28,7 @@ class RideCardParticipantRow extends StatelessWidget {
   final bool compact;
   final bool showRatingSlot;
   final bool showPhoneSlot;
-  final bool showChatSlot;
   final VoidCallback? onCall;
-  final VoidCallback? onChat;
 
   @override
   Widget build(BuildContext context) {
@@ -88,22 +84,12 @@ class RideCardParticipantRow extends StatelessWidget {
           ),
         ),
         if (trailing != null) trailing!,
-        if (showPhoneSlot || showChatSlot) ...[
-          if (showPhoneSlot)
-            RideCardIconButton(
-              assetPath: RideCardAssets.phone,
-              semanticLabel: 'Call',
-              onPressed: onCall,
-            ),
-          if (showChatSlot) ...[
-            const SizedBox(width: OraSpacing.xs),
-            RideCardIconButton(
-              icon: Icons.chat_bubble_outline_rounded,
-              semanticLabel: 'Chat',
-              onPressed: onChat,
-            ),
-          ],
-        ],
+        if (showPhoneSlot)
+          RideCardIconButton(
+            assetPath: RideCardAssets.phone,
+            semanticLabel: 'Call',
+            onPressed: onCall,
+          ),
       ],
     );
   }

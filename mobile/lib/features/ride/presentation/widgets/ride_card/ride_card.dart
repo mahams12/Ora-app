@@ -381,7 +381,6 @@ class _ActiveDriverJobBody extends StatelessWidget {
           participant: model.participant,
           showRatingSlot: true,
           showPhoneSlot: true,
-          showChatSlot: true,
         ),
         const SizedBox(height: OraSpacing.sm),
         RideCardVehicleRow(

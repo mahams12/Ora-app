@@ -290,10 +290,6 @@ class _DriverAssignedRideViewState extends ConsumerState<DriverAssignedRideView>
             leadingIcon: context.canPop() ? Icons.arrow_back_rounded : null,
             leadingTooltip: 'Back',
             onLeading: context.canPop() ? () => context.pop() : null,
-            trailingIcon: Icons.chat_bubble_outline_rounded,
-            trailingTooltip: 'Chat with passenger',
-            onTrailing: () =>
-                context.push(AppRoutes.driverRideChatPath(rideId)),
           ),
           Expanded(
             child: switch (phase) {
@@ -1533,12 +1529,6 @@ class _PassengerCard extends StatelessWidget {
           _RoundContactButton(
             assetPath: RideCardAssets.phone,
             semanticLabel: 'Call $role',
-            enabled: false,
-          ),
-          const SizedBox(width: OraSpacing.xs),
-          _RoundContactButton(
-            icon: Icons.chat_bubble_outline_rounded,
-            semanticLabel: 'Chat with $role',
             enabled: false,
           ),
           const SizedBox(width: OraSpacing.xs),
