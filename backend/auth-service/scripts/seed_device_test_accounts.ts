@@ -17,9 +17,9 @@ if (
   process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9099';
   process.env.FIREBASE_DATABASE_EMULATOR_HOST ??= '127.0.0.1:9000';
 }
-process.env.FIREBASE_PROJECT_ID ??= 'oraapp-a9be5';
+process.env.FIREBASE_PROJECT_ID ??= 'ora-app-d8112';
 process.env.FIREBASE_DATABASE_URL ??=
-  'https://oraapp-a9be5-default-rtdb.local-emulator.local';
+  'https://ora-app-d8112-default-rtdb.local-emulator.local';
 
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
@@ -115,48 +115,6 @@ async function approvePhone(phone: string) {
   console.log(`approved ${phone} uid=${user.uid}`);
 }
 
-const VENDOR_TYPES = new Set(['cargo', 'rental', 'service']);
-const VENDOR_STATUSES = new Set([
-  'pending',
-  'approved',
-  'rejected',
-  'suspended',
-]);
-
-/**
- * Admin review for a partner application:
- *   SEED_ACTION=vendor-status PHONE=+923001112233 TYPE=cargo STATUS=approved npx tsx ...
- */
-async function setVendorStatus(phone: string, type: string, status: string) {
-  if (!VENDOR_TYPES.has(type)) {
-    throw new Error(`TYPE must be one of ${[...VENDOR_TYPES].join(', ')}`);
-  }
-  if (!VENDOR_STATUSES.has(status)) {
-    throw new Error(`STATUS must be one of ${[...VENDOR_STATUSES].join(', ')}`);
-  }
-  const auth = getAuth();
-  const user = await auth.getUserByPhoneNumber(phone);
-  const db = getFirestore();
-  const ref = db.collection('users').doc(user.uid);
-  const snap = await ref.get();
-  const apps =
-    (snap.data()?.vendorApplications as Record<string, unknown> | undefined) ??
-    {};
-  const existing = (apps[type] as Record<string, unknown> | undefined) ?? {};
-  const now = new Date().toISOString();
-  apps[type] = {
-    ...existing,
-    status,
-    submittedAt:
-      typeof existing.submittedAt === 'string'
-        ? existing.submittedAt
-        : now,
-    reviewedAt: now,
-  };
-  await ref.update({ vendorApplications: apps, updatedAt: now });
-  console.log(`vendor ${type}=${status} for ${phone} uid=${user.uid}`);
-}
-
 async function main() {
   if (getApps().length === 0) {
     initializeApp({
@@ -166,14 +124,6 @@ async function main() {
   }
   if (process.env.SEED_ACTION === 'approve-phone') {
     await approvePhone(process.env.PHONE ?? FRESH_SWITCH_PHONE);
-    return;
-  }
-  if (process.env.SEED_ACTION === 'vendor-status') {
-    await setVendorStatus(
-      process.env.PHONE ?? APPROVED_DRIVER_PHONE,
-      process.env.TYPE ?? '',
-      process.env.STATUS ?? '',
-    );
     return;
   }
   await seedPricing();

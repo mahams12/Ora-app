@@ -25,7 +25,7 @@ export const ACTIVE_MODES: readonly ActiveMode[] = ['passenger', 'driver'];
  * live booking they must finish or cancel first. Terminal states and the
  * closeable end states (RIDE_COMPLETED, RETURNED) do not block.
  */
-const PASSENGER_BLOCK_STATES = [
+export const PASSENGER_BLOCK_STATES = [
   'SEARCHING',
   'OFFERS_AVAILABLE',
   'DRIVER_ASSIGNED',

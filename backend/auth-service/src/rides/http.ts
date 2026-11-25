@@ -22,7 +22,7 @@ export function sendRideDomainError(
   err: unknown,
 ): void {
   if (err instanceof RideDomainError) {
-    sendApiError(req, res, err.httpStatus, err.code, err.message);
+    sendApiError(req, res, err.httpStatus, err.code, err.message, err.details);
     return;
   }
   sendApiError(req, res, 500, 'INTERNAL', 'Unexpected server error.');

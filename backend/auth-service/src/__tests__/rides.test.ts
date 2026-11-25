@@ -2619,9 +2619,12 @@ describe('Phase 2J ride expired sweeper', () => {
     const passengerId = 'p-j10';
     const driverId = 'd-j10';
     seedPassenger(db, passengerId);
+    // DR-008: one active ride per passenger — the due ride needs its own
+    // passenger so both fixtures can coexist.
+    seedPassenger(db, 'p-j10b');
     seedDriver(db, driverId);
     seedPricing(db);
-    const due = await createRide(db, passengerId, 'j-create-10a');
+    const due = await createRide(db, 'p-j10b', 'j-create-10a');
     backdateRideExpiry(db, due.rideId);
     const assigned = await createRide(db, passengerId, 'j-create-10b');
     const offer = await createOffer(

@@ -19,7 +19,7 @@ if (process.env.ORA_CLOUD !== '1') {
   process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9099';
   process.env.FIREBASE_DATABASE_EMULATOR_HOST ??= '127.0.0.1:9000';
 }
-process.env.FIREBASE_PROJECT_ID ??= 'oraapp-a9be5';
+process.env.FIREBASE_PROJECT_ID ??= 'ora-app-d8112';
 process.env.FIREBASE_DATABASE_URL ??=
   'https://oraapp-a9be5-default-rtdb.local-emulator.local';
 

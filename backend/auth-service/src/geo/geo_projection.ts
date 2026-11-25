@@ -1,4 +1,8 @@
 import { logSafe } from '../http/errors';
+import {
+  LogSampler,
+  shouldEmitSteadyStateLog,
+} from '../http/log_sampling';
 import { LocationDomainError } from '../location/types';
 import {
   DRIVER_ONLINE_TTL_SECONDS,
@@ -71,6 +75,8 @@ export interface GeoProjectionOptions {
    * cover the throttle gap); 0 disables.
    */
   tripMarkerMinIntervalMs?: number;
+  /** Steady-state log sampler for GEO_STORE_PROJECTED; injectable for tests. */
+  logSampler?: LogSampler;
 }
 
 /** Trip-mode marker horizon: the declared interval written into freshUntilMs
@@ -89,6 +95,7 @@ const TRIP_MARKER_DECLARED_INTERVAL_MS = 60_000;
 export class GeoProjectionService {
   private readonly adaptiveFreshness: boolean;
   private readonly tripMarkerMinIntervalMs: number;
+  private readonly logSampler: LogSampler;
   /** Last successful trip-mode marker write per driver (in-memory). */
   private readonly tripMarkerLastWriteMs = new Map<string, number>();
 
@@ -103,6 +110,7 @@ export class GeoProjectionService {
       options.tripMarkerMinIntervalMs > 0
         ? options.tripMarkerMinIntervalMs
         : 0;
+    this.logSampler = options.logSampler ?? new LogSampler();
   }
 
   /**
@@ -118,6 +126,7 @@ export class GeoProjectionService {
   }
 
   async projectAcceptedLocation(input: ProjectLocationInput): Promise<void> {
+    const startedAt = Date.now();
     if (!this.geoStore) {
       logSafe('GEO_STORE_SKIP', {
         reason: 'geo_store_not_configured',
@@ -314,13 +323,24 @@ export class GeoProjectionService {
         );
       }
 
-      logSafe('GEO_STORE_PROJECTED', {
-        driverId: input.driverId,
-        geoKey: GEO_DRIVERS_KEY,
-        city,
-        locationSeq: input.locationSeq,
-        requestId: input.requestId ?? null,
-      });
+      // Steady-state success log is sampled; SKIP/FAILED paths always log.
+      const durationMs = Date.now() - startedAt;
+      if (
+        shouldEmitSteadyStateLog(
+          this.logSampler,
+          'GEO_STORE_PROJECTED',
+          durationMs,
+        )
+      ) {
+        logSafe('GEO_STORE_PROJECTED', {
+          driverId: input.driverId,
+          geoKey: GEO_DRIVERS_KEY,
+          city,
+          locationSeq: input.locationSeq,
+          durationMs,
+          requestId: input.requestId ?? null,
+        });
+      }
     } catch (err) {
       // Merged-cursor violations are the durable-accept contract (422) —
       // never downgrade them to a swallowed projection failure.

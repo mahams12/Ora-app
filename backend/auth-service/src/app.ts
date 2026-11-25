@@ -118,6 +118,9 @@ export function createApp(options: CreateAppOptions) {
   // a larger parser ahead of the global 32KB one.
   app.use('/v1/vendor', express.json({ limit: '1mb' }));
   app.use('/v1/marketplace', express.json({ limit: '256kb' }));
+  // Profile avatar uploads are base64 data URLs up to the validator's 400KB
+  // cap — the global 32kb limit would reject them before validation.
+  app.patch('/v1/auth/profile', express.json({ limit: '512kb' }));
   app.use(express.json({ limit: '32kb' }));
 
   app.get('/healthz', (_req, res) => {

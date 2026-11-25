@@ -111,6 +111,52 @@ describe('PATCH /v1/auth/profile', () => {
     expect(db.getDoc('users', 'uid-1')?.avatarData).toBeNull();
   });
 
+  it('accepts an avatar payload larger than the global 32kb limit', async () => {
+    const db = memoryDb();
+    seedUser(db, 'uid-1', { displayName: 'Ada' });
+    const app = authedApp({ db });
+    // ~100KB base64 payload — far above 32kb, well under the 512kb
+    // route-scoped limit and the validator's 400KB cap.
+    const avatar = 'data:image/jpeg;base64,' + 'A'.repeat(100_000);
+
+    const res = await request(app)
+      .patch('/v1/auth/profile')
+      .set('Authorization', 'Bearer good')
+      .send({ displayName: 'Ada', avatarData: avatar });
+
+    expect(res.status).toBe(200);
+    expect(res.body.avatarData).toBe(avatar);
+    expect(db.getDoc('users', 'uid-1')?.avatarData).toBe(avatar);
+  });
+
+  it('rejects profile payloads above the 512kb route limit with 413', async () => {
+    const db = memoryDb();
+    seedUser(db, 'uid-1', { displayName: 'Ada' });
+    const app = authedApp({ db });
+    const oversized = 'data:image/jpeg;base64,' + 'A'.repeat(560_000);
+
+    const res = await request(app)
+      .patch('/v1/auth/profile')
+      .set('Authorization', 'Bearer good')
+      .send({ displayName: 'Ada', avatarData: oversized });
+
+    expect(res.status).toBe(413);
+  });
+
+  it('keeps other endpoints on the global 32kb limit', async () => {
+    const db = memoryDb();
+    seedUser(db, 'uid-1', { displayName: 'Ada' });
+    const app = authedApp({ db });
+
+    const res = await request(app)
+      .post('/v1/auth/register')
+      .set('Authorization', 'Bearer good')
+      .set('Idempotency-Key', 'register_uid-1_big')
+      .send({ pad: 'x'.repeat(40_000) });
+
+    expect(res.status).toBe(413);
+  });
+
   it('trims and collapses whitespace', async () => {
     const db = memoryDb();
     seedUser(db, 'uid-1');

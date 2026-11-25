@@ -526,6 +526,7 @@ export class RideDomainError extends Error {
     readonly code: string,
     readonly httpStatus: number,
     message: string,
+    readonly details?: Record<string, unknown>,
   ) {
     super(message);
     this.name = 'RideDomainError';

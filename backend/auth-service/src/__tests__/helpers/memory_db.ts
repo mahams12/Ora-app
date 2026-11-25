@@ -324,6 +324,7 @@ export function memoryDb() {
         >;
         set: (ref: DocRef, value: Record<string, unknown>) => void;
         update: (ref: DocRef, value: Record<string, unknown>) => void;
+        delete: (ref: DocRef) => void;
       }) => Promise<T>,
     ): Promise<T> {
       const run = async (): Promise<T> => {
@@ -416,6 +417,9 @@ export function memoryDb() {
               : store.get(ref.path);
             if (!base) throw new Error('NOT_FOUND');
             pending.set(ref.path, mergeWithDotPaths(base, value));
+          },
+          delete(ref: DocRef) {
+            pending.set(ref.path, null);
           },
         };
         const result = await fn(tx as never);

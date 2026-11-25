@@ -116,6 +116,13 @@ import {
   parseOpenDiscoveryQuery,
 } from './open_discovery_query';
 import { normalizeCitySlug } from '../geo/types';
+import {
+  assertNoActiveRideTx,
+  clearActiveRidePointerIfMatchTx,
+  isTerminalRideState,
+  readActiveRidePointerTx,
+  writeActiveRidePointerTx,
+} from './active_ride_pointer';
 
 const RIDES = 'rides';
 const OFFERS = 'rideOffers';
@@ -1578,8 +1585,20 @@ export class RideService {
           );
         }
 
+        // DR-008 — one active ride per passenger. Pointer-doc check
+        // (race-safe) + legacy query fallback for pre-pointer rides.
+        // Runs after the idem check so replays never see a 409.
+        await assertNoActiveRideTx(tx, this.db, input.caller.uid);
+
         const rideRef = this.db.collection(RIDES).doc(rideId);
         tx.set(rideRef, ride);
+        writeActiveRidePointerTx(
+          tx,
+          this.db,
+          input.caller.uid,
+          rideId,
+          nowIso,
+        );
         tx.set(idemRef, {
           idempotencyKey,
           requestHash,
@@ -2774,6 +2793,12 @@ export class RideService {
           throw new RideDomainError('RIDE_NOT_FOUND', 404, 'Ride not found.');
         }
         const ride = rideSnap.data() as RideDoc;
+        // DR-008 — read-phase pointer fetch (all reads precede writes).
+        const activeRidePointerSnap = await readActiveRidePointerTx(
+          tx,
+          this.db,
+          ride.passengerId,
+        );
 
         if (ride.state === 'CANCELLED') {
           const isOwner =
@@ -2927,6 +2952,14 @@ export class RideService {
           cancellationFeeMinor: 0,
           updatedAt: nowIso,
         });
+        // DR-008 — release the passenger's active-ride pointer in-tx.
+        clearActiveRidePointerIfMatchTx(
+          tx,
+          this.db,
+          ride.passengerId,
+          input.rideId,
+          activeRidePointerSnap,
+        );
 
         for (const doc of pendingOfferDocs) {
           const pendingOffer = doc.data;
@@ -3346,6 +3379,10 @@ export class RideService {
           throw new RideDomainError('RIDE_NOT_FOUND', 404, 'Ride not found.');
         }
         const ride = rideSnap.data() as RideDoc;
+        // DR-008 — pointer read only for terminal targets (read phase).
+        const activeRidePointerSnap = isTerminalRideState(input.toState)
+          ? await readActiveRidePointerTx(tx, this.db, ride.passengerId)
+          : null;
 
         if (ride.assignedDriverId !== input.caller.uid) {
           throw new RideDomainError(
@@ -3516,6 +3553,16 @@ export class RideService {
         }
 
         tx.update(rideRef, patch);
+        // DR-008 — release pointer when this transition is terminal.
+        if (activeRidePointerSnap) {
+          clearActiveRidePointerIfMatchTx(
+            tx,
+            this.db,
+            ride.passengerId,
+            input.rideId,
+            activeRidePointerSnap,
+          );
+        }
 
         const arrivedAtValue =
           input.setArrivedAt && ride.arrivedAt == null
@@ -3751,6 +3798,13 @@ export class RideService {
         }
         const ride = rideSnap.data() as RideDoc;
         viewer = input.authorize(ride);
+        // DR-008 — pointer read in read phase; released below only when
+        // the applied patch lands the ride in a terminal state.
+        const activeRidePointerSnap = await readActiveRidePointerTx(
+          tx,
+          this.db,
+          ride.passengerId,
+        );
 
         if (expectedVersion != null && ride.version !== expectedVersion) {
           throw new RideDomainError(
@@ -3770,6 +3824,22 @@ export class RideService {
           version: nextVersion,
           updatedAt: nowIso,
         });
+        // DR-008 — courier v2 can land terminal states via patch.state
+        // (e.g. RIDE_COMPLETED on final stop); release the pointer only
+        // for explicit terminal outcomes.
+        const resultingState =
+          typeof applied.patch.state === 'string'
+            ? applied.patch.state
+            : ride.state;
+        if (isTerminalRideState(resultingState)) {
+          clearActiveRidePointerIfMatchTx(
+            tx,
+            this.db,
+            ride.passengerId,
+            input.rideId,
+            activeRidePointerSnap,
+          );
+        }
         if (applied.extraWrite) {
           tx.set(
             this.db
@@ -4942,6 +5012,12 @@ export class RideService {
           throw new RideDomainError('RIDE_NOT_FOUND', 404, 'Ride not found.');
         }
         const ride = rideSnap.data() as RideDoc;
+        // DR-008 — pointer read in read phase; RIDE_CLOSED is terminal.
+        const activeRidePointerSnap = await readActiveRidePointerTx(
+          tx,
+          this.db,
+          ride.passengerId,
+        );
 
         const isPassenger = ride.passengerId === input.caller.uid;
         const isAssignedDriver = ride.assignedDriverId === input.caller.uid;
@@ -4989,6 +5065,14 @@ export class RideService {
           closedAt: nowIso,
           updatedAt: nowIso,
         });
+        // DR-008 — release the passenger's active-ride pointer in-tx.
+        clearActiveRidePointerIfMatchTx(
+          tx,
+          this.db,
+          ride.passengerId,
+          input.rideId,
+          activeRidePointerSnap,
+        );
 
         const updated: RideDoc = {
           ...ride,
@@ -5117,6 +5201,13 @@ export class RideService {
 
       assertExpirable(ride.state);
 
+      // DR-008 — pointer read in read phase; EXPIRED is terminal.
+      const activeRidePointerSnap = await readActiveRidePointerTx(
+        tx,
+        this.db,
+        ride.passengerId,
+      );
+
       const fromState = ride.state;
       const nextVersion = ride.version + 1;
       tx.update(rideRef, {
@@ -5124,6 +5215,14 @@ export class RideService {
         version: nextVersion,
         updatedAt: nowIso,
       });
+      // DR-008 — release the passenger's active-ride pointer in-tx.
+      clearActiveRidePointerIfMatchTx(
+        tx,
+        this.db,
+        ride.passengerId,
+        input.rideId,
+        activeRidePointerSnap,
+      );
 
       const eventId = randomUUID();
       tx.set(this.db.collection(OUTBOX).doc(eventId), {
@@ -5426,12 +5525,27 @@ export class RideService {
         };
       }
 
+      // DR-008 — pointer read in read phase; NO_SHOW is terminal.
+      const activeRidePointerSnap = await readActiveRidePointerTx(
+        tx,
+        this.db,
+        ride.passengerId,
+      );
+
       const nextVersion = ride.version + 1;
       tx.update(rideRef, {
         state: 'NO_SHOW',
         version: nextVersion,
         updatedAt: nowIso,
       });
+      // DR-008 — release the passenger's active-ride pointer in-tx.
+      clearActiveRidePointerIfMatchTx(
+        tx,
+        this.db,
+        ride.passengerId,
+        input.rideId,
+        activeRidePointerSnap,
+      );
 
       const eventId = randomUUID();
       tx.set(this.db.collection(OUTBOX).doc(eventId), {

@@ -5,6 +5,7 @@ export interface ApiErrorBody {
   error: {
     code: string;
     message: string;
+    details?: Record<string, unknown>;
   };
   requestId: string;
 }
@@ -15,10 +16,11 @@ export function sendApiError(
   status: number,
   code: string,
   message: string,
+  details?: Record<string, unknown>,
 ): void {
   const requestId = getRequestId(req);
   const body: ApiErrorBody = {
-    error: { code, message },
+    error: { code, message, ...(details ? { details } : {}) },
     requestId,
   };
   res.status(status).json(body);
